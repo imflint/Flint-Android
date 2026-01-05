@@ -1,4 +1,5 @@
 package com.flint.domain.model
 
-class SampleModel {
-}
+data class SampleModel(
+    val convertedData: Int
+)
