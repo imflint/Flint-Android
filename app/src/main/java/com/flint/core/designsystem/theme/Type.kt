@@ -1,18 +1,27 @@
 package com.flint.core.designsystem.theme
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.flint.R
 
 @Immutable
-data class FlintTypography(
+data class Typography(
     val display1Sb32: TextStyle,
     val display1M32: TextStyle,
     val display2M28: TextStyle,
@@ -33,8 +42,8 @@ data class FlintTypography(
     val micro1M10: TextStyle,
 )
 
-val Typography =
-    FlintTypography(
+val FlintTypography =
+    Typography(
         display1Sb32 =
             flintTextStyle(
                 fontWeight = FontWeight.SemiBold,
@@ -162,6 +171,34 @@ val Typography =
                 letterSpacing = (-0.03).em,
             ),
     )
+
+@Preview()
+@Composable
+private fun FlintTypographyPreview() {
+    Column(
+        modifier = Modifier.background(color = Color(0xFF313131)),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Text(text = "display1_sb_32", style = FlintTypography.display1Sb32)
+        Text(text = "display1_m_32", style = FlintTypography.display1M32)
+        Text(text = "display2_m_28", style = FlintTypography.display2M28)
+        Text(text = "head1_sb_22", style = FlintTypography.head1Sb22)
+        Text(text = "head1_m_22", style = FlintTypography.head1M22)
+        Text(text = "head2_sb_20", style = FlintTypography.head2Sb20)
+        Text(text = "head2_m_20", style = FlintTypography.head2M20)
+        Text(text = "head3_sb_18", style = FlintTypography.head3Sb18)
+        Text(text = "head3_m_18", style = FlintTypography.head3M18)
+        Text(text = "body1_b_16", style = FlintTypography.body1B16)
+        Text(text = "body1_sb_16", style = FlintTypography.body1Sb16)
+        Text(text = "body1_m_16", style = FlintTypography.body1M16)
+        Text(text = "body1_r_16", style = FlintTypography.body1R16)
+        Text(text = "body2_m_14", style = FlintTypography.body2M14)
+        Text(text = "body2_r_14", style = FlintTypography.body2R14)
+        Text(text = "caption1_m_12", style = FlintTypography.caption1M12)
+        Text(text = "caption1_r_12", style = FlintTypography.caption1R12)
+        Text(text = "micro1_m_10", style = FlintTypography.micro1M10)
+    }
+}
 
 /** The default font weight - alias for [FontWeight.Normal] */
 private val FontWeight.Companion.Regular: FontWeight get() = FontWeight.Normal
