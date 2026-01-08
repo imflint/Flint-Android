@@ -8,7 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 @Composable
 fun FlintTheme(content: @Composable () -> Unit) {
     CompositionLocalProvider(
-        LocalFlintColors provides Colors,
+        LocalColors provides FlintColors,
         LocalFlintTypography provides Typography,
     ) {
         content()
@@ -16,10 +16,10 @@ fun FlintTheme(content: @Composable () -> Unit) {
 }
 
 object FlintTheme {
-    val colors: FlintColors
+    val colors: Colors
         @Composable
         @ReadOnlyComposable
-        get() = LocalFlintColors.current
+        get() = LocalColors.current
 
     val typography: FlintTypography
         @Composable
@@ -27,8 +27,8 @@ object FlintTheme {
         get() = LocalFlintTypography.current
 }
 
-private val LocalFlintColors =
-    staticCompositionLocalOf<FlintColors> { error("No FlintColors provided") }
+private val LocalColors =
+    staticCompositionLocalOf<Colors> { error("No Colors provided") }
 
 private val LocalFlintTypography =
     staticCompositionLocalOf<FlintTypography> { error("No FlintTypography provided") }
