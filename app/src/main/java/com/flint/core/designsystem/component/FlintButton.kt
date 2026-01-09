@@ -120,8 +120,10 @@ fun FlintButton(
                 modifier = Modifier.size(24.dp),
                 tint = contentColor,
             )
+
             if (text.isNotEmpty()) Spacer(Modifier.width(8.dp))
         }
+
         Text(
             text = text,
             color = contentColor,
@@ -201,6 +203,7 @@ private fun FlintButtonPreview() {
                     onClick = {},
                     modifier = Modifier.weight(1f),
                 )
+
                 Spacer(Modifier.width(16.dp))
 
                 FlintButton(
