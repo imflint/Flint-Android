@@ -132,7 +132,7 @@ fun FlintButton(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun FlintButtonPreview() {
     FlintTheme {
