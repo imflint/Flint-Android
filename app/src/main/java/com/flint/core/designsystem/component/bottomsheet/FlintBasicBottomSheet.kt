@@ -44,6 +44,7 @@ fun FlintBasicBottomSheet(
         sheetState = sheetState,
         dragHandle = null,
         containerColor = FlintTheme.colors.white,
+        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
     ) {
         Column(
             modifier = Modifier
