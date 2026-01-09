@@ -1,7 +1,7 @@
 package com.flint.core.designsystem.component.modal
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import com.flint.core.common.extension.noRippleClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +32,7 @@ fun ModalButton(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
-            .clickable { onClick() }
+            .noRippleClickable { onClick() }
             .padding(vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
