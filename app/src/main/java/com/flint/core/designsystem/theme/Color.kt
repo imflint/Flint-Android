@@ -54,6 +54,7 @@ data class Colors(
     val error500: Color,
     val error700: Color,
     val overlay: Color,
+    val spoilerBlur: Color,
     val gradient900: Brush,
     val gradient700: Brush,
     val gradient400: Brush,
@@ -98,6 +99,7 @@ val FlintColors =
         error500 = Color(0xFFFF4D62),
         error700 = Color(0xFFB53746),
         overlay = Color(0xFF000000).copy(alpha = 0.6f),
+        spoilerBlur = Color(0xFF121212).copy(alpha = 0.3f),
         gradient900 =
         Brush.linearGradient(
             colors = listOf(Color(0xFF3C4256), Color(0xFF121212))
@@ -111,9 +113,9 @@ val FlintColors =
             colors = listOf(Color(0xFF1ABFF2), Color(0xFF86EBFF))
         ),
         imgBlur =
-        Brush.linearGradient(
-            colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000))
-        )
+            Brush.linearGradient(
+                colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f)),
+            ),
     )
 
 @Preview(device = Devices.DESKTOP)
@@ -132,23 +134,23 @@ private fun FlintColorsPreview() {
             )
             Box(
                 Modifier
+                    .background(color = FlintColors.primary100)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
                     .background(color = FlintColors.primary200)
-                    .size(100.dp)
+                    .size(100.dp),
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary300)
-                    .size(100.dp)
+                    .size(100.dp),
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary400)
-                    .size(100.dp)
-            )
-            Box(
-                Modifier
-                    .background(color = FlintColors.primary100)
-                    .size(100.dp)
+                    .size(100.dp),
             )
             Box(
                 Modifier
@@ -314,6 +316,15 @@ private fun FlintColorsPreview() {
                     .background(color = FlintColors.overlay)
                     .size(100.dp)
             )
+            Box(
+                Modifier
+                    .background(color = FlintColors.spoilerBlur)
+                    .size(100.dp),
+            )
+        }
+
+        Text("Gradient", color = Color.White)
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Box(
                 Modifier
                     .background(brush = FlintColors.gradient900)
