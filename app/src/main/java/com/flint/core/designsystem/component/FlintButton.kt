@@ -32,12 +32,26 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
-enum class FlintButtonType(
-    val verticalPadding: Dp,
-    val minHeight: Dp,
-) {
-    Large(verticalPadding = 0.dp, minHeight = 48.dp),
-    Medium(verticalPadding = 2.dp, minHeight = 44.dp),
+sealed interface FlintButtonType {
+    val verticalPadding: Dp
+    val minHeight: Dp
+
+    object Large : FlintButtonType {
+        override val verticalPadding = 0.dp
+        override val minHeight = 48.dp
+    }
+
+    object Medium : FlintButtonType {
+        override val verticalPadding = 2.dp
+        override val minHeight = 44.dp
+    }
+
+    class Icon(
+        val icon: Painter,
+    ) : FlintButtonType {
+        override val verticalPadding = 2.dp
+        override val minHeight = 44.dp
+    }
 }
 
 enum class FlintButtonState(
@@ -86,10 +100,14 @@ fun FlintButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    leadingIcon: Painter? = null,
 ) {
     val verticalPadding: Dp = type.verticalPadding
     val minHeight: Dp = type.minHeight
+    val leadingIcon: Painter? =
+        when (type) {
+            is FlintButtonType.Icon -> type.icon
+            else -> null
+        }
     val enabled: Boolean = state.enabled
     val background: Brush = state.background
     val contentColor: Color = state.contentColor
@@ -218,33 +236,30 @@ private fun FlintButtonPreview() {
             Row {
                 FlintButton(
                     text = "공개",
-                    type = FlintButtonType.Medium,
+                    type = FlintButtonType.Icon(painterResource(R.drawable.ic_share)),
                     state = FlintButtonState.Disable,
                     onClick = {},
                     modifier = Modifier.weight(1f),
-                    leadingIcon = painterResource(R.drawable.ic_share),
                 )
 
                 Spacer(Modifier.width(16.dp))
 
                 FlintButton(
                     text = "공개",
-                    type = FlintButtonType.Medium,
+                    type = FlintButtonType.Icon(painterResource(R.drawable.ic_share)),
                     state = FlintButtonState.ColorOutline,
                     onClick = {},
                     modifier = Modifier.weight(1f),
-                    leadingIcon = painterResource(R.drawable.ic_share),
                 )
             }
 
             Row {
                 FlintButton(
                     text = "공개",
-                    type = FlintButtonType.Medium,
+                    type = FlintButtonType.Icon(painterResource(R.drawable.ic_share)),
                     state = FlintButtonState.Outline,
                     onClick = {},
                     modifier = Modifier.weight(0.5f),
-                    leadingIcon = painterResource(R.drawable.ic_share),
                 )
 
                 Spacer(Modifier.width(16.dp))
