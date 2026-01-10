@@ -40,6 +40,7 @@ fun FlintBasicTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
+    maxLength: Int = Int.MAX_VALUE,
     height: Dp = 40.dp,
     radius: Dp = 8.dp,
     textStyle: TextStyle = FlintTheme.typography.body1R16,
@@ -68,7 +69,11 @@ fun FlintBasicTextField(
             modifier = Modifier.fillMaxSize(),
             value = value,
             textStyle = textStyle.copy(color = FlintTheme.colors.white),
-            onValueChange = onValueChange,
+            onValueChange = {
+                if (it.length <= maxLength) { // TODO: 글자수 제한 정책 기획 확인 필요
+                    onValueChange(it)
+                }
+            },
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             visualTransformation = visualTransformation,
@@ -130,6 +135,7 @@ private fun FlintTextFieldCounterPreview() {
             modifier = Modifier.fillMaxWidth(),
             placeholder = "닉네임",
             value = text,
+            maxLength = 20,
             onValueChange = { text = it },
             trailingContent = {
                 Text(
