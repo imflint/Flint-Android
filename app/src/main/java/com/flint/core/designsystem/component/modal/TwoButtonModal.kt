@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.core.designsystem.theme.FlintTypography
 
 @Composable
 fun TwoButtonModal(
@@ -31,7 +30,7 @@ fun TwoButtonModal(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
-    icon: @Composable () -> Unit,
+    @DrawableRes icon: Int,
     isDestructive: Boolean = false, // true = 삭제 (빨간색 버튼)
     properties: DialogProperties =
         DialogProperties(
@@ -45,7 +44,11 @@ fun TwoButtonModal(
         properties = properties,
     ) {
         // 아이콘 영역
-        icon()
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier.size(80.dp),
+        )
 
         Spacer(modifier = Modifier.height(if (title != null) 4.dp else 12.dp))
 
@@ -112,6 +115,18 @@ private fun TwoButtonModalWithTitlePreview() {
             )
         },
     )
+    FlintTheme {
+        TwoButtonModal(
+            modifier = Modifier.background(Color.White),
+            title = "법최 스릴러 매니아",
+            message = "새로운 뱃지를 획득했어요!",
+            cancelText = "취소",
+            confirmText = "확인",
+            onDismiss = {},
+            isDestructive = false,
+            icon = R.drawable.ic_gradient_check,
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -134,6 +149,17 @@ private fun TwoButtonModalDestructivePreview() {
             )
         },
     )
+    FlintTheme {
+        TwoButtonModal(
+            modifier = Modifier.background(Color.White),
+            message = "새로운 뱃지를 획득했어요!",
+            cancelText = "취소",
+            confirmText = "삭제",
+            onDismiss = {},
+            isDestructive = true,
+            icon = R.drawable.ic_gradient_trash,
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -155,4 +181,14 @@ private fun TwoButtonModalNoTitlePreview() {
             )
         },
     )
+    FlintTheme {
+        TwoButtonModal(
+            modifier = Modifier.background(Color.White),
+            message = "새로운 뱃지를 획득했어요!",
+            cancelText = "취소",
+            confirmText = "확인",
+            onDismiss = {},
+            icon = R.drawable.ic_gradient_check,
+        )
+    }
 }

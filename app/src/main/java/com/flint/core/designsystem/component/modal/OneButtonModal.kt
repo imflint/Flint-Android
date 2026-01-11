@@ -1,11 +1,11 @@
 package com.flint.core.designsystem.component.modal
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +27,7 @@ fun OneButtonModal(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
-    icon: @Composable () -> Unit,
+    @DrawableRes icon: Int,
     properties: DialogProperties =
         DialogProperties(
             usePlatformDefaultWidth = false,
@@ -40,7 +40,11 @@ fun OneButtonModal(
         properties = properties,
     ) {
         // 아이콘 영역
-        icon()
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier.size(80.dp),
+        )
 
         Spacer(modifier = Modifier.height(if (title != null) 4.dp else 12.dp))
 
@@ -86,13 +90,7 @@ private fun OneButtonModalWithTitlePreview() {
             buttonText = "확인",
             onConfirm = {},
             onDismiss = {},
-            icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_gradient_check),
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp),
-                )
-            },
+            icon = R.drawable.ic_gradient_check,
         )
     }
 }
@@ -107,13 +105,7 @@ private fun OneButtonModalNoTitlePreview() {
             buttonText = "확인",
             onConfirm = {},
             onDismiss = {},
-            icon = {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_gradient_check),
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp),
-                )
-            },
+            icon = R.drawable.ic_gradient_check,
         )
     }
 }
