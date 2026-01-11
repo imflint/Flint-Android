@@ -48,8 +48,7 @@ fun BasicModal(
                     Modifier
                         .fillMaxWidth()
                         .background(
-                            // TODO 색상 변경: gradiant700
-                            color = FlintTheme.colors.gray700,
+                            brush = FlintTheme.colors.gradient700,
                             shape = RoundedCornerShape(12.dp),
                         ).shadow(
                             elevation = 4.dp,
