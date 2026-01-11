@@ -12,13 +12,14 @@ import androidx.compose.ui.Modifier
 @Composable
 fun MainScreen() {
     Scaffold(
-        bottomBar = {}
+        bottomBar = {},
     ) { innerPadding ->
-        //TODO: NavHost 연결
+        // TODO: NavHost 연결
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             Text(
                 modifier = Modifier.align(Alignment.Center),

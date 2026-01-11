@@ -15,30 +15,32 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.R
+import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun FlintTopappbar(
+fun FlintBasicTopAppbar(
     modifier: Modifier = Modifier,
     backgroundColor: Color = FlintTheme.colors.background,
     title: String = "",
     navigationIcon: @Composable () -> Unit = {},
     action: @Composable () -> Unit = {},
-    onSkip: Boolean = false,
+    skippable: Boolean = false,
     skipColor: Color = FlintTheme.colors.gray300,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-    ){
-        Row (
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(horizontal = 12.dp, vertical = 16.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(backgroundColor),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(horizontal = 12.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-        ){
+        ) {
             navigationIcon()
         }
 
@@ -46,36 +48,38 @@ fun FlintTopappbar(
             text = title,
             modifier = Modifier.padding(horizontal = 48.dp, vertical = 17.dp),
             color = FlintTheme.colors.white,
-            style = FlintTheme.typography.body1M16
+            style = FlintTheme.typography.body1M16,
         )
 
-        Row (
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(horizontal = 12.dp, vertical = 16.dp),
+        Row(
+            modifier =
+                Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(horizontal = 12.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-        ){
+        ) {
             action()
         }
 
-        if(onSkip==true){
+        if (skippable) {
             Text(
                 text = "건너뛰기",
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(horizontal = 16.dp, vertical = 17.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(horizontal = 16.dp, vertical = 17.dp),
                 color = skipColor,
-                style = FlintTheme.typography.body1M16
+                style = FlintTheme.typography.body1M16,
             )
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-private fun FlintTopappbarPreview(){
-    FlintTheme{
-        FlintTopappbar(
+private fun FlintBasicTopAppbarPreview() {
+    FlintTheme {
+        FlintBasicTopAppbar(
             backgroundColor = Color.Transparent,
             title = "전체 컬렉션",
             navigationIcon = {
@@ -94,7 +98,7 @@ private fun FlintTopappbarPreview(){
                     tint = FlintTheme.colors.white,
                 )
             },
-//            onSkip = true,
+//            skippable = true,
 //            skipColor = FlintTheme.colors.secondary400
         )
     }
