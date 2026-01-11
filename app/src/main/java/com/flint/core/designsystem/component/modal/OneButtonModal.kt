@@ -17,6 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.flint.R
+import com.flint.core.designsystem.component.button.ModalButton
+import com.flint.core.designsystem.component.button.ModalButtonType
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
