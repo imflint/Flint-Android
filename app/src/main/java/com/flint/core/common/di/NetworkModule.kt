@@ -1,7 +1,6 @@
 package com.flint.core.common.di
 
 import com.flint.BuildConfig
-import com.flint.data.api.FlintApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

@@ -8,5 +8,5 @@ import retrofit2.http.GET
 
 interface FlintApi {
     @GET("sample")
-    suspend fun sampleService(@Body requestDto: SampleRequestDto) : BaseResponse<SampleResponseDto>
+    suspend fun sampleService(@Body requestDto: SampleRequestDto): BaseResponse<SampleResponseDto>
 }

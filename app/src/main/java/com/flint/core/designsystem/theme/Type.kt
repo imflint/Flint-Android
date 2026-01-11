@@ -39,137 +39,137 @@ data class Typography(
     val body2R14: TextStyle,
     val caption1M12: TextStyle,
     val caption1R12: TextStyle,
-    val micro1M10: TextStyle,
+    val micro1M10: TextStyle
 )
 
 val FlintTypography =
     Typography(
         display1Sb32 =
-            flintTextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 32.sp,
-                lineHeight = 1.5.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 32.sp,
+            lineHeight = 1.5.em,
+            letterSpacing = (-0.03).em
+        ),
         display1M32 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 32.sp,
-                lineHeight = 1.5.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 32.sp,
+            lineHeight = 1.5.em,
+            letterSpacing = (-0.03).em
+        ),
         display2M28 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 28.sp,
-                lineHeight = 1.5.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 28.sp,
+            lineHeight = 1.5.em,
+            letterSpacing = (-0.03).em
+        ),
         head1Sb22 =
-            flintTextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 22.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         head1M22 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 22.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 22.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         head2Sb20 =
-            flintTextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 20.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         head2M20 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 20.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 20.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         head3Sb18 =
-            flintTextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         head3M18 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 18.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         body1B16 =
-            flintTextStyle(
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                lineHeight = 1.4.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            lineHeight = 1.4.em,
+            letterSpacing = (-0.03).em
+        ),
         body1Sb16 =
-            flintTextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp,
-                lineHeight = 1.4.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
+            lineHeight = 1.4.em,
+            letterSpacing = (-0.03).em
+        ),
         body1M16 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-                lineHeight = 1.4.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            lineHeight = 1.4.em,
+            letterSpacing = (-0.03).em
+        ),
         body1R16 =
-            flintTextStyle(
-                fontWeight = FontWeight.Regular,
-                fontSize = 16.sp,
-                lineHeight = 1.4.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Regular,
+            fontSize = 16.sp,
+            lineHeight = 1.4.em,
+            letterSpacing = (-0.03).em
+        ),
         body2M14 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         body2R14 =
-            flintTextStyle(
-                fontWeight = FontWeight.Regular,
-                fontSize = 14.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Regular,
+            fontSize = 14.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         caption1M12 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 12.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 12.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         caption1R12 =
-            flintTextStyle(
-                fontWeight = FontWeight.Regular,
-                fontSize = 12.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Regular,
+            fontSize = 12.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        ),
         micro1M10 =
-            flintTextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 10.sp,
-                lineHeight = 1.3.em,
-                letterSpacing = (-0.03).em,
-            ),
+        flintTextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 10.sp,
+            lineHeight = 1.3.em,
+            letterSpacing = (-0.03).em
+        )
     )
 
 @Preview()
@@ -177,7 +177,7 @@ val FlintTypography =
 private fun FlintTypographyPreview() {
     Column(
         modifier = Modifier.background(color = Color(0xFF313131)),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(text = "display1_sb_32", style = FlintTypography.display1Sb32)
         Text(text = "display1_m_32", style = FlintTypography.display1M32)
@@ -209,7 +209,7 @@ private fun flintTextStyle(
     lineHeight: TextUnit,
     letterSpacing: TextUnit,
     fontFamily: FontFamily = Pretendard,
-    lineHeightStyle: LineHeightStyle = FigmaLineHeightStyle,
+    lineHeightStyle: LineHeightStyle = FigmaLineHeightStyle
 ): TextStyle =
     TextStyle(
         fontSize = fontSize,
@@ -217,7 +217,7 @@ private fun flintTextStyle(
         fontFamily = fontFamily,
         letterSpacing = letterSpacing,
         lineHeight = lineHeight,
-        lineHeightStyle = lineHeightStyle,
+        lineHeightStyle = lineHeightStyle
     )
 
 private val Pretendard =
@@ -225,11 +225,11 @@ private val Pretendard =
         Font(resId = R.font.pretendard_regular, weight = FontWeight.Regular),
         Font(resId = R.font.pretendard_medium, weight = FontWeight.Medium),
         Font(resId = R.font.pretendard_semi_bold, weight = FontWeight.SemiBold),
-        Font(resId = R.font.pretendard_bold, weight = FontWeight.Bold),
+        Font(resId = R.font.pretendard_bold, weight = FontWeight.Bold)
     )
 
 private val FigmaLineHeightStyle =
     LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,
-        trim = LineHeightStyle.Trim.None,
+        trim = LineHeightStyle.Trim.None
     )
