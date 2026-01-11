@@ -54,7 +54,8 @@ fun FlintBasicButton(
                     }
                 }.clip(shape)
                 .background(background)
-                .clickable(enabled = enabled, onClick = onClick),
+                .clickable(enabled = enabled, onClick = onClick)
+                .padding(10.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
