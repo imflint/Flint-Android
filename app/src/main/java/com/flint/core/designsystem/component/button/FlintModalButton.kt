@@ -1,6 +1,7 @@
 package com.flint.core.designsystem.component.button
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,7 @@ fun ModalButton(
     Box(
         modifier =
             modifier
+                .clickable { onClick() }
                 .clip(RoundedCornerShape(8.dp))
                 .background(backgroundColor)
                 .padding(vertical = 10.dp),
