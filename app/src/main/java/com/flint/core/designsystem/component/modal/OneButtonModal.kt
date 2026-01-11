@@ -30,11 +30,6 @@ fun OneButtonModal(
     modifier: Modifier = Modifier,
     title: String? = null,
     @DrawableRes icon: Int,
-    properties: DialogProperties =
-        DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false,
-        ),
 ) {
     BasicModal(
         onDismiss = onDismiss,

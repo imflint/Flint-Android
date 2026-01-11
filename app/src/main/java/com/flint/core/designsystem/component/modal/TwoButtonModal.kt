@@ -34,11 +34,6 @@ fun TwoButtonModal(
     title: String? = null,
     @DrawableRes icon: Int,
     isDestructive: Boolean = false, // true = 삭제 (빨간색 버튼)
-    properties: DialogProperties =
-        DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false,
-        ),
 ) {
     BasicModal(
         onDismiss = onDismiss,
