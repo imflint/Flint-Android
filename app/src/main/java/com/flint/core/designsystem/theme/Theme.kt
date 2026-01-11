@@ -9,7 +9,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 fun FlintTheme(content: @Composable () -> Unit) {
     CompositionLocalProvider(
         LocalColors provides FlintColors,
-        LocalTypography provides FlintTypography,
+        LocalTypography provides FlintTypography
     ) {
         content()
     }

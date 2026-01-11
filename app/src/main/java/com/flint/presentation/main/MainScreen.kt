@@ -14,15 +14,16 @@ fun MainScreen() {
     Scaffold(
         bottomBar = {}
     ) { innerPadding ->
-        //TODO: NavHost 연결
+        // TODO: NavHost 연결
         Box(
-            modifier = Modifier
+            modifier =
+            Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "MainScreen",
+                text = "MainScreen"
             )
         }
     }
