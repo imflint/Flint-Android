@@ -24,43 +24,44 @@ import com.flint.core.designsystem.theme.FlintTypography
 fun BasicModal(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    properties: DialogProperties = DialogProperties(
-        usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false
-    ),
-    content: @Composable () -> Unit
+    properties: DialogProperties =
+        DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
+    content: @Composable () -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
-        properties = properties
+        properties = properties,
     ) {
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = 40.dp),
-            contentAlignment = Alignment.Center
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp),
+            contentAlignment = Alignment.Center,
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        // TODO 색상 변경: gradiant700
-                        color = FlintTheme.colors.gray700,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .shadow(
-                        elevation = 4.dp,
-                        shape = RoundedCornerShape(12.dp),
-                        ambientColor = Color.Black.copy(alpha = 0.25f),
-                        spotColor = Color.Black.copy(alpha = 0.25f)
-                    )
-                    .padding(
-                        top = 36.dp,
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 20.dp
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            // TODO 색상 변경: gradiant700
+                            color = FlintTheme.colors.gray700,
+                            shape = RoundedCornerShape(12.dp),
+                        ).shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(12.dp),
+                            ambientColor = Color.Black.copy(alpha = 0.25f),
+                            spotColor = Color.Black.copy(alpha = 0.25f),
+                        ).padding(
+                            top = 36.dp,
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 20.dp,
+                        ),
             ) {
                 content()
             }
@@ -73,12 +74,12 @@ fun BasicModal(
 private fun BasicModalPreview() {
     BasicModal(
         onDismiss = {},
-        modifier = Modifier.background(Color.White)
+        modifier = Modifier.background(Color.White),
     ) {
         Text(
             text = "기본 모달 컨텐츠",
             style = FlintTypography.body1M16,
-            color = FlintTheme.colors.white
+            color = FlintTheme.colors.white,
         )
     }
 }

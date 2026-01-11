@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.core.designsystem.theme.FlintTypography
 
 @Composable
 fun OneButtonModal(
@@ -28,15 +28,16 @@ fun OneButtonModal(
     modifier: Modifier = Modifier,
     title: String? = null,
     icon: @Composable () -> Unit,
-    properties: DialogProperties = DialogProperties(
-        usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false
-    )
+    properties: DialogProperties =
+        DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
 ) {
     BasicModal(
         onDismiss = onDismiss,
         modifier = modifier,
-        properties = properties
+        properties = properties,
     ) {
         // 아이콘 영역
         icon()
@@ -47,9 +48,9 @@ fun OneButtonModal(
         if (title != null) {
             Text(
                 text = title,
-                style = FlintTypography.head1Sb22,
+                style = FlintTheme.typography.head1Sb22,
                 color = FlintTheme.colors.white,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -57,9 +58,9 @@ fun OneButtonModal(
         // 메시지
         Text(
             text = message,
-            style = FlintTypography.body1M16,
+            style = FlintTheme.typography.body1M16,
             color = FlintTheme.colors.white,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -68,8 +69,8 @@ fun OneButtonModal(
         ModalButton(
             text = buttonText,
             onClick = onConfirm,
-            backgroundColor = FlintTheme.colors.primary400,
-            modifier = Modifier.fillMaxWidth()
+            type = ModalButtonType.CONFIRM,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -77,38 +78,42 @@ fun OneButtonModal(
 @Preview(showBackground = true)
 @Composable
 private fun OneButtonModalWithTitlePreview() {
-    OneButtonModal(
-        modifier = Modifier.background(Color.White),
-        title = "법최 스릴러 매니아",
-        message = "새로운 뱃지를 획득했어요!",
-        buttonText = "확인",
-        onConfirm = {},
-        onDismiss = {},
-        icon = {
-            Image(
-                painter = painterResource(id = R.drawable.ic_gradient_check),
-                contentDescription = null,
-                modifier = Modifier.size(80.dp)
-            )
-        }
-    )
+    FlintTheme {
+        OneButtonModal(
+            modifier = Modifier.background(Color.White),
+            title = "법최 스릴러 매니아",
+            message = "새로운 뱃지를 획득했어요!",
+            buttonText = "확인",
+            onConfirm = {},
+            onDismiss = {},
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_gradient_check),
+                    contentDescription = null,
+                    modifier = Modifier.size(80.dp),
+                )
+            },
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun OneButtonModalNoTitlePreview() {
-    OneButtonModal(
-        modifier = Modifier.background(Color.White),
-        message = "새로운 뱃지를 획득했어요!",
-        buttonText = "확인",
-        onConfirm = {},
-        onDismiss = {},
-        icon = {
-            Image(
-                painter = painterResource(id = R.drawable.ic_gradient_check),
-                contentDescription = null,
-                modifier = Modifier.size(80.dp)
-            )
-        }
-    )
+    FlintTheme {
+        OneButtonModal(
+            modifier = Modifier.background(Color.White),
+            message = "새로운 뱃지를 획득했어요!",
+            buttonText = "확인",
+            onConfirm = {},
+            onDismiss = {},
+            icon = {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_gradient_check),
+                    contentDescription = null,
+                    modifier = Modifier.size(80.dp),
+                )
+            },
+        )
+    }
 }

@@ -33,15 +33,16 @@ fun TwoButtonModal(
     title: String? = null,
     icon: @Composable () -> Unit,
     isDestructive: Boolean = false, // true = 삭제 (빨간색 버튼)
-    properties: DialogProperties = DialogProperties(
-        usePlatformDefaultWidth = false,
-        decorFitsSystemWindows = false
-    )
+    properties: DialogProperties =
+        DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
 ) {
     BasicModal(
         onDismiss = onDismiss,
         modifier = modifier,
-        properties = properties
+        properties = properties,
     ) {
         // 아이콘 영역
         icon()
@@ -54,7 +55,7 @@ fun TwoButtonModal(
                 text = title,
                 style = FlintTypography.head1Sb22,
                 color = FlintTheme.colors.white,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -64,7 +65,7 @@ fun TwoButtonModal(
             text = message,
             style = FlintTypography.body1M16,
             color = FlintTheme.colors.white,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -72,20 +73,19 @@ fun TwoButtonModal(
         // 버튼 2개
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             ModalButton(
                 text = cancelText,
                 onClick = onNegative,
-                backgroundColor = FlintTheme.colors.gray100,
-                textColor = FlintTheme.colors.gray800,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = ModalButtonType.CANCEL,
             )
             ModalButton(
                 text = confirmText,
                 onClick = onPositive,
-                backgroundColor = if (isDestructive) FlintTheme.colors.error500 else FlintTheme.colors.primary400,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = if (isDestructive) ModalButtonType.DESTRUCTIVE else ModalButtonType.CONFIRM,
             )
         }
     }
@@ -108,9 +108,9 @@ private fun TwoButtonModalWithTitlePreview() {
             Image(
                 painter = painterResource(id = R.drawable.ic_gradient_check),
                 contentDescription = null,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier.size(80.dp),
             )
-        }
+        },
     )
 }
 
@@ -130,9 +130,9 @@ private fun TwoButtonModalDestructivePreview() {
             Image(
                 painter = painterResource(id = R.drawable.ic_gradient_trash),
                 contentDescription = null,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier.size(80.dp),
             )
-        }
+        },
     )
 }
 
@@ -151,9 +151,8 @@ private fun TwoButtonModalNoTitlePreview() {
             Image(
                 painter = painterResource(id = R.drawable.ic_gradient_check),
                 contentDescription = null,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier.size(80.dp),
             )
-        }
+        },
     )
 }
-
