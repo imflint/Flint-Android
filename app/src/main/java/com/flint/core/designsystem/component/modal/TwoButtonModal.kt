@@ -17,9 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import com.flint.R
-import com.flint.core.designsystem.component.button.ModalButton
+import com.flint.core.designsystem.component.button.FlintModalButton
 import com.flint.core.designsystem.component.button.ModalButtonType
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -35,7 +34,7 @@ fun TwoButtonModal(
     @DrawableRes icon: Int,
     isDestructive: Boolean = false, // true = 삭제 (빨간색 버튼)
 ) {
-    BasicModal(
+    FlintBasicModal(
         onDismiss = onDismiss,
         modifier = modifier,
     ) {
@@ -74,13 +73,13 @@ fun TwoButtonModal(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            ModalButton(
+            FlintModalButton(
                 text = cancelText,
                 onClick = onDismiss,
                 modifier = Modifier.weight(1f),
                 type = ModalButtonType.CANCEL,
             )
-            ModalButton(
+            FlintModalButton(
                 text = confirmText,
                 onClick = onConfirm,
                 modifier = Modifier.weight(1f),

@@ -21,7 +21,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTypography
 
 @Composable
-fun BasicModal(
+fun FlintBasicModal(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
@@ -70,7 +70,7 @@ fun BasicModal(
 @Preview(showBackground = true)
 @Composable
 private fun BasicModalPreview() {
-    BasicModal(
+    FlintBasicModal(
         onDismiss = {},
         modifier = Modifier.background(Color.White),
     ) {

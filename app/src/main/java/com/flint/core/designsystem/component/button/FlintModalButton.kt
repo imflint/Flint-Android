@@ -26,7 +26,7 @@ enum class ModalButtonType {
 }
 
 @Composable
-fun ModalButton(
+fun FlintModalButton(
     text: String,
     onClick: () -> Unit,
     type: ModalButtonType,
@@ -65,7 +65,7 @@ private fun ModalButtonPreview() {
                     .background(FlintTheme.colors.white)
                     .padding(20.dp),
         ) {
-            ModalButton(
+            FlintModalButton(
                 text = "확인",
                 onClick = {},
                 type = ModalButtonType.CONFIRM,
@@ -74,7 +74,7 @@ private fun ModalButtonPreview() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ModalButton(
+            FlintModalButton(
                 text = "취소",
                 onClick = {},
                 type = ModalButtonType.CANCEL,
@@ -83,7 +83,7 @@ private fun ModalButtonPreview() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ModalButton(
+            FlintModalButton(
                 text = "삭제",
                 onClick = {},
                 type = ModalButtonType.DESTRUCTIVE,

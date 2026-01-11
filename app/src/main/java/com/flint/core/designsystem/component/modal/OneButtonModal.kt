@@ -15,9 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import com.flint.R
-import com.flint.core.designsystem.component.button.ModalButton
+import com.flint.core.designsystem.component.button.FlintModalButton
 import com.flint.core.designsystem.component.button.ModalButtonType
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -31,7 +30,7 @@ fun OneButtonModal(
     title: String? = null,
     @DrawableRes icon: Int,
 ) {
-    BasicModal(
+    FlintBasicModal(
         onDismiss = onDismiss,
         modifier = modifier,
     ) {
@@ -66,7 +65,7 @@ fun OneButtonModal(
         Spacer(modifier = Modifier.height(32.dp))
 
         // 버튼
-        ModalButton(
+        FlintModalButton(
             text = buttonText,
             onClick = onConfirm,
             type = ModalButtonType.CONFIRM,
