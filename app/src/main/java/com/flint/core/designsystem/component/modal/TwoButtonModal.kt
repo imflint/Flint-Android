@@ -1,5 +1,6 @@
 package com.flint.core.designsystem.component.modal
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +26,8 @@ fun TwoButtonModal(
     message: String,
     cancelText: String,
     confirmText: String,
-    onNegative: () -> Unit,
-    onPositive: () -> Unit,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
@@ -56,7 +57,7 @@ fun TwoButtonModal(
         if (title != null) {
             Text(
                 text = title,
-                style = FlintTypography.head1Sb22,
+                style = FlintTheme.typography.head1Sb22,
                 color = FlintTheme.colors.white,
                 textAlign = TextAlign.Center,
             )
@@ -66,7 +67,7 @@ fun TwoButtonModal(
         // 메시지
         Text(
             text = message,
-            style = FlintTypography.body1M16,
+            style = FlintTheme.typography.body1M16,
             color = FlintTheme.colors.white,
             textAlign = TextAlign.Center,
         )
@@ -80,13 +81,13 @@ fun TwoButtonModal(
         ) {
             ModalButton(
                 text = cancelText,
-                onClick = onNegative,
+                onClick = onCancel,
                 modifier = Modifier.weight(1f),
                 type = ModalButtonType.CANCEL,
             )
             ModalButton(
                 text = confirmText,
-                onClick = onPositive,
+                onClick = onConfirm,
                 modifier = Modifier.weight(1f),
                 type = if (isDestructive) ModalButtonType.DESTRUCTIVE else ModalButtonType.CONFIRM,
             )
@@ -97,24 +98,6 @@ fun TwoButtonModal(
 @Preview(showBackground = true)
 @Composable
 private fun TwoButtonModalWithTitlePreview() {
-    TwoButtonModal(
-        modifier = Modifier.background(Color.White),
-        title = "법최 스릴러 매니아",
-        message = "새로운 뱃지를 획득했어요!",
-        cancelText = "취소",
-        confirmText = "삭제",
-        onNegative = {},
-        onPositive = {},
-        onDismiss = {},
-        isDestructive = false,
-        icon = {
-            Image(
-                painter = painterResource(id = R.drawable.ic_gradient_check),
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-            )
-        },
-    )
     FlintTheme {
         TwoButtonModal(
             modifier = Modifier.background(Color.White),
@@ -122,6 +105,8 @@ private fun TwoButtonModalWithTitlePreview() {
             message = "새로운 뱃지를 획득했어요!",
             cancelText = "취소",
             confirmText = "확인",
+            onCancel = {},
+            onConfirm = {},
             onDismiss = {},
             isDestructive = false,
             icon = R.drawable.ic_gradient_check,
@@ -132,29 +117,14 @@ private fun TwoButtonModalWithTitlePreview() {
 @Preview(showBackground = true)
 @Composable
 private fun TwoButtonModalDestructivePreview() {
-    TwoButtonModal(
-        modifier = Modifier.background(Color.White),
-        message = "새로운 뱃지를 획득했어요!",
-        cancelText = "취소",
-        confirmText = "삭제",
-        onNegative = {},
-        onPositive = {},
-        onDismiss = {},
-        isDestructive = true,
-        icon = {
-            Image(
-                painter = painterResource(id = R.drawable.ic_gradient_trash),
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-            )
-        },
-    )
     FlintTheme {
         TwoButtonModal(
             modifier = Modifier.background(Color.White),
             message = "새로운 뱃지를 획득했어요!",
             cancelText = "취소",
             confirmText = "삭제",
+            onCancel = {},
+            onConfirm = {},
             onDismiss = {},
             isDestructive = true,
             icon = R.drawable.ic_gradient_trash,
@@ -165,28 +135,14 @@ private fun TwoButtonModalDestructivePreview() {
 @Preview(showBackground = true)
 @Composable
 private fun TwoButtonModalNoTitlePreview() {
-    TwoButtonModal(
-        modifier = Modifier.background(Color.White),
-        message = "새로운 뱃지를 획득했어요!",
-        cancelText = "취소",
-        confirmText = "확인",
-        onNegative = {},
-        onPositive = {},
-        onDismiss = {},
-        icon = {
-            Image(
-                painter = painterResource(id = R.drawable.ic_gradient_check),
-                contentDescription = null,
-                modifier = Modifier.size(80.dp),
-            )
-        },
-    )
     FlintTheme {
         TwoButtonModal(
             modifier = Modifier.background(Color.White),
             message = "새로운 뱃지를 획득했어요!",
             cancelText = "취소",
             confirmText = "확인",
+            onCancel = {},
+            onConfirm = {},
             onDismiss = {},
             icon = R.drawable.ic_gradient_check,
         )
