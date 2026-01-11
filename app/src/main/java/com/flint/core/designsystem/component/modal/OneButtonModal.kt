@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.flint.R
-import com.flint.core.designsystem.theme.FlintColors
+import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTypography
 
 @Composable
@@ -48,7 +48,7 @@ fun OneButtonModal(
             Text(
                 text = title,
                 style = FlintTypography.head1Sb22,
-                color = FlintColors.white,
+                color = FlintTheme.colors.white,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -58,7 +58,7 @@ fun OneButtonModal(
         Text(
             text = message,
             style = FlintTypography.body1M16,
-            color = FlintColors.white,
+            color = FlintTheme.colors.white,
             textAlign = TextAlign.Center
         )
 
@@ -68,7 +68,7 @@ fun OneButtonModal(
         ModalButton(
             text = buttonText,
             onClick = onConfirm,
-            backgroundColor = FlintColors.primary400,
+            backgroundColor = FlintTheme.colors.primary400,
             modifier = Modifier.fillMaxWidth()
         )
     }

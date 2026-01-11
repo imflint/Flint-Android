@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintColors
+import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTypography
 
 @Composable
@@ -25,8 +26,8 @@ fun ModalButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = FlintColors.primary400,
-    textColor: Color = FlintColors.white
+    backgroundColor: Color = FlintTheme.colors.primary400,
+    textColor: Color = FlintTheme.colors.white
 ) {
     Box(
         modifier = modifier
@@ -49,13 +50,13 @@ fun ModalButton(
 private fun ModalButtonPreview() {
     Column(
         modifier = Modifier
-            .background(FlintColors.white)
+            .background(FlintTheme.colors.white)
             .padding(20.dp)
     ) {
         ModalButton(
             text = "확인",
             onClick = {},
-            backgroundColor = FlintColors.primary400,
+            backgroundColor = FlintTheme.colors.primary400,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -64,8 +65,8 @@ private fun ModalButtonPreview() {
         ModalButton(
             text = "취소",
             onClick = {},
-            backgroundColor = FlintColors.gray100,
-            textColor = FlintColors.background,
+            backgroundColor = FlintTheme.colors.gray100,
+            textColor = FlintTheme.colors.background,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -74,7 +75,7 @@ private fun ModalButtonPreview() {
         ModalButton(
             text = "삭제",
             onClick = {},
-            backgroundColor = FlintColors.error500,
+            backgroundColor = FlintTheme.colors.error500,
             modifier = Modifier.fillMaxWidth()
         )
     }

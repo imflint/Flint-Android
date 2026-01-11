@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.flint.core.designsystem.theme.FlintColors
+import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTypography
 
 @Composable
@@ -46,7 +46,7 @@ fun BasicModal(
                     .fillMaxWidth()
                     .background(
                         // TODO 색상 변경: gradiant700
-                        color = FlintColors.gray700,
+                        color = FlintTheme.colors.gray700,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .shadow(
@@ -78,7 +78,7 @@ private fun BasicModalPreview() {
         Text(
             text = "기본 모달 컨텐츠",
             style = FlintTypography.body1M16,
-            color = FlintColors.white
+            color = FlintTheme.colors.white
         )
     }
 }

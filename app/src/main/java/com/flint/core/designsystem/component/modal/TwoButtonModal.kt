@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.flint.R
-import com.flint.core.designsystem.theme.FlintColors
+import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTypography
 
 @Composable
@@ -53,7 +53,7 @@ fun TwoButtonModal(
             Text(
                 text = title,
                 style = FlintTypography.head1Sb22,
-                color = FlintColors.white,
+                color = FlintTheme.colors.white,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -63,7 +63,7 @@ fun TwoButtonModal(
         Text(
             text = message,
             style = FlintTypography.body1M16,
-            color = FlintColors.white,
+            color = FlintTheme.colors.white,
             textAlign = TextAlign.Center
         )
 
@@ -77,14 +77,14 @@ fun TwoButtonModal(
             ModalButton(
                 text = cancelText,
                 onClick = onNegative,
-                backgroundColor = FlintColors.gray100,
-                textColor = FlintColors.gray800,
+                backgroundColor = FlintTheme.colors.gray100,
+                textColor = FlintTheme.colors.gray800,
                 modifier = Modifier.weight(1f)
             )
             ModalButton(
                 text = confirmText,
                 onClick = onPositive,
-                backgroundColor = if (isDestructive) FlintColors.error500 else FlintColors.primary400,
+                backgroundColor = if (isDestructive) FlintTheme.colors.error500 else FlintTheme.colors.primary400,
                 modifier = Modifier.weight(1f)
             )
         }
