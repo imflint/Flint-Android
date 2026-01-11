@@ -43,7 +43,6 @@ fun ModalButton(
             modifier
                 .clip(RoundedCornerShape(8.dp))
                 .background(backgroundColor)
-                .noRippleClickable { onClick() }
                 .padding(vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
