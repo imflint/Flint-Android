@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
@@ -35,8 +34,6 @@ fun FlintBasicButton(
     text: String,
     state: FlintButtonState,
     onClick: () -> Unit,
-    verticalPadding: Dp,
-    minHeight: Dp,
     modifier: Modifier = Modifier,
     @DrawableRes leadingIconRes: Int? = null,
 ) {
@@ -49,7 +46,6 @@ fun FlintBasicButton(
     Row(
         modifier =
             modifier
-                .padding(vertical = verticalPadding)
                 .run {
                     if (border != null) {
                         border(border = border, shape = shape)
@@ -58,8 +54,7 @@ fun FlintBasicButton(
                     }
                 }.clip(shape)
                 .background(background)
-                .clickable(enabled = enabled, onClick = onClick)
-                .defaultMinSize(minHeight = minHeight),
+                .clickable(enabled = enabled, onClick = onClick),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -97,36 +92,44 @@ private fun FlintBasicButtonPreview() {
                 text = "시작하기",
                 state = FlintButtonState.Able,
                 onClick = {},
-                verticalPadding = 0.dp,
-                minHeight = 48.dp,
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp)
+                        .padding(vertical = 0.dp),
             )
 
             FlintBasicButton(
                 text = "시작하기",
                 state = FlintButtonState.Disable,
                 onClick = {},
-                verticalPadding = 0.dp,
-                minHeight = 48.dp,
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp)
+                        .padding(vertical = 0.dp),
             )
 
             FlintBasicButton(
                 text = "시작하기",
                 state = FlintButtonState.ColorOutline,
                 onClick = {},
-                verticalPadding = 0.dp,
-                minHeight = 48.dp,
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp)
+                        .padding(vertical = 0.dp),
             )
 
             FlintBasicButton(
                 text = "시작하기",
                 state = FlintButtonState.Outline,
                 onClick = {},
-                verticalPadding = 0.dp,
-                minHeight = 48.dp,
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp)
+                        .padding(vertical = 0.dp),
             )
 
             Row {
@@ -134,9 +137,11 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Able,
                     onClick = {},
-                    verticalPadding = 2.dp,
-                    minHeight = 44.dp,
-                    modifier = Modifier.weight(1f),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 44.dp)
+                            .padding(vertical = 2.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -145,9 +150,11 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Outline,
                     onClick = {},
-                    verticalPadding = 2.dp,
-                    minHeight = 44.dp,
-                    modifier = Modifier.weight(1f),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 44.dp)
+                            .padding(vertical = 2.dp),
                 )
             }
 
@@ -156,9 +163,11 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Disable,
                     onClick = {},
-                    verticalPadding = 2.dp,
-                    minHeight = 44.dp,
-                    modifier = Modifier.weight(1f),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 44.dp)
+                            .padding(vertical = 2.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -167,9 +176,11 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.ColorOutline,
                     onClick = {},
-                    verticalPadding = 2.dp,
-                    minHeight = 44.dp,
-                    modifier = Modifier.weight(1f),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 44.dp)
+                            .padding(vertical = 2.dp),
                 )
             }
 
@@ -178,10 +189,12 @@ private fun FlintBasicButtonPreview() {
                     text = "공개",
                     state = FlintButtonState.Disable,
                     onClick = {},
-                    verticalPadding = 2.dp,
-                    minHeight = 44.dp,
                     leadingIconRes = R.drawable.ic_share,
-                    modifier = Modifier.weight(1f),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 44.dp)
+                            .padding(vertical = 2.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -190,10 +203,12 @@ private fun FlintBasicButtonPreview() {
                     text = "공개",
                     state = FlintButtonState.ColorOutline,
                     onClick = {},
-                    verticalPadding = 2.dp,
-                    minHeight = 44.dp,
                     leadingIconRes = R.drawable.ic_share,
-                    modifier = Modifier.weight(1f),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .defaultMinSize(minHeight = 44.dp)
+                            .padding(vertical = 2.dp),
                 )
             }
 
@@ -202,10 +217,12 @@ private fun FlintBasicButtonPreview() {
                     text = "공개",
                     state = FlintButtonState.Outline,
                     onClick = {},
-                    verticalPadding = 2.dp,
-                    minHeight = 44.dp,
                     leadingIconRes = R.drawable.ic_share,
-                    modifier = Modifier.weight(0.5f),
+                    modifier =
+                        Modifier
+                            .weight(0.5f)
+                            .defaultMinSize(minHeight = 44.dp)
+                            .padding(vertical = 2.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
