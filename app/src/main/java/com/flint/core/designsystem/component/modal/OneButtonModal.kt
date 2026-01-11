@@ -43,7 +43,7 @@ fun OneButtonModal(
         Image(
             painter = painterResource(id = icon),
             contentDescription = null,
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(120.dp),
         )
 
         Spacer(modifier = Modifier.height(if (title != null) 4.dp else 12.dp))

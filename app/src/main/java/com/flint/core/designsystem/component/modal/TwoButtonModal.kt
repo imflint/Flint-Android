@@ -26,7 +26,6 @@ fun TwoButtonModal(
     message: String,
     cancelText: String,
     confirmText: String,
-    onCancel: () -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -81,7 +80,7 @@ fun TwoButtonModal(
         ) {
             ModalButton(
                 text = cancelText,
-                onClick = onCancel,
+                onClick = onDismiss,
                 modifier = Modifier.weight(1f),
                 type = ModalButtonType.CANCEL,
             )
@@ -105,7 +104,6 @@ private fun TwoButtonModalWithTitlePreview() {
             message = "새로운 뱃지를 획득했어요!",
             cancelText = "취소",
             confirmText = "확인",
-            onCancel = {},
             onConfirm = {},
             onDismiss = {},
             isDestructive = false,
@@ -123,7 +121,6 @@ private fun TwoButtonModalDestructivePreview() {
             message = "새로운 뱃지를 획득했어요!",
             cancelText = "취소",
             confirmText = "삭제",
-            onCancel = {},
             onConfirm = {},
             onDismiss = {},
             isDestructive = true,
@@ -141,7 +138,6 @@ private fun TwoButtonModalNoTitlePreview() {
             message = "새로운 뱃지를 획득했어요!",
             cancelText = "취소",
             confirmText = "확인",
-            onCancel = {},
             onConfirm = {},
             onDismiss = {},
             icon = R.drawable.ic_gradient_check,
