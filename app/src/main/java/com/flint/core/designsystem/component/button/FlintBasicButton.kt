@@ -95,8 +95,8 @@ private fun FlintBasicButtonPreview() {
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp)
-                        .padding(vertical = 0.dp),
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             FlintBasicButton(
@@ -106,8 +106,8 @@ private fun FlintBasicButtonPreview() {
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp)
-                        .padding(vertical = 0.dp),
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             FlintBasicButton(
@@ -117,8 +117,8 @@ private fun FlintBasicButtonPreview() {
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp)
-                        .padding(vertical = 0.dp),
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             FlintBasicButton(
@@ -128,8 +128,8 @@ private fun FlintBasicButtonPreview() {
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp)
-                        .padding(vertical = 0.dp),
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             Row {
@@ -140,8 +140,8 @@ private fun FlintBasicButtonPreview() {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .defaultMinSize(minHeight = 44.dp)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -153,8 +153,8 @@ private fun FlintBasicButtonPreview() {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .defaultMinSize(minHeight = 44.dp)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
             }
 
@@ -166,8 +166,8 @@ private fun FlintBasicButtonPreview() {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .defaultMinSize(minHeight = 44.dp)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -179,8 +179,8 @@ private fun FlintBasicButtonPreview() {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .defaultMinSize(minHeight = 44.dp)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
             }
 
@@ -193,8 +193,8 @@ private fun FlintBasicButtonPreview() {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .defaultMinSize(minHeight = 44.dp)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -207,8 +207,8 @@ private fun FlintBasicButtonPreview() {
                     modifier =
                         Modifier
                             .weight(1f)
-                            .defaultMinSize(minHeight = 44.dp)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
             }
 
@@ -221,8 +221,8 @@ private fun FlintBasicButtonPreview() {
                     modifier =
                         Modifier
                             .weight(0.5f)
-                            .defaultMinSize(minHeight = 44.dp)
-                            .padding(vertical = 2.dp),
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
