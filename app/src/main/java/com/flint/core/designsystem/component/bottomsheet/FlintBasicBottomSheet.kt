@@ -43,11 +43,10 @@ fun FlintBasicBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         dragHandle = null,
-        containerColor = FlintTheme.colors.white,
-        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+        shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .background(
                     brush = FlintTheme.colors.gradient700,
