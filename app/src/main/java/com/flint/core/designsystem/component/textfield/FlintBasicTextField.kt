@@ -86,7 +86,7 @@ fun FlintBasicTextField(
                         .fillMaxSize()
                         .padding(paddingValues),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier

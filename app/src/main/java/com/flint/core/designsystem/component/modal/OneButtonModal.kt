@@ -28,17 +28,17 @@ fun OneButtonModal(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
-    @DrawableRes icon: Int,
+    @DrawableRes icon: Int
 ) {
     FlintBasicModal(
         onDismiss = onDismiss,
-        modifier = modifier,
+        modifier = modifier
     ) {
         // 아이콘 영역
         Image(
             painter = painterResource(id = icon),
             contentDescription = null,
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(120.dp)
         )
 
         Spacer(modifier = Modifier.height(if (title != null) 4.dp else 12.dp))
@@ -49,7 +49,7 @@ fun OneButtonModal(
                 text = title,
                 style = FlintTheme.typography.head1Sb22,
                 color = FlintTheme.colors.white,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -59,7 +59,7 @@ fun OneButtonModal(
             text = message,
             style = FlintTheme.typography.body1M16,
             color = FlintTheme.colors.white,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -69,7 +69,7 @@ fun OneButtonModal(
             text = buttonText,
             onClick = onConfirm,
             type = ModalButtonType.CONFIRM,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -85,7 +85,7 @@ private fun OneButtonModalWithTitlePreview() {
             buttonText = "확인",
             onConfirm = {},
             onDismiss = {},
-            icon = R.drawable.ic_gradient_check,
+            icon = R.drawable.ic_gradient_check
         )
     }
 }
@@ -100,7 +100,7 @@ private fun OneButtonModalNoTitlePreview() {
             buttonText = "확인",
             onConfirm = {},
             onDismiss = {},
-            icon = R.drawable.ic_gradient_check,
+            icon = R.drawable.ic_gradient_check
         )
     }
 }
