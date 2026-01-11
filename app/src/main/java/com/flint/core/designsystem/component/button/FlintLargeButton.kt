@@ -2,6 +2,7 @@ package com.flint.core.designsystem.component.button
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ fun FlintLargeButton(
         text = text,
         state = state,
         onClick = onClick,
+        contentPadding = PaddingValues(12.dp),
         modifier =
             modifier
                 .padding(vertical = 0.dp)

@@ -3,6 +3,7 @@ package com.flint.core.designsystem.component.button
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -29,6 +30,7 @@ fun FlintIconButton(
         state = state,
         onClick = onClick,
         leadingIconRes = iconRes,
+        contentPadding = PaddingValues(10.dp),
         modifier =
             modifier
                 .padding(vertical = 2.dp)

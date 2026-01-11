@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -35,6 +36,7 @@ fun FlintBasicButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues,
     @DrawableRes leadingIconRes: Int? = null,
 ) {
     val enabled: Boolean = state.enabled
@@ -55,7 +57,7 @@ fun FlintBasicButton(
                 }.clip(shape)
                 .background(background)
                 .clickable(enabled = enabled, onClick = onClick)
-                .padding(10.dp),
+                .padding(contentPadding),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -93,6 +95,7 @@ private fun FlintBasicButtonPreview() {
                 text = "시작하기",
                 state = FlintButtonState.Able,
                 onClick = {},
+                contentPadding = PaddingValues(12.dp),
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -104,6 +107,7 @@ private fun FlintBasicButtonPreview() {
                 text = "시작하기",
                 state = FlintButtonState.Disable,
                 onClick = {},
+                contentPadding = PaddingValues(12.dp),
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -115,6 +119,7 @@ private fun FlintBasicButtonPreview() {
                 text = "시작하기",
                 state = FlintButtonState.ColorOutline,
                 onClick = {},
+                contentPadding = PaddingValues(12.dp),
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -126,6 +131,7 @@ private fun FlintBasicButtonPreview() {
                 text = "시작하기",
                 state = FlintButtonState.Outline,
                 onClick = {},
+                contentPadding = PaddingValues(12.dp),
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -138,6 +144,7 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Able,
                     onClick = {},
+                    contentPadding = PaddingValues(10.dp),
                     modifier =
                         Modifier
                             .weight(1f)
@@ -151,6 +158,7 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Outline,
                     onClick = {},
+                    contentPadding = PaddingValues(10.dp),
                     modifier =
                         Modifier
                             .weight(1f)
@@ -164,6 +172,7 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Disable,
                     onClick = {},
+                    contentPadding = PaddingValues(10.dp),
                     modifier =
                         Modifier
                             .weight(1f)
@@ -177,6 +186,7 @@ private fun FlintBasicButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.ColorOutline,
                     onClick = {},
+                    contentPadding = PaddingValues(10.dp),
                     modifier =
                         Modifier
                             .weight(1f)
@@ -190,6 +200,7 @@ private fun FlintBasicButtonPreview() {
                     text = "공개",
                     state = FlintButtonState.Disable,
                     onClick = {},
+                    contentPadding = PaddingValues(10.dp),
                     leadingIconRes = R.drawable.ic_share,
                     modifier =
                         Modifier
@@ -204,6 +215,7 @@ private fun FlintBasicButtonPreview() {
                     text = "공개",
                     state = FlintButtonState.ColorOutline,
                     onClick = {},
+                    contentPadding = PaddingValues(10.dp),
                     leadingIconRes = R.drawable.ic_share,
                     modifier =
                         Modifier
@@ -218,6 +230,7 @@ private fun FlintBasicButtonPreview() {
                     text = "공개",
                     state = FlintButtonState.Outline,
                     onClick = {},
+                    contentPadding = PaddingValues(10.dp),
                     leadingIconRes = R.drawable.ic_share,
                     modifier =
                         Modifier
