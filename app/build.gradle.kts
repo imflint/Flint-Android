@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
@@ -87,3 +88,11 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.lottie.compose)
 }
+
+// ktlint {
+//    android = true
+//    debug = true
+//    coloredOutput = true
+//    verbose = true
+//    outputToConsole = true
+// }

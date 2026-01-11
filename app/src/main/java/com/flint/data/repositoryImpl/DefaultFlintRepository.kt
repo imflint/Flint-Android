@@ -5,8 +5,9 @@ import com.flint.data.dto.request.SampleRequestDto
 import com.flint.data.mapper.toModel
 import com.flint.domain.model.SampleModel
 import com.flint.domain.repository.FlintRepository
+import javax.inject.Inject
 
-class DefaultFlintRepository(
+class DefaultFlintRepository @Inject constructor(
     private val apiService: FlintApi
 ) : FlintRepository {
     override suspend fun sample(requestDto: SampleRequestDto): Result<SampleModel> = runCatching {
