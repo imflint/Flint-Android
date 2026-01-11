@@ -24,16 +24,15 @@ import com.flint.core.designsystem.theme.FlintTypography
 fun BasicModal(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    properties: DialogProperties =
-        DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false,
-        ),
     content: @Composable () -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
-        properties = properties,
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false,
+            ),
     ) {
         Box(
             modifier =

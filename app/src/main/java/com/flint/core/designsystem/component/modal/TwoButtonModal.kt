@@ -41,7 +41,6 @@ fun TwoButtonModal(
     BasicModal(
         onDismiss = onDismiss,
         modifier = modifier,
-        properties = properties,
     ) {
         // 아이콘 영역
         Image(
