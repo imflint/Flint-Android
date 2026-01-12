@@ -1,10 +1,12 @@
 package com.flint.presentation.collectioncreate.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -12,10 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -31,14 +35,20 @@ fun CollectionCreateFilmSection(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO: 이미지 URL
-
-        Box(
-            modifier =
-            Modifier
+        CollectionCreateFilmSectionImage(
+            imageUrl = imageUrl,
+            modifier= Modifier
                 .height(150.dp)
                 .width(100.dp)
-                .background(color = FlintTheme.colors.gray300)
         )
+
+//        Box(
+//            modifier =
+//            Modifier
+//                .height(150.dp)
+//                .width(100.dp)
+//                .background(color = FlintTheme.colors.gray300)
+//        )
 
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -106,7 +116,7 @@ private fun CollectionCreateFilmSectionImage(
 private fun CollectionCreateFilmSectionPreview() {
     FlintTheme {
         CollectionCreateFilmSection(
-            imageUrl = "https://media.posterstore.com/site_images/68631db0…B0101-5.jpg?auto=compress%2Cformat&fit=max&w=3840",
+            imageUrl = "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5352%2F2024%2F12%2F20%2F20241220114927_2117531_1200_1800_20241220155206956.jpg&type=sc960_832",
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005"
