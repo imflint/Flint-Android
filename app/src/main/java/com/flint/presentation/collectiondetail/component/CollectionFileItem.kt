@@ -30,25 +30,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.dropShadow
+import com.flint.core.designsystem.component.image.NetworkImage
+import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionFileItem() {
+fun CollectionFileItem(
+    profileImageUrl: String,
+    nickname: String,
+    isBookmarked: Boolean,
+    bookmarkCount: Int,
+    poster1Url: String,
+    poster2Url: String,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(width = 154.dp, height = 154.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(FlintTheme.colors.gray800)
     ) {
         CollectionPocketItem(
+            imageUrl = poster1Url,
             modifier = Modifier
                 .offset(x = 16.dp, y = 8.dp)
         )
 
         CollectionPocketItem(
+            imageUrl = poster2Url,
             modifier = Modifier.dropShadow(
                 shape = CircleShape,
-                color = Color(0xFF000000).copy(alpha = 0.15f),
+                color = Color(0xFF000000).copy(alpha = 0.30f),
                 offsetX = (-4).dp,
                 offsetY = 0.dp,
                 blur = 10.dp,
@@ -81,13 +93,16 @@ fun CollectionFileItem() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_bookmark_fill),
-                        contentDescription = null,
+                        imageVector =
+                            ImageVector.vectorResource(
+                                if (isBookmarked) R.drawable.ic_bookmark_fill else R.drawable.ic_bookmark_empty,
+                            ),
+                            contentDescription = null,
                         modifier = Modifier
                             .size(24.dp)
                     )
                     Text(
-                        "24",
+                        "$bookmarkCount",
                         style = TextStyle(
                             color = Color.White
                         ),
@@ -103,14 +118,13 @@ fun CollectionFileItem() {
                     .align(Alignment.BottomStart)
                     .fillMaxWidth()
             ) {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_avatar_blue),
-                    contentDescription = null,
+                ProfileImage(
+                    imageUrl = profileImageUrl,
                     modifier = Modifier
                         .size(28.dp)
                 )
                 Text(
-                    "닉네임",
+                    nickname,
                     style = FlintTheme.typography.caption1M12,
                     color = Color.White
                 )
@@ -121,9 +135,11 @@ fun CollectionFileItem() {
 
 @Composable
 private fun CollectionPocketItem(
+    imageUrl: String,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    NetworkImage(
+        imageUrl = imageUrl,
         modifier = modifier
             .size(width = 80.dp, height = 120.dp)
             .clip(RoundedCornerShape(12.dp))
@@ -135,6 +151,14 @@ private fun CollectionPocketItem(
 @Composable
 private fun CollectionFileItemPreview() {
     FlintTheme {
-        CollectionFileItem()
+        CollectionFileItem(
+            profileImageUrl = "",
+            nickname = "Flint",
+            isBookmarked = true,
+            bookmarkCount = 123,
+            modifier = Modifier.padding(16.dp),
+            poster1Url = "",
+            poster2Url = ""
+        )
     }
 }
