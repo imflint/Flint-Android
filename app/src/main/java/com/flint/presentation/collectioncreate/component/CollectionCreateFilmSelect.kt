@@ -14,10 +14,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter.State.Empty.painter
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -59,10 +59,11 @@ fun CollectionCreateFilmSelectTag(
     onClick: () -> Unit
 ) {
     Icon(
-        painter = painterResource(if (isSelected) R.drawable.ic_check_fill else R.drawable.ic_check_empty),
+        imageVector = ImageVector.vectorResource(if (isSelected) R.drawable.ic_check_fill else R.drawable.ic_check_empty),
         contentDescription = null,
         tint = Color.Unspecified,
-        modifier = Modifier
+        modifier =
+        Modifier
             .size(48.dp)
             .clickable(onClick = onClick)
     )
@@ -75,7 +76,7 @@ private fun CollectionCreateFilmSectionPreview() {
         var isSelected by remember { mutableStateOf(false) }
         CollectionCreateFilmSelect(
             onCheckClick = { isSelected = !isSelected },
-            isSelected = true,
+            isSelected = isSelected,
             imageUrl = "https://media.posterstore.com/site_images/68631db0…B0101-5.jpg?auto=compress%2Cformat&fit=max&w=3840",
             title = "해리포터 불의 잔",
             director = "메롱",

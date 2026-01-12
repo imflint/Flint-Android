@@ -30,7 +30,7 @@ fun CollectionCreateFilmSection(
         modifier = modifier.background(color = FlintTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // TO-DO 이미지 URL
+        // TODO: 이미지 URL
 
         Box(
             modifier =
@@ -45,8 +45,7 @@ fun CollectionCreateFilmSection(
         CollectionCreateInfoSection(
             title = title,
             director = director,
-            createdYear = createdYear,
-            modifier = Modifier
+            createdYear = createdYear
         )
     }
 }
@@ -108,7 +107,7 @@ private fun CollectionCreateFilmSectionPreview() {
     FlintTheme {
         CollectionCreateFilmSection(
             imageUrl = "https://media.posterstore.com/site_images/68631db0…B0101-5.jpg?auto=compress%2Cformat&fit=max&w=3840",
-            title = "해리포터 불의 잔",
+            title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005"
         )
