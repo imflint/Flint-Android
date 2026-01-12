@@ -52,7 +52,7 @@ fun OnboardingOttItem(
                 contentDescription = platformName,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
             )
 
             // 선택 시 어두운 오버레이
