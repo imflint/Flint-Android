@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,35 +39,35 @@ fun OnboardingFilmItem(
     releaseYear: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.width(100.dp),
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.Start
     ) {
         // 영화 포스터 영역
         Box(
             modifier =
-                Modifier
-                    .aspectRatio(2f / 3f) // 영화 포스터 2:3 비율 유지
-                    .clip(RoundedCornerShape(0.dp))
-                    .clickable { onClick() },
+            Modifier
+                .aspectRatio(2f / 3f) // 영화 포스터 2:3 비율 유지
+                .clip(RoundedCornerShape(0.dp))
+                .clickable { onClick() }
         ) {
             // 영화 포스터 이미지
             Image(
                 painter = rememberAsyncImagePainter(imageUrl),
                 contentDescription = title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
             )
 
             // 선택 시 어두운 오버레이
             if (isSelected) {
                 Box(
                     modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .background(FlintTheme.colors.overlay),
+                    Modifier
+                        .fillMaxSize()
+                        .background(FlintTheme.colors.overlay)
                 )
             }
 
@@ -79,9 +78,9 @@ fun OnboardingFilmItem(
                     contentDescription = "선택됨",
                     tint = FlintTheme.colors.white,
                     modifier =
-                        Modifier
-                            .align(Alignment.Center)
-                            .size(48.dp),
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(48.dp)
                 )
             }
         }
@@ -95,8 +94,8 @@ fun OnboardingFilmItem(
             color = FlintTheme.colors.white,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis, // 넘치면 ...
-            modifier = Modifier.fillMaxWidth(),
-            )
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -107,16 +106,16 @@ fun OnboardingFilmItem(
             color = FlintColors.gray300,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth(),
-            )
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Text(
             text = releaseYear,
             style = FlintTheme.typography.caption1R12,
             color = FlintColors.gray300,
             maxLines = 1,
-            modifier = Modifier.fillMaxWidth(),
-            )
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
@@ -126,10 +125,10 @@ private fun OnboardingFilmItemSelectedPreview() {
     FlintTheme {
         Column(
             modifier =
-                Modifier
-                    .background(FlintColors.background)
-                    .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            Modifier
+                .background(FlintColors.background)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // 선택된 상태
             OnboardingFilmItem(
@@ -138,7 +137,7 @@ private fun OnboardingFilmItemSelectedPreview() {
                 director = "김준서김나현임차민김종우박찬미",
                 releaseYear = "2005",
                 isSelected = true,
-                onClick = {},
+                onClick = {}
             )
 
             // 선택되지 않은 상태
@@ -148,7 +147,7 @@ private fun OnboardingFilmItemSelectedPreview() {
                 director = "김준서김나현임차민김종우박찬미",
                 releaseYear = "2005",
                 isSelected = false,
-                onClick = {},
+                onClick = {}
             )
         }
     }
