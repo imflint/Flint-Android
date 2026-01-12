@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
@@ -90,22 +89,22 @@ fun CollectionFileItem(
                     .align(Alignment.TopEnd)
             ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Image(
                         imageVector =
-                            ImageVector.vectorResource(
-                                if (isBookmarked) R.drawable.ic_bookmark_fill else R.drawable.ic_bookmark_empty,
-                            ),
-                            contentDescription = null,
+                        ImageVector.vectorResource(
+                            if (isBookmarked) R.drawable.ic_bookmark_fill else R.drawable.ic_bookmark_empty
+                        ),
+                        contentDescription = null,
                         modifier = Modifier
                             .size(24.dp)
                     )
                     Text(
                         "$bookmarkCount",
-                        style = TextStyle(
-                            color = Color.White
-                        ),
+                        color = FlintTheme.colors.gray50,
+                        style = FlintTheme.typography.caption1M12,
                         modifier = Modifier
                     )
                 }
@@ -126,7 +125,7 @@ fun CollectionFileItem(
                 Text(
                     nickname,
                     style = FlintTheme.typography.caption1M12,
-                    color = Color.White
+                    color = FlintTheme.colors.gray50
                 )
             }
         }
