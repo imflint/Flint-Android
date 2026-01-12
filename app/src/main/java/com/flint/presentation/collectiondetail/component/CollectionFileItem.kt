@@ -40,13 +40,31 @@ fun CollectionFileItem() {
             .clip(RoundedCornerShape(12.dp))
             .background(FlintTheme.colors.gray800)
     ) {
-
-        OverlappingCards(
+        Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(end = 16.dp, bottom = 4.dp)
+                .size(width = 80.dp, height = 120.dp)
+                .offset(x = 16.dp, y = 8.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White)
         )
 
+        Box(
+            modifier = Modifier
+                .dropShadow(
+                    shape = CircleShape,
+                    color = Color(0xFF000000).copy(alpha = 0.15f),
+                    offsetX = (-4).dp,
+                    offsetY = 0.dp,
+                    blur = 10.dp,
+                    spread = 0.dp
+                )
+                .size(width = 80.dp, height = 120.dp)
+                .align(Alignment.TopCenter)
+                .rotate(15f)
+                .offset(x = 20.dp, y = 15.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White)
+        )
 
         Box(
             modifier = Modifier
@@ -109,43 +127,9 @@ fun CollectionFileItem() {
     }
 }
 
-@Composable
-private fun OverlappingCards(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-    ) {
-        // 앞쪽 카드 (똑바로 있는 카드)
-        Box(
-            modifier = Modifier
-                .size(width = 80.dp, height = 120.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White)
-        )
-        // 뒤쪽 카드 (회전되고 오프셋된 카드)
-        Box(
-            modifier = Modifier
-                .dropShadow(
-                    shape = CircleShape,
-                    color = Color(0xFF000000).copy(alpha = 0.35f),
-                    offsetX = (-4).dp,
-                    offsetY = 0.dp,
-                    blur = 10.dp,
-                    spread = 0.dp
-                )
-                .size(width = 80.dp, height = 120.dp)
-                .rotate(15f)
-                .offset(x = 24.dp, y = 5.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White)
-        )
-    }
-}
-
 @Preview(showBackground = false)
 @Composable
-private fun Preview() {
+private fun CollectionFileItemPreview() {
     FlintTheme {
         CollectionFileItem()
     }
