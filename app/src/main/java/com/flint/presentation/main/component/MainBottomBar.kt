@@ -51,8 +51,7 @@ internal fun MainBottomBar(
             Modifier
                 .navigationBarsPadding()
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                .background(FlintTheme.colors.gray800)
+                .background(FlintTheme.colors.background)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -61,6 +60,7 @@ internal fun MainBottomBar(
                     .height(64.dp)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                    .background(FlintTheme.colors.gray800)
                     .padding(
                         vertical = 4.dp,
                         horizontal = 39.dp
