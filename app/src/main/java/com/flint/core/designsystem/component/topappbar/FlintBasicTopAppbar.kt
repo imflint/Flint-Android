@@ -1,4 +1,4 @@
-package com.flint.core.designsystem.component
+package com.flint.core.designsystem.component.topappbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

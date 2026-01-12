@@ -1,4 +1,4 @@
-package com.flint.core.designsystem.component
+package com.flint.core.designsystem.component.topappbar
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon
