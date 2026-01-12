@@ -1,4 +1,4 @@
-package com.flint.presentation.collectioncreate
+package com.flint.presentation.collectioncreate.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,27 +19,29 @@ import coil3.compose.AsyncImage
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionCreateWork(
+fun CollectionCreateFilmSection(
     imageUrl: String,
     title: String,
     director: String,
     createdYear: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(color = FlintTheme.colors.background),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(color = FlintTheme.colors.background),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-//        CollectionCreateImage(
+//        CollectionCreateFilmSectionImage(
 //            imageUrl = imageUrl
 //        )
         Box(
-            modifier = Modifier
-                .height(150.dp)
-                .width(100.dp)
-                .background(color = FlintTheme.colors.gray300)
+            modifier =
+                Modifier
+                    .height(150.dp)
+                    .width(100.dp)
+                    .background(color = FlintTheme.colors.gray300),
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -48,7 +50,7 @@ fun CollectionCreateWork(
             title = title,
             director = director,
             createdYear = createdYear,
-            modifier = Modifier
+            modifier = Modifier,
         )
     }
 }
@@ -58,12 +60,12 @@ private fun CollectionCreateInfoSection(
     title: String,
     director: String,
     createdYear: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-        modifier
-            .fillMaxWidth()
+            modifier
+                .fillMaxWidth(),
     ) {
         Text(
             text = title,
@@ -71,7 +73,7 @@ private fun CollectionCreateInfoSection(
             color = FlintTheme.colors.white,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,
-            style = FlintTheme.typography.head3M18
+            style = FlintTheme.typography.head3M18,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -80,39 +82,39 @@ private fun CollectionCreateInfoSection(
             text = director,
             modifier = Modifier.fillMaxWidth(),
             color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.body1R16
+            style = FlintTheme.typography.body1R16,
         )
 
         Text(
             text = createdYear,
             modifier = Modifier.fillMaxWidth(),
             color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.body1R16
+            style = FlintTheme.typography.body1R16,
         )
     }
 }
 
 @Composable
-private fun CollectionCreateImage(
+private fun CollectionCreateFilmSectionImage(
     imageUrl: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     AsyncImage(
         model = imageUrl,
         contentDescription = null,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Preview
 @Composable
-private fun CollectionCreateWorkPreview() {
+private fun CollectionCreateFilmSectionPreview() {
     FlintTheme {
-        CollectionCreateWork(
+        CollectionCreateFilmSection(
             imageUrl = "https://media.posterstore.com/site_images/68631db0…B0101-5.jpg?auto=compress%2Cformat&fit=max&w=3840",
             title = "해리포터 불의 잔",
             director = "메롱",
-            createdYear = "2005"
+            createdYear = "2005",
         )
     }
 }
