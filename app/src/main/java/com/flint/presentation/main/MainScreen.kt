@@ -11,12 +11,15 @@ import com.flint.presentation.main.component.MainBottomBar
 import com.flint.presentation.profile.navigation.profileNavGraph
 import kotlinx.collections.immutable.toImmutableList
 
+import com.flint.core.designsystem.theme.FlintTheme
+
 @Composable
 fun MainScreen(navigator: MainNavigator) {
     val isBottomBarVisible by navigator.isBottomBarVisible.collectAsStateWithLifecycle()
     val currentTab by navigator.currentTab.collectAsStateWithLifecycle()
 
     Scaffold(
+        containerColor = FlintTheme.colors.background,
         bottomBar = {
             MainBottomBar(
                 visible = isBottomBarVisible,
