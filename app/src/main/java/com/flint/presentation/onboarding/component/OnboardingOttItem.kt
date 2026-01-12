@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.flint.R
-import com.flint.core.designsystem.theme.FlintColors
 import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun OnboardingOttItem(
@@ -69,9 +68,9 @@ fun OnboardingOttItem(
                     contentDescription = "선택됨",
                     tint = FlintTheme.colors.white,
                     modifier =
-                        Modifier
-                            .align(Alignment.Center)
-                            .size(40.dp)
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(40.dp)
                 )
             }
         }
