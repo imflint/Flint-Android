@@ -69,18 +69,15 @@ fun OnboardingFilmItem(
                         .fillMaxSize()
                         .background(FlintTheme.colors.overlay)
                 )
-            }
 
-            // 선택 시 체크 아이콘
-            if (isSelected) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_onboarding_film_check),
                     contentDescription = "선택됨",
                     tint = FlintTheme.colors.white,
                     modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .size(48.dp)
+                        Modifier
+                            .align(Alignment.Center)
+                            .size(48.dp)
                 )
             }
         }
