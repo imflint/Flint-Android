@@ -125,7 +125,7 @@ val FlintColors =
         green = Color(0xFF00BD76),
         orange = Color(0xFFFF744D),
         yellow = Color(0xFFF9B902),
-        blue = Color(0xFF1ABFF2)
+        blue = Color(0xFF38A5FF)
     )
 
 @Preview(device = Devices.DESKTOP)
