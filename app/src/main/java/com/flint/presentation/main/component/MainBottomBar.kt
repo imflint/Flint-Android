@@ -33,7 +33,6 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.main.MainTab
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 internal fun MainBottomBar(
@@ -48,7 +47,8 @@ internal fun MainBottomBar(
         exit = fadeOut() + slideOut { IntOffset(0, it.height) }
     ) {
         Box(
-            modifier = Modifier
+            modifier =
+            Modifier
                 .navigationBarsPadding()
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
@@ -56,9 +56,11 @@ internal fun MainBottomBar(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
+                modifier =
+                Modifier
                     .height(64.dp)
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                     .padding(
                         vertical = 4.dp,
                         horizontal = 39.dp
@@ -85,7 +87,8 @@ private fun RowScope.MainBottomBarItem(
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier =
+        Modifier
             .noRippleClickable(onClick = onClick)
             .weight(1f)
             .padding(vertical = 4.dp),
@@ -105,7 +108,6 @@ private fun RowScope.MainBottomBarItem(
     }
 }
 
-
 @Preview
 @Composable
 private fun MainBottomBarPreview() {
@@ -119,6 +121,6 @@ private fun MainBottomBarPreview() {
                     onTabSelected = {}
                 )
             }
-    }
+        }
     }
 }
