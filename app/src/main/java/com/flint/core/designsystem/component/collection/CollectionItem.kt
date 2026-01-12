@@ -33,7 +33,7 @@ import com.flint.domain.type.UserRoleType
 @Composable
 fun CollectionItem(
     collectionModel: CollectionModel,
-    itemOnClick: (id: String) -> Unit,
+    onItemClick: (id: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -43,7 +43,7 @@ fun CollectionItem(
             .clip(RoundedCornerShape(12.dp))
             .background(FlintTheme.colors.gray200)
             .noRippleClickable {
-                itemOnClick(collectionModel.collectionId)
+                onItemClick(collectionModel.collectionId)
             }
     ) {
         Image(
@@ -121,7 +121,7 @@ private fun PreviewCollectionItem() {
 
         CollectionItem(
             collectionModel = collectionModel,
-            itemOnClick = {}
+            onItemClick = {}
         )
     }
 }
