@@ -1,0 +1,86 @@
+package com.flint.presentation.collectioncreate.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.flint.R
+import com.flint.core.designsystem.theme.FlintTheme
+
+@Composable
+fun CollectionCreateFilmSelect(
+    onCheckClick: () -> Unit,
+    isSelected: Boolean,
+    imageUrl: String,
+    title: String,
+    director: String,
+    createdYear: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier =
+        modifier
+            .fillMaxWidth()
+            .background(color = FlintTheme.colors.background),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CollectionCreateFilmSection(
+            imageUrl = imageUrl,
+            title = title,
+            director = director,
+            createdYear = createdYear,
+            modifier = Modifier.weight(1f)
+        )
+
+        CollectionCreateFilmSelectTag(
+            isSelected = isSelected,
+            onClick = onCheckClick
+        )
+    }
+}
+
+@Composable
+fun CollectionCreateFilmSelectTag(
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Icon(
+        imageVector = ImageVector.vectorResource(if (isSelected) R.drawable.ic_check_fill else R.drawable.ic_check_empty),
+        contentDescription = null,
+        tint = Color.Unspecified,
+        modifier =
+        Modifier
+            .size(48.dp)
+            .clickable(onClick = onClick)
+    )
+}
+
+@Preview
+@Composable
+private fun CollectionCreateFilmSectionPreview() {
+    FlintTheme {
+        var isSelected by remember { mutableStateOf(false) }
+        CollectionCreateFilmSelect(
+            onCheckClick = { isSelected = !isSelected },
+            isSelected = isSelected,
+            imageUrl = "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5352%2F2024%2F12%2F20%2F20241220114927_2117531_1200_1800_20241220155206956.jpg&type=sc960_832",
+            title = "해리포터 불의 잔",
+            director = "메롱",
+            createdYear = "2005"
+        )
+    }
+}
