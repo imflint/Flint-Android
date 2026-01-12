@@ -59,6 +59,8 @@ data class Colors(
     val gradient700: Brush,
     val gradient400: Brush,
     val imgBlur: Brush,
+    val imgBlurHigh: Brush
+
     val pink: Color,
     val green: Color,
     val orange: Color,
@@ -118,6 +120,13 @@ val FlintColors =
             colors = listOf(Color(0xFF1ABFF2), Color(0xFF86EBFF))
         ),
         imgBlur =
+        Brush.verticalGradient(
+            colors = listOf(Color(0xFF000000).copy(0f), Color(0xFF000000).copy(alpha = 0.8f))
+        ),
+        imgBlurHigh =
+        Brush.verticalGradient(
+            colors = listOf(Color(0xFF000000).copy(0f), Color(0xFF000000).copy(alpha = 0.4f))
+        )
         Brush.linearGradient(
             colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f))
         ),
@@ -354,6 +363,11 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(brush = FlintColors.imgBlur)
+                    .size(100.dp)
+            )
+            Box(
+                Modifier
+                    .background(brush = FlintColors.imgBlurHigh)
                     .size(100.dp)
             )
         }
