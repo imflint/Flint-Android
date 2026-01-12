@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.AuthorModel
 import com.flint.domain.model.CollectionModel
@@ -46,8 +47,8 @@ fun CollectionItem(
                 onItemClick(collectionModel.collectionId)
             }
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(collectionModel.collectionImageUrl),
+        NetworkImage(
+            imageUrl = collectionModel.collectionImageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
