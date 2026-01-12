@@ -39,7 +39,7 @@ fun FlintLongTextField(
         )
 
         Text(
-            text = "${value.length}/${maxLength}",
+            text = "${value.length}/$maxLength",
             style = FlintTheme.typography.caption1M12,
             color = FlintTheme.colors.white
         )

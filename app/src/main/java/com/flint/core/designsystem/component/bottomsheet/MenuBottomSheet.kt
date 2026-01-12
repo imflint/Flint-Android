@@ -27,14 +27,13 @@ data class MenuBottomSheetData(
     val clickAction: () -> Unit
 )
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuBottomSheet(
     menuBottomSheetDataList: List<MenuBottomSheetData>,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberModalBottomSheetState()
 ) {
     FlintBasicBottomSheet(
         sheetState = sheetState,
@@ -45,7 +44,7 @@ fun MenuBottomSheet(
             modifier = Modifier.fillMaxWidth()
         ) {
             itemsIndexed(menuBottomSheetDataList) { index, item ->
-                Column (
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp)
@@ -55,7 +54,6 @@ fun MenuBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-
                     Spacer(Modifier.weight(1f))
 
                     Text(
@@ -66,7 +64,7 @@ fun MenuBottomSheet(
 
                     Spacer(Modifier.weight(1f))
 
-                    if(index != menuBottomSheetDataList.size - 1) {
+                    if (index != menuBottomSheetDataList.size - 1) {
                         HorizontalDivider(
                             thickness = 1.dp,
                             color = FlintTheme.colors.gray500
@@ -82,7 +80,6 @@ fun MenuBottomSheet(
 @Preview
 @Composable
 private fun PreviewMenuBottomSheet() {
-
     FlintTheme {
         val menuBottomSheetDataList = listOf(
             MenuBottomSheetData(
@@ -93,7 +90,7 @@ private fun PreviewMenuBottomSheet() {
                 label = "프로필 사진 삭제",
                 color = FlintTheme.colors.error500,
                 clickAction = {}
-            ),
+            )
         )
 
         val sheetState = rememberModalBottomSheetState()

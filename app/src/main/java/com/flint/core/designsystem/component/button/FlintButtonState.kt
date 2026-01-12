@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintTheme
 
 enum class FlintButtonState(
-    val enabled: Boolean,
+    val enabled: Boolean
 ) {
     Able(enabled = true) {
         override val background: Brush
@@ -78,7 +78,7 @@ enum class FlintButtonState(
             @Composable
             @ReadOnlyComposable
             get() = BorderStroke(2.dp, FlintTheme.colors.primary400)
-    },
+    }
     ;
 
     abstract val background: Brush
