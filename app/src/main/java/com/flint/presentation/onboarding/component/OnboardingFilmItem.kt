@@ -75,9 +75,9 @@ fun OnboardingFilmItem(
                     contentDescription = "선택됨",
                     tint = FlintTheme.colors.white,
                     modifier =
-                        Modifier
-                            .align(Alignment.Center)
-                            .size(48.dp)
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(48.dp)
                 )
             }
         }
