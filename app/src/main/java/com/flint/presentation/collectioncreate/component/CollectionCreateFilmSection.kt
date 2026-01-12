@@ -29,21 +29,12 @@ fun CollectionCreateFilmSection(
         modifier = modifier.background(color = FlintTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // TODO: 이미지 URL
         CollectionCreateFilmSectionImage(
             imageUrl = imageUrl,
             modifier = Modifier
                 .height(150.dp)
                 .width(100.dp)
         )
-
-//        Box(
-//            modifier =
-//            Modifier
-//                .height(150.dp)
-//                .width(100.dp)
-//                .background(color = FlintTheme.colors.gray300)
-//        )
 
         Spacer(modifier = Modifier.width(16.dp))
 
