@@ -334,6 +334,7 @@ private fun FlintColorsPreview() {
         }
 
         Text("Gradient", color = Color.White)
+
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Box(
                 Modifier
@@ -353,6 +354,36 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(brush = FlintColors.imgBlur)
+                    .size(100.dp),
+            )
+        }
+
+        Text("Keyword", color = Color.White)
+
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Box(
+                Modifier
+                    .background(color = FlintColors.pink)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.green)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.orange)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.yellow)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.blue)
                     .size(100.dp),
             )
         }
