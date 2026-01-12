@@ -32,17 +32,17 @@ fun TwoButtonModal(
     modifier: Modifier = Modifier,
     title: String? = null,
     @DrawableRes icon: Int,
-    isDestructive: Boolean = false, // true = 삭제 (빨간색 버튼)
+    isDestructive: Boolean = false // true = 삭제 (빨간색 버튼)
 ) {
     FlintBasicModal(
         onDismiss = onDismiss,
-        modifier = modifier,
+        modifier = modifier
     ) {
         // 아이콘 영역
         Image(
             painter = painterResource(id = icon),
             contentDescription = null,
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(120.dp)
         )
 
         Spacer(modifier = Modifier.height(if (title != null) 4.dp else 12.dp))
@@ -53,7 +53,7 @@ fun TwoButtonModal(
                 text = title,
                 style = FlintTheme.typography.head1Sb22,
                 color = FlintTheme.colors.white,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -63,7 +63,7 @@ fun TwoButtonModal(
             text = message,
             style = FlintTheme.typography.body1M16,
             color = FlintTheme.colors.white,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -71,19 +71,19 @@ fun TwoButtonModal(
         // 버튼 2개
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         ) {
             FlintModalButton(
                 text = cancelText,
                 onClick = onDismiss,
                 modifier = Modifier.weight(1f),
-                type = ModalButtonType.CANCEL,
+                type = ModalButtonType.CANCEL
             )
             FlintModalButton(
                 text = confirmText,
                 onClick = onConfirm,
                 modifier = Modifier.weight(1f),
-                type = if (isDestructive) ModalButtonType.DESTRUCTIVE else ModalButtonType.CONFIRM,
+                type = if (isDestructive) ModalButtonType.DESTRUCTIVE else ModalButtonType.CONFIRM
             )
         }
     }
@@ -102,7 +102,7 @@ private fun TwoButtonModalWithTitlePreview() {
             onConfirm = {},
             onDismiss = {},
             isDestructive = false,
-            icon = R.drawable.ic_gradient_check,
+            icon = R.drawable.ic_gradient_check
         )
     }
 }
@@ -119,7 +119,7 @@ private fun TwoButtonModalDestructivePreview() {
             onConfirm = {},
             onDismiss = {},
             isDestructive = true,
-            icon = R.drawable.ic_gradient_trash,
+            icon = R.drawable.ic_gradient_trash
         )
     }
 }
@@ -135,7 +135,7 @@ private fun TwoButtonModalNoTitlePreview() {
             confirmText = "확인",
             onConfirm = {},
             onDismiss = {},
-            icon = R.drawable.ic_gradient_check,
+            icon = R.drawable.ic_gradient_check
         )
     }
 }

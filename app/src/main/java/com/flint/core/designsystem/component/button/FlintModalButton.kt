@@ -22,7 +22,7 @@ import com.flint.core.designsystem.theme.FlintTypography
 enum class ModalButtonType {
     CONFIRM, // 확인
     CANCEL, // 취소
-    DESTRUCTIVE, // 삭제/위험
+    DESTRUCTIVE // 삭제/위험
 }
 
 @Composable
@@ -30,7 +30,7 @@ fun FlintModalButton(
     text: String,
     onClick: () -> Unit,
     type: ModalButtonType,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val (backgroundColor, textColor) =
         when (type) {
@@ -40,17 +40,17 @@ fun FlintModalButton(
         }
     Box(
         modifier =
-            modifier
-                .clickable { onClick() }
-                .clip(RoundedCornerShape(8.dp))
-                .background(backgroundColor)
-                .padding(vertical = 10.dp),
-        contentAlignment = Alignment.Center,
+        modifier
+            .clickable { onClick() }
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundColor)
+            .padding(vertical = 10.dp),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             style = FlintTypography.body1Sb16,
-            color = textColor,
+            color = textColor
         )
     }
 }
@@ -61,15 +61,15 @@ private fun ModalButtonPreview() {
     FlintTheme {
         Column(
             modifier =
-                Modifier
-                    .background(FlintTheme.colors.white)
-                    .padding(20.dp),
+            Modifier
+                .background(FlintTheme.colors.white)
+                .padding(20.dp)
         ) {
             FlintModalButton(
                 text = "확인",
                 onClick = {},
                 type = ModalButtonType.CONFIRM,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -78,7 +78,7 @@ private fun ModalButtonPreview() {
                 text = "취소",
                 onClick = {},
                 type = ModalButtonType.CANCEL,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -87,7 +87,7 @@ private fun ModalButtonPreview() {
                 text = "삭제",
                 onClick = {},
                 type = ModalButtonType.DESTRUCTIVE,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
