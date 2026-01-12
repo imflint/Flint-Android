@@ -63,7 +63,7 @@ data class Colors(
     val green: Color,
     val orange: Color,
     val yellow: Color,
-    val blue: Color,
+    val blue: Color
 )
 
 val FlintColors =
@@ -106,26 +106,26 @@ val FlintColors =
         overlay = Color(0xFF000000).copy(alpha = 0.6f),
         spoilerBlur = Color(0xFF121212).copy(alpha = 0.3f),
         gradient900 =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF3C4256), Color(0xFF121212)),
-            ),
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF3C4256), Color(0xFF121212))
+        ),
         gradient700 =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF3C4256), Color(0xFF2B2F3A)),
-            ),
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF3C4256), Color(0xFF2B2F3A))
+        ),
         gradient400 =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF1ABFF2), Color(0xFF86EBFF)),
-            ),
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF1ABFF2), Color(0xFF86EBFF))
+        ),
         imgBlur =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f)),
-            ),
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f))
+        ),
         pink = Color(0xFFFF76B6),
         green = Color(0xFF00BD76),
         orange = Color(0xFFFF744D),
         yellow = Color(0xFFF9B902),
-        blue = Color(0xFF1ABFF2),
+        blue = Color(0xFF1ABFF2)
     )
 
 @Preview(device = Devices.DESKTOP)
@@ -133,59 +133,59 @@ val FlintColors =
 private fun FlintColorsPreview() {
     Column(
         modifier = Modifier.background(color = Color(0xFF313131)),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(text = "Primary", color = Color.White)
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Box(
                 Modifier
                     .background(color = FlintColors.primary50)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary100)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary200)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary300)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary400)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary500)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary600)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary700)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary800)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary900)
-                    .size(100.dp),
+                    .size(100.dp)
             )
         }
         Text(text = "Secondary", color = Color.White)
@@ -193,52 +193,52 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.secondary50)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary100)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary200)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary300)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary400)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary500)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary600)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary700)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary800)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.secondary900)
-                    .size(100.dp),
+                    .size(100.dp)
             )
         }
         Text(text = "GrayScale", color = Color.White)
@@ -246,52 +246,52 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.gray50)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray100)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray200)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray300)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray400)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray500)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray600)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray700)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray800)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.gray900)
-                    .size(100.dp),
+                    .size(100.dp)
             )
         }
         Text("Common", color = Color.White)
@@ -299,37 +299,37 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.white)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.background)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.error200)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.error500)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.error700)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.overlay)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.spoilerBlur)
-                    .size(100.dp),
+                    .size(100.dp)
             )
         }
 
@@ -339,22 +339,22 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(brush = FlintColors.gradient900)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(brush = FlintColors.gradient700)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(brush = FlintColors.gradient400)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(brush = FlintColors.imgBlur)
-                    .size(100.dp),
+                    .size(100.dp)
             )
         }
 
@@ -364,27 +364,27 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.pink)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.green)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.orange)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.yellow)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.blue)
-                    .size(100.dp),
+                    .size(100.dp)
             )
         }
     }
