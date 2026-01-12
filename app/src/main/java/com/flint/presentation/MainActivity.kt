@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.main.MainScreen
+import com.flint.presentation.main.rememberMainNavigator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,7 +16,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FlintTheme {
-                MainScreen()
+                val navigator = rememberMainNavigator()
+                MainScreen(
+                    navigator = navigator
+                )
             }
         }
     }
