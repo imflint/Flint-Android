@@ -80,7 +80,13 @@ private fun FlintIconButtonPreview() {
 
                 Spacer(Modifier.width(16.dp))
 
-                Spacer(Modifier.weight(0.5f))
+                FlintIconButton(
+                    text = "비공개",
+                    iconRes = R.drawable.ic_share,
+                    state = FlintButtonState.Outline,
+                    onClick = {},
+                    modifier = Modifier.weight(0.5f)
+                )
             }
         }
     }
