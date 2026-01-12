@@ -59,7 +59,7 @@ data class Colors(
     val gradient700: Brush,
     val gradient400: Brush,
     val imgBlur: Brush,
-    val imgBlurHigh: Brush
+    val imgBlurHigh: Brush,
 
     val pink: Color,
     val green: Color,
@@ -126,9 +126,6 @@ val FlintColors =
         imgBlurHigh =
         Brush.verticalGradient(
             colors = listOf(Color(0xFF000000).copy(0f), Color(0xFF000000).copy(alpha = 0.4f))
-        )
-        Brush.linearGradient(
-            colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f))
         ),
         pink = Color(0xFFFF76B6),
         green = Color(0xFF00BD76),
