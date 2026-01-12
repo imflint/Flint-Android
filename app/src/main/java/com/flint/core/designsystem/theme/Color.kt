@@ -113,9 +113,9 @@ val FlintColors =
             colors = listOf(Color(0xFF1ABFF2), Color(0xFF86EBFF))
         ),
         imgBlur =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f)),
-            ),
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f))
+        )
     )
 
 @Preview(device = Devices.DESKTOP)
@@ -135,22 +135,22 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.primary100)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary200)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary300)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
                     .background(color = FlintColors.primary400)
-                    .size(100.dp),
+                    .size(100.dp)
             )
             Box(
                 Modifier
@@ -319,7 +319,7 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.spoilerBlur)
-                    .size(100.dp),
+                    .size(100.dp)
             )
         }
 
