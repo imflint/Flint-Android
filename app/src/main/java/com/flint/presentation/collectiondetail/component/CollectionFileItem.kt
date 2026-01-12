@@ -40,30 +40,23 @@ fun CollectionFileItem() {
             .clip(RoundedCornerShape(12.dp))
             .background(FlintTheme.colors.gray800)
     ) {
-        Box(
+        CollectionPocketItem(
             modifier = Modifier
-                .size(width = 80.dp, height = 120.dp)
                 .offset(x = 16.dp, y = 8.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White)
         )
 
-        Box(
-            modifier = Modifier
-                .dropShadow(
-                    shape = CircleShape,
-                    color = Color(0xFF000000).copy(alpha = 0.15f),
-                    offsetX = (-4).dp,
-                    offsetY = 0.dp,
-                    blur = 10.dp,
-                    spread = 0.dp
-                )
-                .size(width = 80.dp, height = 120.dp)
+        CollectionPocketItem(
+            modifier = Modifier.dropShadow(
+                shape = CircleShape,
+                color = Color(0xFF000000).copy(alpha = 0.15f),
+                offsetX = (-4).dp,
+                offsetY = 0.dp,
+                blur = 10.dp,
+                spread = 0.dp
+            )
                 .align(Alignment.TopCenter)
                 .rotate(15f)
                 .offset(x = 20.dp, y = 15.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White)
         )
 
         Box(
@@ -85,7 +78,7 @@ fun CollectionFileItem() {
                     .align(Alignment.TopEnd)
             ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_bookmark_fill),
@@ -109,7 +102,7 @@ fun CollectionFileItem() {
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth()
-            ){
+            ) {
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_avatar_blue),
                     contentDescription = null,
@@ -122,9 +115,20 @@ fun CollectionFileItem() {
                     color = Color.White
                 )
             }
-
         }
     }
+}
+
+@Composable
+private fun CollectionPocketItem(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(width = 80.dp, height = 120.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.White)
+    )
 }
 
 @Preview(showBackground = false)
