@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
@@ -32,9 +34,56 @@ import com.flint.core.common.extension.dropShadow
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.AuthorModel
+import com.flint.domain.model.CollectionDetailModel
+import com.flint.domain.type.UserRoleType
 
 @Composable
 fun CollectionFileItem(
+    collection: CollectionDetailModel,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier
+    ) {
+        with(collection) {
+            CollectionFileContent(
+                profileImageUrl = author.profileUrl,
+                nickname = author.nickname,
+                isBookmarked = isBookmarked,
+                bookmarkCount = bookmarkCount,
+                poster1Url = collectionImageUrl1,
+                poster2Url = collectionImageUrl2,
+                modifier = Modifier.size(154.dp)
+            )
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.width(154.dp)
+        ) {
+            Text(
+                text = collection.collectionTitle,
+                style = FlintTheme.typography.body1M16,
+                color = FlintTheme.colors.white,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = collection.collectionContent,
+                style = FlintTheme.typography.caption1R12,
+                color = FlintTheme.colors.gray300,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+private fun CollectionFileContent(
     profileImageUrl: String,
     nickname: String,
     isBookmarked: Boolean,
@@ -45,7 +94,6 @@ fun CollectionFileItem(
 ) {
     Box(
         modifier = modifier
-            .size(width = 154.dp, height = 154.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(FlintTheme.colors.gray800)
     ) {
@@ -79,7 +127,7 @@ fun CollectionFileItem(
                     painter = painterResource(id = R.drawable.img_folder_fg),
                     contentScale = ContentScale.FillWidth
                 )
-                .padding(12.dp)
+                .padding(start = 12.dp, top = 12.dp, end = 5.dp, bottom = 9.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -90,7 +138,8 @@ fun CollectionFileItem(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Image(
                         imageVector =
@@ -125,7 +174,9 @@ fun CollectionFileItem(
                 Text(
                     nickname,
                     style = FlintTheme.typography.caption1M12,
-                    color = FlintTheme.colors.gray50
+                    color = FlintTheme.colors.gray50,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip // TODO: 디자인 논의 후 수정 예정
                 )
             }
         }
@@ -150,14 +201,46 @@ private fun CollectionPocketItem(
 @Composable
 private fun CollectionFileItemPreview() {
     FlintTheme {
-        CollectionFileItem(
-            profileImageUrl = "",
-            nickname = "Flint",
-            isBookmarked = true,
-            bookmarkCount = 123,
-            modifier = Modifier.padding(16.dp),
-            poster1Url = "",
-            poster2Url = ""
-        )
+        Row(
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CollectionFileItem(
+                collection = CollectionDetailModel(
+                    collectionId = "1",
+                    collectionTitle = "컬렉션 내용",
+                    collectionContent = "컬렉션 내용",
+                    collectionImageUrl1 = "",
+                    collectionImageUrl2 = "",
+                    author = AuthorModel(
+                        userId = 1,
+                        nickname = "Nickname",
+                        profileUrl = "",
+                        userRole = UserRoleType.FLINER
+                    ),
+                    isBookmarked = true,
+                    bookmarkCount = 10,
+                    createdAt = ""
+                )
+            )
+            CollectionFileItem(
+                collection = CollectionDetailModel(
+                    collectionId = "1",
+                    collectionTitle = "컬렉션 제목이 마구 길어질 때 두줄까지 표시됩니다.",
+                    collectionContent = "컬렉션 내용이 마구 길어질 때 두줄까지 표시됩니다. 내용이 작으니까 조금 더 표시",
+                    collectionImageUrl1 = "",
+                    collectionImageUrl2 = "",
+                    author = AuthorModel(
+                        userId = 1,
+                        nickname = "닉네임은최대열글자요",
+                        profileUrl = "",
+                        userRole = UserRoleType.FLINER
+                    ),
+                    isBookmarked = true,
+                    bookmarkCount = 10,
+                    createdAt = ""
+                )
+            )
+        }
     }
 }
