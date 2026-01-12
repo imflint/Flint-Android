@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -90,9 +90,8 @@ private fun CollectionCreateFilmSectionImage(
     imageUrl: String,
     modifier: Modifier = Modifier
 ) {
-    AsyncImage(
-        model = imageUrl,
-        contentDescription = null,
+    NetworkImage(
+        imageUrl = imageUrl,
         modifier = modifier
     )
 }
