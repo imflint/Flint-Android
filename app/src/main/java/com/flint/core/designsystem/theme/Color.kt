@@ -60,6 +60,12 @@ data class Colors(
     val gradient400: Brush,
     val imgBlur: Brush,
     val imgBlurHigh: Brush
+
+    val pink: Color,
+    val green: Color,
+    val orange: Color,
+    val yellow: Color,
+    val blue: Color
 )
 
 val FlintColors =
@@ -121,6 +127,14 @@ val FlintColors =
         Brush.verticalGradient(
             colors = listOf(Color(0xFF000000).copy(0f), Color(0xFF000000).copy(alpha = 0.4f))
         )
+        Brush.linearGradient(
+            colors = listOf(Color(0xFF000000).copy(alpha = 0.8f), Color(0xFF000000).copy(0f))
+        ),
+        pink = Color(0xFFFF76B6),
+        green = Color(0xFF00BD76),
+        orange = Color(0xFFFF744D),
+        yellow = Color(0xFFF9B902),
+        blue = Color(0xFF38A5FF)
     )
 
 @Preview(device = Devices.DESKTOP)
@@ -329,6 +343,7 @@ private fun FlintColorsPreview() {
         }
 
         Text("Gradient", color = Color.White)
+
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Box(
                 Modifier
@@ -353,6 +368,36 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(brush = FlintColors.imgBlurHigh)
+                    .size(100.dp)
+            )
+        }
+
+        Text("Keyword", color = Color.White)
+
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Box(
+                Modifier
+                    .background(color = FlintColors.pink)
+                    .size(100.dp)
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.green)
+                    .size(100.dp)
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.orange)
+                    .size(100.dp)
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.yellow)
+                    .size(100.dp)
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.blue)
                     .size(100.dp)
             )
         }
