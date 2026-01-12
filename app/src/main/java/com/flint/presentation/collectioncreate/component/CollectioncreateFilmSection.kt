@@ -27,15 +27,11 @@ fun CollectionCreateFilmSection(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier =
-        modifier
-            .fillMaxWidth()
-            .background(color = FlintTheme.colors.background),
+        modifier = modifier.background(color = FlintTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically
     ) {
-//        CollectionCreateFilmSectionImage(
-//            imageUrl = imageUrl
-//        )
+        // TO-DO 이미지 URL
+
         Box(
             modifier =
             Modifier
