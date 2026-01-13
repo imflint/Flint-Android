@@ -11,19 +11,19 @@ import com.flint.R
 @Composable
 fun ProfileImage(
     imageUrl: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (imageUrl.isNullOrBlank()) {
         Image(
             painter = painterResource(R.drawable.ic_avatar_blue),
             contentDescription = null,
-            modifier = modifier.clip(CircleShape)
+            modifier = modifier.clip(CircleShape),
         )
     } else {
         NetworkImage(
             imageUrl = imageUrl,
             shape = CircleShape,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

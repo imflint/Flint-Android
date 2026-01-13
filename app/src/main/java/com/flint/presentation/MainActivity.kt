@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
             FlintTheme {
                 val navigator = rememberMainNavigator()
                 MainScreen(
-                    navigator = navigator
+                    navigator = navigator,
                 )
             }
         }

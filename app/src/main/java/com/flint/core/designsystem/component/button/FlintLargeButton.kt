@@ -17,7 +17,7 @@ fun FlintLargeButton(
     text: String,
     state: FlintButtonState,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     FlintBasicButton(
         text = text,
@@ -25,9 +25,9 @@ fun FlintLargeButton(
         onClick = onClick,
         contentPadding = PaddingValues(12.dp),
         modifier =
-        modifier
-            .padding(vertical = 0.dp)
-            .defaultMinSize(minHeight = 48.dp)
+            modifier
+                .padding(vertical = 0.dp)
+                .defaultMinSize(minHeight = 48.dp),
     )
 }
 
@@ -37,37 +37,37 @@ private fun FlintLargeButtonPreview() {
     FlintTheme {
         Column(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             FlintLargeButton(
                 text = "시작하기",
                 state = FlintButtonState.Able,
                 onClick = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
 
             FlintLargeButton(
                 text = "시작하기",
                 state = FlintButtonState.Disable,
                 onClick = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
 
             FlintLargeButton(
                 text = "시작하기",
                 state = FlintButtonState.ColorOutline,
                 onClick = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
 
             FlintLargeButton(
                 text = "시작하기",
                 state = FlintButtonState.Outline,
                 onClick = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

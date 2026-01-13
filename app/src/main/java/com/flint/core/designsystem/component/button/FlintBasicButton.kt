@@ -38,7 +38,7 @@ fun FlintBasicButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
-    @DrawableRes leadingIconRes: Int? = null
+    @DrawableRes leadingIconRes: Int? = null,
 ) {
     val enabled: Boolean = state.enabled
     val background: Brush = state.background
@@ -48,31 +48,30 @@ fun FlintBasicButton(
 
     Row(
         modifier =
-        modifier
-            .run {
-                if (border != null) {
-                    border(border = border, shape = shape)
-                } else {
-                    this
-                }
-            }
-            .clip(shape)
-            .background(background)
-            .clickable(enabled = enabled, onClick = onClick)
-            .padding(contentPadding),
+            modifier
+                .run {
+                    if (border != null) {
+                        border(border = border, shape = shape)
+                    } else {
+                        this
+                    }
+                }.clip(shape)
+                .background(background)
+                .clickable(enabled = enabled, onClick = onClick)
+                .padding(contentPadding),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (leadingIconRes != null) {
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterEnd
+                contentAlignment = Alignment.CenterEnd,
             ) {
                 Icon(
                     painter = painterResource(leadingIconRes),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = contentColor
+                    tint = contentColor,
                 )
             }
 
@@ -80,19 +79,19 @@ fun FlintBasicButton(
 
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterStart
+                contentAlignment = Alignment.CenterStart,
             ) {
                 Text(
                     text = text,
                     color = contentColor,
-                    style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16
+                    style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
                 )
             }
         } else {
             Text(
                 text = text,
                 color = contentColor,
-                style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16
+                style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
             )
         }
     }
@@ -104,10 +103,10 @@ private fun FlintBasicButtonPreview() {
     FlintTheme {
         Column(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             FlintBasicButton(
                 text = "시작하기",
@@ -115,10 +114,10 @@ private fun FlintBasicButtonPreview() {
                 onClick = {},
                 contentPadding = PaddingValues(12.dp),
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 0.dp)
-                    .defaultMinSize(minHeight = 48.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             FlintBasicButton(
@@ -127,10 +126,10 @@ private fun FlintBasicButtonPreview() {
                 onClick = {},
                 contentPadding = PaddingValues(12.dp),
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 0.dp)
-                    .defaultMinSize(minHeight = 48.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             FlintBasicButton(
@@ -139,10 +138,10 @@ private fun FlintBasicButtonPreview() {
                 onClick = {},
                 contentPadding = PaddingValues(12.dp),
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 0.dp)
-                    .defaultMinSize(minHeight = 48.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             FlintBasicButton(
@@ -151,10 +150,10 @@ private fun FlintBasicButtonPreview() {
                 onClick = {},
                 contentPadding = PaddingValues(12.dp),
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 0.dp)
-                    .defaultMinSize(minHeight = 48.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 0.dp)
+                        .defaultMinSize(minHeight = 48.dp),
             )
 
             Row {
@@ -164,10 +163,10 @@ private fun FlintBasicButtonPreview() {
                     onClick = {},
                     contentPadding = PaddingValues(10.dp),
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(vertical = 2.dp)
-                        .defaultMinSize(minHeight = 44.dp)
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -178,10 +177,10 @@ private fun FlintBasicButtonPreview() {
                     onClick = {},
                     contentPadding = PaddingValues(10.dp),
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(vertical = 2.dp)
-                        .defaultMinSize(minHeight = 44.dp)
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
             }
 
@@ -192,10 +191,10 @@ private fun FlintBasicButtonPreview() {
                     onClick = {},
                     contentPadding = PaddingValues(10.dp),
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(vertical = 2.dp)
-                        .defaultMinSize(minHeight = 44.dp)
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -206,10 +205,10 @@ private fun FlintBasicButtonPreview() {
                     onClick = {},
                     contentPadding = PaddingValues(10.dp),
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(vertical = 2.dp)
-                        .defaultMinSize(minHeight = 44.dp)
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
             }
 
@@ -221,10 +220,10 @@ private fun FlintBasicButtonPreview() {
                     contentPadding = PaddingValues(10.dp),
                     leadingIconRes = R.drawable.ic_share,
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(vertical = 2.dp)
-                        .defaultMinSize(minHeight = 44.dp)
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -236,10 +235,10 @@ private fun FlintBasicButtonPreview() {
                     contentPadding = PaddingValues(10.dp),
                     leadingIconRes = R.drawable.ic_share,
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(vertical = 2.dp)
-                        .defaultMinSize(minHeight = 44.dp)
+                        Modifier
+                            .weight(1f)
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
             }
 
@@ -251,10 +250,10 @@ private fun FlintBasicButtonPreview() {
                     contentPadding = PaddingValues(10.dp),
                     leadingIconRes = R.drawable.ic_share,
                     modifier =
-                    Modifier
-                        .weight(0.5f)
-                        .padding(vertical = 2.dp)
-                        .defaultMinSize(minHeight = 44.dp)
+                        Modifier
+                            .weight(0.5f)
+                            .padding(vertical = 2.dp)
+                            .defaultMinSize(minHeight = 44.dp),
                 )
 
                 Spacer(Modifier.width(16.dp))
