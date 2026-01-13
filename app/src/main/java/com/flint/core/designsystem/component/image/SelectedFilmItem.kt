@@ -21,7 +21,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun SelectedFilmItem(
     imageUrl: String,
-    onClickRemove: () -> Unit,
+    onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -43,7 +43,7 @@ fun SelectedFilmItem(
             Modifier
                 .align(Alignment.TopEnd)
                 .size(24.dp)
-                .clickable { onClickRemove() }
+                .clickable { onRemoveClick() }
         )
     }
 }
@@ -58,7 +58,7 @@ fun SelectedFilmItemPreview() {
         ) {
             SelectedFilmItem(
                 imageUrl = "",
-                onClickRemove = {}
+                onRemoveClick = {}
             )
         }
     }
