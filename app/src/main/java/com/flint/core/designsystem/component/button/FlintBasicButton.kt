@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,7 +55,8 @@ fun FlintBasicButton(
                 } else {
                     this
                 }
-            }.clip(shape)
+            }
+            .clip(shape)
             .background(background)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(contentPadding),
@@ -62,21 +64,37 @@ fun FlintBasicButton(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (leadingIconRes != null) {
-            Icon(
-                painter = painterResource(leadingIconRes),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = contentColor
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(
+                    painter = painterResource(leadingIconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = contentColor
+                )
+            }
+
+            Spacer(Modifier.width(4.dp))
+
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = text,
+                    color = contentColor,
+                    style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16
+                )
+            }
+        } else {
+            Text(
+                text = text,
+                color = contentColor,
+                style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16
             )
-
-            if (text.isNotEmpty()) Spacer(Modifier.width(8.dp))
         }
-
-        Text(
-            text = text,
-            color = contentColor,
-            style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16
-        )
     }
 }
 
