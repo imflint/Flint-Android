@@ -51,6 +51,7 @@ fun MenuBottomSheet(
                             .height(60.dp)
                             .noRippleClickable {
                                 item.clickAction()
+                                onDismiss()
                             },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
