@@ -2,9 +2,12 @@ package com.flint.presentation.collectioncreate.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
@@ -113,9 +117,18 @@ private fun CollectionCreateFillThumbnail(
 @Composable
 fun CollectionCreateEmptyThumbnailPreview() {
     FlintTheme {
-        CollectionCreateThumbnail(
-            imageUrl = "https://buly.kr/DEaVFRZ",
-            onClick = {},
-        )
+        Column {
+            CollectionCreateThumbnail(
+                imageUrl = "https://buly.kr/DEaVFRZ",
+                onClick = {},
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            CollectionCreateThumbnail(
+                imageUrl = null,
+                onClick = {},
+            )
+        }
     }
 }
