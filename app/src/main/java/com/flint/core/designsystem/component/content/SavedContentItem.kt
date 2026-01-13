@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.ContentModel
-import com.flint.domain.model.OttModel
 import com.flint.domain.type.OttType
 
 @Composable
@@ -25,10 +24,6 @@ fun SavedContentItem(
     contentModel: ContentModel,
     modifier: Modifier = Modifier
 ) {
-    val ottList = contentModel.ottSimpleList.mapNotNull {
-        OttType.entries.find { type -> type.name == it.ottName }
-    }
-
     Column(
         modifier = modifier
             .width(120.dp)
@@ -45,7 +40,7 @@ fun SavedContentItem(
             )
 
             OttHorizontalList(
-                ottList = ottList,
+                ottList = contentModel.ottSimpleList,
                 modifier = Modifier
                     .padding(top = 10.dp, start = 8.dp)
             )
@@ -79,31 +74,12 @@ private fun PreviewSavedContentItem() {
             year = 2000,
             posterImage = "",
             ottSimpleList = listOf(
-                OttModel(
-                    ottId = 0,
-                    ottName = "Netflix",
-                    logoUrl = ""
-                ),
-                OttModel(
-                    ottId = 0,
-                    ottName = "Tving",
-                    logoUrl = ""
-                ),
-                OttModel(
-                    ottId = 0,
-                    ottName = "Wave",
-                    logoUrl = ""
-                ),
-                OttModel(
-                    ottId = 0,
-                    ottName = "Coupang",
-                    logoUrl = ""
-                ),
-                OttModel(
-                    ottId = 0,
-                    ottName = "Disney",
-                    logoUrl = ""
-                )
+                OttType.Netflix,
+                OttType.Disney,
+                OttType.Tving,
+                OttType.Coupang,
+                OttType.Wave,
+                OttType.Watcha
             )
         )
 

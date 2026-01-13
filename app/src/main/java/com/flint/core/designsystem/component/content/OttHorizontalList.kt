@@ -20,6 +20,8 @@ import com.flint.core.common.extension.dropShadow
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.type.OttType
 
+private const val maxOttShowingCount = 2
+
 @Composable
 fun OttHorizontalList(
     ottList: List<OttType>,
@@ -35,8 +37,8 @@ fun OttHorizontalList(
         null
     }
 
-    val etcOttText = if (ottList.size > 2) {
-        "+${ottList.size - 2}"
+    val etcOttText = if (ottList.size > maxOttShowingCount) {
+        "+${ottList.size - maxOttShowingCount}"
     } else {
         "0"
     }
