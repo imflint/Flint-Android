@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.flint.R
+import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintColors
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -54,9 +55,9 @@ fun OnboardingFilmItem(
                 .clickable { onClick() }
         ) {
             // 영화 포스터 이미지
-            Image(
-                painter = rememberAsyncImagePainter(imageUrl),
-                contentDescription = title,
+            NetworkImage(
+                imageUrl = imageUrl,
+                contentDescription = title ,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
