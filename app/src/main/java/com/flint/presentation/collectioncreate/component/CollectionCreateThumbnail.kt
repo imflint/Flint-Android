@@ -53,7 +53,7 @@ private fun CollectionCreateEmptyThumbnail(
                 .fillMaxWidth()
                 .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) { 
+    ) {
         Image(
             modifier =
                 Modifier
@@ -64,9 +64,6 @@ private fun CollectionCreateEmptyThumbnail(
         )
 
         Icon(
-            modifier =
-                Modifier
-                    .align(Alignment.Center),
             painter = painterResource(R.drawable.ic_background_photo),
             contentDescription = null,
             tint = Color.Unspecified,
@@ -90,9 +87,7 @@ private fun CollectionCreateFillThumbnail(
     ) {
         NetworkImage(
             imageUrl = imageUrl,
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Box(
@@ -103,9 +98,6 @@ private fun CollectionCreateFillThumbnail(
         )
 
         Icon(
-            modifier =
-                Modifier
-                    .align(Alignment.Center),
             painter = painterResource(R.drawable.ic_background_photo),
             contentDescription = null,
             tint = Color.Unspecified,
