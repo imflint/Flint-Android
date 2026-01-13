@@ -43,7 +43,7 @@ import com.flint.domain.type.UserRoleType
 @Composable
 fun PeopleBottomSheet(
     people: List<AuthorModel>,
-    onAuthorClick: (AuthorModel) -> Unit,
+    onAuthorClick: (userId: Long) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -107,14 +107,14 @@ fun PeopleBottomSheet(
 @Composable
 private fun Author(
     author: AuthorModel,
-    onClick: (AuthorModel) -> Unit,
+    onClick: (userId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
             modifier
                 .defaultMinSize(minHeight = 48.dp)
-                .clickable(onClick = { onClick(author) }),
+                .clickable(onClick = { onClick(author.userId) }),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ProfileImage(
