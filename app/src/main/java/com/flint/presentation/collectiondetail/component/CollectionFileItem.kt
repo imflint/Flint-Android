@@ -161,7 +161,7 @@ private fun CollectionFileContent(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth()
@@ -176,7 +176,7 @@ private fun CollectionFileContent(
                     style = FlintTheme.typography.caption1M12,
                     color = FlintTheme.colors.gray50,
                     maxLines = 1,
-                    overflow = TextOverflow.Clip // TODO: 디자인 논의 후 수정 예정
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -232,7 +232,7 @@ private fun CollectionFileItemPreview() {
                     collectionImageUrl2 = "",
                     author = AuthorModel(
                         userId = 1,
-                        nickname = "닉네임은최대열글자요",
+                        nickname = "닉네임은여덟글자",
                         profileUrl = "",
                         userRole = UserRoleType.FLINER
                     ),
