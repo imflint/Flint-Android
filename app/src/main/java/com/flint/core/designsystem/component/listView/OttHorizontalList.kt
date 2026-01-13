@@ -20,87 +20,90 @@ import com.flint.core.common.extension.dropShadow
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.type.OttType
 
-private const val maxOttShowingCount = 2
+private const val MaxOttShowingCount = 2
 
 @Composable
 fun OttHorizontalList(
     ottList: List<OttType>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (ottList.isEmpty()) return
 
     val firstOttIcon = ottList[0].iconRes
 
-    val secondOttIcon = if (ottList.size > 1) {
-        ottList[1].iconRes
-    } else {
-        null
-    }
+    val secondOttIcon =
+        if (ottList.size > 1) {
+            ottList[1].iconRes
+        } else {
+            null
+        }
 
-    val etcOttText = if (ottList.size > maxOttShowingCount) {
-        "+${ottList.size - maxOttShowingCount}"
-    } else {
-        "0"
-    }
+    val etcOttText =
+        if (ottList.size > MaxOttShowingCount) {
+            "+${ottList.size - MaxOttShowingCount}"
+        } else {
+            "0"
+        }
 
     Row(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Image(
             painter = rememberAsyncImagePainter(firstOttIcon),
             contentDescription = null,
-            modifier = Modifier
-                .size(28.dp)
-                .dropShadow(
-                    shape = CircleShape,
-                    color = Color(0xFF000000).copy(alpha = 0.35f),
-                    offsetX = (-4).dp,
-                    offsetY = 0.dp,
-                    blur = 6.dp,
-                    spread = 0.dp
-                )
+            modifier =
+                Modifier
+                    .size(28.dp)
+                    .dropShadow(
+                        shape = CircleShape,
+                        color = Color(0xFF000000).copy(alpha = 0.35f),
+                        offsetX = (-4).dp,
+                        offsetY = 0.dp,
+                        blur = 6.dp,
+                        spread = 0.dp,
+                    ),
         )
 
         if (secondOttIcon != null) {
             Image(
                 painter = rememberAsyncImagePainter(secondOttIcon),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(28.dp)
-                    .offset(x = (-8).dp)
-                    .dropShadow(
-                        shape = CircleShape,
-                        color = Color(0xFF000000).copy(alpha = 0.35f),
-                        offsetX = (-4).dp,
-                        offsetY = 0.dp,
-                        blur = 6.dp,
-                        spread = 0.dp
-                    )
+                modifier =
+                    Modifier
+                        .size(28.dp)
+                        .offset(x = (-8).dp)
+                        .dropShadow(
+                            shape = CircleShape,
+                            color = Color(0xFF000000).copy(alpha = 0.35f),
+                            offsetX = (-4).dp,
+                            offsetY = 0.dp,
+                            blur = 6.dp,
+                            spread = 0.dp,
+                        ),
             )
         }
 
         if (etcOttText != "0") {
             Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .offset(x = (-16).dp)
-                    .dropShadow(
-                        shape = CircleShape,
-                        color = Color(0xFF000000).copy(alpha = 0.35f),
-                        offsetX = (-4).dp,
-                        offsetY = 0.dp,
-                        blur = 6.dp,
-                        spread = 0.dp
-                    )
-                    .clip(CircleShape)
-                    .background(FlintTheme.colors.gray500),
-
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(28.dp)
+                        .offset(x = (-16).dp)
+                        .dropShadow(
+                            shape = CircleShape,
+                            color = Color(0xFF000000).copy(alpha = 0.35f),
+                            offsetX = (-4).dp,
+                            offsetY = 0.dp,
+                            blur = 6.dp,
+                            spread = 0.dp,
+                        ).clip(CircleShape)
+                        .background(FlintTheme.colors.gray500),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = etcOttText,
                     color = FlintTheme.colors.white,
-                    style = FlintTheme.typography.body2M14
+                    style = FlintTheme.typography.body2M14,
                 )
             }
         }
@@ -111,16 +114,17 @@ fun OttHorizontalList(
 @Composable
 private fun PreviewOttHorizontalList() {
     FlintTheme {
-        val ottList = listOf(
-            OttType.Netflix,
-            OttType.Disney,
-            OttType.Tving,
-            OttType.Coupang,
-            OttType.Wave
-        )
+        val ottList =
+            listOf(
+                OttType.Netflix,
+                OttType.Disney,
+                OttType.Tving,
+                OttType.Coupang,
+                OttType.Wave,
+            )
 
         OttHorizontalList(
-            ottList = ottList
+            ottList = ottList,
         )
     }
 }

@@ -18,9 +18,8 @@ package com.flint.core.common.extension
 import timber.log.Timber
 import kotlin.onFailure
 
-suspend inline fun <T> Result<T>.onLogFailure(
-    crossinline action: suspend (exception: Throwable) -> Unit
-): Result<T> = onFailure { e ->
-    Timber.e(e)
-    action(e)
-}
+suspend inline fun <T> Result<T>.onLogFailure(crossinline action: suspend (exception: Throwable) -> Unit): Result<T> =
+    onFailure { e ->
+        Timber.e(e)
+        action(e)
+    }

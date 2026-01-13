@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.component.image.NetworkImage
+import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.ContentModel
 import com.flint.domain.type.OttType
@@ -23,27 +23,30 @@ import com.flint.domain.type.OttType
 @Composable
 fun SavedContentItem(
     contentModel: ContentModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .width(120.dp)
+        modifier =
+            modifier
+                .width(120.dp),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(180.dp),
         ) {
             NetworkImage(
                 imageUrl = contentModel.posterImage,
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
 
             OttHorizontalList(
                 ottList = contentModel.ottSimpleList,
-                modifier = Modifier
-                    .padding(top = 10.dp, start = 8.dp)
+                modifier =
+                    Modifier
+                        .padding(top = 10.dp, start = 8.dp),
             )
         }
 
@@ -52,7 +55,7 @@ fun SavedContentItem(
         Text(
             text = contentModel.title,
             color = FlintTheme.colors.white,
-            style = FlintTheme.typography.body1M16
+            style = FlintTheme.typography.body1M16,
         )
 
         Spacer(Modifier.height(4.dp))
@@ -60,7 +63,7 @@ fun SavedContentItem(
         Text(
             text = "${contentModel.year}년도",
             color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.caption1R12
+            style = FlintTheme.typography.caption1R12,
         )
     }
 }
@@ -69,23 +72,25 @@ fun SavedContentItem(
 @Composable
 private fun PreviewSavedContentItem() {
     FlintTheme {
-        val contentModel = ContentModel(
-            contentId = 0,
-            title = "드라마 제목",
-            year = 2000,
-            posterImage = "",
-            ottSimpleList = listOf(
-                OttType.Netflix,
-                OttType.Disney,
-                OttType.Tving,
-                OttType.Coupang,
-                OttType.Wave,
-                OttType.Watcha
+        val contentModel =
+            ContentModel(
+                contentId = 0,
+                title = "드라마 제목",
+                year = 2000,
+                posterImage = "",
+                ottSimpleList =
+                    listOf(
+                        OttType.Netflix,
+                        OttType.Disney,
+                        OttType.Tving,
+                        OttType.Coupang,
+                        OttType.Wave,
+                        OttType.Watcha,
+                    ),
             )
-        )
 
         SavedContentItem(
-            contentModel = contentModel
+            contentModel = contentModel,
         )
     }
 }

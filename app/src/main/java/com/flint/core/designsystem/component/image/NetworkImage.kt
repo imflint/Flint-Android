@@ -25,14 +25,14 @@ fun NetworkImage(
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
     contentScale: ContentScale = ContentScale.Crop,
-    contentDescription: String? = null
+    contentDescription: String? = null,
 ) {
     if (LocalInspectionMode.current) { // 프리뷰 확인용
         Image(
             painter = painterResource(R.drawable.img_dummy_poster),
             contentDescription = contentDescription,
             contentScale = contentScale,
-            modifier = modifier.clip(shape)
+            modifier = modifier.clip(shape),
         )
     } else {
         AsyncImage(
@@ -40,7 +40,7 @@ fun NetworkImage(
             contentDescription = contentDescription,
             contentScale = contentScale,
             error = ColorPainter(FlintTheme.colors.gray200),
-            modifier = modifier.clip(shape)
+            modifier = modifier.clip(shape),
         )
     }
 }
@@ -52,12 +52,12 @@ private fun NetworkImagePreview() {
         Row {
             NetworkImage(
                 imageUrl = "",
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(50.dp),
             )
             NetworkImage(
                 imageUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
                 shape = CircleShape,
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(50.dp),
             )
         }
     }

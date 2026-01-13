@@ -23,17 +23,18 @@ fun CollectionCreateFilmSection(
     title: String,
     director: String,
     createdYear: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.background(color = FlintTheme.colors.background),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         CollectionCreateFilmSectionImage(
             imageUrl = imageUrl,
-            modifier = Modifier
-                .height(150.dp)
-                .width(100.dp)
+            modifier =
+                Modifier
+                    .height(150.dp)
+                    .width(100.dp),
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -41,7 +42,7 @@ fun CollectionCreateFilmSection(
         CollectionCreateInfoSection(
             title = title,
             director = director,
-            createdYear = createdYear
+            createdYear = createdYear,
         )
     }
 }
@@ -51,12 +52,12 @@ private fun CollectionCreateInfoSection(
     title: String,
     director: String,
     createdYear: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-        modifier
-            .fillMaxWidth()
+            modifier
+                .fillMaxWidth(),
     ) {
         Text(
             text = title,
@@ -64,7 +65,7 @@ private fun CollectionCreateInfoSection(
             color = FlintTheme.colors.white,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,
-            style = FlintTheme.typography.head3M18
+            style = FlintTheme.typography.head3M18,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -73,14 +74,14 @@ private fun CollectionCreateInfoSection(
             text = director,
             modifier = Modifier.fillMaxWidth(),
             color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.body1R16
+            style = FlintTheme.typography.body1R16,
         )
 
         Text(
             text = createdYear,
             modifier = Modifier.fillMaxWidth(),
             color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.body1R16
+            style = FlintTheme.typography.body1R16,
         )
     }
 }
@@ -88,11 +89,11 @@ private fun CollectionCreateInfoSection(
 @Composable
 private fun CollectionCreateFilmSectionImage(
     imageUrl: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     NetworkImage(
         imageUrl = imageUrl,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -104,7 +105,7 @@ private fun CollectionCreateFilmSectionPreview() {
             imageUrl = "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5352%2F2024%2F12%2F20%2F20241220114927_2117531_1200_1800_20241220155206956.jpg&type=sc960_832",
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
-            createdYear = "2005"
+            createdYear = "2005",
         )
     }
 }

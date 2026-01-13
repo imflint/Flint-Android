@@ -39,39 +39,39 @@ internal fun MainBottomBar(
     visible: Boolean,
     tabs: ImmutableList<MainTab>,
     currentTab: MainTab?,
-    onTabSelected: (MainTab) -> Unit
+    onTabSelected: (MainTab) -> Unit,
 ) {
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn() + slideIn { IntOffset(0, it.height) },
-        exit = fadeOut() + slideOut { IntOffset(0, it.height) }
+        exit = fadeOut() + slideOut { IntOffset(0, it.height) },
     ) {
         Box(
             modifier =
-            Modifier
-                .navigationBarsPadding()
-                .fillMaxWidth()
-                .background(FlintTheme.colors.background)
+                Modifier
+                    .navigationBarsPadding()
+                    .fillMaxWidth()
+                    .background(FlintTheme.colors.background),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier =
-                Modifier
-                    .height(64.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                    .background(FlintTheme.colors.gray800)
-                    .padding(
-                        vertical = 4.dp,
-                        horizontal = 39.dp
-                    )
+                    Modifier
+                        .height(64.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                        .background(FlintTheme.colors.gray800)
+                        .padding(
+                            vertical = 4.dp,
+                            horizontal = 39.dp,
+                        ),
             ) {
                 tabs.forEach { tab ->
                     key(tab.route) {
                         MainBottomBarItem(
                             tab = tab,
                             selected = (tab == currentTab),
-                            onClick = { onTabSelected(tab) }
+                            onClick = { onTabSelected(tab) },
                         )
                     }
                 }
@@ -84,26 +84,26 @@ internal fun MainBottomBar(
 private fun RowScope.MainBottomBarItem(
     tab: MainTab,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier =
-        Modifier
-            .noRippleClickable(onClick = onClick)
-            .weight(1f)
-            .padding(vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            Modifier
+                .noRippleClickable(onClick = onClick)
+                .weight(1f)
+                .padding(vertical = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(tab.iconResId),
             modifier = Modifier.size(height = 24.dp, width = 38.dp),
             contentDescription = tab.label,
-            tint = if (selected) FlintTheme.colors.gray100 else FlintTheme.colors.gray500
+            tint = if (selected) FlintTheme.colors.gray100 else FlintTheme.colors.gray500,
         )
         Text(
             text = tab.label,
             color = if (selected) FlintTheme.colors.gray100 else FlintTheme.colors.gray500,
-            style = FlintTheme.typography.micro1M10
+            style = FlintTheme.typography.micro1M10,
         )
     }
 }
@@ -118,7 +118,7 @@ private fun MainBottomBarPreview() {
                     visible = true,
                     tabs = MainTab.entries.toImmutableList(),
                     currentTab = MainTab.HOME,
-                    onTabSelected = {}
+                    onTabSelected = {},
                 )
             }
         }

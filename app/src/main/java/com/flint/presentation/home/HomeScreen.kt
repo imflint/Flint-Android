@@ -14,7 +14,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun HomeRoute(paddingValues: PaddingValues) {
     HomeScreen(
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
     )
 }
 
@@ -22,14 +22,14 @@ fun HomeRoute(paddingValues: PaddingValues) {
 private fun HomeScreen(modifier: Modifier = Modifier) {
     Box(
         modifier =
-        modifier
-            .background(FlintTheme.colors.background)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+            modifier
+                .background(FlintTheme.colors.background)
+                .fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "HomeScreen",
-            color = FlintTheme.colors.white
+            color = FlintTheme.colors.white,
         )
     }
 }
