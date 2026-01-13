@@ -1,4 +1,4 @@
-package com.flint.core.designsystem.component.content
+package com.flint.core.designsystem.component.listItem
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.ContentModel

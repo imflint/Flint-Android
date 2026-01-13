@@ -1,4 +1,4 @@
-package com.flint.core.designsystem.component.content
+package com.flint.core.designsystem.component.listView
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
