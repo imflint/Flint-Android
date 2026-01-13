@@ -18,6 +18,15 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
+/**
+ * Displays a circular film thumbnail with a dismiss icon anchored at the top-right.
+ *
+ * The thumbnail loads the image from [imageUrl]; tapping the dismiss icon calls [onClickRemove].
+ *
+ * @param imageUrl URL or resource identifier for the image to display inside the circular frame.
+ * @param onClickRemove Callback invoked when the remove/deselect icon is clicked.
+ * @param modifier Modifier applied to the component's container Box.
+ */
 @Composable
 fun SelectedFilmItem(
     imageUrl: String,
@@ -48,6 +57,11 @@ fun SelectedFilmItem(
     }
 }
 
+/**
+ * Preview composable that displays SelectedFilmItem inside the FlintTheme.
+ *
+ * Renders the item with an empty image URL and a no-op removal callback for design-time preview.
+ */
 @Preview(showBackground = true)
 @Composable
 fun SelectedFilmItemPreview() {

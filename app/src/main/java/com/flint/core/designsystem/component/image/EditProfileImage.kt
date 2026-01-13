@@ -19,6 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
+/**
+ * Displays a circular profile image with a bottom-right edit (camera) icon overlay.
+ *
+ * Tapping the icon invokes the provided edit callback.
+ *
+ * @param imageUrl URL of the profile image to display; may be empty to show a placeholder.
+ * @param onClickEdit Lambda invoked when the edit icon is pressed.
+ * @param modifier Optional [Modifier] applied to the outer container.
+ */
 @Composable
 fun EditProfileImage(
     imageUrl: String,
@@ -50,6 +59,12 @@ fun EditProfileImage(
     }
 }
 
+/**
+ * Displays an IDE preview of the EditProfileImage composable wrapped in FlintTheme.
+ *
+ * Renders the component inside a Box using the theme background, with an empty `imageUrl`
+ * and a no-op `onClickEdit` handler for preview purposes.
+ */
 @Preview(showBackground = true)
 @Composable
 fun EditProfileImagePreview() {
