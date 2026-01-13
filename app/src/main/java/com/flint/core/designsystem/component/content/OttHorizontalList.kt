@@ -84,8 +84,6 @@ fun OttHorizontalList(
                 modifier = Modifier
                     .size(28.dp)
                     .offset(x = (-16).dp)
-                    .clip(CircleShape)
-                    .background(FlintTheme.colors.gray500)
                     .dropShadow(
                         shape = CircleShape,
                         color = Color(0xFF000000).copy(alpha = 0.35f),
@@ -93,7 +91,10 @@ fun OttHorizontalList(
                         offsetY = 0.dp,
                         blur = 6.dp,
                         spread = 0.dp
-                    ),
+                    )
+                    .clip(CircleShape)
+                    .background(FlintTheme.colors.gray500),
+
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -106,7 +107,7 @@ fun OttHorizontalList(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PreviewOttHorizontalList() {
     FlintTheme {
