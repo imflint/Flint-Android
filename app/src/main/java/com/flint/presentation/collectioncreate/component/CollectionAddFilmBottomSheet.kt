@@ -12,7 +12,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun CollectionAddFilmBottomSheet(
     onGalleryClick: () -> Unit,
-    onCoverdeleteClick: () -> Unit,
+    onCoverDeleteClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val menuBottomSheetDataList = listOf(
@@ -23,7 +23,7 @@ fun CollectionAddFilmBottomSheet(
         MenuBottomSheetData(
             label = "커버 사진 삭제",
             color = FlintTheme.colors.error500,
-            clickAction = onCoverdeleteClick
+            clickAction = onCoverDeleteClick
         )
     )
 
@@ -43,7 +43,7 @@ private fun CollectionAddFilmBottomSheetPreview() {
     FlintTheme {
         CollectionAddFilmBottomSheet(
             onGalleryClick = {},
-            onCoverdeleteClick = {},
+            onCoverDeleteClick = {},
             onDismiss = {}
         )
     }

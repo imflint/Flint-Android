@@ -12,12 +12,12 @@ fun CollectionCreateFilmDeleteModal(
     onDismiss: () -> Unit
 ) {
     TwoButtonModal(
+        title = "작품을 삭제할까요?",
         message = "작성한 내용이 모두 삭제돼요.",
         cancelText = "취소",
         confirmText = "삭제",
         onConfirm = onConfirm,
         onDismiss = onDismiss,
-        title = "작품을 삭제할까요?",
         icon = R.drawable.ic_gradient_trash,
         isDestructive = true
     )
