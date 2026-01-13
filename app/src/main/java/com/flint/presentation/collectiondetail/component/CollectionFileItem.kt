@@ -106,8 +106,8 @@ private fun CollectionFileContent(
         CollectionPocketItem(
             imageUrl = poster2Url,
             modifier = Modifier.dropShadow(
-                shape = CircleShape,
-                color = Color(0xFF000000).copy(alpha = 0.30f),
+                shape = RoundedCornerShape(12.dp),
+                color = Color(0xFF000000).copy(alpha = 0.35f),
                 offsetX = (-4).dp,
                 offsetY = 0.dp,
                 blur = 10.dp,
