@@ -107,7 +107,7 @@ private fun CollectionCreateFillThumbnail(
 
 @Preview
 @Composable
-fun CollectionCreateEmptyThumbnailPreview() {
+fun CollectionCreateThumbnailPreview() {
     FlintTheme {
         Column {
             CollectionCreateThumbnail(
