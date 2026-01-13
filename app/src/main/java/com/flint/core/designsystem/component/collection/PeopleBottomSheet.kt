@@ -188,20 +188,20 @@ private val sampleAuthors: List<AuthorModel> =
     listOf(
         AuthorModel(
             userId = 0,
-            nickname = "사용자 이름",
+            nickname = "관리자",
+            profileUrl = "",
+            userRole = UserRoleType.ADMIN,
+        ),
+        AuthorModel(
+            userId = 0,
+            nickname = "플리너",
             profileUrl = "",
             userRole = UserRoleType.FLINER,
         ),
         AuthorModel(
             userId = 0,
-            nickname = "사용자 이름",
+            nickname = "플링",
             profileUrl = "",
-            userRole = UserRoleType.FLINER,
-        ),
-        AuthorModel(
-            userId = 0,
-            nickname = "사용자 이름",
-            profileUrl = "",
-            userRole = UserRoleType.FLINER,
+            userRole = UserRoleType.FLING,
         ),
     )
