@@ -6,5 +6,5 @@ data class CollectionModel(
     val collectionImageUrl: String,
     val createdAt: String,
     val isBookmarked: Boolean,
-    val author: AuthorModel
+    val author: AuthorModel,
 )

@@ -24,22 +24,22 @@ fun MainScreen(navigator: MainNavigator) {
                 visible = isBottomBarVisible,
                 tabs = MainTab.entries.toImmutableList(),
                 currentTab = currentTab,
-                onTabSelected = navigator::navigate
+                onTabSelected = navigator::navigate,
             )
-        }
+        },
     ) { paddingValues ->
         NavHost(
             navController = navigator.navController,
-            startDestination = navigator.startDestination
+            startDestination = navigator.startDestination,
         ) {
             homeNavGraph(
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
             )
             exploreNavGraph(
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
             )
             profileNavGraph(
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
             )
         }
     }

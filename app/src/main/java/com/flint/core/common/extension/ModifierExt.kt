@@ -21,15 +21,16 @@ import androidx.compose.ui.unit.dp
 @Composable
 inline fun Modifier.noRippleClickable(
     enabled: Boolean = true,
-    crossinline onClick: () -> Unit
-): Modifier = composed {
-    this.clickable(
-        indication = null,
-        interactionSource = remember { MutableInteractionSource() },
-        onClick = { onClick() },
-        enabled = enabled
-    )
-}
+    crossinline onClick: () -> Unit,
+): Modifier =
+    composed {
+        this.clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+            onClick = { onClick() },
+            enabled = enabled,
+        )
+    }
 
 @Composable
 fun Modifier.dropShadow(
@@ -38,20 +39,21 @@ fun Modifier.dropShadow(
     blur: Dp = 1.dp,
     offsetY: Dp = 1.dp,
     offsetX: Dp = 1.dp,
-    spread: Dp = 1.dp
+    spread: Dp = 1.dp,
 ) = composed {
     val density = LocalDensity.current
 
-    val paint = remember(color, blur) {
-        Paint().apply {
-            this.color = color
-            val blurPx = with(density) { blur.toPx() }
-            if (blurPx > 0f) {
-                this.asFrameworkPaint().maskFilter =
-                    BlurMaskFilter(blurPx, BlurMaskFilter.Blur.NORMAL)
+    val paint =
+        remember(color, blur) {
+            Paint().apply {
+                this.color = color
+                val blurPx = with(density) { blur.toPx() }
+                if (blurPx > 0f) {
+                    this.asFrameworkPaint().maskFilter =
+                        BlurMaskFilter(blurPx, BlurMaskFilter.Blur.NORMAL)
+                }
             }
         }
-    }
 
     drawBehind {
         val spreadPx = spread.toPx()

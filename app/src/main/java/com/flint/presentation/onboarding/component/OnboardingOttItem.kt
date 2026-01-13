@@ -33,44 +33,44 @@ fun OnboardingOttItem(
     platformName: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.width(100.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // OTT 로고 영역
         Box(
             modifier =
-            Modifier
-                .size(100.dp)
-                .clickable { onClick() },
-            contentAlignment = Alignment.Center
+                Modifier
+                    .size(100.dp)
+                    .clickable { onClick() },
+            contentAlignment = Alignment.Center,
         ) {
             // OTT 로고 이미지
             NetworkImage(
                 imageUrl = imageUrl,
                 contentDescription = platformName,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
 
             // 선택 시 어두운 오버레이
             if (isSelected) {
                 Box(
                     modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(FlintTheme.colors.overlay)
+                        Modifier
+                            .fillMaxSize()
+                            .background(FlintTheme.colors.overlay),
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_onboarding_film_check),
                     contentDescription = "선택됨",
                     tint = FlintTheme.colors.white,
                     modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .size(40.dp)
+                        Modifier
+                            .align(Alignment.Center)
+                            .size(40.dp),
                 )
             }
         }
@@ -83,7 +83,7 @@ fun OnboardingOttItem(
             style = FlintTheme.typography.body1M16,
             color = if (isSelected) FlintTheme.colors.gray300 else FlintTheme.colors.white,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -94,17 +94,17 @@ private fun OnboardingOttItemPreview() {
     FlintTheme {
         Column(
             modifier =
-            Modifier
-                .background(FlintTheme.colors.background)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                Modifier
+                    .background(FlintTheme.colors.background)
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             // 선택된 상태
             OnboardingOttItem(
                 imageUrl = "",
                 platformName = "넷플릭스",
                 isSelected = true,
-                onClick = {}
+                onClick = {},
             )
 
             // 선택되지 않은 상태
@@ -112,14 +112,14 @@ private fun OnboardingOttItemPreview() {
                 imageUrl = "",
                 platformName = "넷플릭스",
                 isSelected = false,
-                onClick = {}
+                onClick = {},
             )
 
             OnboardingOttItem(
                 imageUrl = "",
                 platformName = "왓챠",
                 isSelected = false,
-                onClick = {}
+                onClick = {},
             )
         }
     }

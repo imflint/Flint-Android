@@ -23,11 +23,11 @@ fun FlintLongTextField(
     maxLength: Int,
     placeholder: String,
     modifier: Modifier = Modifier,
-    height: Dp = 120.dp
+    height: Dp = 120.dp,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.End
+        horizontalAlignment = Alignment.End,
     ) {
         FlintBasicTextField(
             modifier = modifier,
@@ -35,13 +35,13 @@ fun FlintLongTextField(
             value = value,
             onValueChange = onValueChanged,
             maxLines = 5,
-            height = height
+            height = height,
         )
 
         Text(
             text = "${value.length}/$maxLength",
             style = FlintTheme.typography.caption1M12,
-            color = FlintTheme.colors.white
+            color = FlintTheme.colors.white,
         )
     }
 }
@@ -57,7 +57,7 @@ private fun FlintLongTextFieldPreview() {
             value = text,
             placeholder = "컬렉션의 주제를 작성해주세요.",
             onValueChanged = { text = it },
-            maxLength = 200
+            maxLength = 200,
         )
     }
 }

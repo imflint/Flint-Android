@@ -20,7 +20,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 fun FlintBasicToggle(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Switch(
         checked = isChecked,
@@ -28,18 +28,18 @@ fun FlintBasicToggle(
         modifier = modifier.noRippleClickable { onCheckedChange(!isChecked) },
         thumbContent = {
             Box(
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(28.dp),
             )
         },
-        colors = SwitchDefaults.colors(
-            checkedThumbColor = FlintTheme.colors.white,
-            checkedTrackColor = FlintTheme.colors.secondary400,
-            uncheckedThumbColor = FlintTheme.colors.white,
-            uncheckedTrackColor = FlintTheme.colors.gray200,
-
-            checkedBorderColor = Color.Transparent,
-            uncheckedBorderColor = Color.Transparent
-        )
+        colors =
+            SwitchDefaults.colors(
+                checkedThumbColor = FlintTheme.colors.white,
+                checkedTrackColor = FlintTheme.colors.secondary400,
+                uncheckedThumbColor = FlintTheme.colors.white,
+                uncheckedTrackColor = FlintTheme.colors.gray200,
+                checkedBorderColor = Color.Transparent,
+                uncheckedBorderColor = Color.Transparent,
+            ),
     )
 }
 
@@ -51,7 +51,7 @@ private fun FlintBasicTogglePreview() {
 
         FlintBasicToggle(
             isChecked = checked,
-            onCheckedChange = { checked = it }
+            onCheckedChange = { checked = it },
         )
     }
 }

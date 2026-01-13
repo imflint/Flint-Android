@@ -23,7 +23,7 @@ fun FlintBackTopAppbar(
     title: String = "",
     closeable: Boolean = false,
     actionText: String = "",
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     FlintBasicTopAppbar(
         modifier = modifier,
@@ -33,7 +33,7 @@ fun FlintBackTopAppbar(
                 modifier = Modifier.noRippleClickable(onClick = onClick),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_back),
                 contentDescription = null,
-                tint = FlintTheme.colors.white
+                tint = FlintTheme.colors.white,
             )
         },
         title = title,
@@ -43,16 +43,16 @@ fun FlintBackTopAppbar(
                     modifier = Modifier,
                     imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
                     contentDescription = null,
-                    tint = FlintTheme.colors.white
+                    tint = FlintTheme.colors.white,
                 )
             } else {
                 Text(
                     text = actionText,
                     color = textColor,
-                    style = FlintTheme.typography.body1M16
+                    style = FlintTheme.typography.body1M16,
                 )
             }
-        }
+        },
     )
 }
 
@@ -62,25 +62,25 @@ private fun FlintBackTopAppbarPreview() {
     FlintTheme {
         Column {
             FlintBackTopAppbar(
-                onClick = {}
-            )
-
-            FlintBackTopAppbar(
                 onClick = {},
-                title = "전체 컬렉션"
             )
 
             FlintBackTopAppbar(
                 onClick = {},
                 title = "전체 컬렉션",
-                closeable = true
+            )
+
+            FlintBackTopAppbar(
+                onClick = {},
+                title = "전체 컬렉션",
+                closeable = true,
             )
 
             FlintBackTopAppbar(
                 onClick = {},
                 title = "전체 컬렉션",
                 actionText = "뒤로가기",
-                textColor = FlintTheme.colors.error700
+                textColor = FlintTheme.colors.error700,
             )
         }
     }

@@ -7,5 +7,5 @@ data class ContentModel(
     val title: String,
     val year: Int,
     val posterImage: String,
-    val ottSimpleList: List<OttType>
+    val ottSimpleList: List<OttType>,
 )

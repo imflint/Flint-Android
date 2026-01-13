@@ -20,7 +20,7 @@ fun FlintMediumButton(
     text: String,
     state: FlintButtonState,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     FlintBasicButton(
         text = text,
@@ -28,9 +28,9 @@ fun FlintMediumButton(
         onClick = onClick,
         contentPadding = PaddingValues(10.dp),
         modifier =
-        modifier
-            .padding(vertical = 2.dp)
-            .defaultMinSize(minHeight = 44.dp)
+            modifier
+                .padding(vertical = 2.dp)
+                .defaultMinSize(minHeight = 44.dp),
     )
 }
 
@@ -40,17 +40,17 @@ private fun FlintMediumButtonPreview() {
     FlintTheme {
         Column(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Row {
                 FlintMediumButton(
                     text = "시작하기",
                     state = FlintButtonState.Able,
                     onClick = {},
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -59,7 +59,7 @@ private fun FlintMediumButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Outline,
                     onClick = {},
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             }
 
@@ -68,7 +68,7 @@ private fun FlintMediumButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.Disable,
                     onClick = {},
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -77,7 +77,7 @@ private fun FlintMediumButtonPreview() {
                     text = "시작하기",
                     state = FlintButtonState.ColorOutline,
                     onClick = {},
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             }
         }
