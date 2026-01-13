@@ -1,4 +1,4 @@
-package com.flint.presentation.collectioncreate.component
+package com.flint.core.designsystem.component.toggle
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
