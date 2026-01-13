@@ -29,42 +29,57 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
-sealed class ToastType(val space: Int) {
-    data class Success(val message: String, val bottomSpace: Int = 72) : ToastType(bottomSpace)
-    data class Error(val message: String, val bottomSpace: Int = 72) : ToastType(bottomSpace)
-    data class Default(val message: String, val bottomSpace: Int = 72) : ToastType(bottomSpace)
+sealed class ToastType(
+    val space: Int,
+) {
+    data class Success(
+        val message: String,
+        val bottomSpace: Int = 72,
+    ) : ToastType(bottomSpace)
+
+    data class Error(
+        val message: String,
+        val bottomSpace: Int = 72,
+    ) : ToastType(bottomSpace)
+
+    data class Default(
+        val message: String,
+        val bottomSpace: Int = 72,
+    ) : ToastType(bottomSpace)
 }
 
 object CustomToastUtil {
     @Composable
     fun SetView(type: ToastType) {
-        val message = when (type) {
-            is ToastType.Success -> type.message
-            is ToastType.Error -> type.message
-            is ToastType.Default -> type.message
-        }
+        val message =
+            when (type) {
+                is ToastType.Success -> type.message
+                is ToastType.Error -> type.message
+                is ToastType.Default -> type.message
+            }
 
-        val icon = when (type) {
-            is ToastType.Success -> R.drawable.ic_check
-            is ToastType.Error -> R.drawable.ic_x
-            is ToastType.Default -> null
-        }
+        val icon =
+            when (type) {
+                is ToastType.Success -> R.drawable.ic_check
+                is ToastType.Error -> R.drawable.ic_x
+                is ToastType.Default -> null
+            }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(
-                    color = FlintTheme.colors.gray700,
-                    shape = RoundedCornerShape(44.dp)
-                )
-                .padding(horizontal = 12.dp, vertical = 8.dp)
+            modifier =
+                Modifier
+                    .background(
+                        color = FlintTheme.colors.gray700,
+                        shape = RoundedCornerShape(44.dp),
+                    ).padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
             icon?.let {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = it),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
 
@@ -72,17 +87,19 @@ object CustomToastUtil {
                 text = message,
                 style = FlintTheme.typography.body2R14,
                 color = FlintTheme.colors.white,
-                modifier = Modifier.padding(start = if (icon != null) 8.dp else 0.dp)
+                modifier = Modifier.padding(start = if (icon != null) 8.dp else 0.dp),
             )
         }
     }
 }
 
-class CustomToast(context: Context) : Toast(context) {
+class CustomToast(
+    context: Context,
+) : Toast(context) {
     @Composable
     fun MakeText(
         type: ToastType,
-        duration: Int = LENGTH_SHORT
+        duration: Int = LENGTH_SHORT,
     ) {
         val context = LocalContext.current
         val density = LocalDensity.current
@@ -101,7 +118,12 @@ class CustomToast(context: Context) : Toast(context) {
         }
 
         // dp -> 픽셀로 변환
-        val yOffsetPx = with(density) { type.space.dp.toPx().toInt() }
+        val yOffsetPx =
+            with(density) {
+                type.space.dp
+                    .toPx()
+                    .toInt()
+            }
 
         this.duration = duration
         this.view = views
