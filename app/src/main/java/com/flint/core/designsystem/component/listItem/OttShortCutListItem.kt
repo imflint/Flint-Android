@@ -56,12 +56,12 @@ fun OttShortCutListItem(
 
         Box(
             modifier =
-                modifier
+                Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(FlintTheme.colors.primary400)
                     .clickable {
                         onMoveClick()
-                    }.clip(RoundedCornerShape(8.dp))
-                    .background(FlintTheme.colors.primary400)
-                    .padding(vertical = 7.dp, horizontal = 12.dp),
+                    }.padding(vertical = 7.dp, horizontal = 12.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(
