@@ -21,17 +21,18 @@ import com.flint.core.designsystem.theme.FlintTheme
 fun SelectedFilmItem(
     imageUrl: String,
     onRemoveClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.size(92.dp)
+        modifier = modifier.size(92.dp),
     ) {
         NetworkImage(
             imageUrl = imageUrl,
             shape = CircleShape,
-            modifier = Modifier
-                .size(80.dp)
-                .align(Alignment.BottomStart)
+            modifier =
+                Modifier
+                    .size(80.dp)
+                    .align(Alignment.BottomStart),
         )
 
         Icon(
@@ -39,10 +40,10 @@ fun SelectedFilmItem(
             contentDescription = "x",
             tint = Color.Unspecified,
             modifier =
-            Modifier
-                .align(Alignment.TopEnd)
-                .size(48.dp)
-                .clickable { onRemoveClick() }
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .size(48.dp)
+                    .clickable { onRemoveClick() },
         )
     }
 }
@@ -52,12 +53,13 @@ fun SelectedFilmItem(
 fun SelectedFilmItemPreview() {
     FlintTheme {
         Box(
-            modifier = Modifier
-                .background(FlintTheme.colors.background)
+            modifier =
+                Modifier
+                    .background(FlintTheme.colors.background),
         ) {
             SelectedFilmItem(
                 imageUrl = "",
-                onRemoveClick = {}
+                onRemoveClick = {},
             )
         }
     }
