@@ -17,6 +17,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -86,10 +90,7 @@ private fun SavedFilmListItemImage(
         modifier = modifier.width(100.dp),
     ) {
         Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             NetworkImage(
                 imageUrl = contentModel.posterImage,
@@ -197,7 +198,7 @@ private fun SavedFilmListItemBookmark(
 
 @Preview
 @Composable
-private fun CollectionCreateFilmSectionPreview() {
+private fun SavedFilmListItemBookmarkPreview() {
     FlintTheme {
         val contentModel =
             ContentModel(
@@ -215,15 +216,16 @@ private fun CollectionCreateFilmSectionPreview() {
                         OttType.Watcha,
                     ),
             )
+        var isBookmarked by remember { mutableStateOf(false) }
 
         SavedFilmListItem(
             contentModel = contentModel,
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005",
-            isBookmarked = true,
+            isBookmarked = isBookmarked,
             bookmarkCount = 128,
-            onBookmarkClick = {},
+            onBookmarkClick = { isBookmarked = !isBookmarked },
         )
     }
 }
