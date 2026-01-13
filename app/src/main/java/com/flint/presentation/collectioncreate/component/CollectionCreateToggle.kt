@@ -18,14 +18,14 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun CollectionCreateToggle(
-    checked: Boolean,
+    isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Switch(
-        checked = checked,
+        checked = isChecked,
         onCheckedChange = null,
-        modifier = modifier.noRippleClickable { onCheckedChange(!checked) },
+        modifier = modifier.noRippleClickable { onCheckedChange(!isChecked) },
         thumbContent = {
             Box(
                 modifier = Modifier.size(28.dp)
@@ -50,7 +50,7 @@ private fun CollectionCreateTogglePreview() {
         var checked by remember { mutableStateOf(false) }
 
         CollectionCreateToggle(
-            checked = checked,
+            isChecked = checked,
             onCheckedChange = { checked = it }
         )
     }
