@@ -10,16 +10,20 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectionCreateBottomSheet() {
+fun CollectionAddFilmBottomSheet(
+    onGalleryClick: () -> Unit,
+    onCoverdeleteClick: () -> Unit,
+    onDismiss: () -> Unit
+) {
     val menuBottomSheetDataList = listOf(
         MenuBottomSheetData(
             label = "갤러리에서 선택",
-            clickAction = {}
+            clickAction = onGalleryClick
         ),
         MenuBottomSheetData(
             label = "커버 사진 삭제",
             color = FlintTheme.colors.error500,
-            clickAction = {}
+            clickAction = onCoverdeleteClick
         )
     )
 
@@ -27,7 +31,7 @@ fun CollectionCreateBottomSheet() {
 
     MenuBottomSheet(
         menuBottomSheetDataList = menuBottomSheetDataList,
-        onDismiss = {},
+        onDismiss = onDismiss,
         sheetState = sheetState
     )
 }
@@ -35,8 +39,12 @@ fun CollectionCreateBottomSheet() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun CollectionCreateBottomSheetPreview() {
+private fun CollectionAddFilmBottomSheetPreview() {
     FlintTheme {
-        CollectionCreateBottomSheet()
+        CollectionAddFilmBottomSheet(
+            onGalleryClick = {},
+            onCoverdeleteClick = {},
+            onDismiss = {}
+        )
     }
 }
