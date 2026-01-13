@@ -28,7 +28,7 @@ import com.flint.domain.type.PreferenceType
 fun ProfileKeywordGraph(
     keyword: String,
     preferenceType: PreferenceType,
-    percent: Float,
+    percent: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -54,15 +54,15 @@ fun ProfileKeywordGraph(
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ProfileKeywordProgressBar(
                 preferenceType = preferenceType,
-                percent = percent / 100,
+                percent = percent.toFloat() / 100,
                 modifier = Modifier.width(160.dp),
             )
             Text(
-                text = "${percent.toInt()}%",
+                text = "${percent}%",
                 style = FlintTheme.typography.body2R14,
                 color = FlintTheme.colors.gray100,
             )
@@ -104,9 +104,9 @@ private fun ProfileKeywordGraphPreview() {
         ) {
             itemsIndexed(
                 listOf(
-                    Triple("환경", PreferenceType.Green, 75f),
-                    Triple("동물", PreferenceType.Orange, 50f),
-                    Triple("패션", PreferenceType.Yellow, 30f),
+                    Triple("환경", PreferenceType.Green, 75),
+                    Triple("동물", PreferenceType.Orange, 50),
+                    Triple("패션", PreferenceType.Yellow, 30),
                 ),
             ) { _, item ->
                 ProfileKeywordGraph(
