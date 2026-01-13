@@ -33,7 +33,6 @@ fun NetworkImage(
             contentDescription = contentDescription,
             contentScale = contentScale,
             modifier = modifier.clip(shape)
-
         )
     } else {
         AsyncImage(
