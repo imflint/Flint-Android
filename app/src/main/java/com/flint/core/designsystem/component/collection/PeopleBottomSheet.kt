@@ -28,7 +28,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -134,7 +135,7 @@ private fun Author(
             Spacer(Modifier.width(10.dp))
 
             Image(
-                painter = painterResource(R.drawable.ic_qualified),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_qualified),
                 contentDescription = "플리너",
             )
         }
