@@ -13,26 +13,27 @@ import com.flint.core.designsystem.theme.FlintTheme
 fun CollectionAddFilmBottomSheet(
     onGalleryClick: () -> Unit,
     onCoverDeleteClick: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
-    val menuBottomSheetDataList = listOf(
-        MenuBottomSheetData(
-            label = "갤러리에서 선택",
-            clickAction = onGalleryClick
-        ),
-        MenuBottomSheetData(
-            label = "커버 사진 삭제",
-            color = FlintTheme.colors.error500,
-            clickAction = onCoverDeleteClick
+    val menuBottomSheetDataList =
+        listOf(
+            MenuBottomSheetData(
+                label = "갤러리에서 선택",
+                clickAction = onGalleryClick,
+            ),
+            MenuBottomSheetData(
+                label = "커버 사진 삭제",
+                color = FlintTheme.colors.error500,
+                clickAction = onCoverDeleteClick,
+            ),
         )
-    )
 
     val sheetState = rememberModalBottomSheetState()
 
     MenuBottomSheet(
         menuBottomSheetDataList = menuBottomSheetDataList,
         onDismiss = onDismiss,
-        sheetState = sheetState
+        sheetState = sheetState,
     )
 }
 
@@ -44,7 +45,7 @@ private fun CollectionAddFilmBottomSheetPreview() {
         CollectionAddFilmBottomSheet(
             onGalleryClick = {},
             onCoverDeleteClick = {},
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }

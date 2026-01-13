@@ -1,4 +1,4 @@
-package com.flint.core.designsystem.component.searchview
+package com.flint.core.designsystem.component.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,14 +18,14 @@ import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun FlintSearchInitializeView() {
+fun FlintSearchEmptyView() {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             modifier = Modifier.size(120.dp),
-            painter = painterResource(R.drawable.ic_gradient_search),
+            painter = painterResource(R.drawable.ic_gradient_none),
             contentDescription = null,
             tint = Color.Unspecified,
         )
@@ -33,7 +33,7 @@ fun FlintSearchInitializeView() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "떠오르는 작품이 있나요?",
+            text = "작품을 찾을 수 없어요",
             color = FlintTheme.colors.white,
             style = FlintTheme.typography.head3M18,
         )
@@ -42,8 +42,8 @@ fun FlintSearchInitializeView() {
 
 @Preview
 @Composable
-private fun FlintSearchInitializeViewPreview() {
+private fun FlintSearchEmptyViewPreview() {
     FlintTheme {
-        FlintSearchInitializeView()
+        FlintSearchEmptyView()
     }
 }

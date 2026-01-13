@@ -9,7 +9,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun CollectionCreateFilmDeleteModal(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     TwoButtonModal(
         title = "작품을 삭제할까요?",
@@ -19,7 +19,7 @@ fun CollectionCreateFilmDeleteModal(
         onConfirm = onConfirm,
         onDismiss = onDismiss,
         icon = R.drawable.ic_gradient_trash,
-        isDestructive = true
+        isDestructive = true,
     )
 }
 
@@ -29,7 +29,7 @@ private fun CollectionCreateFilmDeleteModalPreview() {
     FlintTheme {
         CollectionCreateFilmDeleteModal(
             onConfirm = {},
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }
