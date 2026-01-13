@@ -41,30 +41,33 @@ fun FlintBasicBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         dragHandle = null,
-        shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
+        shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
     ) {
         Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(
-                    brush = FlintTheme.colors.gradient700,
-                    shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
-                )
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = FlintTheme.colors.gradient700,
+                        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
+                    ),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                contentAlignment = Alignment.Center,
             ) {
                 Box(
-                    modifier = Modifier
-                        .width(52.dp)
-                        .height(4.dp)
-                        .background(
-                            color = FlintTheme.colors.gray500,
-                            shape = RoundedCornerShape(2.dp)
-                        )
+                    modifier =
+                        Modifier
+                            .width(52.dp)
+                            .height(4.dp)
+                            .background(
+                                color = FlintTheme.colors.gray500,
+                                shape = RoundedCornerShape(2.dp),
+                            ),
                 )
             }
 
@@ -72,7 +75,7 @@ fun FlintBasicBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 content = {
                     content()
-                }
+                },
             )
         }
     }
@@ -88,26 +91,28 @@ private fun FlintBasicBottomSheetPreview() {
 
     FlintTheme {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Text(
                 text = "BottomSheet 열기",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .noRippleClickable {
-                        showSheet = true
-                    }
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .noRippleClickable {
+                            showSheet = true
+                        },
             )
 
             val dismissCallback: () -> Unit = {
-                scope.launch { sheetState.hide() }
+                scope
+                    .launch { sheetState.hide() }
                     .invokeOnCompletion { showSheet = false }
             }
 
             if (showSheet) {
                 FlintBasicBottomSheet(
                     sheetState = sheetState,
-                    onDismiss = dismissCallback
+                    onDismiss = dismissCallback,
                 ) {
                     Text("내용")
                     Button(onClick = {

@@ -13,7 +13,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun FlintLogoTopAppbar(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = FlintTheme.colors.background
+    backgroundColor: Color = FlintTheme.colors.background,
 ) {
     FlintBasicTopAppbar(
         modifier = modifier,
@@ -22,9 +22,9 @@ fun FlintLogoTopAppbar(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.img_textlogo),
                 contentDescription = null,
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
-        }
+        },
     )
 }
 
@@ -33,7 +33,7 @@ fun FlintLogoTopAppbar(
 private fun FlintLogoTopAppbarPreview() {
     FlintTheme {
         FlintLogoTopAppbar(
-            backgroundColor = Color.Transparent
+            backgroundColor = Color.Transparent,
         )
     }
 }

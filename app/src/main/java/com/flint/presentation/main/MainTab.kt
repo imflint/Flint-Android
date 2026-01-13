@@ -11,23 +11,23 @@ import com.flint.presentation.profile.navigation.Profile
 enum class MainTab(
     @DrawableRes val iconResId: Int,
     val route: MainTabRoute,
-    val label: String
+    val label: String,
 ) {
     HOME(
         iconResId = R.drawable.ic_home_empty,
         route = Home,
-        label = "홈"
+        label = "홈",
     ),
     EXPLORE(
         iconResId = R.drawable.ic_explore_empty,
         route = Explore,
-        label = "탐색"
+        label = "탐색",
     ),
     PROFILE(
         iconResId = R.drawable.ic_my_empty,
         route = Profile,
-        label = "MY"
-    )
+        label = "MY",
+    ),
     ;
 
     companion object {

@@ -9,5 +9,5 @@ data class CollectionDetailModel(
     val createdAt: String,
     val isBookmarked: Boolean,
     val bookmarkCount: Int,
-    val author: AuthorModel
+    val author: AuthorModel,
 )
