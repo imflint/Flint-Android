@@ -99,9 +99,7 @@ private fun SavedFilmListItemImage(
 
             OttHorizontalList(
                 ottList = contentModel.ottSimpleList,
-                modifier =
-                    Modifier
-                        .padding(top = 10.dp, start = 8.dp),
+                modifier = Modifier.padding(top = 10.dp, start = 8.dp),
             )
         }
     }
@@ -178,7 +176,7 @@ private fun SavedFilmListItemBookmark(
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(if (isBookmarked) R.drawable.ic_bookmark_fill else R.drawable.ic_bookmark_empty),
-            contentDescription = null,
+            contentDescription = "북마크",
             tint = Color.Unspecified,
             modifier =
                 Modifier
