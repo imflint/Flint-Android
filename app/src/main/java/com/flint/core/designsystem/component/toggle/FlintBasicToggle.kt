@@ -45,7 +45,7 @@ fun FlintBasicToggle(
 
 @Preview
 @Composable
-private fun CollectionCreateTogglePreview() {
+private fun FlintBasicTogglePreview() {
     FlintTheme {
         var checked by remember { mutableStateOf(false) }
 
