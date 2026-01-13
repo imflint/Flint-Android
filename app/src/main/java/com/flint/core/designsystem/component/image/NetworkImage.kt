@@ -55,7 +55,7 @@ private fun NetworkImagePreview() {
                 modifier = Modifier.size(50.dp)
             )
             NetworkImage(
-                imageUrl = "",
+                imageUrl = "https://avatars.githubusercontent.com/u/101113025?v=4",
                 shape = CircleShape,
                 modifier = Modifier.size(50.dp)
             )
