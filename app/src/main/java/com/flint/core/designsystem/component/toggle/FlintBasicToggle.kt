@@ -17,7 +17,7 @@ import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionCreateToggle(
+fun FlintBasicToggle(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -49,7 +49,7 @@ private fun CollectionCreateTogglePreview() {
     FlintTheme {
         var checked by remember { mutableStateOf(false) }
 
-        CollectionCreateToggle(
+        FlintBasicToggle(
             isChecked = checked,
             onCheckedChange = { checked = it }
         )
