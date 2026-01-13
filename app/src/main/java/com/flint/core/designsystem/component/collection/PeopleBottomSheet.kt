@@ -43,7 +43,7 @@ import com.flint.domain.type.UserRoleType
 @Composable
 fun PeopleBottomSheet(
     people: List<AuthorModel>,
-    onClickPeople: (AuthorModel) -> Unit,
+    onAuthorClick: (AuthorModel) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -88,7 +88,7 @@ fun PeopleBottomSheet(
                 items(people) { author: AuthorModel ->
                     Author(
                         author = author,
-                        onClick = onClickPeople,
+                        onClick = onAuthorClick,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -151,7 +151,7 @@ private fun PeopleBottomSheetPreview(
         if (showBottomSheet) {
             PeopleBottomSheet(
                 people = people,
-                onClickPeople = {},
+                onAuthorClick = {},
                 onDismiss = { showBottomSheet = !showBottomSheet },
             )
         }
