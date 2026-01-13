@@ -25,11 +25,9 @@ fun OttHorizontalList(
     ottList: List<OttType>,
     modifier: Modifier = Modifier
 ) {
-    val firstOttIcon = if (ottList.isNotEmpty()) {
-        ottList[0].iconRes
-    } else {
-        null
-    }
+    if (ottList.isEmpty()) return
+
+    val firstOttIcon = ottList[0].iconRes
 
     val secondOttIcon = if (ottList.size > 1) {
         ottList[1].iconRes

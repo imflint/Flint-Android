@@ -3,6 +3,7 @@ package com.flint.core.designsystem.component.content
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,8 +25,8 @@ fun SavedContentItem(
     contentModel: ContentModel,
     modifier: Modifier = Modifier
 ) {
-    val ottList = contentModel.ottSimpleList.map {
-        OttType.valueOf(it.ottName)
+    val ottList = contentModel.ottSimpleList.mapNotNull {
+        OttType.entries.find { type -> type.name == it.ottName }
     }
 
     Column(
@@ -39,7 +40,8 @@ fun SavedContentItem(
         ) {
             NetworkImage(
                 imageUrl = contentModel.posterImage,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxSize()
             )
 
             OttHorizontalList(
