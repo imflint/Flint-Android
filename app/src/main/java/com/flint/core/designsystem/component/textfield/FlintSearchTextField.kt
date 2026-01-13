@@ -24,7 +24,7 @@ fun FlintSearchTextField(
     value: String,
     onValueChanged: (String) -> Unit,
     placeholder: String,
-    onSearchAction: () -> Unit = {}
+    onSearchAction: () -> Unit = {},
 ) {
     FlintBasicTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -37,16 +37,17 @@ fun FlintSearchTextField(
         paddingValues = PaddingValues(start = 16.dp),
         trailingContent = {
             Image(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .size(24.dp)
-                    .noRippleClickable(
-                        onClick = { onSearchAction() }
-                    ),
+                modifier =
+                    Modifier
+                        .padding(12.dp)
+                        .size(24.dp)
+                        .noRippleClickable(
+                            onClick = { onSearchAction() },
+                        ),
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
-                contentDescription = null
+                contentDescription = null,
             )
-        }
+        },
     )
 }
 
@@ -59,7 +60,7 @@ private fun FlintSearchTextFieldPreview() {
         FlintSearchTextField(
             placeholder = "작품 이름",
             value = text,
-            onValueChanged = { text = it }
+            onValueChanged = { text = it },
         )
     }
 }

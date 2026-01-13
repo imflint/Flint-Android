@@ -24,42 +24,42 @@ import com.flint.core.designsystem.theme.FlintTypography
 fun FlintBasicModal(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
         properties =
-        DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false
-        )
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false,
+            ),
     ) {
         Box(
             modifier =
-            modifier
-                .fillMaxSize()
-                .padding(horizontal = 40.dp),
-            contentAlignment = Alignment.Center
+                modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp),
+            contentAlignment = Alignment.Center,
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(
-                        brush = FlintTheme.colors.gradient700,
-                        shape = RoundedCornerShape(12.dp)
-                    ).shadow(
-                        elevation = 4.dp,
-                        shape = RoundedCornerShape(12.dp),
-                        ambientColor = Color.Black.copy(alpha = 0.25f),
-                        spotColor = Color.Black.copy(alpha = 0.25f)
-                    ).padding(
-                        top = 36.dp,
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 20.dp
-                    )
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush = FlintTheme.colors.gradient700,
+                            shape = RoundedCornerShape(12.dp),
+                        ).shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(12.dp),
+                            ambientColor = Color.Black.copy(alpha = 0.25f),
+                            spotColor = Color.Black.copy(alpha = 0.25f),
+                        ).padding(
+                            top = 36.dp,
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 20.dp,
+                        ),
             ) {
                 content()
             }
@@ -72,12 +72,12 @@ fun FlintBasicModal(
 private fun BasicModalPreview() {
     FlintBasicModal(
         onDismiss = {},
-        modifier = Modifier.background(Color.White)
+        modifier = Modifier.background(Color.White),
     ) {
         Text(
             text = "기본 모달 컨텐츠",
             style = FlintTypography.body1M16,
-            color = FlintTheme.colors.white
+            color = FlintTheme.colors.white,
         )
     }
 }

@@ -50,20 +50,21 @@ fun FlintBasicTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    trailingContent: @Composable () -> Unit = {}
+    trailingContent: @Composable () -> Unit = {},
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 
     Box(
-        modifier = modifier
-            .height(height)
-            .clip(RoundedCornerShape(radius))
-            .background(backgroundColor)
-            .border(
-                width = 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(radius)
-            )
+        modifier =
+            modifier
+                .height(height)
+                .clip(RoundedCornerShape(radius))
+                .background(backgroundColor)
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(radius),
+                ),
     ) {
         BasicTextField(
             modifier = Modifier.fillMaxSize(),
@@ -82,30 +83,32 @@ fun FlintBasicTextField(
             cursorBrush = SolidColor(FlintTheme.colors.gray300),
             decorationBox = { innerTextField ->
                 Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                        contentAlignment = if (maxLines == 1) Alignment.CenterStart else Alignment.TopStart
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .weight(1f),
+                        contentAlignment = if (maxLines == 1) Alignment.CenterStart else Alignment.TopStart,
                     ) {
                         if (value.isEmpty()) { // PlaceHolder
                             Text(
                                 text = placeholder,
                                 style = textStyle,
-                                color = FlintTheme.colors.gray300
+                                color = FlintTheme.colors.gray300,
                             )
                         }
                         innerTextField()
                     }
                     trailingContent()
                 }
-            }
+            },
         )
     }
 }
@@ -120,7 +123,7 @@ private fun BasicTextFieldPreview() {
             modifier = Modifier.fillMaxWidth(),
             placeholder = "PlaceHolder",
             value = text,
-            onValueChange = { text = it }
+            onValueChange = { text = it },
         )
     }
 }
@@ -141,9 +144,9 @@ private fun FlintTextFieldCounterPreview() {
                 Text(
                     text = "${text.length}/20",
                     style = FlintTheme.typography.body2R14,
-                    color = FlintTheme.colors.gray300
+                    color = FlintTheme.colors.gray300,
                 )
-            }
+            },
         )
     }
 }

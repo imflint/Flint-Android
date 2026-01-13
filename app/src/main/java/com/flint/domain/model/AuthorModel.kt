@@ -6,5 +6,5 @@ data class AuthorModel(
     val userId: Long,
     val nickname: String,
     val profileUrl: String,
-    val userRole: UserRoleType
+    val userRole: UserRoleType,
 )

@@ -11,12 +11,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun OnboardingScreen(
-    viewModel: OnboardingViewModel = hiltViewModel()
-) {
+fun OnboardingScreen(viewModel: OnboardingViewModel = hiltViewModel()) {
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(text = "OnboardingScreen")
     }

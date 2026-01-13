@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 @Stable
 class MainNavigator(
     val navController: NavHostController,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
 ) {
     val startDestination = Home
 
@@ -33,7 +33,7 @@ class MainNavigator(
             .stateIn(
                 scope = coroutineScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = null
+                initialValue = null,
             )
 
     // derived state를 Composable 종속성 없이 StateFlow로 생성
@@ -46,7 +46,7 @@ class MainNavigator(
             }.stateIn(
                 scope = coroutineScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = null
+                initialValue = null,
             )
 
     // MainTab 소속인지를 확인하며 바텀바 노출 여부 체크
@@ -59,7 +59,7 @@ class MainNavigator(
             }.stateIn(
                 scope = coroutineScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = false
+                initialValue = false,
             )
 
     fun navigate(tab: MainTab) {
@@ -87,7 +87,7 @@ class MainNavigator(
 @Composable
 fun rememberMainNavigator(
     navController: NavHostController = rememberNavController(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): MainNavigator =
     remember(navController) {
         MainNavigator(navController, coroutineScope)

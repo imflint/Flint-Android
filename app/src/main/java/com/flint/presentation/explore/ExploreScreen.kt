@@ -14,7 +14,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun ExploreRoute(paddingValues: PaddingValues) {
     ExploreScreen(
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
     )
 }
 
@@ -22,14 +22,14 @@ fun ExploreRoute(paddingValues: PaddingValues) {
 private fun ExploreScreen(modifier: Modifier) {
     Box(
         modifier =
-        modifier
-            .background(FlintTheme.colors.background)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+            modifier
+                .background(FlintTheme.colors.background)
+                .fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             "ExploreScreen",
-            color = FlintTheme.colors.white
+            color = FlintTheme.colors.white,
         )
     }
 }
