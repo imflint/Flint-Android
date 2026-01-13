@@ -26,18 +26,18 @@ fun FlintBasicTopAppbar(
     backgroundColor: Color = FlintTheme.colors.background,
     title: String = "",
     navigationIcon: @Composable () -> Unit,
-    action: @Composable () -> Unit = {}
+    action: @Composable () -> Unit = {},
 ) {
     Box(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-            .padding(horizontal = 12.dp, vertical = 16.dp)
+            modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .padding(horizontal = 12.dp, vertical = 16.dp),
     ) {
         Row(
             modifier = Modifier.align(Alignment.CenterStart),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             navigationIcon()
 
@@ -46,13 +46,13 @@ fun FlintBasicTopAppbar(
             Text(
                 text = title,
                 color = FlintTheme.colors.white,
-                style = FlintTheme.typography.body1M16
+                style = FlintTheme.typography.body1M16,
             )
         }
 
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             action()
         }
@@ -71,7 +71,7 @@ private fun FlintBasicTopAppbarPreview() {
                     modifier = Modifier,
                     imageVector = ImageVector.vectorResource(R.drawable.ic_back),
                     contentDescription = null,
-                    tint = FlintTheme.colors.white
+                    tint = FlintTheme.colors.white,
                 )
             },
             action = {
@@ -79,9 +79,9 @@ private fun FlintBasicTopAppbarPreview() {
                     modifier = Modifier,
                     imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
                     contentDescription = null,
-                    tint = FlintTheme.colors.white
+                    tint = FlintTheme.colors.white,
                 )
-            }
+            },
         )
     }
 }

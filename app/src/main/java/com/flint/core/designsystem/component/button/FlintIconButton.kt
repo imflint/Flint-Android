@@ -23,7 +23,7 @@ fun FlintIconButton(
     @DrawableRes iconRes: Int,
     state: FlintButtonState,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     FlintBasicButton(
         text = text,
@@ -32,9 +32,9 @@ fun FlintIconButton(
         leadingIconRes = iconRes,
         contentPadding = PaddingValues(10.dp),
         modifier =
-        modifier
-            .padding(vertical = 2.dp)
-            .defaultMinSize(minHeight = 44.dp)
+            modifier
+                .padding(vertical = 2.dp)
+                .defaultMinSize(minHeight = 44.dp),
     )
 }
 
@@ -44,10 +44,10 @@ private fun FlintIconButtonPreview() {
     FlintTheme {
         Column(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Row {
                 FlintIconButton(
@@ -55,7 +55,7 @@ private fun FlintIconButtonPreview() {
                     iconRes = R.drawable.ic_share,
                     state = FlintButtonState.Disable,
                     onClick = {},
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -65,7 +65,7 @@ private fun FlintIconButtonPreview() {
                     iconRes = R.drawable.ic_share,
                     state = FlintButtonState.ColorOutline,
                     onClick = {},
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             }
 
@@ -75,7 +75,7 @@ private fun FlintIconButtonPreview() {
                     iconRes = R.drawable.ic_share,
                     state = FlintButtonState.Outline,
                     onClick = {},
-                    modifier = Modifier.weight(0.5f)
+                    modifier = Modifier.weight(0.5f),
                 )
 
                 Spacer(Modifier.width(16.dp))
@@ -85,7 +85,7 @@ private fun FlintIconButtonPreview() {
                     iconRes = R.drawable.ic_share,
                     state = FlintButtonState.Outline,
                     onClick = {},
-                    modifier = Modifier.weight(0.5f)
+                    modifier = Modifier.weight(0.5f),
                 )
             }
         }

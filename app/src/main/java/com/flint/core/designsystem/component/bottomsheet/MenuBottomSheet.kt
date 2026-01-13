@@ -24,7 +24,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 data class MenuBottomSheetData(
     val label: String,
     val color: Color = Color.White,
-    val clickAction: () -> Unit
+    val clickAction: () -> Unit,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,33 +33,35 @@ fun MenuBottomSheet(
     menuBottomSheetDataList: List<MenuBottomSheetData>,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState()
+    sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
     FlintBasicBottomSheet(
         sheetState = sheetState,
         onDismiss = onDismiss,
-        modifier = modifier
+        modifier = modifier,
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             itemsIndexed(menuBottomSheetDataList) { index, item ->
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp)
-                        .noRippleClickable {
-                            item.clickAction()
-                        },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .noRippleClickable {
+                                item.clickAction()
+                                onDismiss()
+                            },
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     Spacer(Modifier.weight(1f))
 
                     Text(
                         text = item.label,
                         color = item.color,
-                        style = FlintTheme.typography.body1M16
+                        style = FlintTheme.typography.body1M16,
                     )
 
                     Spacer(Modifier.weight(1f))
@@ -67,7 +69,7 @@ fun MenuBottomSheet(
                     if (index != menuBottomSheetDataList.size - 1) {
                         HorizontalDivider(
                             thickness = 1.dp,
-                            color = FlintTheme.colors.gray500
+                            color = FlintTheme.colors.gray500,
                         )
                     }
                 }
@@ -81,24 +83,25 @@ fun MenuBottomSheet(
 @Composable
 private fun PreviewMenuBottomSheet() {
     FlintTheme {
-        val menuBottomSheetDataList = listOf(
-            MenuBottomSheetData(
-                label = "갤러리에서 선택",
-                clickAction = {}
-            ),
-            MenuBottomSheetData(
-                label = "프로필 사진 삭제",
-                color = FlintTheme.colors.error500,
-                clickAction = {}
+        val menuBottomSheetDataList =
+            listOf(
+                MenuBottomSheetData(
+                    label = "갤러리에서 선택",
+                    clickAction = {},
+                ),
+                MenuBottomSheetData(
+                    label = "프로필 사진 삭제",
+                    color = FlintTheme.colors.error500,
+                    clickAction = {},
+                ),
             )
-        )
 
         val sheetState = rememberModalBottomSheetState()
 
         MenuBottomSheet(
             menuBottomSheetDataList = menuBottomSheetDataList,
             onDismiss = {},
-            sheetState = sheetState
+            sheetState = sheetState,
         )
     }
 }

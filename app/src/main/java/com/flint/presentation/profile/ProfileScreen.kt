@@ -14,7 +14,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun ProfileRoute(paddingValues: PaddingValues) {
     ProfileScreen(
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
     )
 }
 
@@ -22,14 +22,14 @@ fun ProfileRoute(paddingValues: PaddingValues) {
 private fun ProfileScreen(modifier: Modifier = Modifier) {
     Box(
         modifier =
-        modifier
-            .background(FlintTheme.colors.background)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+            modifier
+                .background(FlintTheme.colors.background)
+                .fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "ProfileScreen",
-            color = FlintTheme.colors.white
+            color = FlintTheme.colors.white,
         )
     }
 }

@@ -29,26 +29,26 @@ fun CollectionCreateFilmSelect(
     title: String,
     director: String,
     createdYear: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .background(color = FlintTheme.colors.background),
-        verticalAlignment = Alignment.CenterVertically
+            modifier
+                .fillMaxWidth()
+                .background(color = FlintTheme.colors.background),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         CollectionCreateFilmSection(
             imageUrl = imageUrl,
             title = title,
             director = director,
             createdYear = createdYear,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         CollectionCreateFilmSelectTag(
             isSelected = isSelected,
-            onClick = onCheckClick
+            onClick = onCheckClick,
         )
     }
 }
@@ -56,16 +56,16 @@ fun CollectionCreateFilmSelect(
 @Composable
 fun CollectionCreateFilmSelectTag(
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Icon(
         imageVector = ImageVector.vectorResource(if (isSelected) R.drawable.ic_check_fill else R.drawable.ic_check_empty),
         contentDescription = null,
         tint = Color.Unspecified,
         modifier =
-        Modifier
-            .size(48.dp)
-            .clickable(onClick = onClick)
+            Modifier
+                .size(48.dp)
+                .clickable(onClick = onClick),
     )
 }
 
@@ -77,10 +77,10 @@ private fun CollectionCreateFilmSectionPreview() {
         CollectionCreateFilmSelect(
             onCheckClick = { isSelected = !isSelected },
             isSelected = isSelected,
-            imageUrl = "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5352%2F2024%2F12%2F20%2F20241220114927_2117531_1200_1800_20241220155206956.jpg&type=sc960_832",
+            imageUrl = "https://buly.kr/DEaVFRZ",
             title = "해리포터 불의 잔",
             director = "메롱",
-            createdYear = "2005"
+            createdYear = "2005",
         )
     }
 }

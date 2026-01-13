@@ -1,4 +1,4 @@
-package com.flint.core.designsystem.component.collection
+package com.flint.core.designsystem.component.listItem
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,52 +35,57 @@ import com.flint.domain.type.UserRoleType
 fun CollectionItem(
     collectionModel: CollectionModel,
     onItemClick: (id: String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .width(260.dp)
-            .height(180.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(FlintTheme.colors.gray200)
-            .noRippleClickable {
-                onItemClick(collectionModel.collectionId)
-            }
+        modifier =
+            modifier
+                .width(260.dp)
+                .height(180.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(FlintTheme.colors.gray200)
+                .noRippleClickable {
+                    onItemClick(collectionModel.collectionId)
+                },
     ) {
         NetworkImage(
             imageUrl = collectionModel.collectionImageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(FlintTheme.colors.imgBlur)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(FlintTheme.colors.imgBlur),
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .rotate(180f)
-                .background(FlintTheme.colors.imgBlurHigh)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .rotate(180f)
+                    .background(FlintTheme.colors.imgBlurHigh),
         )
 
         Row(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 14.dp, bottom = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 14.dp, bottom = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
-                painter = if (collectionModel.author.profileUrl.isEmpty()) {
-                    painterResource(R.drawable.ic_avatar_gray)
-                } else {
-                    rememberAsyncImagePainter(collectionModel.author.profileUrl)
-                },
+                painter =
+                    if (collectionModel.author.profileUrl.isEmpty()) {
+                        painterResource(R.drawable.ic_avatar_gray)
+                    } else {
+                        rememberAsyncImagePainter(collectionModel.author.profileUrl)
+                    },
                 contentDescription = null,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(28.dp),
             )
 
             Spacer(Modifier.width(12.dp))
@@ -89,13 +94,13 @@ fun CollectionItem(
                 Text(
                     text = collectionModel.collectionTitle,
                     style = FlintTheme.typography.body2M14,
-                    color = FlintTheme.colors.gray50
+                    color = FlintTheme.colors.gray50,
                 )
 
                 Text(
                     text = collectionModel.author.nickname,
                     style = FlintTheme.typography.caption1R12,
-                    color = FlintTheme.colors.gray200
+                    color = FlintTheme.colors.gray200,
                 )
             }
         }
@@ -106,23 +111,25 @@ fun CollectionItem(
 @Composable
 private fun PreviewCollectionItem() {
     FlintTheme {
-        val collectionModel = CollectionModel(
-            collectionId = "",
-            collectionTitle = "컬렉션 제목",
-            collectionImageUrl = "",
-            createdAt = "",
-            isBookmarked = false,
-            author = AuthorModel(
-                userId = 0,
-                nickname = "사용자 이름",
-                profileUrl = "",
-                userRole = UserRoleType.FLINER
+        val collectionModel =
+            CollectionModel(
+                collectionId = "",
+                collectionTitle = "컬렉션 제목",
+                collectionImageUrl = "",
+                createdAt = "",
+                isBookmarked = false,
+                author =
+                    AuthorModel(
+                        userId = 0,
+                        nickname = "사용자 이름",
+                        profileUrl = "",
+                        userRole = UserRoleType.FLINER,
+                    ),
             )
-        )
 
         CollectionItem(
             collectionModel = collectionModel,
-            onItemClick = {}
+            onItemClick = {},
         )
     }
 }
