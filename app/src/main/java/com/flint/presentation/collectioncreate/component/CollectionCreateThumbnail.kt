@@ -2,7 +2,6 @@ package com.flint.presentation.collectioncreate.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,18 +21,18 @@ import com.flint.core.designsystem.theme.FlintTheme
 fun CollectionCreateThumbnail(
     imageUrl: String?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (imageUrl.isNullOrBlank()) {
         CollectionCreateEmptyThumbnail(
             onClick = onClick,
-            modifier = modifier
+            modifier = modifier,
         )
     } else {
         CollectionCreateFillThumbnail(
             imageUrl = imageUrl,
             onClick = onClick,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }
@@ -87,8 +86,9 @@ private fun CollectionCreateFillThumbnail(
     ) {
         NetworkImage(
             imageUrl = imageUrl,
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
         )
 
         Box(
@@ -115,7 +115,7 @@ fun CollectionCreateEmptyThumbnailPreview() {
     FlintTheme {
         CollectionCreateThumbnail(
             imageUrl = "https://buly.kr/DEaVFRZ",
-            onClick = {}
+            onClick = {},
         )
     }
 }
