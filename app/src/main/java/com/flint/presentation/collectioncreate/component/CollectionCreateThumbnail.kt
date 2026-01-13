@@ -1,5 +1,6 @@
 package com.flint.presentation.collectioncreate.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,15 +53,14 @@ private fun CollectionCreateEmptyThumbnail(
                 .fillMaxWidth()
                 .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) {
-        Icon(
+    ) { 
+        Image(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .align(Alignment.Center),
             painter = painterResource(R.drawable.img_collection_bg1),
             contentDescription = null,
-            tint = Color.Unspecified,
         )
 
         Icon(
