@@ -3,16 +3,10 @@ package com.flint.domain.type
 import androidx.annotation.DrawableRes
 import com.flint.R
 
-// enum class KeywordType {
-//    Small,
-//    Large,
-// }
-
 sealed class KeywordType {
     data object Small : KeywordType()
 
     data class Large(
-//        val imageUrl: String,
         val preferenceType: PreferenceType,
     ) : KeywordType()
 }
