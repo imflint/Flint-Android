@@ -22,19 +22,21 @@ import com.flint.core.designsystem.theme.FlintTheme
 fun EditProfileImage(
     imageUrl: String,
     onEditClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .size(128.dp)
-            .clickable { onEditClick() }
+        modifier =
+            modifier
+                .size(128.dp)
+                .clickable { onEditClick() },
     ) {
         ProfileImage(
             imageUrl = imageUrl,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(4.dp)
-                .align(Alignment.Center)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(4.dp)
+                    .align(Alignment.Center),
         )
 
         Icon(
@@ -42,9 +44,9 @@ fun EditProfileImage(
             contentDescription = "camera",
             tint = Color.Unspecified,
             modifier =
-            Modifier
-                .align(Alignment.BottomEnd)
-                .size(48.dp)
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(48.dp),
         )
     }
 }
@@ -54,12 +56,13 @@ fun EditProfileImage(
 fun EditProfileImagePreview() {
     FlintTheme {
         Box(
-            modifier = Modifier
-                .background(FlintTheme.colors.background)
+            modifier =
+                Modifier
+                    .background(FlintTheme.colors.background),
         ) {
             EditProfileImage(
                 imageUrl = "",
-                onEditClick = {}
+                onEditClick = {},
             )
         }
     }

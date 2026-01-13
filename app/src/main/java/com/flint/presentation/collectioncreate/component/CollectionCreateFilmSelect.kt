@@ -77,7 +77,7 @@ private fun CollectionCreateFilmSectionPreview() {
         CollectionCreateFilmSelect(
             onCheckClick = { isSelected = !isSelected },
             isSelected = isSelected,
-            imageUrl = "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5352%2F2024%2F12%2F20%2F20241220114927_2117531_1200_1800_20241220155206956.jpg&type=sc960_832",
+            imageUrl = "https://buly.kr/DEaVFRZ",
             title = "해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005",
