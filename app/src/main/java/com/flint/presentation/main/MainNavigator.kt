@@ -7,12 +7,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.flint.core.navigation.Route
+import com.flint.presentation.collectioncreate.navigation.navigateToCollectionCreate
+import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
+import com.flint.presentation.collectionlist.navigation.navigateToCollectionList
 import com.flint.presentation.explore.navigation.navigateToExplore
-import com.flint.presentation.home.navigation.Home
 import com.flint.presentation.home.navigation.navigateToHome
+import com.flint.presentation.login.navigation.navigateToLogin
+import com.flint.presentation.onboarding.navigation.navigateToOnboarding
 import com.flint.presentation.profile.navigation.navigateToProfile
+import com.flint.presentation.savedfilm.navigation.navigateToSavedFilmList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +31,7 @@ class MainNavigator(
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
 ) {
-    val startDestination = Home
+    val startDestination = Route.Splash
 
     // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination =
@@ -77,6 +84,48 @@ class MainNavigator(
             MainTab.EXPLORE -> navController.navigateToExplore(navOptions)
             MainTab.PROFILE -> navController.navigateToProfile(navOptions)
         }
+    }
+
+    fun navigateToLogin() {
+        navController.navigateToLogin(
+            navOptions {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            },
+        )
+    }
+
+    fun navigateToOnBoarding() {
+        navController.navigateToOnboarding()
+    }
+
+    fun navigateToHome(navOptions: NavOptions? = null) {
+        navController.navigateToHome(
+            navOptions ?: navOptions {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            },
+        )
+    }
+
+    fun navigateToCollectionList() {
+        navController.navigateToCollectionList()
+    }
+
+    fun navigateToCollectionDetail() {
+        navController.navigateToCollectionDetail()
+    }
+
+    fun navigateToCollectionCreate() {
+        navController.navigateToCollectionCreate()
+    }
+
+    fun navigateToSavedFilm() {
+        navController.navigateToSavedFilmList()
     }
 
     fun navigateUp() {
