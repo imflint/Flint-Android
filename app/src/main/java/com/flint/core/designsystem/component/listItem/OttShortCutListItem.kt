@@ -26,9 +26,9 @@ import com.flint.domain.type.OttType
 
 @Composable
 fun OttShortCutListItem(
-    modifier: Modifier = Modifier,
     ottType: OttType,
     onMoveClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =

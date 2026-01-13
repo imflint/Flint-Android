@@ -49,15 +49,7 @@ fun OttListBottomSheet(
 @Composable
 private fun PreviewOttListBottomSheet() {
     FlintTheme {
-        val ottList =
-            listOf(
-                OttType.Netflix,
-                OttType.Wave,
-                OttType.Tving,
-                OttType.Disney,
-                OttType.Coupang,
-                OttType.Watcha,
-            )
+        val ottList = OttType.entries
 
         val sheetState = rememberModalBottomSheetState()
 
