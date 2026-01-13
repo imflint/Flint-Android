@@ -47,24 +47,22 @@ fun ProfileKeywordChip(
 }
 
 @Composable
-private fun ProfileSmallKeywordChip(
-    keyword: String,
-) {
+private fun ProfileSmallKeywordChip(keyword: String) {
     Box(
         Modifier
             .widthIn(min = 64.dp)
             .draw9Patch(LocalContext.current, R.drawable.bg_tag_gray)
             .padding(
                 vertical = 8.dp,
-                horizontal = 7.dp
-            )
+                horizontal = 7.dp,
+            ),
     ) {
         Text(
             text = keyword,
             style = FlintTheme.typography.body2R14,
             color = FlintTheme.colors.white,
             textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
         )
     }
 }
@@ -81,7 +79,7 @@ private fun ProfileLargeKeywordChip(
             .padding(
                 vertical = 12.dp,
                 horizontal = 28.dp,
-            )
+            ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -108,7 +106,7 @@ private fun ProfileLargeKeywordChip(
 private fun ProfileKeywordChipPreview() {
     FlintTheme {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             ProfileKeywordChip(
                 keyword = "슬픈",
@@ -116,10 +114,11 @@ private fun ProfileKeywordChipPreview() {
             )
             ProfileKeywordChip(
                 keyword = "영화",
-                keywordType = KeywordType.Large(
-                    preferenceType = PreferenceType.Blue,
-                ),
-                keywordImageUrl = ""
+                keywordType =
+                    KeywordType.Large(
+                        preferenceType = PreferenceType.Blue,
+                    ),
+                keywordImageUrl = "",
             )
         }
     }
