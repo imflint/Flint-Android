@@ -18,7 +18,7 @@ import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun FlintSearchInitializeView() {
+fun FlintSearchInitView() {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -42,8 +42,8 @@ fun FlintSearchInitializeView() {
 
 @Preview
 @Composable
-private fun FlintSearchInitializeViewPreview() {
+private fun FlintSearchIniViewPreview() {
     FlintTheme {
-        FlintSearchInitializeView()
+        FlintSearchInitView()
     }
 }
