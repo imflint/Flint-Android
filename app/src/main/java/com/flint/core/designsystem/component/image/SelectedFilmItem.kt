@@ -25,14 +25,14 @@ fun SelectedFilmItem(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.size(80.dp)
+        modifier = modifier.size(92.dp)
     ) {
         NetworkImage(
             imageUrl = imageUrl,
             shape = CircleShape,
             modifier = Modifier
-                .fillMaxSize()
-                .align(Alignment.Center)
+                .size(80.dp)
+                .align(Alignment.BottomStart)
         )
 
         Icon(
@@ -42,7 +42,7 @@ fun SelectedFilmItem(
             modifier =
             Modifier
                 .align(Alignment.TopEnd)
-                .size(24.dp)
+                .size(48.dp)
                 .clickable { onRemoveClick() }
         )
     }
