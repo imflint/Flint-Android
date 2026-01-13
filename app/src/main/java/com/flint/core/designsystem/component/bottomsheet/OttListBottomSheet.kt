@@ -34,7 +34,10 @@ fun OttListBottomSheet(
             items(ottList.size) {
                 OttShortCutListItem(
                     ottType = ottList[it],
-                    onMoveClick = { onMoveClick(ottList[it]) },
+                    onMoveClick = {
+                        onMoveClick(ottList[it])
+                        onDismiss()
+                    },
                 )
             }
         }
