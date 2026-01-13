@@ -42,10 +42,10 @@ fun EditProfileImage(
             contentDescription = "camera",
             tint = Color.Unspecified,
             modifier =
-                Modifier
-                    .align(Alignment.BottomEnd)
-                    .size(48.dp)
-                    .clickable { onClickEdit() },
+            Modifier
+                .align(Alignment.BottomEnd)
+                .size(48.dp)
+                .clickable { onClickEdit() }
         )
     }
 }

@@ -40,10 +40,10 @@ fun SelectedFilmItem(
             contentDescription = "x",
             tint = Color.Unspecified,
             modifier =
-                Modifier
-                    .align(Alignment.TopEnd)
-                    .size(24.dp)
-                    .clickable { onClickRemove() },
+            Modifier
+                .align(Alignment.TopEnd)
+                .size(24.dp)
+                .clickable { onClickRemove() }
         )
     }
 }
