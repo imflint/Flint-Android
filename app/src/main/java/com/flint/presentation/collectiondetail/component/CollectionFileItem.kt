@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -97,13 +96,13 @@ private fun CollectionFileContent(
             .clip(RoundedCornerShape(12.dp))
             .background(FlintTheme.colors.gray800)
     ) {
-        CollectionPocketItem(
+        CollectionPocketPoster(
             imageUrl = poster1Url,
             modifier = Modifier
                 .offset(x = 16.dp, y = 8.dp)
         )
 
-        CollectionPocketItem(
+        CollectionPocketPoster(
             imageUrl = poster2Url,
             modifier = Modifier.dropShadow(
                 shape = RoundedCornerShape(12.dp),
@@ -184,7 +183,7 @@ private fun CollectionFileContent(
 }
 
 @Composable
-private fun CollectionPocketItem(
+private fun CollectionPocketPoster(
     imageUrl: String,
     modifier: Modifier = Modifier
 ) {
