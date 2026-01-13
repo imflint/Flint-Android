@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
+
 @Composable
 fun OnboardingOttItem(
     imageUrl: String,
