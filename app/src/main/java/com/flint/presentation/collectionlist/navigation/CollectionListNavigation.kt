@@ -14,11 +14,13 @@ fun NavController.navigateToCollectionList(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.collectionListNavGraph(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     navigateToCollectionDetail: () -> Unit,
 ) {
     composable<Route.CollectionList> {
         CollectionListRoute(
             paddingValues = paddingValues,
+            navigateUp = navigateUp,
             navigateToCollectionDetail = navigateToCollectionDetail,
         )
     }

@@ -24,10 +24,11 @@ fun FlintSearchTextField(
     value: String,
     onValueChanged: (String) -> Unit,
     placeholder: String,
+    modifier: Modifier = Modifier,
     onSearchAction: () -> Unit = {},
 ) {
     FlintBasicTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         placeholder = placeholder,
         value = value,
         onValueChange = onValueChanged,
