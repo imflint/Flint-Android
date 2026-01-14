@@ -3,7 +3,6 @@ package com.flint.presentation.collectioncreate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -31,20 +31,21 @@ import com.flint.core.designsystem.component.textfield.FlintLongTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectioncreate.component.CollectionAddFilmBottomSheet
+import com.flint.presentation.collectioncreate.component.CollectionCreateFilmItemList
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
 
-@Composable
-fun CollectionCreateRoute(
-    paddingValues: PaddingValues,
-    navigateToAddFilm: () -> Unit,
-) {
-    CollectionCreateScreen(
-        thumbnailImageUrl = "",
-        onBackClick = {},
-        onGalleryClick = {},
-        onCoverDeleteClick = {},
-    )
-}
+// @Composable
+// fun CollectionCreateRoute(
+//    paddingValues: PaddingValues,
+//    navigateToAddFilm: () -> Unit,
+// ) {
+//    CollectionCreateScreen(
+//        thumbnailImageUrl = "",
+//        onBackClick = {},
+//        onGalleryClick = {},
+//        onCoverDeleteClick = {},
+//    )
+// }
 
 @Composable
 fun CollectionCreateScreen(
@@ -120,7 +121,7 @@ fun CollectionCreateScreen(
                     FlintLongTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = contentText,
-                        placeholder = "컬렉션의 주제를 작성해주세요.",
+                        placeholder = "컬렉션의 소개를 작성해주세요.",
                         onValueChanged = { contentText = it },
                         maxLength = 200,
                         height = 104.dp,
@@ -185,6 +186,18 @@ fun CollectionCreateScreen(
 
                     Spacer(Modifier.height(16.dp))
 
+                    LazyColumn {
+                        item {
+                            CollectionCreateFilmItemList(
+                                onCancelClick = {},
+                                imageUrl = "https://buly.kr/DEaVFRZ",
+                                title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
+                                director = "메롱",
+                                createdYear = "2005",
+                            )
+                        }
+                    }
+
                     FlintIconButton(
                         text = "작품 추가하기",
                         iconRes = R.drawable.ic_plus,
@@ -197,14 +210,17 @@ fun CollectionCreateScreen(
                     )
                 }
             }
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(36.dp))
         }
 
         FlintLargeButton(
             text = "완료",
             state = FlintButtonState.Disable,
             onClick = {},
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
         )
     }
 

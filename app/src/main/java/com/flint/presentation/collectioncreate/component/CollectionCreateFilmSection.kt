@@ -1,6 +1,5 @@
 package com.flint.presentation.collectioncreate.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +25,7 @@ fun CollectionCreateFilmSection(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.background(color = FlintTheme.colors.background),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CollectionCreateFilmSectionImage(
@@ -97,8 +96,8 @@ private fun CollectionCreateFilmSectionImage(
     )
 }
 
-@Preview
 @Composable
+@Preview(showBackground = false, backgroundColor = 0xFF121212)
 private fun CollectionCreateFilmSectionPreview() {
     FlintTheme {
         CollectionCreateFilmSection(
