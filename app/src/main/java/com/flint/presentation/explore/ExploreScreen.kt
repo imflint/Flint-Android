@@ -12,7 +12,11 @@ import androidx.compose.ui.Modifier
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun ExploreRoute(paddingValues: PaddingValues) {
+fun ExploreRoute(
+    paddingValues: PaddingValues,
+    navigateToCollectionDetail: () -> Unit,
+    navigateToCollectionCreate: () -> Unit,
+) {
     ExploreScreen(
         modifier = Modifier.padding(paddingValues),
     )

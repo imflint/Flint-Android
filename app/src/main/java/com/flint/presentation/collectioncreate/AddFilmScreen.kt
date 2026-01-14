@@ -4,13 +4,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 
 @Composable
-fun CollectionCreateRoute(
+fun AddFilmRoute(
     paddingValues: PaddingValues,
-    navigateToAddFilm: () -> Unit,
+    navigateToCollectionCreate: () -> Unit,
 ) {
-    CollectionCreateScreen()
 }
 
 @Composable
-fun CollectionCreateScreen() {
+fun AddFilmScreen() {
 }
