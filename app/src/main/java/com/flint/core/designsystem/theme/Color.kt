@@ -65,6 +65,7 @@ data class Colors(
     val orange: Color,
     val yellow: Color,
     val blue: Color,
+    val kakao: Color,
 )
 
 val FlintColors =
@@ -131,6 +132,7 @@ val FlintColors =
         orange = Color(0xFFFF744D),
         yellow = Color(0xFFF9B902),
         blue = Color(0xFF38A5FF),
+        kakao = Color(0xFFFEE500),
     )
 
 @Preview(device = Devices.DESKTOP)
@@ -394,6 +396,16 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.blue)
+                    .size(100.dp),
+            )
+        }
+
+        Text("ETC", color = Color.White)
+
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Box(
+                Modifier
+                    .background(color = FlintColors.kakao)
                     .size(100.dp),
             )
         }
