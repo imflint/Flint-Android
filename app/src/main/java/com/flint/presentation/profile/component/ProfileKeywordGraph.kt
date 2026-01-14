@@ -62,7 +62,7 @@ fun ProfileKeywordGraph(
                 modifier = Modifier.width(160.dp),
             )
             Text(
-                text = "${percent}%",
+                text = "$percent%",
                 style = FlintTheme.typography.body2R14,
                 color = FlintTheme.colors.gray100,
             )
