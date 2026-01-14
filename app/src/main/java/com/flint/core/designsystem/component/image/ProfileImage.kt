@@ -12,11 +12,12 @@ import com.flint.R
 fun ProfileImage(
     imageUrl: String?,
     modifier: Modifier = Modifier,
+    contentDescription: String? = null
 ) {
     if (imageUrl.isNullOrBlank()) {
         Image(
             painter = painterResource(R.drawable.ic_avatar_blue),
-            contentDescription = null,
+            contentDescription = contentDescription,
             modifier = modifier.clip(CircleShape),
         )
     } else {
