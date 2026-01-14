@@ -31,6 +31,18 @@ import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.toggle.FlintBasicToggle
 import com.flint.core.designsystem.theme.FlintTheme
 
+/**
+ * Displays a film item entry used in the collection-creation flow, including a cancel control,
+ * film details, a spoiler toggle, and a multiline reason input.
+ *
+ * Manages local UI state for the spoiler toggle and the reason text input.
+ *
+ * @param onCancelClick Callback invoked when the top-right cancel icon is clicked.
+ * @param imageUrl URL of the film's poster image to display.
+ * @param title Film title to display.
+ * @param director Film director to display.
+ * @param createdYear Film release year to display.
+ */
 @Composable
 fun CollectionCreateFilmItemList(
     onCancelClick: () -> Unit,

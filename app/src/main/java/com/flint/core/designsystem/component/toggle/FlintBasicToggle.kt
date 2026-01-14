@@ -17,6 +17,16 @@ import androidx.compose.ui.unit.dp
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
+/**
+ * A Flint-themed toggle switch that displays the current state and delegates state updates to the caller.
+ *
+ * The switch uses Flint design system colors and a 24.dp thumb. Tapping the toggle invokes `onCheckedChange`
+ * with the new state (the inverse of the current `isChecked`).
+ *
+ * @param isChecked Current checked state of the toggle.
+ * @param onCheckedChange Callback invoked with the new checked state when the user toggles the switch.
+ * @param modifier Optional [Modifier] applied to the switch (e.g., for layout or additional click handling).
+ */
 @Composable
 fun FlintBasicToggle(
     isChecked: Boolean,

@@ -35,6 +35,14 @@ import com.flint.presentation.collectioncreate.component.CollectionAddFilmBottom
 import com.flint.presentation.collectioncreate.component.CollectionCreateFilmItemList
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
 
+/**
+ * Provides the composable route that displays the collection creation screen.
+ *
+ * Renders CollectionCreateScreen with an empty thumbnail and no-op callbacks.
+ *
+ * @param paddingValues Window insets or parent padding to be applied to the route's content (currently unused).
+ * @param navigateToAddFilm Callback intended to navigate to the "add film" flow (currently not invoked).
+ */
 @Composable
 fun CollectionCreateRoute(
     paddingValues: PaddingValues,
@@ -56,6 +64,19 @@ data class CollectionFilmUiModel(
     val createdYear: String,
 )
 
+/**
+ * Displays the collection creation screen allowing the user to compose a new collection.
+ *
+ * The UI includes a thumbnail (tapping opens a bottom sheet), inputs for title and introduction,
+ * a visibility toggle, a list of added films with a displayed count/10 and the ability to remove items,
+ * an "add film" action, and a completion button. When the thumbnail is tapped a bottom sheet is shown
+ * that can invoke gallery or cover-delete actions.
+ *
+ * @param thumbnailImageUrl URL of the current collection thumbnail to display.
+ * @param onBackClick Called when the top app bar back action is triggered.
+ * @param onGalleryClick Called when the user selects the gallery option from the bottom sheet.
+ * @param onCoverDeleteClick Called when the user selects the delete-cover option from the bottom sheet.
+ */
 @Composable
 fun CollectionCreateScreen(
     thumbnailImageUrl: String,
@@ -261,6 +282,12 @@ fun CollectionCreateScreen(
     }
 }
 
+/**
+ * Preview of CollectionCreateScreen rendered inside the app theme.
+ *
+ * Renders the screen with an empty thumbnail and no-op callbacks so the layout
+ * and visual appearance can be inspected in Android Studio's preview.
+ */
 @Preview
 @Composable
 fun CollectionCreateScreenPreview() {

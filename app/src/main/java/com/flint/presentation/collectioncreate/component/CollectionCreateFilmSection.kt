@@ -16,6 +16,15 @@ import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 
+/**
+ * Shows a film entry for the collection-creation UI, displaying the poster alongside title, director, and year in a horizontal layout.
+ *
+ * @param imageUrl URL of the film poster image.
+ * @param title The film title.
+ * @param director The film director's name.
+ * @param createdYear The film's release year (displayed as text).
+ * @param modifier Optional Modifier applied to the root container.
+ */
 @Composable
 fun CollectionCreateFilmSection(
     imageUrl: String,
@@ -85,6 +94,11 @@ private fun CollectionCreateInfoSection(
     }
 }
 
+/**
+ * Renders the film's image from the provided URL.
+ *
+ * @param imageUrl The URL of the image to display.
+ */
 @Composable
 private fun CollectionCreateFilmSectionImage(
     imageUrl: String,
@@ -96,6 +110,12 @@ private fun CollectionCreateFilmSectionImage(
     )
 }
 
+/**
+ * Preview of CollectionCreateFilmSection using sample data.
+ *
+ * Renders the film section with a sample image URL, an intentionally long title, a sample director name,
+ * and a sample year inside FlintTheme for visual verification in the Android Studio preview.
+ */
 @Composable
 @Preview(showBackground = false, backgroundColor = 0xFF121212)
 private fun CollectionCreateFilmSectionPreview() {
