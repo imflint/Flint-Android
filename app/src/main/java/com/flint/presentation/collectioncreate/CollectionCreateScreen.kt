@@ -66,6 +66,7 @@ fun CollectionCreateScreen(
     var titleText by remember { mutableStateOf("") }
     var contentText by remember { mutableStateOf("") }
     var isSheetVisible by remember { mutableStateOf(false) }
+    var isPublic by remember { mutableStateOf(true) }
 
     val filmList =
         remember {
@@ -163,7 +164,7 @@ fun CollectionCreateScreen(
                             text = "공개",
                             iconRes = R.drawable.ic_share,
                             state = FlintButtonState.Outline,
-                            onClick = {},
+                            onClick = { isPublic = true },
                             modifier = Modifier.weight(1f),
                         )
                         Spacer(Modifier.width(8.dp))
@@ -171,7 +172,7 @@ fun CollectionCreateScreen(
                             text = "비공개",
                             iconRes = R.drawable.ic_lock,
                             state = FlintButtonState.Outline,
-                            onClick = {},
+                            onClick = { isPublic = false },
                             modifier = Modifier.weight(1f),
                         )
                     }
