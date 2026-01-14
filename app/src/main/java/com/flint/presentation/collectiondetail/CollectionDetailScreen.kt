@@ -34,6 +34,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
@@ -58,7 +60,6 @@ fun CollectionDetailRoute(
     collectionId: String,
     navigateToCollectionList: () -> Unit,
 ) {
-
 }
 
 @Composable
@@ -198,87 +199,103 @@ private fun PeopleWhoSavedThisCollection(people: ImmutableList<AuthorModel>) {
     }
 }
 
-@Preview
-@Composable
-private fun PeopleWhoSavedThisCollectionPreview() {
-    FlintTheme {
-        PeopleWhoSavedThisCollection(
-            people =
-                persistentListOf(
-                    AuthorModel(
-                        userId = 0,
-                        nickname = "관리자",
-                        profileUrl = "",
-                        userRole = UserRoleType.ADMIN,
-                    ),
-                    AuthorModel(
-                        userId = 0,
-                        nickname = "플리너",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLINER,
-                    ),
-                    AuthorModel(
-                        userId = 0,
-                        nickname = "플링",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLING,
-                    ),
+private class PeoplePreviewProvider : PreviewParameterProvider<ImmutableList<AuthorModel>> {
+    override val values: Sequence<ImmutableList<AuthorModel>> =
+        sequenceOf(
+            persistentListOf(
+                AuthorModel(
+                    userId = 1,
+                    nickname = "유저1",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
                 ),
+            ),
+            persistentListOf(
+                AuthorModel(
+                    userId = 1,
+                    nickname = "유저1",
+                    profileUrl = "",
+                    userRole = UserRoleType.ADMIN,
+                ),
+                AuthorModel(
+                    userId = 2,
+                    nickname = "유저2",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLINER,
+                ),
+                AuthorModel(
+                    userId = 3,
+                    nickname = "유저3",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+                AuthorModel(
+                    userId = 4,
+                    nickname = "유저4",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+                AuthorModel(
+                    userId = 5,
+                    nickname = "유저5",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+            ),
+            persistentListOf(
+                AuthorModel(
+                    userId = 1,
+                    nickname = "유저1",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+                AuthorModel(
+                    userId = 2,
+                    nickname = "유저2",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+                AuthorModel(
+                    userId = 3,
+                    nickname = "유저3",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+                AuthorModel(
+                    userId = 4,
+                    nickname = "유저4",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+                AuthorModel(
+                    userId = 5,
+                    nickname = "유저5",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLING,
+                ),
+                AuthorModel(
+                    userId = 6,
+                    nickname = "유저6",
+                    profileUrl = "",
+                    userRole = UserRoleType.FLINER,
+                ),
+                AuthorModel(
+                    userId = 7,
+                    nickname = "유저7",
+                    profileUrl = "",
+                    userRole = UserRoleType.ADMIN,
+                ),
+            ),
         )
-    }
 }
 
 @Preview
 @Composable
-private fun PeopleWhoSavedThisCollectionMoreThan5Preview() {
+private fun PeopleWhoSavedThisCollectionPreview(
+    @PreviewParameter(PeoplePreviewProvider::class) people: ImmutableList<AuthorModel>,
+) {
     FlintTheme {
-        PeopleWhoSavedThisCollection(
-            people =
-                persistentListOf(
-                    AuthorModel(
-                        userId = 1,
-                        nickname = "유저1",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLING,
-                    ),
-                    AuthorModel(
-                        userId = 2,
-                        nickname = "유저2",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLING,
-                    ),
-                    AuthorModel(
-                        userId = 3,
-                        nickname = "유저3",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLING,
-                    ),
-                    AuthorModel(
-                        userId = 4,
-                        nickname = "유저4",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLING,
-                    ),
-                    AuthorModel(
-                        userId = 5,
-                        nickname = "유저5",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLING,
-                    ),
-                    AuthorModel(
-                        userId = 6,
-                        nickname = "유저6",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLINER,
-                    ),
-                    AuthorModel(
-                        userId = 7,
-                        nickname = "유저7",
-                        profileUrl = "",
-                        userRole = UserRoleType.ADMIN,
-                    ),
-                ),
-        )
+        PeopleWhoSavedThisCollection(people = people)
     }
 }
 
@@ -540,156 +557,251 @@ private fun Content(
     }
 }
 
+private data class HeaderPreviewData(
+    val title: String,
+    val authorId: Long,
+    val userId: Long,
+    val isBookmarked: Boolean,
+)
+
+private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData> {
+    override val values: Sequence<HeaderPreviewData> =
+        sequenceOf(
+            HeaderPreviewData(
+                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
+                authorId = 0L,
+                userId = 1L,
+                isBookmarked = true,
+            ),
+            HeaderPreviewData(
+                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
+                authorId = 0L,
+                userId = 1L,
+                isBookmarked = false,
+            ),
+            HeaderPreviewData(
+                title = "내가 만든 컬렉션",
+                authorId = 1L,
+                userId = 1L,
+                isBookmarked = false,
+            ),
+        )
+}
+
 @Preview
 @Composable
-private fun CollectionDetailHeaderPreview() {
+private fun CollectionDetailHeaderPreview(
+    @PreviewParameter(HeaderPreviewProvider::class) data: HeaderPreviewData,
+) {
     FlintTheme {
         CollectionDetailHeader(
-            title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-            authorId = 0L,
-            userId = 1L,
-            isBookmarked = true,
+            title = data.title,
+            authorId = data.authorId,
+            userId = data.userId,
+            isBookmarked = data.isBookmarked,
         )
     }
 }
 
+private data class DescriptionPreviewData(
+    val authorNickname: String,
+    val authorUserRoleType: UserRoleType,
+    val createdAt: String,
+    val collectionContent: String,
+)
+
+private class DescriptionPreviewProvider : PreviewParameterProvider<DescriptionPreviewData> {
+    override val values: Sequence<DescriptionPreviewData> =
+        sequenceOf(
+            DescriptionPreviewData(
+                authorNickname = "키카",
+                authorUserRoleType = UserRoleType.FLINER,
+                createdAt = "2026. 01. 07.",
+                collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
+            ),
+            DescriptionPreviewData(
+                authorNickname = "일반유저",
+                authorUserRoleType = UserRoleType.FLING,
+                createdAt = "2026. 01. 15.",
+                collectionContent = "제가 좋아하는 영화 모음입니다",
+            ),
+            DescriptionPreviewData(
+                authorNickname = "관리자",
+                authorUserRoleType = UserRoleType.ADMIN,
+                createdAt = "2026. 01. 01.",
+                collectionContent = "공식 추천 컬렉션입니다",
+            ),
+        )
+}
+
 @Preview
 @Composable
-private fun CollectionDetailDescriptionPreview() {
+private fun CollectionDetailDescriptionPreview(
+    @PreviewParameter(DescriptionPreviewProvider::class) data: DescriptionPreviewData,
+) {
     FlintTheme {
         CollectionDetailDescription(
-            authorNickname = "키카",
-            authorUserRoleType = UserRoleType.FLINER,
-            createdAt = "2026. 01. 07.",
-            collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
+            authorNickname = data.authorNickname,
+            authorUserRoleType = data.authorUserRoleType,
+            createdAt = data.createdAt,
+            collectionContent = data.collectionContent,
         )
     }
 }
 
+private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
+    override val values: Sequence<ContentModel> =
+        sequenceOf(
+            ContentModel(
+                contentId = 0,
+                title = "드라마 제목",
+                year = 2000,
+                posterImage = "",
+                ottSimpleList = listOf(OttType.Netflix, OttType.Disney),
+                director = "가스 제닝스",
+                description = "달라진 온도\n-\n같은 구도에 채도를 달리해 변해버린 사랑을 시각적으로 담아낸 장면들",
+                isSpoiler = false,
+                isBookmarked = false,
+            ),
+            ContentModel(
+                contentId = 1,
+                title = "스포일러 있는 영화",
+                year = 2024,
+                posterImage = "",
+                ottSimpleList = listOf(OttType.Netflix),
+                director = "감독 이름",
+                description = "이 내용은 스포일러가 포함되어 있습니다.",
+                isSpoiler = true,
+                isBookmarked = false,
+            ),
+            ContentModel(
+                contentId = 2,
+                title = "저장된 영화",
+                year = 2023,
+                posterImage = "",
+                ottSimpleList = listOf(OttType.Watcha, OttType.Wave),
+                director = "다른 감독",
+                description = "내가 저장한 영화입니다.",
+                isSpoiler = false,
+                isBookmarked = true,
+                bookmarkCount = 42,
+            ),
+        )
+}
+
 @Preview
 @Composable
-private fun ContentPreview() {
+private fun ContentPreview(
+    @PreviewParameter(ContentPreviewProvider::class) content: ContentModel,
+) {
     FlintTheme {
         Content(
-            content =
-                ContentModel(
-                    contentId = 0,
-                    title = "드라마 제목",
-                    year = 2000,
-                    posterImage = "",
-                    ottSimpleList =
-                        listOf(
-                            OttType.Netflix,
-                            OttType.Disney,
-                            OttType.Tving,
-                            OttType.Coupang,
-                            OttType.Wave,
-                            OttType.Watcha,
-                        ),
-                    director = "가스 제닝스",
-                    description =
-                        """
-                        달라진 온도
-                        -
-                        같은 구도에 채도를 달리해 변해버린 사랑을 시각적
-                        으로 담아낸 장면들
-                        
-                        어떻게 이런 연출을 할 수 있는지 감독이 너무
-                        변태같다
-                        """.trimIndent(),
-                ),
+            content = content,
             onBookmarkIconClick = {},
         )
     }
 }
 
-@Preview
-@Composable
-private fun CollectionDetailScreenPreview() {
-    FlintTheme {
-        Scaffold { paddingValues: PaddingValues ->
-            CollectionDetailScreen(
-                paddingValues,
-                {},
+private data class ScreenPreviewData(
+    val title: String,
+    val authorId: Long,
+    val userId: Long,
+    val isBookmarked: Boolean,
+    val authorNickname: String,
+    val authorUserRoleType: UserRoleType,
+    val contents: ImmutableList<ContentModel>,
+    val people: ImmutableList<AuthorModel>,
+)
+
+private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData> {
+    private val sampleContent =
+        ContentModel(
+            contentId = 0,
+            title = "드라마 제목",
+            year = 2000,
+            posterImage = "",
+            ottSimpleList = listOf(OttType.Netflix, OttType.Disney),
+            director = "감독 이름",
+            description = "달라진 온도\n-\n같은 구도에 채도를 달리해 변해버린 사랑을 시각적으로 담아낸 장면들",
+        )
+
+    private val samplePeople =
+        persistentListOf(
+            AuthorModel(
+                userId = 1,
+                nickname = "유저1",
+                profileUrl = "",
+                userRole = UserRoleType.FLING,
+            ),
+            AuthorModel(
+                userId = 2,
+                nickname = "유저2",
+                profileUrl = "",
+                userRole = UserRoleType.FLINER,
+            ),
+            AuthorModel(
+                userId = 3,
+                nickname = "유저3",
+                profileUrl = "",
+                userRole = UserRoleType.FLING,
+            ),
+        )
+
+    override val values: Sequence<ScreenPreviewData> =
+        sequenceOf(
+            ScreenPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
                 authorId = 0L,
                 userId = 1L,
                 isBookmarked = true,
                 authorNickname = "키카",
                 authorUserRoleType = UserRoleType.FLINER,
+                contents = persistentListOf(sampleContent),
+                people = samplePeople,
+            ),
+            ScreenPreviewData(
+                title = "새로운 컬렉션",
+                authorId = 0L,
+                userId = 1L,
+                isBookmarked = false,
+                authorNickname = "일반유저",
+                authorUserRoleType = UserRoleType.FLING,
+                contents = persistentListOf(sampleContent),
+                people = persistentListOf(),
+            ),
+            ScreenPreviewData(
+                title = "내가 만든 컬렉션",
+                authorId = 1L,
+                userId = 1L,
+                isBookmarked = false,
+                authorNickname = "나",
+                authorUserRoleType = UserRoleType.FLING,
+                contents = persistentListOf(sampleContent),
+                people = samplePeople,
+            ),
+        )
+}
+
+@Preview
+@Composable
+private fun CollectionDetailScreenPreview(
+    @PreviewParameter(ScreenPreviewProvider::class) data: ScreenPreviewData,
+) {
+    FlintTheme {
+        Scaffold { paddingValues: PaddingValues ->
+            CollectionDetailScreen(
+                paddingValues = paddingValues,
+                navigateToCollectionList = {},
+                title = data.title,
+                authorId = data.authorId,
+                userId = data.userId,
+                isBookmarked = data.isBookmarked,
+                authorNickname = data.authorNickname,
+                authorUserRoleType = data.authorUserRoleType,
                 createdAt = "2026. 01. 07.",
                 collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
-                contents =
-                    persistentListOf(
-                        ContentModel(
-                            contentId = 0,
-                            title = "드라마 제목",
-                            year = 2000,
-                            posterImage = "",
-                            ottSimpleList =
-                                listOf(
-                                    OttType.Netflix,
-                                    OttType.Disney,
-                                    OttType.Tving,
-                                    OttType.Coupang,
-                                    OttType.Wave,
-                                    OttType.Watcha,
-                                ),
-                            director = "감독 이름",
-                            description =
-                                """
-                                달라진 온도
-                                -
-                                같은 구도에 채도를 달리해 변해버린 사랑을 시각적
-                                으로 담아낸 장면들
-                                
-                                어떻게 이런 연출을 할 수 있는지 감독이 너무
-                                변태같다
-                                """.trimIndent(),
-                            isSpoiler = true,
-                        ),
-                        ContentModel(
-                            contentId = 0,
-                            title = "드라마 제목",
-                            year = 2000,
-                            posterImage = "",
-                            ottSimpleList =
-                                listOf(
-                                    OttType.Netflix,
-                                    OttType.Disney,
-                                    OttType.Tving,
-                                    OttType.Coupang,
-                                    OttType.Wave,
-                                    OttType.Watcha,
-                                ),
-                            director = "감독 이름",
-                            description =
-                                """
-                                난 비록 한 줄이지만 height은 최소 183이라는 말씀
-                                """.trimIndent(),
-                        ),
-                    ),
-                people =
-                    persistentListOf(
-                        AuthorModel(
-                            userId = 0,
-                            nickname = "관리자",
-                            profileUrl = "",
-                            userRole = UserRoleType.ADMIN,
-                        ),
-                        AuthorModel(
-                            userId = 0,
-                            nickname = "플리너",
-                            profileUrl = "",
-                            userRole = UserRoleType.FLINER,
-                        ),
-                        AuthorModel(
-                            userId = 0,
-                            nickname = "플링",
-                            profileUrl = "",
-                            userRole = UserRoleType.FLING,
-                        ),
-                    ),
+                contents = data.contents,
+                people = data.people,
             )
         }
     }
