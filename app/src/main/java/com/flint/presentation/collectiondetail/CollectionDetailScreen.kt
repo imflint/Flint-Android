@@ -21,10 +21,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +46,7 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintMediumButton
+import com.flint.core.designsystem.component.collection.PeopleBottomSheet
 import com.flint.core.designsystem.component.collection.Spoiler
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
@@ -62,6 +68,7 @@ fun CollectionDetailRoute(
 ) {
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
@@ -77,6 +84,16 @@ fun CollectionDetailScreen(
     contents: ImmutableList<ContentModel>,
     people: ImmutableList<AuthorModel>,
 ) {
+    var showPeopleBottomSheet by remember { mutableStateOf(false) }
+
+    if (showPeopleBottomSheet) {
+        PeopleBottomSheet(
+            people = people,
+            onAuthorClick = { /* TODO: 프로필 화면으로 이동 */ },
+            onDismiss = { showPeopleBottomSheet = false },
+        )
+    }
+
     Column(
         modifier =
             Modifier
@@ -122,7 +139,10 @@ fun CollectionDetailScreen(
 
             if (people.isNotEmpty()) {
                 item {
-                    PeopleWhoSavedThisCollection(people)
+                    PeopleWhoSavedThisCollection(
+                        people = people,
+                        onMoreClick = { showPeopleBottomSheet = true },
+                    )
                 }
             }
         }
@@ -130,7 +150,10 @@ fun CollectionDetailScreen(
 }
 
 @Composable
-private fun PeopleWhoSavedThisCollection(people: ImmutableList<AuthorModel>) {
+private fun PeopleWhoSavedThisCollection(
+    people: ImmutableList<AuthorModel>,
+    onMoreClick: () -> Unit,
+) {
     Column(
         modifier = Modifier.padding(vertical = 10.dp),
     ) {
@@ -151,7 +174,7 @@ private fun PeopleWhoSavedThisCollection(people: ImmutableList<AuthorModel>) {
                 modifier =
                     Modifier
                         .size(48.dp)
-                        .clickable(onClick = {})
+                        .clickable(onClick = onMoreClick)
                         .padding(12.dp),
                 tint = FlintTheme.colors.white,
             )
@@ -295,7 +318,10 @@ private fun PeopleWhoSavedThisCollectionPreview(
     @PreviewParameter(PeoplePreviewProvider::class) people: ImmutableList<AuthorModel>,
 ) {
     FlintTheme {
-        PeopleWhoSavedThisCollection(people = people)
+        PeopleWhoSavedThisCollection(
+            people = people,
+            onMoreClick = {},
+        )
     }
 }
 
