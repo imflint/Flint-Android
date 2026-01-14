@@ -1,4 +1,4 @@
-package com.flint.presentation.collectiondetail.component
+package com.flint.presentation.collectionlist.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
