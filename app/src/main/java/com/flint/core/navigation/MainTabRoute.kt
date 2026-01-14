@@ -1,3 +1,14 @@
 package com.flint.core.navigation
 
-interface MainTabRoute : Route
+import kotlinx.serialization.Serializable
+
+interface MainTabRoute : Route {
+    @Serializable
+    data object Home : MainTabRoute
+
+    @Serializable
+    data object Explore : MainTabRoute
+
+    @Serializable
+    data object Profile : MainTabRoute
+}

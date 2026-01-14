@@ -12,7 +12,11 @@ import androidx.compose.ui.Modifier
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun HomeRoute(paddingValues: PaddingValues) {
+fun HomeRoute(
+    paddingValues: PaddingValues,
+    navigateToCollectionList: () -> Unit,
+    navigateToCollectionCreate: () -> Unit,
+) {
     HomeScreen(
         modifier = Modifier.padding(paddingValues),
     )

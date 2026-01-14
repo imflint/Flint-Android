@@ -12,7 +12,12 @@ import androidx.compose.ui.Modifier
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun ProfileRoute(paddingValues: PaddingValues) {
+fun ProfileRoute(
+    paddingValues: PaddingValues,
+    navigateToCollectionList: () -> Unit,
+    navigateToSavedFilmList: () -> Unit,
+    navigateToCollectionDetail: () -> Unit,
+) {
     ProfileScreen(
         modifier = Modifier.padding(paddingValues),
     )
