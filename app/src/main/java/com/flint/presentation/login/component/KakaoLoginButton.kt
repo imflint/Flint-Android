@@ -29,8 +29,8 @@ fun KakaoLoginButton(
         modifier =
             modifier
                 .height(48.dp)
-                .clickable { onClick() }
                 .clip(RoundedCornerShape(8.dp))
+                .clickable { onClick() }
                 .background(FlintTheme.colors.kakao)
                 .padding(horizontal = 24.dp),
     ) {

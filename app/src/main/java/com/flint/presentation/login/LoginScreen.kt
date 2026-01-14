@@ -33,9 +33,7 @@ fun LoginRoute(
 }
 
 @Composable
-fun LoginScreen(
-    modifier: Modifier = Modifier,
-) {
+fun LoginScreen(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
