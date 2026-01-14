@@ -4,9 +4,6 @@ import androidx.annotation.DrawableRes
 import com.flint.R
 import com.flint.core.navigation.MainTabRoute
 import com.flint.core.navigation.Route
-import com.flint.presentation.explore.navigation.Explore
-import com.flint.presentation.home.navigation.Home
-import com.flint.presentation.profile.navigation.Profile
 
 enum class MainTab(
     @DrawableRes val iconResId: Int,
@@ -15,17 +12,17 @@ enum class MainTab(
 ) {
     HOME(
         iconResId = R.drawable.ic_home_empty,
-        route = Home,
+        route = MainTabRoute.Home,
         label = "홈",
     ),
     EXPLORE(
         iconResId = R.drawable.ic_explore_empty,
-        route = Explore,
+        route = MainTabRoute.Explore,
         label = "탐색",
     ),
     PROFILE(
         iconResId = R.drawable.ic_my_empty,
-        route = Profile,
+        route = MainTabRoute.Profile,
         label = "MY",
     ),
     ;
