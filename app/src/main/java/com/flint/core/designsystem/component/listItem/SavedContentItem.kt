@@ -28,11 +28,12 @@ fun SavedContentItem(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .width(120.dp)
-            .noRippleClickable {
-                onItemClick(contentModel.contentId)
-            },
+        modifier =
+            modifier
+                .width(120.dp)
+                .noRippleClickable {
+                    onItemClick(contentModel.contentId)
+                },
     ) {
         Box(
             modifier =
@@ -95,7 +96,7 @@ private fun PreviewSavedContentItem() {
 
         SavedContentItem(
             contentModel = contentModel,
-            onItemClick = {}
+            onItemClick = {},
         )
     }
 }

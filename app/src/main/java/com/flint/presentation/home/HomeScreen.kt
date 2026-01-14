@@ -23,6 +23,9 @@ import com.flint.domain.model.ContentModel
 import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.home.component.HomeBanner
+import com.flint.presentation.home.component.HomeFab
+import com.flint.presentation.home.component.HomeRecentCollection
+import com.flint.presentation.home.component.HomeRecentCollectionEmpty
 import com.flint.presentation.home.component.HomeRecommendCollection
 import com.flint.presentation.home.component.HomeSavedContents
 
@@ -38,7 +41,7 @@ fun HomeRoute(
             navigateToCollectionDetail(collectionId)
         },
         onSavedContentItemClick = { contentId ->
-            //TODO show OttListBottomSheet
+            // TODO show OttListBottomSheet
         },
         modifier = Modifier.padding(paddingValues),
     )
@@ -48,23 +51,29 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     userName: String = "",
-    collectionModelList: List<CollectionModel> = emptyList(),
-    contentModelList: List<ContentModel> = emptyList(),
+    recommendCollectionModelList: List<CollectionModel> = emptyList(),
+    savedContentModelList: List<ContentModel> = emptyList(),
+    recentCollectionModelList: List<CollectionModel> = emptyList(),
     onRecommendCollectionItemClick: (collectionId: String) -> Unit = {},
     onSavedContentItemClick: (contentId: Long) -> Unit = {},
-    modifier: Modifier = Modifier
+    onRecentCollectionItemClick: (collectionId: String) -> Unit = {},
+    onRecentCollectionAllClick: () -> Unit = {},
+    navigateToExplore: () -> Unit = {},
+    navigateToCollectionCreate: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .background(FlintTheme.colors.background)
-            .fillMaxSize()
-            .statusBarsPadding(),
+        modifier =
+            modifier
+                .background(FlintTheme.colors.background)
+                .fillMaxSize()
+                .statusBarsPadding(),
         contentAlignment = Alignment.Center,
     ) {
-
         LazyColumn(
             overscrollEffect = null,
-            modifier = Modifier.fillMaxSize()
+            contentPadding = PaddingValues(bottom = 80.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             stickyHeader {
                 FlintLogoTopAppbar()
@@ -74,7 +83,7 @@ private fun HomeScreen(
                 Spacer(Modifier.height(5.dp))
 
                 HomeBanner(
-                    userName = userName
+                    userName = userName,
                 )
             }
 
@@ -82,10 +91,10 @@ private fun HomeScreen(
                 Spacer(Modifier.height(48.dp))
 
                 HomeRecommendCollection(
-                    collectionModelList = collectionModelList,
+                    collectionModelList = recommendCollectionModelList,
                     onItemClick = { collectionId ->
                         onRecommendCollectionItemClick(collectionId)
-                    }
+                    },
                 )
             }
 
@@ -93,14 +102,40 @@ private fun HomeScreen(
                 Spacer(Modifier.height(48.dp))
 
                 HomeSavedContents(
-                    contentModelList = contentModelList,
+                    contentModelList = savedContentModelList,
                     onItemClick = { contentId ->
                         onSavedContentItemClick(contentId)
-                    }
+                    },
                 )
             }
 
+            item {
+                Spacer(Modifier.height(48.dp))
+
+                if (recentCollectionModelList.isEmpty()) {
+                    HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)
+                } else {
+                    HomeRecentCollection(
+                        collectionModelList = recentCollectionModelList,
+                        onItemClick = { collectionId ->
+                            onRecentCollectionItemClick(collectionId)
+                        },
+                        onAllClick = {
+                            onRecentCollectionAllClick()
+                        },
+                    )
+                }
+            }
         }
+
+        /** FAB **/
+        HomeFab(
+            onClick = navigateToCollectionCreate,
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 16.dp, bottom = 8.dp),
+        )
     }
 }
 
@@ -108,85 +143,93 @@ private fun HomeScreen(
 @Composable
 private fun PreviewHomeScreen() {
     FlintTheme {
-        val collectionModelList = listOf(
-            CollectionModel(
-                collectionId = "",
-                collectionTitle = "컬렉션 제목",
-                collectionImageUrl = "",
-                createdAt = "",
-                isBookmarked = false,
-                author = AuthorModel(
-                    userId = 0,
-                    nickname = "사용자 이름",
-                    profileUrl = "",
-                    userRole = UserRoleType.FLINER
-                )
-            ),
-            CollectionModel(
-                collectionId = "",
-                collectionTitle = "컬렉션 제목2",
-                collectionImageUrl = "",
-                createdAt = "",
-                isBookmarked = false,
-                author = AuthorModel(
-                    userId = 0,
-                    nickname = "사용자 이름2",
-                    profileUrl = "",
-                    userRole = UserRoleType.FLINER
-                )
-            ),
-        )
-
-        val contentModelList = listOf(
-            ContentModel(
-                contentId = 0,
-                title = "드라마 제목",
-                year = 2000,
-                posterImage = "",
-                ottSimpleList = listOf(
-                    OttType.Netflix,
-                    OttType.Disney,
-                    OttType.Tving,
-                    OttType.Coupang
-                )
-            ),
-            ContentModel(
-                contentId = 0,
-                title = "드라마 제목2",
-                year = 2020,
-                posterImage = "",
-                ottSimpleList = listOf(
-                    OttType.Wave,
-                    OttType.Watcha,
-                    OttType.Tving,
-                )
-            ),
-            ContentModel(
-                contentId = 0,
-                title = "드라마 제목3",
-                year = 2003,
-                posterImage = "",
-                ottSimpleList = listOf(
-                    OttType.Disney,
-                    OttType.Tving,
-                )
-            ),
-            ContentModel(
-                contentId = 0,
-                title = "드라마 제목4",
-                year = 1919,
-                posterImage = "",
-                ottSimpleList = listOf(
-                    OttType.Watcha
-                )
+        val collectionModelList =
+            listOf(
+                CollectionModel(
+                    collectionId = "",
+                    collectionTitle = "컬렉션 제목",
+                    collectionImageUrl = "",
+                    createdAt = "",
+                    isBookmarked = false,
+                    author =
+                        AuthorModel(
+                            userId = 0,
+                            nickname = "사용자 이름",
+                            profileUrl = "",
+                            userRole = UserRoleType.FLINER,
+                        ),
+                ),
+                CollectionModel(
+                    collectionId = "",
+                    collectionTitle = "컬렉션 제목2",
+                    collectionImageUrl = "",
+                    createdAt = "",
+                    isBookmarked = false,
+                    author =
+                        AuthorModel(
+                            userId = 0,
+                            nickname = "사용자 이름2",
+                            profileUrl = "",
+                            userRole = UserRoleType.FLINER,
+                        ),
+                ),
             )
-        )
 
+        val contentModelList =
+            listOf(
+                ContentModel(
+                    contentId = 0,
+                    title = "드라마 제목",
+                    year = 2000,
+                    posterImage = "",
+                    ottSimpleList =
+                        listOf(
+                            OttType.Netflix,
+                            OttType.Disney,
+                            OttType.Tving,
+                            OttType.Coupang,
+                        ),
+                ),
+                ContentModel(
+                    contentId = 0,
+                    title = "드라마 제목2",
+                    year = 2020,
+                    posterImage = "",
+                    ottSimpleList =
+                        listOf(
+                            OttType.Wave,
+                            OttType.Watcha,
+                            OttType.Tving,
+                        ),
+                ),
+                ContentModel(
+                    contentId = 0,
+                    title = "드라마 제목3",
+                    year = 2003,
+                    posterImage = "",
+                    ottSimpleList =
+                        listOf(
+                            OttType.Disney,
+                            OttType.Tving,
+                        ),
+                ),
+                ContentModel(
+                    contentId = 0,
+                    title = "드라마 제목4",
+                    year = 1919,
+                    posterImage = "",
+                    ottSimpleList =
+                        listOf(
+                            OttType.Watcha,
+                        ),
+                ),
+            )
 
         HomeScreen(
             userName = "종우",
-            collectionModelList = collectionModelList,
-            contentModelList = contentModelList
+            recommendCollectionModelList = collectionModelList,
+            savedContentModelList = contentModelList,
+            recentCollectionModelList = collectionModelList, // or 'emptyList()'
         )
     }
 }

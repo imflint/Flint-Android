@@ -19,24 +19,26 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun HomeBanner(
     userName: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(270.dp)
-            .paint(
-                painter = painterResource(id = R.drawable.img_collection_bg2),
-                contentScale = ContentScale.FillBounds
-            )
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(270.dp)
+                .paint(
+                    painter = painterResource(id = R.drawable.img_collection_bg2),
+                    contentScale = ContentScale.FillBounds,
+                ),
     ) {
         Text(
             text = "반가워요, $userName 님\n오늘은 어떤 작품이 끌리세요?",
             style = FlintTheme.typography.head1Sb22,
             color = FlintTheme.colors.white,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 16.dp, bottom = 30.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 16.dp, bottom = 30.dp),
         )
     }
 }
@@ -46,7 +48,7 @@ fun HomeBanner(
 private fun PreviewHomeBanner() {
     FlintTheme {
         HomeBanner(
-            userName = "종우"
+            userName = "종우",
         )
     }
 }
