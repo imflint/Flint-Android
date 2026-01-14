@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
@@ -23,12 +24,15 @@ import com.flint.domain.type.OttType
 @Composable
 fun SavedContentItem(
     contentModel: ContentModel,
+    onItemClick: (contentId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            modifier
-                .width(120.dp),
+        modifier = modifier
+            .width(120.dp)
+            .noRippleClickable {
+                onItemClick(contentModel.contentId)
+            },
     ) {
         Box(
             modifier =
@@ -91,6 +95,7 @@ private fun PreviewSavedContentItem() {
 
         SavedContentItem(
             contentModel = contentModel,
+            onItemClick = {}
         )
     }
 }
