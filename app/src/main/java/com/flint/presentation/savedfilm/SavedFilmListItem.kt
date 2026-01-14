@@ -33,15 +33,16 @@ import com.flint.R
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.ContentModel
 import com.flint.domain.type.OttType
 
 @Composable
 fun SavedFilmListItem(
-    contentModel: ContentModel,
+    filmImage: String,
+    ottList: List<OttType>,
     title: String,
     director: String,
     createdYear: String,
+    onMoreFilmClick: () -> Unit,
     isBookmarked: Boolean,
     bookmarkCount: Int,
     onBookmarkClick: () -> Unit,
@@ -52,10 +53,12 @@ fun SavedFilmListItem(
             modifier
                 .fillMaxWidth()
                 .height(150.dp)
-                .background(color = FlintTheme.colors.background),
+                .background(color = FlintTheme.colors.background)
+                .padding(16.dp, 12.dp),
     ) {
         SavedFilmListItemImage(
-            contentModel = contentModel,
+            filmImage = filmImage,
+            ottList = ottList,
             modifier = Modifier.fillMaxHeight(),
         )
 
@@ -65,6 +68,7 @@ fun SavedFilmListItem(
             title = title,
             director = director,
             createdYear = createdYear,
+            onMoreFilmClick = onMoreFilmClick,
             modifier =
                 Modifier
                     .fillMaxHeight()
@@ -83,25 +87,24 @@ fun SavedFilmListItem(
 
 @Composable
 private fun SavedFilmListItemImage(
-    contentModel: ContentModel,
+    filmImage: String,
+    ottList: List<OttType>,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.width(100.dp),
+    Box(
+        modifier =
+            modifier
+                .width(100.dp)
+                .fillMaxSize(),
     ) {
-        Box(
+        NetworkImage(
+            imageUrl = filmImage,
             modifier = Modifier.fillMaxSize(),
-        ) {
-            NetworkImage(
-                imageUrl = contentModel.posterImage,
-                modifier = Modifier.fillMaxSize(),
-            )
-
-            OttHorizontalList(
-                ottList = contentModel.ottSimpleList,
-                modifier = Modifier.padding(top = 10.dp, start = 8.dp),
-            )
-        }
+        )
+        OttHorizontalList(
+            ottList = ottList,
+            modifier = Modifier.padding(top = 10.dp, start = 8.dp),
+        )
     }
 }
 
@@ -110,6 +113,7 @@ private fun SavedFilmListItemInfo(
     title: String,
     director: String,
     createdYear: String,
+    onMoreFilmClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -146,6 +150,7 @@ private fun SavedFilmListItemInfo(
         }
 
         Row(
+            modifier = Modifier.clickable(onClick = onMoreFilmClick),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -198,29 +203,17 @@ private fun SavedFilmListItemBookmark(
 @Composable
 private fun SavedFilmListItemBookmarkPreview() {
     FlintTheme {
-        val contentModel =
-            ContentModel(
-                contentId = 0,
-                title = "드라마 제목",
-                year = 2000,
-                posterImage = "",
-                ottSimpleList =
-                    listOf(
-                        OttType.Netflix,
-                        OttType.Disney,
-                        OttType.Tving,
-                        OttType.Coupang,
-                        OttType.Wave,
-                        OttType.Watcha,
-                    ),
-            )
         var isBookmarked by remember { mutableStateOf(false) }
 
+        val ottSimpleList = OttType.entries
+
         SavedFilmListItem(
-            contentModel = contentModel,
+            filmImage = "",
+            ottList = ottSimpleList,
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005",
+            onMoreFilmClick = {},
             isBookmarked = isBookmarked,
             bookmarkCount = 128,
             onBookmarkClick = { isBookmarked = !isBookmarked },
