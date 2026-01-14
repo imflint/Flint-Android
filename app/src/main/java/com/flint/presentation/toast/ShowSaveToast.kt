@@ -41,15 +41,8 @@ fun ShowSaveToast(
             navigateToSavedCollection = { navigateToSavedCollection(collectionId) },
             modifier = Modifier.padding(bottom = yOffset),
         )
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        SaveToast(
-            navigateToSavedCollection = { navigateToSavedCollection(collectionId) },
-            modifier = Modifier.padding(bottom = yOffset),
-        )
     }
+}
 }
 
 @Preview(showBackground = true)
