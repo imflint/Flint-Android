@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import com.flint.core.navigation.Route
 import com.flint.presentation.login.LoginRoute
 
-fun NavController.navigateToLogin(navOptions: NavOptions) {
+fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
     navigate(Route.Login, navOptions)
 }
 
