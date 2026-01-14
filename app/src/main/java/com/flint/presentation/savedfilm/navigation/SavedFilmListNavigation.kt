@@ -12,9 +12,7 @@ fun NavController.navigateToSavedFilmList(navOptions: NavOptions? = null) {
     navigate(Route.SavedFilmList, navOptions)
 }
 
-fun NavGraphBuilder.savedFilmListNavGraph(
-    paddingValues: PaddingValues,
-) {
+fun NavGraphBuilder.savedFilmListNavGraph(paddingValues: PaddingValues) {
     composable<Route.SavedFilmList> {
         SavedFilmListRoute(
             paddingValues = paddingValues,

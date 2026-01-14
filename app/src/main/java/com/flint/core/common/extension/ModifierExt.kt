@@ -1,6 +1,9 @@
 package com.flint.core.common.extension
 
+import android.content.Context
 import android.graphics.BlurMaskFilter
+import android.graphics.Rect
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
@@ -14,9 +17,11 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 
 @Composable
 inline fun Modifier.noRippleClickable(
@@ -73,6 +78,20 @@ fun Modifier.dropShadow(
             canvas.translate(offsetXPx, offsetYPx)
             canvas.drawOutline(shadowOutline, paint)
             canvas.restore()
+        }
+    }
+}
+
+fun Modifier.draw9Patch(
+    context: Context,
+    @DrawableRes ninePatchRes: Int,
+) = this.drawBehind {
+    drawIntoCanvas {
+        ContextCompat.getDrawable(context, ninePatchRes)?.let { ninePatch ->
+            ninePatch.run {
+                bounds = Rect(0, 0, size.width.toInt(), size.height.toInt())
+                draw(it.nativeCanvas)
+            }
         }
     }
 }
