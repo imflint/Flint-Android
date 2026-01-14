@@ -16,7 +16,7 @@ fun NavGraphBuilder.collectionDetailNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
 ) {
-    composable<Route.CollectionList> {
+    composable<Route.CollectionDetail> {
         CollectionDetailRoute(
             paddingValues = paddingValues,
             navigateToCollectionList = navigateToCollectionList,
