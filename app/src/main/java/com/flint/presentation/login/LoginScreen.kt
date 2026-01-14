@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.dropShadow
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.presentation.login.component.KakaoLoginButton
 
 @Composable
 fun LoginRoute(
@@ -57,6 +59,18 @@ fun LoginScreen(
                     .width(160.dp)
                     .height(56.dp)
                     .offset(y = (-32).dp),
+        )
+
+        KakaoLoginButton(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 60.dp)
+                    .padding(horizontal = 16.dp),
+            onClick = {
+                // TODO Kakao Login
+            },
         )
     }
 }
