@@ -16,7 +16,7 @@ fun ProfileRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
     navigateToSavedFilmList: () -> Unit,
-    navigateToCollectionDetail: () -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
     ProfileScreen(
         modifier = Modifier.padding(paddingValues),

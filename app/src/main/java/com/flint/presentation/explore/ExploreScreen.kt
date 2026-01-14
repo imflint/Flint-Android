@@ -14,7 +14,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun ExploreRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionDetail: () -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
 ) {
     ExploreScreen(

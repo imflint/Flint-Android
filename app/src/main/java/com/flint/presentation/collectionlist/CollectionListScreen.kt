@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun CollectionListRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionDetail: () -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
     CollectionListScreen()
 }

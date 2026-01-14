@@ -14,7 +14,7 @@ fun NavController.navigateToCollectionList(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.collectionListNavGraph(
     paddingValues: PaddingValues,
-    navigateToCollectionDetail: () -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
     composable<Route.CollectionList> {
         CollectionListRoute(
