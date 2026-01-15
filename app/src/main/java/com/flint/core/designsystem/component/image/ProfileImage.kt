@@ -12,7 +12,7 @@ import com.flint.R
 fun ProfileImage(
     imageUrl: String?,
     modifier: Modifier = Modifier,
-    contentDescription: String? = null
+    contentDescription: String? = null,
 ) {
     if (imageUrl.isNullOrBlank()) {
         Image(
