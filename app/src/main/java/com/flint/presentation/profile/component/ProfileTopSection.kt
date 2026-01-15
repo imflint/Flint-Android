@@ -28,7 +28,6 @@ import com.flint.R
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
 
-
 @Composable
 fun ProfileTopSection(
     userName: String,
@@ -47,16 +46,16 @@ fun ProfileTopSection(
                         contentScale = ContentScale.FillBounds,
                     ),
         ) {
-
             val gradient =
                 Brush.verticalGradient(
                     colors = listOf(Color(0xFF424BBD).copy(1f), Color(0xFF121212).copy(alpha = 0.04f)),
                 )
 
             Column(
-                modifier = Modifier
-                    .background(FlintTheme.colors.background)
-                    .align(Alignment.BottomCenter)
+                modifier =
+                    Modifier
+                        .background(FlintTheme.colors.background)
+                        .align(Alignment.BottomCenter),
             ) {
                 Box(
                     modifier =
@@ -68,7 +67,7 @@ fun ProfileTopSection(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 ) {
                     Text(
                         text = userName,
@@ -79,7 +78,7 @@ fun ProfileTopSection(
                         Image(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_qualified),
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                     }
                 }
@@ -93,7 +92,6 @@ fun ProfileTopSection(
                         .align(Alignment.BottomStart)
                         .size(128.dp),
             )
-
         }
     }
 }
@@ -105,7 +103,7 @@ private fun ProfileTopSectionPreview() {
         ProfileTopSection(
             userName = "안두콩",
             profileUrl = "",
-            isFliner = false
+            isFliner = false,
         )
     }
 }

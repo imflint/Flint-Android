@@ -12,35 +12,36 @@ data class CollectionModel(
     val author: AuthorModel,
 ) {
     companion object {
-        val FakeList = persistentListOf(
-            CollectionModel(
-                collectionId = "",
-                collectionTitle = "컬렉션 제목",
-                collectionImageUrl = "",
-                createdAt = "",
-                isBookmarked = false,
-                author =
-                    AuthorModel(
-                        userId = 0,
-                        nickname = "사용자 이름",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLINER,
-                    ),
-            ),
-            CollectionModel(
-                collectionId = "",
-                collectionTitle = "컬렉션 제목2",
-                collectionImageUrl = "",
-                createdAt = "",
-                isBookmarked = false,
-                author =
-                    AuthorModel(
-                        userId = 0,
-                        nickname = "사용자 이름2",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLINER,
-                    ),
-            ),
-        )
+        val FakeList =
+            persistentListOf(
+                CollectionModel(
+                    collectionId = "",
+                    collectionTitle = "컬렉션 제목",
+                    collectionImageUrl = "",
+                    createdAt = "",
+                    isBookmarked = false,
+                    author =
+                        AuthorModel(
+                            userId = 0,
+                            nickname = "사용자 이름",
+                            profileUrl = "",
+                            userRole = UserRoleType.FLINER,
+                        ),
+                ),
+                CollectionModel(
+                    collectionId = "",
+                    collectionTitle = "컬렉션 제목2",
+                    collectionImageUrl = "",
+                    createdAt = "",
+                    isBookmarked = false,
+                    author =
+                        AuthorModel(
+                            userId = 0,
+                            nickname = "사용자 이름2",
+                            profileUrl = "",
+                            userRole = UserRoleType.FLINER,
+                        ),
+                ),
+            )
     }
 }

@@ -12,14 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.core.designsystem.component.listView.CollectionSection
+import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
 import com.flint.domain.model.CollectionModel
 import com.flint.domain.model.ContentModel
 import com.flint.domain.model.PreferenceKeywordModel
 import com.flint.domain.type.UserRoleType
-import com.flint.presentation.home.component.HomeSavedContents
-import com.flint.presentation.profile.component.ProfileCollectionSection
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 import kotlinx.collections.immutable.ImmutableList
@@ -47,6 +47,8 @@ private fun ProfileScreen(
     savedContentModelList: ImmutableList<ContentModel> = persistentListOf(),
     onCollectionItemClick: (String) -> Unit = {},
     onFilmItemClick: (contentId: Long) -> Unit = {},
+    onCollectionMoreClick: () -> Unit = {},
+    onFilmMoreClick: () -> Unit = {},
     modifier: Modifier = Modifier, // TODO: 위치 조정
 ) {
     LazyColumn(
@@ -61,7 +63,7 @@ private fun ProfileScreen(
             ProfileTopSection(
                 userName = userName,
                 profileUrl = "",
-                isFliner = (userRole == UserRoleType.FLINER)
+                isFliner = (userRole == UserRoleType.FLINER),
             )
         }
 
@@ -72,38 +74,44 @@ private fun ProfileScreen(
                 nickname = userName,
                 keywordList = keywordList,
                 modifier =
-                    Modifier.fillMaxWidth()
+                    Modifier.fillMaxWidth(),
             )
         }
 
         item {
             Spacer(Modifier.height(48.dp))
 
-            ProfileCollectionSection(
+            CollectionSection(
                 title = "${userName}님의 컬렉션",
                 description = "${userName}님이 생성한 컬렉션이에요",
                 onItemClick = onCollectionItemClick,
-                onAllClick = {},
-                collectionModelList = createCollectionModelList
+                isAllVisible = true,
+                onAllClick = onCollectionMoreClick,
+                collectionModelList = createCollectionModelList,
             )
         }
 
         item {
             Spacer(Modifier.height(48.dp))
 
-            ProfileCollectionSection(
-                title = "${userName}님이 저장한 컬렉션",
+            CollectionSection(
+                title = "저장한 컬렉션",
                 description = "${userName}님이 저장한 컬렉션이에요",
                 onItemClick = onCollectionItemClick,
-                onAllClick = {},
-                collectionModelList = savedCollectionModelList
+                isAllVisible = true,
+                onAllClick = onCollectionMoreClick,
+                collectionModelList = savedCollectionModelList,
             )
         }
 
         item {
             Spacer(Modifier.height(48.dp))
 
-            HomeSavedContents(
+            SavedContentsSection(
+                title = "저장한 작품",
+                description = "${userName}님이 저장한 작품이에요",
+                isAllVisible = true,
+                onAllClick = onFilmMoreClick,
                 contentModelList = savedContentModelList,
                 onItemClick = onFilmItemClick,
             )
@@ -121,7 +129,7 @@ private fun ProfileScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             createCollectionModelList = CollectionModel.FakeList,
             savedCollectionModelList = CollectionModel.FakeList,
-            savedContentModelList = ContentModel.FakeList
+            savedContentModelList = ContentModel.FakeList,
         )
     }
 }

@@ -30,9 +30,10 @@ fun ProfileKeywordSection(
     keywordList: ImmutableList<PreferenceKeywordModel>,
     modifier: Modifier = Modifier,
 ) {
-    val rotatedKeywordList = remember(keywordList) {
-        rotateKeywordByRank(keywordList)
-    }
+    val rotatedKeywordList =
+        remember(keywordList) {
+            rotateKeywordByRank(keywordList)
+        }
 
     Column(
         modifier =
@@ -72,16 +73,18 @@ fun KeywordChipsLayout(
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth(),
     ) {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             itemVerticalAlignment = Alignment.CenterVertically,
             maxItemsInEachRow = 3,
-            modifier = Modifier
-                .align(Alignment.Center),
+            modifier =
+                Modifier
+                    .align(Alignment.Center),
         ) {
             keywordList.forEach {
                 with(it) {

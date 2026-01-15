@@ -14,9 +14,7 @@ data class PreferenceKeywordModel(
     val percentage: Int = 0,
 ) {
     companion object {
-        fun rotateKeywordByRank(
-            keywordList: ImmutableList<PreferenceKeywordModel>
-        ): ImmutableList<PreferenceKeywordModel> {
+        fun rotateKeywordByRank(keywordList: ImmutableList<PreferenceKeywordModel>): ImmutableList<PreferenceKeywordModel> {
             if (keywordList.size < 2) return keywordList
 
             val sortedByRank = keywordList.sortedBy { it.rank }
@@ -27,7 +25,8 @@ data class PreferenceKeywordModel(
             val bottomRanks = sortedByRank.drop(3)
 
             // 번갈아 배치: 1, 4, 2, 5, 3, 6
-            return topRanks.zip(bottomRanks)
+            return topRanks
+                .zip(bottomRanks)
                 .flatMap { (top, bottom) -> listOf(top, bottom) }
                 .toPersistentList()
         }

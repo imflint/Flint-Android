@@ -68,7 +68,7 @@ fun ProfileKeywordGraphItem(
                 style = FlintTheme.typography.body2R14,
                 color = FlintTheme.colors.gray100,
                 textAlign = TextAlign.End,
-                modifier = Modifier.widthIn(min = 32.dp)
+                modifier = Modifier.widthIn(min = 32.dp),
             )
         }
     }
