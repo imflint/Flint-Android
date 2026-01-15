@@ -78,7 +78,7 @@ fun KeywordChipsLayout(
                 .fillMaxWidth(),
     ) {
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             itemVerticalAlignment = Alignment.CenterVertically,
             maxItemsInEachRow = 3,
