@@ -73,6 +73,7 @@ private fun ProfileScreen(
             ProfileKeywordSection(
                 nickname = userName,
                 keywordList = keywordList,
+                onRefreshClick = {},
                 modifier =
                     Modifier.fillMaxWidth(),
             )
