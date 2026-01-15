@@ -21,11 +21,13 @@ fun FlintMediumButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     FlintBasicButton(
         text = text,
         state = state,
         onClick = onClick,
+        enabled = enabled,
         contentPadding = PaddingValues(10.dp),
         modifier =
             modifier
