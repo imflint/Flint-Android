@@ -2,6 +2,7 @@ package com.flint.presentation.collectiondetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalOverscrollFactory
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,9 +20,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -29,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +40,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -89,7 +94,20 @@ fun CollectionDetailScreen(
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
     ) {
-        var showPeopleBottomSheet by remember { mutableStateOf(false) }
+        var showPeopleBottomSheet: Boolean by remember { mutableStateOf(false) }
+        val scrollState: ScrollState = rememberScrollState()
+        var thumbnailHeight: Int by remember { mutableIntStateOf(0) }
+        val topPaddingPx: Int = with(LocalDensity.current) { 24.dp.toPx().toInt() }
+
+        val scrollProgress: Float =
+            if (scrollState.maxValue > 0) {
+                scrollState.value.toFloat() / scrollState.maxValue
+            } else {
+                0f
+            }
+
+        // Thumbnail + 상단 패딩(24dp)이 스크롤되어 사라지면 sticky
+        val isProgressBarSticky = scrollState.value >= thumbnailHeight + topPaddingPx
 
         if (showPeopleBottomSheet) {
             PeopleBottomSheet(
@@ -111,25 +129,34 @@ fun CollectionDetailScreen(
                 backgroundColor = Color.Transparent,
             )
 
-            LazyColumn(
-                contentPadding = PaddingValues(vertical = 24.dp),
-            ) {
-                item {
+            Box {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                            .padding(vertical = 24.dp),
+                ) {
                     Thumbnail(
                         title = title,
                         authorId = authorId,
                         userId = userId,
                         isBookmarked = isBookmarked,
+                        modifier =
+                            Modifier.onGloballyPositioned { coordinates: LayoutCoordinates ->
+                                thumbnailHeight = coordinates.size.height
+                            },
                     )
-                }
 
-                stickyHeader {
-                    UnderImageProgressBar(
-                        progress = 0.5f, // TODO: Progress 퍼센티지 추가
-                    )
-                }
+                    if (!isProgressBarSticky) {
+                        UnderImageProgressBar(progress = scrollProgress)
+                    } else {
+                        // sticky 상태일 때 공간 유지
+                        Spacer(Modifier.height(5.dp))
+                    }
 
-                item {
+                    Spacer(Modifier.height(24.dp))
+
                     CollectionDetailDescription(
                         authorNickname = authorNickname,
                         authorUserRoleType = authorUserRoleType,
@@ -140,28 +167,32 @@ fun CollectionDetailScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
                     )
-                }
 
-                item {
                     Spacer(Modifier.height(48.dp))
-                }
 
-                items(contents) { content: ContentModel ->
-                    Content(
-                        content = content,
-                        onBookmarkIconClick = { contentId: Long ->
-                            // TODO: Content 저장
-                        },
-                    )
-                }
+                    contents.forEach { content: ContentModel ->
+                        Content(
+                            content = content,
+                            onBookmarkIconClick = { contentId: Long ->
+                                // TODO: Content 저장
+                            },
+                        )
+                    }
 
-                if (people.isNotEmpty()) {
-                    item {
+                    if (people.isNotEmpty()) {
                         PeopleWhoSavedThisCollection(
                             people = people,
                             onMoreClick = { showPeopleBottomSheet = true },
                         )
                     }
+                }
+
+                // Sticky ProgressBar
+                if (isProgressBarSticky) {
+                    UnderImageProgressBar(
+                        progress = scrollProgress,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
         }
@@ -350,10 +381,11 @@ private fun Thumbnail(
     authorId: Long,
     userId: Long,
     isBookmarked: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .aspectRatio(360f / 270f),
     ) {
