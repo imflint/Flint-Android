@@ -68,7 +68,7 @@ fun HomeRecommendCollection(
 
 @Preview(showBackground = true, backgroundColor = 0xFF121212)
 @Composable
-private fun PreviewHomeRecommentCollection() {
+private fun PreviewHomeRecommendCollection() {
     FlintTheme {
         val collectionModelList =
             listOf(

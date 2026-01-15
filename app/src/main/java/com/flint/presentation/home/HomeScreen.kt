@@ -116,6 +116,7 @@ private fun HomeScreen(
                     HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)
                 } else {
                     HomeRecentCollection(
+                        userName = userName,
                         collectionModelList = recentCollectionModelList,
                         onItemClick = { collectionId ->
                             onRecentCollectionItemClick(collectionId)

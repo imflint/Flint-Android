@@ -31,6 +31,7 @@ import com.flint.domain.type.UserRoleType
 
 @Composable
 fun HomeRecentCollection(
+    userName: String,
     collectionModelList: List<CollectionModel>,
     onItemClick: (id: String) -> Unit,
     onAllClick: () -> Unit,
@@ -59,7 +60,7 @@ fun HomeRecentCollection(
                 Spacer(Modifier.height(4.dp))
 
                 Text(
-                    text = "키카님이 최근 살펴본 컬렉션이에요",
+                    text = "${userName}님이 최근 살펴본 컬렉션이에요",
                     style = FlintTheme.typography.body2R14,
                     color = FlintTheme.colors.white,
                     modifier = Modifier.padding(start = 16.dp),
@@ -137,6 +138,7 @@ private fun PreviewHomeRecentCollection() {
             )
 
         HomeRecentCollection(
+            userName = "종우",
             collectionModelList = collectionModelList,
             onItemClick = { },
             onAllClick = { },

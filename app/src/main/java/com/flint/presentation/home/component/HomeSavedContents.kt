@@ -31,7 +31,7 @@ fun HomeSavedContents(
                 .fillMaxWidth(),
     ) {
         Text(
-            text = "최근 저장한 콘텐츠 ",
+            text = "최근 저장한 콘텐츠",
             style = FlintTheme.typography.head3Sb18,
             color = FlintTheme.colors.white,
             modifier = Modifier.padding(start = 16.dp),
