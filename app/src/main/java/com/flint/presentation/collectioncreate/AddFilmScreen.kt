@@ -29,6 +29,9 @@ fun AddFilmRoute(
     paddingValues: PaddingValues,
     navigateToCollectionCreate: () -> Unit,
 ) {
+    AddFilmScreen(
+        onBackClick = {}
+    )
 }
 
 data class CollectionFilmUiModel(
@@ -48,27 +51,14 @@ fun AddFilmScreen(
 
     val filmList = remember {
         mutableStateListOf(
-            CollectionFilmUiModel(
-                filmId = 1L,
-                imageUrl = "https://buly.kr/DEaVFRZ",
-                title = "해리포터 불의 잔",
-                director = "마이크 뉴웰",
-                createdYear = "2005",
-            ),
-            CollectionFilmUiModel(
-                filmId = 2L,
-                imageUrl = "https://buly.kr/DEaVFRZ",
-                title = "인터스텔라",
-                director = "크리스토퍼 놀란",
-                createdYear = "2014",
-            ),
-            CollectionFilmUiModel(
-                filmId = 3L,
-                imageUrl = "https://buly.kr/DEaVFRZ",
-                title = "라라랜드",
-                director = "데이미언 셔젤",
-                createdYear = "2016",
-            ),
+            CollectionFilmUiModel(1L, "https://buly.kr/DEaVFRZ", "해리포터 불의 잔", "마이크 뉴웰", "2005"),
+            CollectionFilmUiModel(2L, "https://buly.kr/DEaVFRZ", "인터스텔라", "크리스토퍼 놀란", "2014"),
+            CollectionFilmUiModel(3L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+            CollectionFilmUiModel(4L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+            CollectionFilmUiModel(5L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+            CollectionFilmUiModel(6L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+            CollectionFilmUiModel(7L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+            CollectionFilmUiModel(8L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
         )
     }
 
@@ -86,14 +76,13 @@ fun AddFilmScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 16.dp),
-
         FlintSearchTextField(
             placeholder = "추천하고 싶은 작품을 검색해보세요",
             value = searchText,
             onValueChanged = { searchText = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -133,7 +122,7 @@ fun AddFilmScreen(
 
 @Preview
 @Composable
-fun AddFilmScreenPreview() {
+private fun AddFilmScreenPreview() {
     FlintTheme {
         AddFilmScreen(
             onBackClick = {}
