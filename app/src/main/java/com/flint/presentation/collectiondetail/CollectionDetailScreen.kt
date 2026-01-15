@@ -78,7 +78,6 @@ fun CollectionDetailRoute(
 @Composable
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
-    navigateToCollectionList: () -> Unit,
     title: String,
     authorId: Long,
     userId: Long,
@@ -816,7 +815,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
                 isBookmarked = true,
                 authorNickname = "키카",
                 authorUserRoleType = UserRoleType.FLINER,
-                contents = persistentListOf(sampleContent),
+                contents = persistentListOf(sampleContent, sampleContent.copy(isSpoiler = true)),
                 people = samplePeople,
             ),
             ScreenPreviewData(
@@ -826,7 +825,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
                 isBookmarked = false,
                 authorNickname = "일반유저",
                 authorUserRoleType = UserRoleType.FLING,
-                contents = persistentListOf(sampleContent),
+                contents = persistentListOf(sampleContent, sampleContent.copy(isSpoiler = true)),
                 people = persistentListOf(),
             ),
             ScreenPreviewData(
@@ -836,7 +835,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
                 isBookmarked = false,
                 authorNickname = "나",
                 authorUserRoleType = UserRoleType.FLING,
-                contents = persistentListOf(sampleContent),
+                contents = persistentListOf(sampleContent, sampleContent.copy(isSpoiler = true)),
                 people = samplePeople,
             ),
         )
@@ -851,7 +850,6 @@ private fun CollectionDetailScreenPreview(
         Scaffold { paddingValues: PaddingValues ->
             CollectionDetailScreen(
                 paddingValues = paddingValues,
-                navigateToCollectionList = {},
                 title = data.title,
                 authorId = data.authorId,
                 userId = data.userId,
