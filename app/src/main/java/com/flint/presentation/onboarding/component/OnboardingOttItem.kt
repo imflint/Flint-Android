@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,14 +37,15 @@ fun OnboardingOttItem(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.width(100.dp),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // OTT 로고 영역
         Box(
             modifier =
                 Modifier
-                    .size(100.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
                     .clickable { onClick() },
             contentAlignment = Alignment.Center,
         ) {
@@ -52,12 +54,6 @@ fun OnboardingOttItem(
                 painter = painterResource(ottType.imageRes),
                 contentDescription = null,
             )
-//            NetworkImage(
-//                imageUrl = imageUrl,
-//                contentDescription = platformName,
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier.fillMaxSize(),
-//            )
 
             // 선택 시 어두운 오버레이
             if (isSelected) {
