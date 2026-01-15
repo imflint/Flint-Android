@@ -34,6 +34,9 @@ fun ProfileRoute(
 ) {
     ProfileScreen(
         modifier = Modifier.padding(paddingValues),
+        onCollectionItemClick = navigateToCollectionDetail,
+        onFilmMoreClick = navigateToSavedFilmList,
+        onCollectionMoreClick = navigateToCollectionList
     )
 }
 
@@ -45,10 +48,10 @@ private fun ProfileScreen(
     createCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
     savedCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
     savedContentModelList: ImmutableList<ContentModel> = persistentListOf(),
-    onCollectionItemClick: (String) -> Unit = {},
-    onFilmItemClick: (contentId: Long) -> Unit = {},
-    onCollectionMoreClick: () -> Unit = {},
-    onFilmMoreClick: () -> Unit = {},
+    onCollectionItemClick: (collectionId: String) -> Unit,
+    onFilmItemClick: (contentId: Long) -> Unit = {}, //TODO: 바텀시트 띄우기
+    onCollectionMoreClick: () -> Unit,
+    onFilmMoreClick: () -> Unit,
     modifier: Modifier = Modifier, // TODO: 위치 조정
 ) {
     LazyColumn(
@@ -126,11 +129,16 @@ private fun ProfileScreenPreview() {
     FlintTheme {
         ProfileScreen(
             userName = "안두콩",
+            userRole = UserRoleType.FLINER,
             keywordList = PreferenceKeywordModel.FakeList1,
             modifier = Modifier.fillMaxSize(),
             createCollectionModelList = CollectionModel.FakeList,
             savedCollectionModelList = CollectionModel.FakeList,
             savedContentModelList = ContentModel.FakeList,
+            onCollectionItemClick = {},
+            onFilmItemClick = {},
+            onCollectionMoreClick = {},
+            onFilmMoreClick = {}
         )
     }
 }

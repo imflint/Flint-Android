@@ -55,6 +55,7 @@ data class PreferenceKeywordModel(
                     imageUrl = null,
                     level = PreferenceType.Pink,
                     rank = 3,
+                    percentage = 7
                 ),
                 PreferenceKeywordModel(
                     id = 4L,
