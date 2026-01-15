@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.flint.core.navigation.Route
+import com.flint.presentation.onboarding.OnboardingDoneRoute
 import com.flint.presentation.onboarding.OnboardingFilmRoute
 import com.flint.presentation.onboarding.OnboardingOttRoute
 import com.flint.presentation.onboarding.OnboardingProfileRoute
@@ -19,6 +20,10 @@ fun NavController.navigateToOnboardingFilm() {
 
 fun NavController.navigateToOnboardingOtt() {
     navigate(Route.OnboardingOtt)
+}
+
+fun NavController.navigateToOnboardingDone() {
+    navigate(Route.OnboardingDone)
 }
 
 fun NavGraphBuilder.onBoardingNavGraph(
@@ -42,6 +47,13 @@ fun NavGraphBuilder.onBoardingNavGraph(
 
     composable<Route.OnboardingOtt> {
         OnboardingOttRoute(
+            paddingValues = paddingValues,
+            navigateToDone = navController::navigateToOnboardingDone,
+        )
+    }
+
+    composable<Route.OnboardingDone> {
+        OnboardingDoneRoute(
             paddingValues = paddingValues,
             navigateToHome = onNavigateToHome,
         )
