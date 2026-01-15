@@ -35,7 +35,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun CollectionListRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToCollectionDetail: () -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
     CollectionListScreen(
         onBackClick = navigateUp,

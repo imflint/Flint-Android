@@ -56,6 +56,7 @@ fun MainNavHost(
             homeNavGraph(
                 paddingValues = paddingValues,
                 navigateToCollectionList = navigator::navigateToCollectionList,
+                navigateToCollectionDetail = navigator::navigateToCollectionDetail,
                 navigateToCollectionCreate = navigator::navigateToCollectionCreate,
             )
 

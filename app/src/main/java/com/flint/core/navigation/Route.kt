@@ -22,7 +22,9 @@ interface Route {
     data object CollectionList : Route
 
     @Serializable
-    data object CollectionDetail : Route
+    data class CollectionDetail(
+        val collectionId: String,
+    ) : Route
 
     @Serializable
     data object CollectionCreate : Route

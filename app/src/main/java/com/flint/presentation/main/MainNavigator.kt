@@ -116,8 +116,8 @@ class MainNavigator(
         navController.navigateToCollectionList()
     }
 
-    fun navigateToCollectionDetail() {
-        navController.navigateToCollectionDetail()
+    fun navigateToCollectionDetail(collectionId: String) {
+        navController.navigateToCollectionDetail(collectionId = collectionId)
     }
 
     fun navigateToCollectionCreate() {
