@@ -71,13 +71,17 @@ fun KeywordChipsLayout(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxWidth(),
     ) {
         FlowRow(
-            modifier = Modifier.align(Alignment.Center),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
+            itemVerticalAlignment = Alignment.CenterVertically,
             maxItemsInEachRow = 3,
+            modifier = Modifier
+                .align(Alignment.Center),
         ) {
             keywordList.forEach {
                 with(it) {
