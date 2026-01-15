@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.core.designsystem.component.image.SelectedFilmItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
@@ -30,7 +32,7 @@ fun AddFilmRoute(
     navigateToCollectionCreate: () -> Unit,
 ) {
     AddFilmScreen(
-        onBackClick = {}
+        onBackClick = {},
     )
 }
 
@@ -43,29 +45,29 @@ data class CollectionFilmUiModel(
 )
 
 @Composable
-fun AddFilmScreen(
-    onBackClick: () -> Unit,
-) {
-    var selectedFilmIds by remember { mutableStateOf(setOf<Long>()) }
+fun AddFilmScreen(onBackClick: () -> Unit) {
     var searchText by remember { mutableStateOf("") }
+    var selectedFilms = remember { mutableStateListOf<CollectionFilmUiModel>() }
 
-    val filmList = remember {
-        mutableStateListOf(
-            CollectionFilmUiModel(1L, "https://buly.kr/DEaVFRZ", "해리포터 불의 잔", "마이크 뉴웰", "2005"),
-            CollectionFilmUiModel(2L, "https://buly.kr/DEaVFRZ", "인터스텔라", "크리스토퍼 놀란", "2014"),
-            CollectionFilmUiModel(3L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-            CollectionFilmUiModel(4L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-            CollectionFilmUiModel(5L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-            CollectionFilmUiModel(6L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-            CollectionFilmUiModel(7L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-            CollectionFilmUiModel(8L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-        )
-    }
+    val filmList =
+        remember {
+            mutableStateListOf(
+                CollectionFilmUiModel(1L, "https://buly.kr/DEaVFRZ", "해리포터 불의 잔", "마이크 뉴웰", "2005"),
+                CollectionFilmUiModel(2L, "https://buly.kr/2UkIDen", "인터스텔라", "크리스토퍼 놀란", "2014"),
+                CollectionFilmUiModel(3L, "https://buly.kr/FAeqqRB", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionFilmUiModel(4L, "https://buly.kr/DPVH2Ob", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionFilmUiModel(5L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionFilmUiModel(6L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionFilmUiModel(7L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionFilmUiModel(8L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+            )
+        }
 
     Column(
-        modifier =Modifier
-            .fillMaxWidth()
-            .background(color = FlintTheme.colors.background),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(color = FlintTheme.colors.background),
     ) {
         FlintBackTopAppbar(
             onClick = onBackClick,
@@ -80,14 +82,35 @@ fun AddFilmScreen(
             placeholder = "추천하고 싶은 작품을 검색해보세요",
             value = searchText,
             onValueChanged = { searchText = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn (
+        if (selectedFilms.isNotEmpty()) {
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(
+                    items = selectedFilms,
+                    key = { it.filmId },
+                ) { film: CollectionFilmUiModel ->
+                    SelectedFilmItem(
+                        imageUrl = film.imageUrl,
+                        onRemoveClick = {
+                            selectedFilms.remove(film)
+                        },
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        LazyColumn(
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -97,16 +120,15 @@ fun AddFilmScreen(
                 items = filmList,
                 key = { it.filmId },
             ) { film ->
-                val isSelected = selectedFilmIds.contains(film.filmId)
+                val isSelected = selectedFilms.contains(film)
 
                 CollectionCreateFilmSelect(
                     onCheckClick = {
-                        selectedFilmIds =
-                            if (isSelected) {
-                                selectedFilmIds - film.filmId
-                            } else {
-                                selectedFilmIds + film.filmId
-                            }
+                        if (isSelected) {
+                            selectedFilms.remove(film)
+                        } else {
+                            selectedFilms.add(film)
+                        }
                     },
                     isSelected = isSelected,
                     imageUrl = film.imageUrl,
@@ -119,13 +141,12 @@ fun AddFilmScreen(
     }
 }
 
-
 @Preview
 @Composable
 private fun AddFilmScreenPreview() {
     FlintTheme {
         AddFilmScreen(
-            onBackClick = {}
+            onBackClick = {},
         )
     }
 }
