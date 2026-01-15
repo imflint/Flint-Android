@@ -25,10 +25,10 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.type.PreferenceType
 
 @Composable
-fun ProfileKeywordGraph(
+fun ProfileKeywordGraphItem(
     keyword: String,
     preferenceType: PreferenceType,
-    percent: Int,
+    percentage: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -58,11 +58,11 @@ fun ProfileKeywordGraph(
         ) {
             ProfileKeywordProgressBar(
                 preferenceType = preferenceType,
-                percent = percent.toFloat() / 100,
+                percent = percentage.toFloat() / 100,
                 modifier = Modifier.width(160.dp),
             )
             Text(
-                text = "$percent%",
+                text = "$percentage%",
                 style = FlintTheme.typography.body2R14,
                 color = FlintTheme.colors.gray100,
             )
@@ -109,10 +109,10 @@ private fun ProfileKeywordGraphPreview() {
                     Triple("패션", PreferenceType.Yellow, 30),
                 ),
             ) { _, item ->
-                ProfileKeywordGraph(
+                ProfileKeywordGraphItem(
                     keyword = item.first,
                     preferenceType = item.second,
-                    percent = item.third,
+                    percentage = item.third,
                     modifier =
                         Modifier
                             .fillMaxWidth(),
