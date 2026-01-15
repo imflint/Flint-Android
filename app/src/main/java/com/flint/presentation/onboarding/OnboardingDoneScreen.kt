@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -40,7 +40,8 @@ fun OnboardingDoneScreen(
         modifier =
             modifier
                 .fillMaxSize()
-                .background(color = FlintTheme.colors.background),
+                .background(color = FlintTheme.colors.background)
+                .statusBarsPadding(),
     ) {
         FlintBackTopAppbar(
             onClick = onBackClick,
@@ -49,8 +50,7 @@ fun OnboardingDoneScreen(
         Column(
             modifier =
                 Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp),
+                    .weight(1f),
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -58,14 +58,22 @@ fun OnboardingDoneScreen(
                 text = "취향이 보이기 시작했어요",
                 color = FlintTheme.colors.primary200,
                 style = FlintTheme.typography.body1R16,
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Flint에서 끌리는 콘텐츠를\n만나러 가볼까요? ",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -73,9 +81,10 @@ fun OnboardingDoneScreen(
             Image(
                 painter = painterResource(id = R.drawable.img_onboarding_3d),
                 contentDescription = null,
-                modifier = Modifier
-                .fillMaxWidth(),
-                contentScale = ContentScale.Crop
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
+                contentScale = ContentScale.Crop,
             )
         }
 
