@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -55,7 +54,9 @@ fun CollectionFileItem(
                 bookmarkCount = bookmarkCount,
                 poster1Url = collectionImageUrl1,
                 poster2Url = collectionImageUrl2,
-                modifier = Modifier.size(154.dp),
+                modifier =
+                    Modifier
+                        .size(154.dp),
             )
         }
 
@@ -77,7 +78,7 @@ fun CollectionFileItem(
                 color = FlintTheme.colors.gray300,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.height(45.dp)
+                modifier = Modifier.height(45.dp),
             )
         }
     }
