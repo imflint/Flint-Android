@@ -50,7 +50,6 @@ fun CollectionCreateRoute(
         onGalleryClick = {},
         onCoverDeleteClick = {},
         onConfirm = {},
-
     )
 }
 
@@ -76,7 +75,6 @@ fun CollectionCreateScreen(
     var isModalVisible by remember { mutableStateOf(false) }
     var selectedFilm by remember { mutableStateOf<CollectionFilmUiModel?>(null) }
     var isPublic by remember { mutableStateOf<Boolean?>(null) }
-
 
     val filmList =
         remember {
@@ -122,7 +120,7 @@ fun CollectionCreateScreen(
 
             // 컬렉션 제목
             item {
-                Column (modifier = Modifier.padding(horizontal = 16.dp),){
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
                         text = "컬렉션 제목",
                         color = FlintTheme.colors.white,
@@ -140,19 +138,19 @@ fun CollectionCreateScreen(
                 }
             }
 
-
             // 컬렉션 소개
             item {
-                Column (modifier = Modifier.padding(horizontal = 16.dp),){
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
-                        text = buildAnnotatedString {
-                            append("컬렉션 소개 ")
-                            withStyle(
-                                style = SpanStyle(color = FlintTheme.colors.gray300)
-                            ) {
-                                append("(선택)")
-                            }
-                        },
+                        text =
+                            buildAnnotatedString {
+                                append("컬렉션 소개 ")
+                                withStyle(
+                                    style = SpanStyle(color = FlintTheme.colors.gray300),
+                                ) {
+                                    append("(선택)")
+                                }
+                            },
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.head3M18,
                     )
@@ -171,7 +169,7 @@ fun CollectionCreateScreen(
 
             // 컬렉션 공개 여부
             item {
-                Column (modifier = Modifier.padding(horizontal = 16.dp),){
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
                         text = "컬렉션 공개 여부",
                         color = FlintTheme.colors.white,
@@ -183,7 +181,18 @@ fun CollectionCreateScreen(
                         FlintIconButton(
                             text = "공개",
                             iconRes = R.drawable.ic_share,
-                            state = if(isPublic==true) FlintButtonState.ColorOutline else if (isPublic==false) FlintButtonState.Disable else FlintButtonState.Outline,
+                            state =
+                                if (isPublic ==
+                                    true
+                                ) {
+                                    FlintButtonState.ColorOutline
+                                } else if (isPublic ==
+                                    false
+                                ) {
+                                    FlintButtonState.Disable
+                                } else {
+                                    FlintButtonState.Outline
+                                },
                             onClick = { isPublic = true },
                             modifier = Modifier.weight(1f),
                         )
@@ -193,7 +202,18 @@ fun CollectionCreateScreen(
                         FlintIconButton(
                             text = "비공개",
                             iconRes = R.drawable.ic_lock,
-                            state = if(isPublic==false) FlintButtonState.ColorOutline else if (isPublic==true) FlintButtonState.Disable else FlintButtonState.Outline,
+                            state =
+                                if (isPublic ==
+                                    false
+                                ) {
+                                    FlintButtonState.ColorOutline
+                                } else if (isPublic ==
+                                    true
+                                ) {
+                                    FlintButtonState.Disable
+                                } else {
+                                    FlintButtonState.Outline
+                                },
                             onClick = { isPublic = false },
                             modifier = Modifier.weight(1f),
                         )
@@ -203,7 +223,7 @@ fun CollectionCreateScreen(
 
             // 작품 추가 헤더
             item {
-                Column (modifier = Modifier.padding(horizontal = 16.dp),){
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
                         text = "작품 추가",
                         color = FlintTheme.colors.white,
@@ -248,10 +268,9 @@ fun CollectionCreateScreen(
                 }
             }
 
-
             // 작품 추가 버튼
             item {
-                Column (modifier = Modifier.padding(horizontal = 16.dp),){
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     FlintIconButton(
                         text = "작품 추가하기",
                         iconRes = R.drawable.ic_plus,
@@ -282,7 +301,7 @@ fun CollectionCreateScreen(
         CollectionAddFilmBottomSheet(
             onGalleryClick = onGalleryClick,
             onCoverDeleteClick = onCoverDeleteClick,
-            onDismiss = { isSheetVisible = false }
+            onDismiss = { isSheetVisible = false },
         )
     }
 
@@ -298,10 +317,9 @@ fun CollectionCreateScreen(
             onDismiss = {
                 selectedFilm = null
                 isModalVisible = false
-            }
+            },
         )
     }
-
 }
 
 @Preview

@@ -15,7 +15,7 @@ fun CollectionAddFilmBottomSheet(
     onGalleryClick: () -> Unit,
     onCoverDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val menuBottomSheetDataList =
         listOf(
@@ -36,7 +36,7 @@ fun CollectionAddFilmBottomSheet(
         menuBottomSheetDataList = menuBottomSheetDataList,
         onDismiss = onDismiss,
         sheetState = sheetState,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 

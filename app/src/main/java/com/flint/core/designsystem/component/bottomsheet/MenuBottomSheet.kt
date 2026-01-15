@@ -42,9 +42,10 @@ fun MenuBottomSheet(
         modifier = modifier,
     ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
         ) {
             itemsIndexed(menuBottomSheetDataList) { index, item ->
                 Column(
