@@ -146,7 +146,6 @@ fun OnboardingFilmScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .height(300.dp), // 대강 // TODO: 위아래 중앙 배치
-
                         contentAlignment = Alignment.Center,
                     ) {
                         FlintSearchEmptyView()

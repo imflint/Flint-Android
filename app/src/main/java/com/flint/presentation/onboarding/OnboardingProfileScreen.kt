@@ -49,7 +49,8 @@ fun OnboardingProfileScreen() {
     val maxLength = 10
 
     Column(
-        modifier = Modifier
+        modifier =
+            Modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
                 .statusBarsPadding(),
@@ -82,16 +83,18 @@ fun OnboardingProfileScreen() {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FlintBasicTextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                     placeholder = "닉네임",
                     value = nickname,
                     maxLength = maxLength,
@@ -110,7 +113,7 @@ fun OnboardingProfileScreen() {
                     state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
                     onClick = { },
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier.fillMaxHeight(),
                 )
             }
         }

@@ -61,7 +61,7 @@ fun OnboardingOttScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "${nickname} 님이 구독 중인\nOTT 서비스를 알려주세요",
+                text = "$nickname 님이 구독 중인\nOTT 서비스를 알려주세요",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 modifier = Modifier.fillMaxWidth(),
