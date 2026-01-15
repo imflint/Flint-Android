@@ -27,11 +27,11 @@ fun ShowToast(
     text: String,
     imageVector: ImageVector?,
     yOffset: Dp,
-    hideToast: () -> Unit,
+    hide: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
         delay(2.seconds)
-        hideToast()
+        hide()
     }
 
     Box(
@@ -57,13 +57,13 @@ private fun ShowToastPreview() {
                 text = "저장되었습니다",
                 imageVector = ImageVector.vectorResource(R.drawable.ic_check),
                 yOffset = 80.dp,
-                hideToast = { show = false },
+                hide = { show = false },
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun ShowToastWithoutIconPreview() {
     FlintTheme {
@@ -74,7 +74,7 @@ private fun ShowToastWithoutIconPreview() {
                 text = "알림 메시지입니다",
                 imageVector = null,
                 yOffset = 80.dp,
-                hideToast = { show = false },
+                hide = { show = false },
             )
         }
     }
