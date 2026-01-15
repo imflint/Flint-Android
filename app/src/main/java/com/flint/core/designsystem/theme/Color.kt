@@ -58,6 +58,7 @@ data class Colors(
     val gradient900: Brush,
     val gradient700: Brush,
     val gradient400: Brush,
+    val gradient400Secondary: Brush,
     val imgBlur: Brush,
     val imgBlurHigh: Brush,
     val pink: Color,
@@ -118,6 +119,10 @@ val FlintColors =
         gradient400 =
             Brush.linearGradient(
                 colors = listOf(Color(0xFF1ABFF2), Color(0xFF86EBFF)),
+            ),
+        gradient400Secondary =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF8991FF), Color(0xFF6B75FF)),
             ),
         imgBlur =
             Brush.verticalGradient(
@@ -356,6 +361,11 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(brush = FlintColors.gradient400)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
+                    .background(brush = FlintColors.gradient400Secondary)
                     .size(100.dp),
             )
             Box(

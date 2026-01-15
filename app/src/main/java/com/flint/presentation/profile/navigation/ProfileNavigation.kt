@@ -16,7 +16,7 @@ fun NavGraphBuilder.profileNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
     navigateToSavedFilmList: () -> Unit,
-    navigateToCollectionDetail: () -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
     composable<MainTabRoute.Profile> {
         ProfileRoute(
