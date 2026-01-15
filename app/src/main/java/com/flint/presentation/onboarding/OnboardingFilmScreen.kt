@@ -2,6 +2,7 @@ package com.flint.presentation.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,7 @@ import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.image.SelectedFilmItem
 import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.onboarding.component.OnboardingFilmItem
 import com.flint.presentation.onboarding.component.StepProgressBar
@@ -33,6 +36,12 @@ fun OnboardingFilmRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingOtt: () -> Unit,
 ) {
+    OnboardingFilmScreen(
+        nickname = "User",
+        currentStep = 7,
+        onBackClick = {},
+        onNextClick = navigateToOnboardingOtt,
+    )
 }
 
 @Composable
@@ -41,6 +50,8 @@ fun OnboardingFilmScreen(
     currentStep: Int,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    // UI 테스트를 위한 임시 파라미터 (실제 로직 연결 시 ViewModel 상태로 대체)
+    isEmptyParams: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -71,7 +82,6 @@ fun OnboardingFilmScreen(
             overscrollEffect = null,
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
-            // verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             // 타이틀 영역 - 스크롤됨
             item(span = { GridItemSpan(3) }) {
@@ -124,25 +134,40 @@ fun OnboardingFilmScreen(
                             )
                         }
                     }
-
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
 
-            // 영화 목록 그리드
-            items(9) { index ->
-                OnboardingFilmItem(
-                    imageUrl = "",
-                    title = "은하수를 여행하는 히치하이커...",
-                    director = "가스 제닝스",
-                    releaseYear = "2005",
-                    isSelected = false,
-                    onClick = {},
-                    modifier =
-                        Modifier.padding(
-                            top = if (index >= 3) 20.dp else 0.dp,
-                        ),
-                )
+            // 영화 검색 목록 [비어있을 때 || 리스트 있을 때]
+            if (isEmptyParams) {
+                item(span = { GridItemSpan(3) }) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(300.dp), // 대강 // TODO: 위아래 중앙 배치
+
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        FlintSearchEmptyView()
+                    }
+                }
+            } else {
+                // 영화 목록 그리드
+                items(9) { index ->
+                    OnboardingFilmItem(
+                        imageUrl = "",
+                        title = "은하수를 여행하는 히치하이커...",
+                        director = "가스 제닝스",
+                        releaseYear = "2005",
+                        isSelected = false,
+                        onClick = {},
+                        modifier =
+                            Modifier.padding(
+                                top = if (index >= 3) 20.dp else 0.dp,
+                            ),
+                    )
+                }
             }
         }
 
@@ -159,15 +184,30 @@ fun OnboardingFilmScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "기본 목록 상태")
 @Composable
-private fun OnboardingFilmScreenPreview() {
+private fun OnboardingFilmScreenListPreview() {
     FlintTheme {
         OnboardingFilmScreen(
             nickname = "안비",
             currentStep = 7,
             onBackClick = {},
             onNextClick = {},
+            isEmptyParams = false,
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "검색 결과 없음 상태")
+@Composable
+private fun OnboardingFilmScreenEmptyPreview() {
+    FlintTheme {
+        OnboardingFilmScreen(
+            nickname = "안비",
+            currentStep = 7,
+            onBackClick = {},
+            onNextClick = {},
+            isEmptyParams = true,
         )
     }
 }
