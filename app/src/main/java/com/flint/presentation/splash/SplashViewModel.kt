@@ -8,13 +8,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
-    private val preferencesManager: PreferencesManager
-) : ViewModel(){
+class SplashViewModel
+    @Inject
+    constructor(
+        private val preferencesManager: PreferencesManager,
+    ) : ViewModel() {
+        val prefData = preferencesManager.getString("sampleKey")
 
-    val prefData = preferencesManager.getString("sampleKey")
-
-    fun sampleSaveData() = viewModelScope.launch {
-        preferencesManager.saveString("sampleKey", "sampleValue")
+        fun sampleSaveData() =
+            viewModelScope.launch {
+                preferencesManager.saveString("sampleKey", "sampleValue")
+            }
     }
-}

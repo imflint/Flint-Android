@@ -10,32 +10,34 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PreferencesManager @Inject constructor(
-    private val dataStore: DataStore<Preferences>,
-) {
-    suspend fun saveString(
-        key: String,
-        value: String,
+class PreferencesManager
+    @Inject
+    constructor(
+        private val dataStore: DataStore<Preferences>,
     ) {
-        dataStore.edit { preferences ->
-            preferences[stringPreferencesKey(key)] = value
+        suspend fun saveString(
+            key: String,
+            value: String,
+        ) {
+            dataStore.edit { preferences ->
+                preferences[stringPreferencesKey(key)] = value
+            }
+        }
+
+        fun getString(key: String): Flow<String> =
+            dataStore.data.map { preferences ->
+                preferences[stringPreferencesKey(key)].orEmpty()
+            }
+
+        suspend fun removeString(key: String) {
+            dataStore.edit { preferences ->
+                preferences.remove(stringPreferencesKey(key))
+            }
+        }
+
+        suspend fun clearAll() {
+            dataStore.edit { preferences ->
+                preferences.clear()
+            }
         }
     }
-
-    fun getString(key: String): Flow<String> =
-        dataStore.data.map { preferences ->
-            preferences[stringPreferencesKey(key)].orEmpty()
-        }
-
-    suspend fun removeString(key: String) {
-        dataStore.edit { preferences ->
-            preferences.remove(stringPreferencesKey(key))
-        }
-    }
-
-    suspend fun clearAll() {
-        dataStore.edit { preferences ->
-            preferences.clear()
-        }
-    }
-}

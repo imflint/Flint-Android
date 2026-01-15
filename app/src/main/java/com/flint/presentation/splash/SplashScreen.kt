@@ -12,7 +12,7 @@ fun SplashRoute(
     paddingValues: PaddingValues,
     navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit,
-    viewModel: SplashViewModel = hiltViewModel()
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
         viewModel.sampleSaveData()
