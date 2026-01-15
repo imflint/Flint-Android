@@ -1,6 +1,7 @@
 package com.flint.presentation.collectiondetail
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -84,65 +86,82 @@ fun CollectionDetailScreen(
     contents: ImmutableList<ContentModel>,
     people: ImmutableList<AuthorModel>,
 ) {
-    var showPeopleBottomSheet by remember { mutableStateOf(false) }
-
-    if (showPeopleBottomSheet) {
-        PeopleBottomSheet(
-            people = people,
-            onAuthorClick = { /* TODO: 프로필 화면으로 이동 */ },
-            onDismiss = { showPeopleBottomSheet = false },
-        )
-    }
-
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(color = FlintTheme.colors.background),
+    CompositionLocalProvider(
+        LocalOverscrollFactory provides null,
     ) {
-        CollectionDetailHeader(
-            title = title,
-            authorId = authorId,
-            userId = userId,
-            isBookmarked = isBookmarked,
-        )
+        var showPeopleBottomSheet by remember { mutableStateOf(false) }
 
-        LazyColumn(
-            contentPadding = PaddingValues(vertical = 24.dp),
+        if (showPeopleBottomSheet) {
+            PeopleBottomSheet(
+                people = people,
+                onAuthorClick = { /* TODO: 프로필 화면으로 이동 */ },
+                onDismiss = { showPeopleBottomSheet = false },
+            )
+        }
+
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(color = FlintTheme.colors.background),
         ) {
-            item {
-                CollectionDetailDescription(
-                    authorNickname = authorNickname,
-                    authorUserRoleType = authorUserRoleType,
-                    createdAt = createdAt,
-                    collectionContent = collectionContent,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                )
-            }
+            FlintBackTopAppbar(
+                onClick = { },
+                backgroundColor = Color.Transparent,
+            )
 
-            item {
-                Spacer(Modifier.height(48.dp))
-            }
-
-            items(contents) { content: ContentModel ->
-                Content(
-                    content = content,
-                    onBookmarkIconClick = { contentId: Long ->
-                        // TODO: Content 저장
-                    },
-                )
-            }
-
-            if (people.isNotEmpty()) {
+            LazyColumn(
+                contentPadding = PaddingValues(vertical = 24.dp),
+            ) {
                 item {
-                    PeopleWhoSavedThisCollection(
-                        people = people,
-                        onMoreClick = { showPeopleBottomSheet = true },
+                    Thumbnail(
+                        title = title,
+                        authorId = authorId,
+                        userId = userId,
+                        isBookmarked = isBookmarked,
                     )
+                }
+
+                stickyHeader {
+                    UnderImageProgressBar(
+                        progress = 0.5f, // TODO: Progress 퍼센티지 추가
+                    )
+                }
+
+                item {
+                    CollectionDetailDescription(
+                        authorNickname = authorNickname,
+                        authorUserRoleType = authorUserRoleType,
+                        createdAt = createdAt,
+                        collectionContent = collectionContent,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                    )
+                }
+
+                item {
+                    Spacer(Modifier.height(48.dp))
+                }
+
+                items(contents) { content: ContentModel ->
+                    Content(
+                        content = content,
+                        onBookmarkIconClick = { contentId: Long ->
+                            // TODO: Content 저장
+                        },
+                    )
+                }
+
+                if (people.isNotEmpty()) {
+                    item {
+                        PeopleWhoSavedThisCollection(
+                            people = people,
+                            onMoreClick = { showPeopleBottomSheet = true },
+                        )
+                    }
                 }
             }
         }
@@ -326,7 +345,7 @@ private fun PeopleWhoSavedThisCollectionPreview(
 }
 
 @Composable
-private fun CollectionDetailHeader(
+private fun Thumbnail(
     title: String,
     authorId: Long,
     userId: Long,
@@ -345,50 +364,40 @@ private fun CollectionDetailHeader(
             contentScale = ContentScale.FillBounds,
         )
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            FlintBackTopAppbar(
-                onClick = { },
-                backgroundColor = Color.Transparent,
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 55.dp, bottom = 19.dp),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = title,
+                color = FlintTheme.colors.white,
+                style = FlintTheme.typography.display2M28,
+                modifier = Modifier.fillMaxWidth(),
             )
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 19.dp),
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = title,
-                    color = FlintTheme.colors.white,
-                    style = FlintTheme.typography.display2M28,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                if (authorId != userId) {
-                    if (isBookmarked) {
-                        FlintMediumButton(
-                            text = "저장된 컬렉션",
-                            state = FlintButtonState.Able,
-                            onClick = {
-                                // TODO: 저장된 컬렉션 해제
-                            },
-                        )
-                    } else {
-                        FlintMediumButton(
-                            text = "컬렉션 저장 +",
-                            state = FlintButtonState.Outline,
-                            onClick = {
-                                // TODO: 컬렉션 저장
-                            },
-                        )
-                    }
+            if (authorId != userId) {
+                if (isBookmarked) {
+                    FlintMediumButton(
+                        text = "저장된 컬렉션",
+                        state = FlintButtonState.Able,
+                        onClick = {
+                            // TODO: 저장된 컬렉션 해제
+                        },
+                    )
+                } else {
+                    FlintMediumButton(
+                        text = "컬렉션 저장 +",
+                        state = FlintButtonState.Outline,
+                        onClick = {
+                            // TODO: 컬렉션 저장
+                        },
+                    )
                 }
             }
-
-            UnderImageProgressBar(
-                progress = 0.5f, // TODO: Progress 퍼센티지 추가
-            )
         }
     }
 }
@@ -616,11 +625,11 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
 
 @Preview
 @Composable
-private fun CollectionDetailHeaderPreview(
+private fun ThumbnailPreview(
     @PreviewParameter(HeaderPreviewProvider::class) data: HeaderPreviewData,
 ) {
     FlintTheme {
-        CollectionDetailHeader(
+        Thumbnail(
             title = data.title,
             authorId = data.authorId,
             userId = data.userId,
