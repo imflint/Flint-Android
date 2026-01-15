@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.PreferenceKeywordModel
+import com.flint.domain.model.PreferenceKeywordModel.Companion.rotateKeywordByRank
 import com.flint.domain.type.KeywordType
 import kotlinx.collections.immutable.ImmutableList
 
@@ -28,6 +30,10 @@ fun ProfileKeywordSection(
     keywordList: ImmutableList<PreferenceKeywordModel>,
     modifier: Modifier = Modifier,
 ) {
+    val rotatedKeywordList = remember(keywordList) {
+        rotateKeywordByRank(keywordList)
+    }
+
     Column(
         modifier =
             modifier
@@ -48,7 +54,7 @@ fun ProfileKeywordSection(
         )
         Spacer(Modifier.height(32.dp))
         KeywordChipsLayout(
-            keywordList = keywordList,
+            keywordList = rotatedKeywordList,
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.height(32.dp))

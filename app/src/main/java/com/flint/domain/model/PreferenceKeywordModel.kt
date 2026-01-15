@@ -1,8 +1,9 @@
 package com.flint.domain.model
 
-import com.flint.domain.model.PreferenceKeywordModel.Companion.FakeList1
 import com.flint.domain.type.PreferenceType
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
 data class PreferenceKeywordModel(
     val id: Long,
@@ -13,6 +14,24 @@ data class PreferenceKeywordModel(
     val percentage: Int = 0,
 ) {
     companion object {
+        fun rotateKeywordByRank(
+            keywordList: ImmutableList<PreferenceKeywordModel>
+        ): ImmutableList<PreferenceKeywordModel> {
+            if (keywordList.size < 2) return keywordList
+
+            val sortedByRank = keywordList.sortedBy { it.rank }
+
+            // rank 1, 2, 3 (상위 3개) → Large
+            val topRanks = sortedByRank.take(3)
+            // rank 4, 5, 6 (하위 3개) → Small
+            val bottomRanks = sortedByRank.drop(3)
+
+            // 번갈아 배치: 1, 4, 2, 5, 3, 6
+            return topRanks.zip(bottomRanks)
+                .flatMap { (top, bottom) -> listOf(top, bottom) }
+                .toPersistentList()
+        }
+
         val FakeList1 =
             persistentListOf(
                 PreferenceKeywordModel(
