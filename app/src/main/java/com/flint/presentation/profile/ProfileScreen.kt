@@ -36,7 +36,7 @@ fun ProfileRoute(
         modifier = Modifier.padding(paddingValues),
         onCollectionItemClick = navigateToCollectionDetail,
         onFilmMoreClick = navigateToSavedFilmList,
-        onCollectionMoreClick = navigateToCollectionList
+        onCollectionMoreClick = navigateToCollectionList,
     )
 }
 
@@ -49,7 +49,7 @@ private fun ProfileScreen(
     savedCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
     savedContentModelList: ImmutableList<ContentModel> = persistentListOf(),
     onCollectionItemClick: (collectionId: String) -> Unit,
-    onFilmItemClick: (contentId: Long) -> Unit = {}, //TODO: 바텀시트 띄우기
+    onFilmItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
     onCollectionMoreClick: () -> Unit,
     onFilmMoreClick: () -> Unit,
     modifier: Modifier = Modifier, // TODO: 위치 조정
@@ -138,7 +138,7 @@ private fun ProfileScreenPreview() {
             onCollectionItemClick = {},
             onFilmItemClick = {},
             onCollectionMoreClick = {},
-            onFilmMoreClick = {}
+            onFilmMoreClick = {},
         )
     }
 }

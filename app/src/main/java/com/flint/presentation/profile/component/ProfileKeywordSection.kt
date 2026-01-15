@@ -52,7 +52,7 @@ fun ProfileKeywordSection(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Column {
                 Text(
@@ -70,10 +70,11 @@ fun ProfileKeywordSection(
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .noRippleClickable(
-                        onClick = onRefreshClick
-                    )
+                modifier =
+                    Modifier
+                        .noRippleClickable(
+                            onClick = onRefreshClick,
+                        ),
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_refresh),
