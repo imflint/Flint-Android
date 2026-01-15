@@ -50,8 +50,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
-import com.flint.core.designsystem.component.button.FlintButtonState
-import com.flint.core.designsystem.component.button.FlintMediumButton
+import com.flint.core.designsystem.component.button.FlintSaveDoneButton
+import com.flint.core.designsystem.component.button.FlintSaveNoneButton
 import com.flint.core.designsystem.component.collection.PeopleBottomSheet
 import com.flint.core.designsystem.component.collection.Spoiler
 import com.flint.core.designsystem.component.image.NetworkImage
@@ -410,17 +410,13 @@ private fun Thumbnail(
             )
             if (authorId != userId) {
                 if (isBookmarked) {
-                    FlintMediumButton(
-                        text = "저장된 컬렉션",
-                        state = FlintButtonState.Able,
+                    FlintSaveDoneButton(
                         onClick = {
                             // TODO: 저장된 컬렉션 해제
                         },
                     )
                 } else {
-                    FlintMediumButton(
-                        text = "컬렉션 저장 +",
-                        state = FlintButtonState.Outline,
+                    FlintSaveNoneButton(
                         onClick = {
                             // TODO: 컬렉션 저장
                         },
