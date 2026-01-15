@@ -67,6 +67,7 @@ data class Colors(
     val yellow: Color,
     val blue: Color,
     val kakao: Color,
+    val buttonStroke: Brush,
 )
 
 val FlintColors =
@@ -138,6 +139,10 @@ val FlintColors =
         yellow = Color(0xFFF9B902),
         blue = Color(0xFF38A5FF),
         kakao = Color(0xFFFEE500),
+        buttonStroke =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFFAEAEAE), Color(0xFF666666)),
+            ),
     )
 
 @Preview(device = Devices.DESKTOP)
@@ -376,6 +381,11 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(brush = FlintColors.imgBlurHigh)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
+                    .background(brush = FlintColors.buttonStroke)
                     .size(100.dp),
             )
         }
