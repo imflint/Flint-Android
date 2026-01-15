@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,7 +96,6 @@ fun CollectionDetailScreen(
         var showPeopleBottomSheet: Boolean by remember { mutableStateOf(false) }
         val scrollState: ScrollState = rememberScrollState()
         var thumbnailHeight: Int by remember { mutableIntStateOf(0) }
-        val topPaddingPx: Int = with(LocalDensity.current) { 24.dp.toPx().toInt() }
 
         val scrollProgress: Float =
             if (scrollState.maxValue > 0) {
@@ -106,8 +104,7 @@ fun CollectionDetailScreen(
                 0f
             }
 
-        // Thumbnail + 상단 패딩(24dp)이 스크롤되어 사라지면 sticky
-        val isProgressBarSticky = scrollState.value >= thumbnailHeight + topPaddingPx
+        val isProgressBarSticky = scrollState.value >= thumbnailHeight
 
         if (showPeopleBottomSheet) {
             PeopleBottomSheet(
@@ -135,7 +132,7 @@ fun CollectionDetailScreen(
                         Modifier
                             .fillMaxSize()
                             .verticalScroll(scrollState)
-                            .padding(vertical = 24.dp),
+                            .padding(bottom = 24.dp),
                 ) {
                     Thumbnail(
                         title = title,
