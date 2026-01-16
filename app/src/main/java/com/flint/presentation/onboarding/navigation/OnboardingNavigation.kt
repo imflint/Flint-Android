@@ -34,6 +34,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
     composable<Route.OnboardingProfile> {
         OnboardingProfileRoute(
             paddingValues = paddingValues,
+            navigateUp = navController::navigateUp,
             navigateToOnboardingFilm = navController::navigateToOnboardingFilm,
         )
     }
@@ -41,6 +42,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
     composable<Route.OnboardingFilm> {
         OnboardingFilmRoute(
             paddingValues = paddingValues,
+            navigateUp = navController::navigateUp,
             navigateToOnboardingOtt = navController::navigateToOnboardingOtt,
         )
     }
@@ -48,6 +50,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
     composable<Route.OnboardingOtt> {
         OnboardingOttRoute(
             paddingValues = paddingValues,
+            navigateUp = navController::navigateUp,
             navigateToDone = navController::navigateToOnboardingDone,
         )
     }
@@ -55,6 +58,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
     composable<Route.OnboardingDone> {
         OnboardingDoneRoute(
             paddingValues = paddingValues,
+            navigateUp = navController::navigateUp,
             navigateToHome = onNavigateToHome,
         )
     }

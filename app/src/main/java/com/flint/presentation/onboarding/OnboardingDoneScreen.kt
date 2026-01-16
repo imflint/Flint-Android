@@ -27,9 +27,10 @@ import com.flint.core.designsystem.theme.FlintTheme
 fun OnboardingDoneRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
+    navigateUp: () -> Unit,
 ) {
     OnboardingDoneScreen(
-        onBackClick = {},
+        onBackClick = navigateUp,
         onNextClick = navigateToHome,
         modifier = Modifier.padding(paddingValues),
     )

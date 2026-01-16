@@ -28,12 +28,13 @@ import com.flint.presentation.onboarding.component.OnboardingOttItem
 @Composable
 fun OnboardingOttRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     navigateToDone: () -> Unit,
 ) {
     // 뷰모델
     OnboardingOttScreen(
         nickname = "user",
-        onBackClick = {},
+        onBackClick = navigateUp,
         onNextClick = navigateToDone,
         modifier = Modifier.padding(paddingValues),
     )

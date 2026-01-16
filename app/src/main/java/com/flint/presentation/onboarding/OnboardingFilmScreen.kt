@@ -35,11 +35,12 @@ import com.flint.presentation.onboarding.component.StepProgressBar
 fun OnboardingFilmRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingOtt: () -> Unit,
+    navigateUp: () -> Unit,
 ) {
     OnboardingFilmScreen(
         nickname = "User",
         currentStep = 7,
-        onBackClick = {},
+        onBackClick = navigateUp,
         onNextClick = navigateToOnboardingOtt,
         modifier = Modifier.padding(paddingValues),
     )

@@ -37,10 +37,12 @@ import com.flint.core.designsystem.theme.FlintTheme
 fun OnboardingProfileRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingFilm: () -> Unit,
+    navigateUp: () -> Unit,
 ) {
-    // 뷰모델
     OnboardingProfileScreen(
-        navigateToOnboardingFilm = navigateToOnboardingFilm,
+        onBackClick = navigateUp,
+        onNextClick = navigateToOnboardingFilm,
+        modifier = Modifier.padding(paddingValues),
     )
 }
 
@@ -48,7 +50,9 @@ fun OnboardingProfileRoute(
 @Composable
 fun OnboardingProfileScreen(
     paddingValues: PaddingValues = PaddingValues(),
-    navigateToOnboardingFilm: () -> Unit = {},
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -64,7 +68,7 @@ fun OnboardingProfileScreen(
                 .statusBarsPadding(),
     ) {
         FlintBackTopAppbar(
-            onClick = {},
+            onClick = onBackClick,
         )
 
         Column(
@@ -119,7 +123,7 @@ fun OnboardingProfileScreen(
                 FlintBasicButton(
                     text = "확인",
                     state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
-                    onClick = { },
+                    onClick = onNextClick,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                     modifier = Modifier.fillMaxHeight(),
                 )
@@ -129,7 +133,7 @@ fun OnboardingProfileScreen(
         FlintBasicButton(
             text = "시작하기",
             state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = navigateToOnboardingFilm,
+            onClick = onNextClick,
             contentPadding = PaddingValues(12.dp),
             modifier =
                 Modifier
@@ -162,6 +166,9 @@ fun OnboardingProfileScreen(
 @Composable
 private fun OnboardingProfileScreenPreview() {
     FlintTheme {
-        OnboardingProfileScreen()
+        OnboardingProfileScreen(
+            onBackClick = {},
+            onNextClick = {},
+        )
     }
 }
