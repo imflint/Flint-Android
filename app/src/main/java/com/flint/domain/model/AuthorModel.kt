@@ -7,4 +7,14 @@ data class AuthorModel(
     val nickname: String,
     val profileUrl: String,
     val userRole: UserRoleType,
-)
+) {
+    companion object {
+        val Fake =
+            AuthorModel(
+                userId = 1L,
+                nickname = "작성자 닉네임",
+                profileUrl = "",
+                userRole = UserRoleType.FLINER,
+            )
+    }
+}

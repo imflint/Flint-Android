@@ -16,12 +16,14 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SplashRoute(
     paddingValues: PaddingValues,
     navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit,
+    viewModel: SplashViewModel = hiltViewModel(),
 ) {
     SplashScreen(
         onAnimationFinished = navigateToLogin,
