@@ -30,6 +30,13 @@ fun OnboardingOttRoute(
     paddingValues: PaddingValues,
     navigateToDone: () -> Unit,
 ) {
+    //뷰모델
+    OnboardingOttScreen(
+        nickname = "user",
+        onBackClick = {},
+        onNextClick = navigateToDone,
+        modifier = Modifier.padding(paddingValues),
+    )
 }
 
 @Composable

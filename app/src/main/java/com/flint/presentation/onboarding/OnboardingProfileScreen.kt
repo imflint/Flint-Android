@@ -38,11 +38,19 @@ fun OnboardingProfileRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingFilm: () -> Unit,
 ) {
+    // 뷰모델
+    OnboardingProfileScreen(
+        paddingValues = paddingValues,
+        navigateToOnboardingFilm = navigateToOnboardingFilm,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OnboardingProfileScreen() {
+fun OnboardingProfileScreen(
+    paddingValues: PaddingValues = PaddingValues(),
+    navigateToOnboardingFilm: () -> Unit = {},
+) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var nickname by remember { mutableStateOf("") }
@@ -121,7 +129,7 @@ fun OnboardingProfileScreen() {
         FlintBasicButton(
             text = "시작하기",
             state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = {},
+            onClick = navigateToOnboardingFilm,
             contentPadding = PaddingValues(12.dp),
             modifier =
                 Modifier
@@ -138,12 +146,12 @@ fun OnboardingProfileScreen() {
                 listOf(
                     MenuBottomSheetData(
                         label = "갤러리에서 선택",
-                        clickAction = { },
+                        clickAction = { showBottomSheet = false },
                     ),
                     MenuBottomSheetData(
                         label = "프로필 사진 삭제",
                         color = FlintTheme.colors.error500,
-                        clickAction = { },
+                        clickAction = {showBottomSheet = false },
                     ),
                 ),
         )

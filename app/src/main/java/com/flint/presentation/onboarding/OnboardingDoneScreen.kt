@@ -28,6 +28,11 @@ fun OnboardingDoneRoute(
     paddingValues: PaddingValues,
     navigateToHome: () -> Unit,
 ) {
+    OnboardingDoneScreen(
+        onBackClick = {},
+        onNextClick = navigateToHome,
+        modifier = Modifier.padding(paddingValues)
+    )
 }
 
 @Composable
@@ -103,7 +108,7 @@ fun OnboardingDoneScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun OnboardingOttScreenPreview() {
+private fun OnboardingDoneScreenPreview() {
     FlintTheme {
         OnboardingDoneScreen(
             onBackClick = {},
