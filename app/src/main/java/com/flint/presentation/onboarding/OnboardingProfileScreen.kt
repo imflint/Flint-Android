@@ -49,7 +49,6 @@ fun OnboardingProfileRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingProfileScreen(
-    paddingValues: PaddingValues = PaddingValues(),
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -61,8 +60,7 @@ fun OnboardingProfileScreen(
 
     Column(
         modifier =
-            Modifier
-                .padding(paddingValues)
+            modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
                 .statusBarsPadding(),
