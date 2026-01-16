@@ -18,11 +18,13 @@ fun FlintLargeButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     FlintBasicButton(
         text = text,
         state = state,
         onClick = onClick,
+        enabled = enabled,
         contentPadding = PaddingValues(12.dp),
         modifier =
             modifier

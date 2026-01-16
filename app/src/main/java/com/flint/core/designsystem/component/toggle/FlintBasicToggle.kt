@@ -1,6 +1,7 @@
 package com.flint.core.designsystem.component.toggle
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -25,10 +26,13 @@ fun FlintBasicToggle(
     Switch(
         checked = isChecked,
         onCheckedChange = null,
-        modifier = modifier.noRippleClickable { onCheckedChange(!isChecked) },
+        modifier =
+            modifier
+                .noRippleClickable { onCheckedChange(!isChecked) }
+                .padding(vertical = 10.dp),
         thumbContent = {
             Box(
-                modifier = Modifier.size(28.dp),
+                modifier = Modifier.size(24.dp),
             )
         },
         colors =
