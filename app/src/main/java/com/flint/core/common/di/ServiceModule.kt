@@ -1,6 +1,6 @@
 package com.flint.core.common.di
 
-import com.flint.data.api.FlintApi
+import com.flint.data.api.AuthApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,5 +13,5 @@ import javax.inject.Singleton
 object ServiceModule {
     @Provides
     @Singleton
-    fun provideFlintApi(retrofit: Retrofit): FlintApi = retrofit.create(FlintApi::class.java)
+    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
 }

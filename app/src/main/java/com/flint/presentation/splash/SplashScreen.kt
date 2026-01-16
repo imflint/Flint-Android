@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashRoute(
@@ -15,10 +16,10 @@ fun SplashRoute(
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.sampleSaveData()
+        // FIXME navigation test @ckals413
+        delay(2000)
+        navigateToLogin()
     }
-
-    val prefData by viewModel.prefData.collectAsStateWithLifecycle("")
 
     SplashScreen()
 }

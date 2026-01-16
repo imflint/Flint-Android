@@ -97,8 +97,8 @@ class MainNavigator(
         )
     }
 
-    fun navigateToOnBoarding() {
-        navController.navigateToOnboarding()
+    fun navigateToOnBoarding(tempToken: String) {
+        navController.navigateToOnboarding(tempToken)
     }
 
     fun navigateToHome(navOptions: NavOptions? = null) {
