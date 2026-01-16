@@ -40,7 +40,6 @@ fun OnboardingProfileRoute(
 ) {
     // 뷰모델
     OnboardingProfileScreen(
-        paddingValues = paddingValues,
         navigateToOnboardingFilm = navigateToOnboardingFilm,
     )
 }
@@ -59,6 +58,7 @@ fun OnboardingProfileScreen(
     Column(
         modifier =
             Modifier
+                .padding(paddingValues)
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
                 .statusBarsPadding(),
@@ -151,7 +151,7 @@ fun OnboardingProfileScreen(
                     MenuBottomSheetData(
                         label = "프로필 사진 삭제",
                         color = FlintTheme.colors.error500,
-                        clickAction = {showBottomSheet = false },
+                        clickAction = { showBottomSheet = false },
                     ),
                 ),
         )

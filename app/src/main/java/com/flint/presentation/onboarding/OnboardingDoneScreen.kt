@@ -31,7 +31,7 @@ fun OnboardingDoneRoute(
     OnboardingDoneScreen(
         onBackClick = {},
         onNextClick = navigateToHome,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
     )
 }
 

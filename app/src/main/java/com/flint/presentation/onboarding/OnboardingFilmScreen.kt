@@ -41,7 +41,7 @@ fun OnboardingFilmRoute(
         currentStep = 7,
         onBackClick = {},
         onNextClick = navigateToOnboardingOtt,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
     )
 }
 

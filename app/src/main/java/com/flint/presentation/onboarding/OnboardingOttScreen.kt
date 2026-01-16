@@ -30,7 +30,7 @@ fun OnboardingOttRoute(
     paddingValues: PaddingValues,
     navigateToDone: () -> Unit,
 ) {
-    //뷰모델
+    // 뷰모델
     OnboardingOttScreen(
         nickname = "user",
         onBackClick = {},
@@ -57,6 +57,7 @@ fun OnboardingOttScreen(
             onClick = onBackClick,
             actionText = "건너뛰기",
             textColor = FlintTheme.colors.secondary400,
+            onActionClick = onNextClick,
         )
 
         Column(
