@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.image.SelectedFilmItem
-import com.flint.core.designsystem.component.textfield.FlintBasicTextField
+import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
@@ -114,11 +114,11 @@ fun OnboardingFilmScreen(
                             .background(FlintTheme.colors.background)
                             .padding(bottom = 16.dp),
                 ) {
-                    FlintBasicTextField(
+                    FlintSearchTextField(
                         placeholder = "작품 이름",
                         value = "",
-                        onValueChange = {},
-                        modifier = Modifier.fillMaxWidth(),
+                        onValueChanged = {},
+                        onSearchAction = {},
                     )
                 }
             }

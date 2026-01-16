@@ -46,6 +46,8 @@ fun OnboardingProfileRoute(
     )
 }
 
+private const val maxLength = 10
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingProfileScreen(
@@ -56,7 +58,6 @@ fun OnboardingProfileScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var nickname by remember { mutableStateOf("") }
-    val maxLength = 10
 
     Column(
         modifier =
