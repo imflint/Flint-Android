@@ -1,5 +1,6 @@
 package com.flint.presentation.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -66,8 +67,8 @@ fun LoginRoute(
                 result.onSuccess { token ->
                     viewModel.socialVerifyWithKakao(
                         requestModel = SocialVerifyRequestModel(
-                            provider = ProviderType.Kakao,
-                            code = token.accessToken,
+                            provider = ProviderType.KAKAO,
+                            accessToken = token.accessToken
                         ),
                     )
                 }.onFailure { error ->

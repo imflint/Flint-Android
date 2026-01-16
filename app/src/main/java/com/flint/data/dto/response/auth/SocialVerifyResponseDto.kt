@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SocialVerifyResponseDto(
     @SerialName("isRegistered")
-    val isRegistered : Boolean,
+    val isRegistered: Boolean,
     @SerialName("accessToken")
-    val accessToken : String,
+    val accessToken: String? = null,
     @SerialName("refreshToken")
-    val refreshToken : String,
+    val refreshToken: String? = null,
     @SerialName("userId")
-    val userId : Long,
+    val userId: Long? = null,
     @SerialName("tempToken")
-    val tempToken : String,
+    val tempToken: String? = null,
 )

@@ -33,9 +33,9 @@ class LoginViewModel @Inject constructor(
         authRepository.socialVerify(requestModel).fold(
             onSuccess = { result ->
                 if (result.isRegistered) {
-                    preferenceManager.saveString(ACCESS_TOKEN, result.accessToken)
-                    preferenceManager.saveString(REFRESH_TOKEN, result.refreshToken)
-                    preferenceManager.saveString(USER_ID, result.userId.toString())
+                    result.accessToken?.let { preferenceManager.saveString(ACCESS_TOKEN, it) }
+                    result.refreshToken?.let { preferenceManager.saveString(REFRESH_TOKEN, it) }
+                    result.userId?.let { preferenceManager.saveString(USER_ID, it.toString()) }
                 }
 
                 _verifyStatus.emit(UiState.Success(VerifyStatusData(result.isRegistered, result.tempToken)))

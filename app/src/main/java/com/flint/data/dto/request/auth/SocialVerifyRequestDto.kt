@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class SocialVerifyRequestDto (
     @SerialName("provider")
     val provider : String,
-    @SerialName("code")
-    val code : String,
+    @SerialName("accessToken")
+    val accessToken : String,
 )

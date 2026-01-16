@@ -8,7 +8,7 @@ import com.flint.domain.model.auth.SocialVerifyResponseModel
 fun SocialVerifyRequestModel.toDto() : SocialVerifyRequestDto {
     return SocialVerifyRequestDto(
         provider = provider.name,
-        code = code
+        accessToken = accessToken
     )
 }
 
