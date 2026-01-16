@@ -52,7 +52,7 @@ fun CollectionCreateFilmItemList(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = Color.White,
                 modifier =
                     Modifier
                         .clickable(onClick = onCancelClick)
@@ -104,7 +104,7 @@ fun CollectionCreateFilmItemList(
         Spacer(Modifier.height(4.dp))
 
         FlintBasicTextField(
-            placeholder = "이 작품의 매력 포인트 적어주세요.",
+            placeholder = "이 작품의 매력 포인트를 적어주세요.",
             value = reasonText,
             onValueChange = { reasonText = it },
             modifier = Modifier.fillMaxWidth(),
