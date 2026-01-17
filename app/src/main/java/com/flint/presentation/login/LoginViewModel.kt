@@ -41,7 +41,7 @@ class LoginViewModel @Inject constructor(
                 _verifyStatus.emit(UiState.Success(VerifyStatusData(result.isRegistered, result.tempToken)))
             },
             onFailure = {
-                Timber.e(it)
+                _verifyStatus.emit(UiState.Failure)
             }
         )
     }
