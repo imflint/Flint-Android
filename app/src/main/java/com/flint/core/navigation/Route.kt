@@ -21,6 +21,9 @@ interface Route {
     data object OnboardingOtt : Route
 
     @Serializable
+    data object OnboardingDone : Route
+
+    @Serializable
     data object CollectionList : Route
 
     @Serializable

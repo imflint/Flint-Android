@@ -23,6 +23,7 @@ fun FlintBackTopAppbar(
     title: String = "",
     closeable: Boolean = false,
     actionText: String = "",
+    onActionClick: () -> Unit = {},
     textColor: Color = Color.Unspecified,
 ) {
     FlintBasicTopAppbar(
@@ -40,13 +41,14 @@ fun FlintBackTopAppbar(
         action = {
             if (closeable) {
                 Icon(
-                    modifier = Modifier,
+                    modifier = Modifier.noRippleClickable(onClick = onActionClick),
                     imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
                     contentDescription = null,
                     tint = FlintTheme.colors.white,
                 )
             } else {
                 Text(
+                    modifier = Modifier.noRippleClickable(onClick = onActionClick),
                     text = actionText,
                     color = textColor,
                     style = FlintTheme.typography.body1M16,

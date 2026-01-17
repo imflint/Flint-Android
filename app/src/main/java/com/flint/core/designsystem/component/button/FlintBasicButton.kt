@@ -37,10 +37,10 @@ fun FlintBasicButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     contentPadding: PaddingValues,
     @DrawableRes leadingIconRes: Int? = null,
 ) {
-    val enabled: Boolean = state.enabled
     val background: Brush = state.background
     val contentColor: Color = state.contentColor
     val border: BorderStroke? = state.border

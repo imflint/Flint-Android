@@ -15,19 +15,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.core.designsystem.component.listView.CollectionSection
+import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.AuthorModel
 import com.flint.domain.model.CollectionModel
 import com.flint.domain.model.ContentModel
-import com.flint.domain.type.OttType
-import com.flint.domain.type.UserRoleType
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
-import com.flint.presentation.home.component.HomeRecentCollection
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty
-import com.flint.presentation.home.component.HomeRecommendCollection
-import com.flint.presentation.home.component.HomeSavedContents
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun HomeRoute(
@@ -51,9 +49,9 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     userName: String = "",
-    recommendCollectionModelList: List<CollectionModel> = emptyList(),
-    savedContentModelList: List<ContentModel> = emptyList(),
-    recentCollectionModelList: List<CollectionModel> = emptyList(),
+    recommendCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
+    savedContentModelList: ImmutableList<ContentModel> = persistentListOf(),
+    recentCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
     onRecommendCollectionItemClick: (collectionId: String) -> Unit = {},
     onSavedContentItemClick: (contentId: Long) -> Unit = {},
     onRecentCollectionItemClick: (collectionId: String) -> Unit = {},
@@ -90,22 +88,26 @@ private fun HomeScreen(
             item {
                 Spacer(Modifier.height(48.dp))
 
-                HomeRecommendCollection(
+                CollectionSection(
+                    title = "Fliner의 추천 컬렉션을 만나보세요",
+                    description = "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요",
+                    isAllVisible = false,
+                    onAllClick = {},
                     collectionModelList = recommendCollectionModelList,
-                    onItemClick = { collectionId ->
-                        onRecommendCollectionItemClick(collectionId)
-                    },
+                    onItemClick = onRecommendCollectionItemClick,
                 )
             }
 
             item {
                 Spacer(Modifier.height(48.dp))
 
-                HomeSavedContents(
+                SavedContentsSection(
+                    title = "최근 저장한 콘텐츠",
+                    description = "현재 구독 중인 OTT에서 볼 수 있는 작품들이에요",
+                    isAllVisible = false,
+                    onAllClick = {},
                     contentModelList = savedContentModelList,
-                    onItemClick = { contentId ->
-                        onSavedContentItemClick(contentId)
-                    },
+                    onItemClick = onSavedContentItemClick,
                 )
             }
 
@@ -115,15 +117,13 @@ private fun HomeScreen(
                 if (recentCollectionModelList.isEmpty()) {
                     HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)
                 } else {
-                    HomeRecentCollection(
-                        userName = userName,
+                    CollectionSection(
+                        title = "눈여겨보고 있는 컬렉션",
+                        description = "${userName}님이 최근 살펴본 컬렉션이에요",
+                        isAllVisible = true,
+                        onAllClick = onRecentCollectionAllClick,
                         collectionModelList = recentCollectionModelList,
-                        onItemClick = { collectionId ->
-                            onRecentCollectionItemClick(collectionId)
-                        },
-                        onAllClick = {
-                            onRecentCollectionAllClick()
-                        },
+                        onItemClick = onRecentCollectionItemClick,
                     )
                 }
             }
@@ -144,87 +144,8 @@ private fun HomeScreen(
 @Composable
 private fun PreviewHomeScreen() {
     FlintTheme {
-        val collectionModelList =
-            listOf(
-                CollectionModel(
-                    collectionId = "",
-                    collectionTitle = "컬렉션 제목",
-                    collectionImageUrl = "",
-                    createdAt = "",
-                    isBookmarked = false,
-                    author =
-                        AuthorModel(
-                            userId = 0,
-                            nickname = "사용자 이름",
-                            profileUrl = "",
-                            userRole = UserRoleType.FLINER,
-                        ),
-                ),
-                CollectionModel(
-                    collectionId = "",
-                    collectionTitle = "컬렉션 제목2",
-                    collectionImageUrl = "",
-                    createdAt = "",
-                    isBookmarked = false,
-                    author =
-                        AuthorModel(
-                            userId = 0,
-                            nickname = "사용자 이름2",
-                            profileUrl = "",
-                            userRole = UserRoleType.FLINER,
-                        ),
-                ),
-            )
-
-        val contentModelList =
-            listOf(
-                ContentModel(
-                    contentId = 0,
-                    title = "드라마 제목",
-                    year = 2000,
-                    posterImage = "",
-                    ottSimpleList =
-                        listOf(
-                            OttType.Netflix,
-                            OttType.Disney,
-                            OttType.Tving,
-                            OttType.Coupang,
-                        ),
-                ),
-                ContentModel(
-                    contentId = 0,
-                    title = "드라마 제목2",
-                    year = 2020,
-                    posterImage = "",
-                    ottSimpleList =
-                        listOf(
-                            OttType.Wave,
-                            OttType.Watcha,
-                            OttType.Tving,
-                        ),
-                ),
-                ContentModel(
-                    contentId = 0,
-                    title = "드라마 제목3",
-                    year = 2003,
-                    posterImage = "",
-                    ottSimpleList =
-                        listOf(
-                            OttType.Disney,
-                            OttType.Tving,
-                        ),
-                ),
-                ContentModel(
-                    contentId = 0,
-                    title = "드라마 제목4",
-                    year = 1919,
-                    posterImage = "",
-                    ottSimpleList =
-                        listOf(
-                            OttType.Watcha,
-                        ),
-                ),
-            )
+        val collectionModelList = CollectionModel.FakeList
+        val contentModelList = ContentModel.FakeList
 
         HomeScreen(
             userName = "종우",
