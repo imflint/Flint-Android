@@ -6,8 +6,8 @@ import com.flint.data.model.user.UserKeywordModel
 import com.flint.data.model.user.AuthorModel
 import com.flint.data.model.collection.CollectionModel
 import com.flint.data.model.content.ContentModel
-import com.flint.domain.type.PreferenceType
-import com.flint.domain.type.UserRoleType
+import com.flint.core.common.type.PreferenceType
+import com.flint.core.common.type.UserRoleType
 import com.flint.presentation.profile.model.UserKeywordUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

@@ -20,8 +20,8 @@ import com.flint.R
 import com.flint.core.common.extension.draw9Patch
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.type.KeywordType
-import com.flint.domain.type.PreferenceType
+import com.flint.core.common.type.KeywordType
+import com.flint.core.common.type.PreferenceType
 
 @Composable
 fun ProfileKeywordChip(

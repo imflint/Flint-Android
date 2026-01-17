@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.flint.core.common.extension.dropShadow
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.type.OttType
+import com.flint.core.common.type.OttType
 
 private const val MAX_OTT_SHOWING_COUNT = 2
 

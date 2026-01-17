@@ -20,7 +20,7 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
-import com.flint.domain.type.UserRoleType
+import com.flint.core.common.type.UserRoleType
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 

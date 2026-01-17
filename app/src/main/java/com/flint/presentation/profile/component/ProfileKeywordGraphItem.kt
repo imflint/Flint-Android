@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.type.PreferenceType
+import com.flint.core.common.type.PreferenceType
 
 @Composable
 fun ProfileKeywordGraphItem(

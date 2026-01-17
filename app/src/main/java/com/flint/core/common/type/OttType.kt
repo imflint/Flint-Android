@@ -1,4 +1,4 @@
-package com.flint.domain.type
+package com.flint.core.common.type
 
 import com.flint.R
 
@@ -16,6 +16,6 @@ enum class OttType(
     ;
 
     companion object {
-        fun getOtts(): List<OttType> = OttType.entries
+        fun getOtts(): List<OttType> = entries
     }
 }

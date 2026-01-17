@@ -35,7 +35,7 @@ import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.data.model.user.AuthorModel
 import com.flint.data.model.collection.CollectionDetailModel
-import com.flint.domain.type.UserRoleType
+import com.flint.core.common.type.UserRoleType
 
 @Composable
 fun CollectionFileItem(

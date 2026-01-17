@@ -33,7 +33,7 @@ import com.flint.R
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.type.OttType
+import com.flint.core.common.type.OttType
 
 @Composable
 fun SavedFilmListItem(

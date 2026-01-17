@@ -1,6 +1,6 @@
 package com.flint.data.model.user
 
-import com.flint.domain.type.UserRoleType
+import com.flint.core.common.type.UserRoleType
 
 data class AuthorModel(
     val userId: Long,

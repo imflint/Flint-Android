@@ -61,8 +61,8 @@ import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.data.model.user.AuthorModel
 import com.flint.data.model.content.ContentModel
-import com.flint.domain.type.OttType
-import com.flint.domain.type.UserRoleType
+import com.flint.core.common.type.OttType
+import com.flint.core.common.type.UserRoleType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

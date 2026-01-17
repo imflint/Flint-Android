@@ -1,4 +1,4 @@
-package com.flint.domain.type
+package com.flint.core.common.type
 
 /** 앱 내에 저장될 enum 등의 타입 지정*/
 enum class SampleType(
