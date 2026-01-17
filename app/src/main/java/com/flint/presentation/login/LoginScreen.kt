@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.R
 import com.flint.core.common.extension.dropShadow
 import com.flint.core.common.manager.KakaoLoginManager
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.type.ProviderType
@@ -41,14 +42,19 @@ fun LoginRoute(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect { event ->
-            when (event) {
-                is LoginNavigationEvent.NavigateToHome -> {
-                    navigateToHome()
+        viewModel.navigationEvent.collect { uiState ->
+            when (uiState) {
+                is UiState.Success -> {
+                    when(val event = uiState.data) {
+                        is LoginNavigationEvent.NavigateToHome -> {
+                            navigateToHome()
+                        }
+                        is LoginNavigationEvent.NavigateToOnBoarding -> {
+                            navigateToOnBoarding(event.tempToken)
+                        }
+                    }
                 }
-                is LoginNavigationEvent.NavigateToOnBoarding -> {
-                    navigateToOnBoarding(event.tempToken)
-                }
+                else -> {}
             }
         }
     }
