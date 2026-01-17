@@ -24,11 +24,13 @@ fun FlintIconButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     FlintBasicButton(
         text = text,
         state = state,
         onClick = onClick,
+        enabled = enabled,
         leadingIconRes = iconRes,
         contentPadding = PaddingValues(10.dp),
         modifier =

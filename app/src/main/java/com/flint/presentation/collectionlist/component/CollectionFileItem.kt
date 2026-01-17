@@ -54,7 +54,9 @@ fun CollectionFileItem(
                 bookmarkCount = bookmarkCount,
                 poster1Url = collectionImageUrl1,
                 poster2Url = collectionImageUrl2,
-                modifier = Modifier.size(154.dp),
+                modifier =
+                    Modifier
+                        .size(154.dp),
             )
         }
 
@@ -76,6 +78,7 @@ fun CollectionFileItem(
                 color = FlintTheme.colors.gray300,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.height(45.dp),
             )
         }
     }

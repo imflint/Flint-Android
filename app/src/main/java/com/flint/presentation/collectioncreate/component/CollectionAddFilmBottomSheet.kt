@@ -3,6 +3,7 @@ package com.flint.presentation.collectioncreate.component
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheet
 import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheetData
@@ -14,6 +15,7 @@ fun CollectionAddFilmBottomSheet(
     onGalleryClick: () -> Unit,
     onCoverDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val menuBottomSheetDataList =
         listOf(
@@ -34,6 +36,7 @@ fun CollectionAddFilmBottomSheet(
         menuBottomSheetDataList = menuBottomSheetDataList,
         onDismiss = onDismiss,
         sheetState = sheetState,
+        modifier = modifier,
     )
 }
 

@@ -10,13 +10,18 @@ interface Route {
     data object Login : Route
 
     @Serializable
-    data object OnboardingProfile : Route
+    data class OnboardingProfile(
+        val tempToken: String
+    ) : Route
 
     @Serializable
     data object OnboardingFilm : Route
 
     @Serializable
     data object OnboardingOtt : Route
+
+    @Serializable
+    data object OnboardingDone : Route
 
     @Serializable
     data object CollectionList : Route
