@@ -9,6 +9,11 @@ data class ContentModel(
     val year: Int,
     val posterImage: String,
     val ottSimpleList: List<OttType>,
+    val director: String = "",
+    val isBookmarked: Boolean = false,
+    val bookmarkCount: Int = 0,
+    val description: String = "",
+    val isSpoiler: Boolean = false,
 ) {
     companion object {
         val FakeList =
