@@ -7,16 +7,13 @@ import com.flint.core.common.util.DataStoreKey.ACCESS_TOKEN
 import com.flint.core.common.util.DataStoreKey.REFRESH_TOKEN
 import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.UiState
-import com.flint.domain.model.auth.SocialVerifyRequestModel
+import com.flint.data.model.auth.SocialVerifyRequestModel
 import com.flint.domain.repository.AuthRepository
 import com.flint.presentation.login.data.VerifyStatusData
-import com.kakao.sdk.auth.model.OAuthToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.Locale
 import javax.inject.Inject
 
 

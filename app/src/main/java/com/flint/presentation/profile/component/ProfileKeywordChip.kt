@@ -116,7 +116,7 @@ private fun ProfileKeywordChipPreview() {
                 keyword = "영화",
                 keywordType =
                     KeywordType.Large(
-                        preferenceType = PreferenceType.Blue,
+                        preferenceType = PreferenceType.BLUE,
                     ),
                 keywordImageUrl = "",
             )

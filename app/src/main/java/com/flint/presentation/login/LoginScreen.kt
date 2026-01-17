@@ -27,7 +27,7 @@ import com.flint.R
 import com.flint.core.common.extension.dropShadow
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.auth.SocialVerifyRequestModel
+import com.flint.data.model.auth.SocialVerifyRequestModel
 import com.flint.domain.type.ProviderType
 import com.flint.presentation.login.component.KakaoLoginButton
 import com.flint.presentation.login.data.VerifyStatusData

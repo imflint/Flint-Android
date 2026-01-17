@@ -1,10 +1,10 @@
-package com.flint.domain.model.auth
+package com.flint.data.model.auth
 
 import com.flint.domain.type.ProviderType
 
 data class SocialVerifyRequestModel(
     val provider: ProviderType,
-    val accessToken: String
+    val accessToken: String,
 )
 
 data class SocialVerifyResponseModel(

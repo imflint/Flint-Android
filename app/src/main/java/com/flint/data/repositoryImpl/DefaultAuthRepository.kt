@@ -3,10 +3,10 @@ package com.flint.data.repositoryImpl
 import com.flint.data.api.AuthApi
 import com.flint.data.mapper.auth.toDto
 import com.flint.data.mapper.auth.toModel
-import com.flint.domain.model.auth.SignupRequestModel
-import com.flint.domain.model.auth.SignupResponseModel
-import com.flint.domain.model.auth.SocialVerifyRequestModel
-import com.flint.domain.model.auth.SocialVerifyResponseModel
+import com.flint.data.model.auth.SignupRequestModel
+import com.flint.data.model.auth.SignupResponseModel
+import com.flint.data.model.auth.SocialVerifyRequestModel
+import com.flint.data.model.auth.SocialVerifyResponseModel
 import com.flint.domain.repository.AuthRepository
 import javax.inject.Inject
 

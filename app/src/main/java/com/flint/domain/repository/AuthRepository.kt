@@ -1,9 +1,9 @@
 package com.flint.domain.repository
 
-import com.flint.domain.model.auth.SignupRequestModel
-import com.flint.domain.model.auth.SignupResponseModel
-import com.flint.domain.model.auth.SocialVerifyRequestModel
-import com.flint.domain.model.auth.SocialVerifyResponseModel
+import com.flint.data.model.auth.SignupRequestModel
+import com.flint.data.model.auth.SignupResponseModel
+import com.flint.data.model.auth.SocialVerifyRequestModel
+import com.flint.data.model.auth.SocialVerifyResponseModel
 
 interface AuthRepository {
     suspend fun signup(requestModel: SignupRequestModel): Result<SignupResponseModel>

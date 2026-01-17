@@ -2,8 +2,8 @@ package com.flint.data.mapper.auth
 
 import com.flint.data.dto.request.auth.SignupRequestDto
 import com.flint.data.dto.response.auth.SignupResponseDto
-import com.flint.domain.model.auth.SignupRequestModel
-import com.flint.domain.model.auth.SignupResponseModel
+import com.flint.data.model.auth.SignupRequestModel
+import com.flint.data.model.auth.SignupResponseModel
 
 fun SignupRequestModel.toDto(): SignupRequestDto {
     return SignupRequestDto(
