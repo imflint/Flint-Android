@@ -18,7 +18,7 @@ import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun FlintSearchEmptyView() {
+fun FlintSearchEmptyView(title: String) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -33,7 +33,7 @@ fun FlintSearchEmptyView() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "작품을 찾을 수 없어요",
+            text = title,
             color = FlintTheme.colors.white,
             style = FlintTheme.typography.head3M18,
         )
@@ -44,6 +44,8 @@ fun FlintSearchEmptyView() {
 @Composable
 private fun FlintSearchEmptyViewPreview() {
     FlintTheme {
-        FlintSearchEmptyView()
+        FlintSearchEmptyView(
+            title = "아직 준비 중인 작품이에요",
+        )
     }
 }
