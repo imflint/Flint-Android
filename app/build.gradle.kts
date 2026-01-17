@@ -108,11 +108,3 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.lottie.compose)
 }
-
-// ktlint {
-//    android = true
-//    debug = true
-//    coloredOutput = true
-//    verbose = true
-//    outputToConsole = true
-// }
