@@ -1,6 +1,7 @@
 package com.flint.core.common.di
 
 import com.flint.BuildConfig
+import com.flint.core.common.di.interceptor.TokenInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -41,13 +42,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
+    fun provideOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        tokenInterceptor: TokenInterceptor,
+    ): OkHttpClient =
         OkHttpClient
             .Builder()
             .apply {
                 connectTimeout(20, TimeUnit.SECONDS)
                 writeTimeout(20, TimeUnit.SECONDS)
                 readTimeout(20, TimeUnit.SECONDS)
+                addInterceptor(tokenInterceptor)
                 addInterceptor(loggingInterceptor)
             }.build()
 
