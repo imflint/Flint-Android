@@ -27,8 +27,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun SaveToast(
-    // TODO: 이름 추천 해주세요
-    onClick: () -> Unit,
+    navigateToSavedCollection: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -60,7 +59,7 @@ fun SaveToast(
             Spacer(Modifier.height(4.dp))
 
             Row(
-                modifier = Modifier.clickable(onClick = onClick),
+                modifier = Modifier.clickable(onClick = navigateToSavedCollection),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -85,7 +84,7 @@ fun SaveToast(
 private fun SaveToastPreview() {
     FlintTheme {
         SaveToast(
-            onClick = {},
+            navigateToSavedCollection = {},
         )
     }
 }
