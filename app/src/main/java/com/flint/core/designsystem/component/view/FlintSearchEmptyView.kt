@@ -18,7 +18,9 @@ import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun FlintSearchEmptyView(title: String) {
+fun FlintSearchEmptyView(
+    title: String = ""
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
