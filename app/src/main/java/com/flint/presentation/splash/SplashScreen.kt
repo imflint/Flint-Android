@@ -17,6 +17,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun SplashRoute(
@@ -28,6 +29,11 @@ fun SplashRoute(
     SplashScreen(
         onAnimationFinished = navigateToLogin,
     )
+    LaunchedEffect(Unit) {
+        // FIXME navigation test @ckals413
+        delay(2000)
+        navigateToLogin()
+    }
 }
 
 @Composable

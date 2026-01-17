@@ -11,29 +11,79 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.common.extension.dropShadow
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.auth.SocialVerifyRequestModel
+import com.flint.domain.type.ProviderType
 import com.flint.presentation.login.component.KakaoLoginButton
+import com.flint.presentation.login.data.VerifyStatusData
+import com.flint.presentation.login.manager.KakaoLoginManager
+import timber.log.Timber
 
 @Composable
 fun LoginRoute(
     paddingValues: PaddingValues,
-    navigateToOnBoarding: () -> Unit,
+    navigateToOnBoarding: (tempToken: String) -> Unit,
     navigateToHome: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel(),
+    kakaoLoginManager: KakaoLoginManager = KakaoLoginManager()
 ) {
-    LoginScreen(modifier = Modifier.padding(paddingValues))
+    val context = LocalContext.current
+    val socialVerifyStatus by viewModel.verifyStatus.collectAsStateWithLifecycle()
+
+    LaunchedEffect(socialVerifyStatus) {
+        when(socialVerifyStatus) {
+            is UiState.Success -> {
+                val data = (socialVerifyStatus as UiState.Success<VerifyStatusData>).data
+
+                if (data.isRegistered) {
+                    navigateToHome()
+                } else {
+                    navigateToOnBoarding(data.tempToken ?: "")
+                }
+            }
+            else -> {}
+        }
+    }
+
+    LoginScreen(
+        onKakaoLoginClick = {
+            kakaoLoginManager.login(context) { result ->
+                result.onSuccess { token ->
+                    viewModel.socialVerifyWithKakao(
+                        requestModel = SocialVerifyRequestModel(
+                            provider = ProviderType.KAKAO,
+                            accessToken = token.accessToken
+                        ),
+                    )
+                }.onFailure { error ->
+                    Timber.e(error)
+                }
+            }
+        },
+        modifier = Modifier.padding(paddingValues)
+    )
 }
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(
+    onKakaoLoginClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier =
             modifier
@@ -67,7 +117,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
                     .padding(bottom = 60.dp)
                     .padding(horizontal = 16.dp),
             onClick = {
-                // TODO Kakao Login
+                onKakaoLoginClick()
             },
         )
     }
@@ -77,6 +127,8 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun PreviewLoginScreen() {
     FlintTheme {
-        LoginScreen()
+        LoginScreen(
+            onKakaoLoginClick = {}
+        )
     }
 }

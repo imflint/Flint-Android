@@ -14,7 +14,7 @@ fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.loginNavGraph(
     paddingValues: PaddingValues,
-    onNavigateToOnBoarding: () -> Unit,
+    onNavigateToOnBoarding: (tempToken: String) -> Unit,
     onNavigateToHome: () -> Unit,
 ) {
     composable<Route.Login> {

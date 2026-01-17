@@ -10,8 +10,8 @@ import com.flint.presentation.onboarding.OnboardingFilmRoute
 import com.flint.presentation.onboarding.OnboardingOttRoute
 import com.flint.presentation.onboarding.OnboardingProfileRoute
 
-fun NavController.navigateToOnboarding() {
-    navigate(Route.OnboardingProfile)
+fun NavController.navigateToOnboarding(tempToken: String) {
+    navigate(Route.OnboardingProfile(tempToken))
 }
 
 fun NavController.navigateToOnboardingFilm() {
