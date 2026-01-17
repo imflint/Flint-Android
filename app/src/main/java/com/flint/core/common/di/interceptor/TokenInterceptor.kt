@@ -20,19 +20,10 @@ class TokenInterceptor @Inject constructor(
                 preferencesManager.getString(ACCESS_TOKEN).first()
             }
 
-        val refreshToken =
-            runBlocking {
-                preferencesManager.getString(REFRESH_TOKEN).first()
-            }
-
         val requestBuilder = originalRequest.newBuilder()
 
         if (accessToken.isNotEmpty()) {
-            requestBuilder.header("accesstoken", accessToken)
-        }
-
-        if (refreshToken.isNotEmpty()) {
-            requestBuilder.header("refreshtoken", refreshToken)
+            requestBuilder.header("authorization", "Bearer $accessToken")
         }
 
         val request = requestBuilder.build()
