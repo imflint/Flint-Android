@@ -1,7 +1,7 @@
 package com.flint.data.mapper.auth
 
-import com.flint.data.dto.request.auth.SocialVerifyRequestDto
-import com.flint.data.dto.response.auth.SocialVerifyResponseDto
+import com.flint.data.dto.auth.request.SocialVerifyRequestDto
+import com.flint.data.dto.auth.response.SocialVerifyResponseDto
 import com.flint.data.model.auth.SocialVerifyRequestModel
 import com.flint.data.model.auth.SocialVerifyResponseModel
 

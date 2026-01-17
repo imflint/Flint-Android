@@ -1,6 +1,6 @@
-package com.flint.domain.repository
+package com.flint.data.repository
 
-import com.flint.data.dto.request.SampleRequestDto
+import com.flint.data.dto.SampleRequestDto
 import com.flint.domain.model.SampleModel
 
 interface FlintRepository {

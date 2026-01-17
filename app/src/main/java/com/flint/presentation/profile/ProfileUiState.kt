@@ -3,9 +3,9 @@ package com.flint.presentation.profile
 import androidx.compose.runtime.Immutable
 import com.flint.data.model.user.UserKeywordListModel
 import com.flint.data.model.user.UserKeywordModel
-import com.flint.domain.model.AuthorModel
-import com.flint.domain.model.CollectionModel
-import com.flint.domain.model.ContentModel
+import com.flint.data.model.user.AuthorModel
+import com.flint.data.model.collection.CollectionModel
+import com.flint.data.model.content.ContentModel
 import com.flint.domain.type.PreferenceType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.profile.model.UserKeywordUiModel

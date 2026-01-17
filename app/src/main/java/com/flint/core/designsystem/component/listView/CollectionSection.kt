@@ -25,7 +25,7 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.listItem.CollectionItem
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.CollectionModel
+import com.flint.data.model.collection.CollectionModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

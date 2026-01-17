@@ -1,4 +1,4 @@
-package com.flint.data.dto.response.auth
+package com.flint.data.dto.auth.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,4 +1,4 @@
-package com.flint.data.dto.request.auth
+package com.flint.data.dto.auth.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -12,5 +12,5 @@ data class SignupRequestDto(
     @SerialName("favoriteContentIds")
     val favoriteContentIds: List<Long>,
     @SerialName("subscribedOttIds")
-    val subscribedOttIds: List<Long>
+    val subscribedOttIds: List<Long>,
 )

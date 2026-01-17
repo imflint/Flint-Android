@@ -59,8 +59,8 @@ import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.component.progressbar.UnderImageProgressBar
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.AuthorModel
-import com.flint.domain.model.ContentModel
+import com.flint.data.model.user.AuthorModel
+import com.flint.data.model.content.ContentModel
 import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import kotlinx.collections.immutable.ImmutableList

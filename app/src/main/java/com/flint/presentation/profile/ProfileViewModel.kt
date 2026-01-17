@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.extension.updateSuccess
 import com.flint.core.common.util.UiState
-import com.flint.domain.repository.UserRepository
+import com.flint.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

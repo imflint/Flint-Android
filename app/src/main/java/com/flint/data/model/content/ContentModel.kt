@@ -1,4 +1,4 @@
-package com.flint.domain.model
+package com.flint.data.model.content
 
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.persistentListOf

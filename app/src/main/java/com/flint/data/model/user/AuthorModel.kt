@@ -1,4 +1,4 @@
-package com.flint.domain.model
+package com.flint.data.model.user
 
 import com.flint.domain.type.UserRoleType
 

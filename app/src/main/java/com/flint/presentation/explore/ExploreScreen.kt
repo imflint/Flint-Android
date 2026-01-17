@@ -32,7 +32,7 @@ import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.ContentModel
+import com.flint.data.model.content.ContentModel
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

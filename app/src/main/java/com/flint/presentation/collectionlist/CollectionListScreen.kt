@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.AuthorModel
-import com.flint.domain.model.CollectionDetailModel
+import com.flint.data.model.user.AuthorModel
+import com.flint.data.model.collection.CollectionDetailModel
 import com.flint.presentation.collectionlist.component.CollectionFileItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

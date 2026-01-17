@@ -8,7 +8,7 @@ import com.flint.core.common.util.DataStoreKey.REFRESH_TOKEN
 import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.UiState
 import com.flint.data.model.auth.SocialVerifyRequestModel
-import com.flint.domain.repository.AuthRepository
+import com.flint.data.repository.AuthRepository
 import com.flint.presentation.login.data.VerifyStatusData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

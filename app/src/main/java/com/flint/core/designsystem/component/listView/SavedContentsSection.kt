@@ -25,7 +25,7 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.listItem.SavedContentItem
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.ContentModel
+import com.flint.data.model.content.ContentModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

@@ -1,10 +1,10 @@
 package com.flint.data.api
 
 import com.flint.data.dto.base.BaseResponse
-import com.flint.data.dto.request.auth.SignupRequestDto
-import com.flint.data.dto.request.auth.SocialVerifyRequestDto
-import com.flint.data.dto.response.auth.SignupResponseDto
-import com.flint.data.dto.response.auth.SocialVerifyResponseDto
+import com.flint.data.dto.auth.request.SignupRequestDto
+import com.flint.data.dto.auth.request.SocialVerifyRequestDto
+import com.flint.data.dto.auth.response.SignupResponseDto
+import com.flint.data.dto.auth.response.SocialVerifyResponseDto
 import retrofit2.http.Body
 import retrofit2.http.POST
 

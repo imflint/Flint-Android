@@ -1,4 +1,4 @@
-package com.flint.domain.repository
+package com.flint.data.repository
 
 import com.flint.data.model.user.UserKeywordListModel
 

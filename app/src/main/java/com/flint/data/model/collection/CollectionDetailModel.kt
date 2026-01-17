@@ -1,4 +1,6 @@
-package com.flint.domain.model
+package com.flint.data.model.collection
+
+import com.flint.data.model.user.AuthorModel
 
 data class CollectionDetailModel(
     val collectionId: String,
@@ -22,7 +24,7 @@ data class CollectionDetailModel(
                 createdAt = "2024-01-01",
                 isBookmarked = true,
                 bookmarkCount = 10,
-                author = AuthorModel.Fake,
+                author = AuthorModel.Companion.Fake,
             )
     }
 }

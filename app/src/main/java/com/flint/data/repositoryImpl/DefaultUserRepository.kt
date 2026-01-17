@@ -4,7 +4,7 @@ import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.UserApi
 import com.flint.data.mapper.user.toModel
 import com.flint.data.model.user.UserKeywordListModel
-import com.flint.domain.repository.UserRepository
+import com.flint.data.repository.UserRepository
 import javax.inject.Inject
 
 class DefaultUserRepository @Inject constructor(

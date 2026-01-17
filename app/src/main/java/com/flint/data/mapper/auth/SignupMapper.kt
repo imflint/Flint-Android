@@ -1,7 +1,7 @@
 package com.flint.data.mapper.auth
 
-import com.flint.data.dto.request.auth.SignupRequestDto
-import com.flint.data.dto.response.auth.SignupResponseDto
+import com.flint.data.dto.auth.request.SignupRequestDto
+import com.flint.data.dto.auth.response.SignupResponseDto
 import com.flint.data.model.auth.SignupRequestModel
 import com.flint.data.model.auth.SignupResponseModel
 

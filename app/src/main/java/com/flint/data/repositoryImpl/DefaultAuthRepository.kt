@@ -7,7 +7,7 @@ import com.flint.data.model.auth.SignupRequestModel
 import com.flint.data.model.auth.SignupResponseModel
 import com.flint.data.model.auth.SocialVerifyRequestModel
 import com.flint.data.model.auth.SocialVerifyResponseModel
-import com.flint.domain.repository.AuthRepository
+import com.flint.data.repository.AuthRepository
 import javax.inject.Inject
 
 class DefaultAuthRepository @Inject constructor(

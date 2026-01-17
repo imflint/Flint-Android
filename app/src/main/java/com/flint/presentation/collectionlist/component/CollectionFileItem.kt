@@ -33,8 +33,8 @@ import com.flint.core.common.extension.dropShadow
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.AuthorModel
-import com.flint.domain.model.CollectionDetailModel
+import com.flint.data.model.user.AuthorModel
+import com.flint.data.model.collection.CollectionDetailModel
 import com.flint.domain.type.UserRoleType
 
 @Composable

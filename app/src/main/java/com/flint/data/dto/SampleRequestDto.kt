@@ -1,4 +1,4 @@
-package com.flint.data.dto.request
+package com.flint.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

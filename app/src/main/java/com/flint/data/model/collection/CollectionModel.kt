@@ -1,5 +1,6 @@
-package com.flint.domain.model
+package com.flint.data.model.collection
 
+import com.flint.data.model.user.AuthorModel
 import com.flint.domain.type.UserRoleType
 import kotlinx.collections.immutable.persistentListOf
 
