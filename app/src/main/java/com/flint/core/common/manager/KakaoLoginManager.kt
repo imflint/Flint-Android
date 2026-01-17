@@ -1,4 +1,4 @@
-package com.flint.presentation.login.manager
+package com.flint.core.common.manager
 
 import android.content.Context
 import com.kakao.sdk.auth.model.OAuthToken
