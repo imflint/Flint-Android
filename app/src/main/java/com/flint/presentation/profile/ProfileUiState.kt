@@ -4,19 +4,14 @@ import androidx.compose.runtime.Immutable
 import com.flint.domain.model.collection.CollectionModel
 import com.flint.domain.model.content.ContentModel
 import com.flint.domain.model.user.AuthorModel
-import com.flint.domain.model.user.UserKeywordListModel
-import com.flint.domain.model.user.UserKeywordModel
-import com.flint.domain.type.PreferenceType
+import com.flint.domain.model.user.UserKeywordResponseModel
 import com.flint.domain.type.UserRoleType
-import com.flint.presentation.profile.model.UserKeywordUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
 data class ProfileUiState(
-    val keywords: ImmutableList<UserKeywordUiModel>,
-    // TODO: UiModel로 변경
+    val keywords: ImmutableList<UserKeywordResponseModel>,
     val profile: AuthorModel,
     val savedContent: ImmutableList<ContentModel>,
     val createCollections: ImmutableList<CollectionModel>,
@@ -28,7 +23,7 @@ data class ProfileUiState(
                 keywords = persistentListOf(),
                 profile =
                     AuthorModel(
-                        userId = 800370427074376600, // TODO: 임시 userId
+                        userId = 0,
                         nickname = "",
                         profileUrl = "",
                         userRole = UserRoleType.FLINER,
@@ -39,7 +34,7 @@ data class ProfileUiState(
             )
         val Fake =
             ProfileUiState(
-                keywords = UserKeywordUiModel.FakeList1,
+                keywords = UserKeywordResponseModel.FakeList1,
                 profile = AuthorModel.Fake,
                 createCollections = CollectionModel.FakeList,
                 savedCollections = CollectionModel.FakeList,
@@ -47,14 +42,3 @@ data class ProfileUiState(
             )
     }
 }
-
-fun UserKeywordListModel.toState(): ImmutableList<UserKeywordUiModel> = this.keywordList.map { it.toState() }.toImmutableList()
-
-private fun UserKeywordModel.toState(): UserKeywordUiModel =
-    UserKeywordUiModel(
-        name = this.name,
-        imageUrl = this.imageUrl,
-        preferenceType = PreferenceType.valueOf(this.color),
-        rank = this.rank,
-        percentage = this.percentage,
-    )

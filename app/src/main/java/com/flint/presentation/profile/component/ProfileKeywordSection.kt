@@ -22,17 +22,18 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.user.UserKeywordResponseModel
 import com.flint.domain.type.KeywordType
-import com.flint.presentation.profile.model.UserKeywordUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import kotlin.collections.sortedBy
 
 private const val MAX = 3
 
 @Composable
 fun ProfileKeywordSection(
     nickname: String,
-    keywordList: ImmutableList<UserKeywordUiModel>,
+    keywordList: ImmutableList<UserKeywordResponseModel>,
     onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -93,7 +94,7 @@ fun ProfileKeywordSection(
 
 @Composable
 fun KeywordChipsLayout(
-    keywordList: ImmutableList<UserKeywordUiModel>,
+    keywordList: ImmutableList<UserKeywordResponseModel>,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -126,7 +127,7 @@ fun KeywordChipsLayout(
 
 @Composable
 fun KeywordGraphLayout(
-    keywordList: ImmutableList<UserKeywordUiModel>,
+    keywordList: ImmutableList<UserKeywordResponseModel>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -147,7 +148,7 @@ fun KeywordGraphLayout(
 }
 
 // TODO: 배치 로직 수정 필요
-private fun rotateKeywordByRank(keywordList: ImmutableList<UserKeywordUiModel>): ImmutableList<UserKeywordUiModel> {
+private fun rotateKeywordByRank(keywordList: ImmutableList<UserKeywordResponseModel>): ImmutableList<UserKeywordResponseModel> {
     if (keywordList.size < 2) return keywordList
 
     val sortedByRank = keywordList.sortedBy { it.rank }
@@ -170,7 +171,7 @@ private fun ProfileKeywordSectionPreview() {
     FlintTheme {
         ProfileKeywordSection(
             nickname = "안두콩",
-            keywordList = UserKeywordUiModel.FakeList1,
+            keywordList = UserKeywordResponseModel.FakeList1,
             modifier = Modifier.fillMaxSize(),
             onRefreshClick = {},
         )

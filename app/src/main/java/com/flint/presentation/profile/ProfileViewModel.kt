@@ -7,6 +7,7 @@ import com.flint.core.common.util.UiState
 import com.flint.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,7 +49,7 @@ class ProfileViewModel
                         Timber.d("onSuccess: $result")
                         _uiState.updateSuccess {
                             it.copy(
-                                keywords = result.toState(),
+                                keywords = result.toImmutableList(),
                             )
                         }
                     },
