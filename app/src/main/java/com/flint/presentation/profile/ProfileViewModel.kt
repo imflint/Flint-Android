@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class ProfileViewModel
@@ -20,9 +21,7 @@ class ProfileViewModel
     ) : ViewModel() {
         private val _uiState =
             MutableStateFlow<UiState<ProfileUiState>>(
-                UiState.Success(
-                    ProfileUiState.Empty,
-                ),
+                UiState.Success(ProfileUiState.Fake),
             )
         val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
 
@@ -32,13 +31,13 @@ class ProfileViewModel
 
         private fun loadInitialData() {
             viewModelScope.launch {
-                userRepository.getUserKeywords(userId = 800370427074376600).fold(
+                userRepository.getUserKeywords(userId = 800370427074376635).fold( // TODO: 임시 userId
                     onFailure = {
+                        Timber.d("onFailure: $it")
                         _uiState.emit(UiState.Failure)
                     },
                     onSuccess = { result ->
-//                        _uiState.value = UiState.Success(ProfileUiState.Empty) //TODO: 임시 Empty 상태 처리
-
+                        Timber.d("onSuccess: $result")
                         _uiState.updateSuccess {
                             it.copy(
                                 keywords = result.toState(),
