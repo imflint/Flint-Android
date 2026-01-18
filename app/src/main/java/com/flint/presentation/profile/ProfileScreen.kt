@@ -29,7 +29,7 @@ import com.flint.presentation.profile.component.ProfileTopSection
 fun ProfileRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
-    navigateToSavedFilmList: () -> Unit,
+    navigateToSavedFilmList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -44,6 +44,7 @@ fun ProfileRoute(
             ProfileScreen(
                 modifier = Modifier.padding(paddingValues),
                 uiState = state.data,
+                onRefreshClick = viewModel::refreshProfileKeyword,
                 onCollectionItemClick = navigateToCollectionDetail,
                 onCollectionMoreClick = navigateToCollectionList,
             )
@@ -57,6 +58,7 @@ fun ProfileRoute(
 private fun ProfileScreen(
     uiState: ProfileUiState,
     modifier: Modifier = Modifier,
+    onRefreshClick: () -> Unit = {},
     onCollectionItemClick: (collectionId: String) -> Unit,
     onFilmItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
     onFilmMoreClick: () -> Unit = {},
@@ -88,9 +90,8 @@ private fun ProfileScreen(
             ProfileKeywordSection(
                 nickname = uiState.profile.nickname,
                 keywordList = uiState.keywords,
-                onRefreshClick = {},
-                modifier =
-                    Modifier.fillMaxWidth(),
+                onRefreshClick = onRefreshClick,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 

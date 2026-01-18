@@ -21,7 +21,7 @@ class ProfileViewModel
     ) : ViewModel() {
         private val _uiState =
             MutableStateFlow<UiState<ProfileUiState>>(
-                UiState.Success(ProfileUiState.Fake),
+                UiState.Loading,
             )
         val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
 
@@ -30,6 +30,14 @@ class ProfileViewModel
         }
 
         private fun loadInitialData() {
+            viewModelScope.launch {
+                _uiState.emit(UiState.Success(ProfileUiState.Fake)) // TODO: 임시 로직
+
+                // 프로필/컬렉션/작품 목록 등 설정 필요한 초기 데이터 로드 필요
+            }
+        }
+
+        fun refreshProfileKeyword() {
             viewModelScope.launch {
                 userRepository.getUserKeywords(userId = 800370427074376635).fold( // TODO: 임시 userId
                     onFailure = {
@@ -46,8 +54,5 @@ class ProfileViewModel
                     },
                 )
             }
-        }
-
-        private fun refreshProfile() {
         }
     }

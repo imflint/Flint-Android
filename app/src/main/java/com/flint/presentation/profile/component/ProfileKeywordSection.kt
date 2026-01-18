@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
-import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.common.type.KeywordType
+import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.profile.model.UserKeywordUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -84,7 +84,7 @@ fun ProfileKeywordSection(
         }
         Spacer(Modifier.height(32.dp))
         KeywordChipsLayout(
-            keywordList = keywordList,
+            keywordList = rotateKeywordByRank(keywordList),
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.height(32.dp))
@@ -146,6 +146,7 @@ fun KeywordGraphLayout(
     }
 }
 
+// TODO: 배치 로직 수정 필요
 private fun rotateKeywordByRank(keywordList: ImmutableList<UserKeywordUiModel>): ImmutableList<UserKeywordUiModel> {
     if (keywordList.size < 2) return keywordList
 
