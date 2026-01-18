@@ -1,4 +1,4 @@
-package com.flint.data.model.user
+package com.flint.domain.model.user
 
 data class UserKeywordListModel(
     val keywordList: List<UserKeywordModel>,

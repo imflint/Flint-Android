@@ -1,4 +1,4 @@
-package com.flint.core.common.type
+package com.flint.domain.type
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color

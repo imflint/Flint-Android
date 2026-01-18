@@ -28,9 +28,9 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.data.model.user.AuthorModel
-import com.flint.data.model.collection.CollectionModel
-import com.flint.core.common.type.UserRoleType
+import com.flint.domain.model.collection.CollectionModel
+import com.flint.domain.model.user.AuthorModel
+import com.flint.domain.type.UserRoleType
 
 @Composable
 fun CollectionItem(

@@ -33,9 +33,9 @@ import com.flint.core.common.extension.dropShadow
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.data.model.user.AuthorModel
-import com.flint.data.model.collection.CollectionDetailModel
-import com.flint.core.common.type.UserRoleType
+import com.flint.domain.model.collection.CollectionDetailModel
+import com.flint.domain.model.user.AuthorModel
+import com.flint.domain.type.UserRoleType
 
 @Composable
 fun CollectionFileItem(

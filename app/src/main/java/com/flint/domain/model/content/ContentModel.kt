@@ -1,6 +1,6 @@
-package com.flint.data.model.content
+package com.flint.domain.model.content
 
-import com.flint.core.common.type.OttType
+import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.persistentListOf
 
 data class ContentModel(

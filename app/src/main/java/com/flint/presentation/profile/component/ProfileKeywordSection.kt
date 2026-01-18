@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
-import com.flint.core.common.type.KeywordType
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.type.KeywordType
 import com.flint.presentation.profile.model.UserKeywordUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList

@@ -22,7 +22,7 @@ import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.core.common.type.OttType
+import com.flint.domain.type.OttType
 import com.flint.presentation.onboarding.component.OnboardingOttItem
 
 @Composable

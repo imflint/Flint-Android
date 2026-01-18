@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.core.common.type.OttType
+import com.flint.domain.type.OttType
 
 @Composable
 fun OnboardingOttItem(

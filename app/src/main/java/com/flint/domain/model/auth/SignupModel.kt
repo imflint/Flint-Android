@@ -1,4 +1,4 @@
-package com.flint.data.model.auth
+package com.flint.domain.model.auth
 
 data class SignupRequestModel(
     val tempToken: String,

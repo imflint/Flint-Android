@@ -1,6 +1,6 @@
 package com.flint.presentation.profile.model
 
-import com.flint.core.common.type.PreferenceType
+import com.flint.domain.type.PreferenceType
 import kotlinx.collections.immutable.persistentListOf
 
 data class UserKeywordUiModel(

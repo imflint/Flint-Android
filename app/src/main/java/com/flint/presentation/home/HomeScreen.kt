@@ -19,8 +19,8 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.data.model.collection.CollectionModel
-import com.flint.data.model.content.ContentModel
+import com.flint.domain.model.collection.CollectionModel
+import com.flint.domain.model.content.ContentModel
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty

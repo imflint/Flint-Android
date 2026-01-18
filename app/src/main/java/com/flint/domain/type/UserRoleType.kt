@@ -1,4 +1,4 @@
-package com.flint.core.common.type
+package com.flint.domain.type
 
 enum class UserRoleType {
     ADMIN,

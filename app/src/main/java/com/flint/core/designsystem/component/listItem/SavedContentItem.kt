@@ -18,8 +18,8 @@ import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.data.model.content.ContentModel
-import com.flint.core.common.type.OttType
+import com.flint.domain.model.content.ContentModel
+import com.flint.domain.type.OttType
 
 @Composable
 fun SavedContentItem(

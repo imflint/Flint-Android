@@ -1,6 +1,6 @@
-package com.flint.data.model.collection
+package com.flint.domain.model.collection
 
-import com.flint.data.model.user.AuthorModel
+import com.flint.domain.model.user.AuthorModel
 import kotlinx.collections.immutable.persistentListOf
 
 data class CollectionDetailModel(

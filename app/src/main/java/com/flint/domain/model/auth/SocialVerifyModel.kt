@@ -1,6 +1,6 @@
-package com.flint.data.model.auth
+package com.flint.domain.model.auth
 
-import com.flint.core.common.type.ProviderType
+import com.flint.domain.type.ProviderType
 
 data class SocialVerifyRequestModel(
     val provider: ProviderType,

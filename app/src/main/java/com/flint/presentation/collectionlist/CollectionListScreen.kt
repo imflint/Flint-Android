@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.data.model.collection.CollectionDetailModel
+import com.flint.domain.model.collection.CollectionDetailModel
 import com.flint.presentation.collectionlist.component.CollectionFileItem
 import kotlinx.collections.immutable.ImmutableList
 
