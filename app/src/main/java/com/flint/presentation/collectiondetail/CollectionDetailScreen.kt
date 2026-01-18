@@ -72,6 +72,19 @@ fun CollectionDetailRoute(
     collectionId: String,
     navigateToCollectionList: () -> Unit,
 ) {
+    CollectionDetailScreen(
+        paddingValues = paddingValues,
+        title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
+        authorId = 2L,
+        userId = 1L,
+        isBookmarked = false,
+        authorNickname = "키카",
+        authorUserRoleType = UserRoleType.FLINER,
+        createdAt = "2026. 01. 07.",
+        collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
+        contents = ContentModel.FakeList,
+        people = persistentListOf(),
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

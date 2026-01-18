@@ -1,9 +1,9 @@
 package com.flint.core.common.di
 
-import com.flint.data.repositoryImpl.DefaultAuthRepository
-import com.flint.data.repositoryImpl.DefaultUserRepository
 import com.flint.data.repository.AuthRepository
 import com.flint.data.repository.UserRepository
+import com.flint.data.repositoryImpl.DefaultAuthRepository
+import com.flint.data.repositoryImpl.DefaultUserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 abstract class RepositoryModule {
     @Binds
     @Singleton
-    abstract fun bindFlintRepository(defaultFlintRepository: DefaultAuthRepository): AuthRepository
+    abstract fun bindAuthRepository(defaultAuthRepository: DefaultAuthRepository): AuthRepository
 
     @Binds
     @Singleton

@@ -1,7 +1,6 @@
 package com.flint.presentation.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,7 +45,6 @@ fun ProfileRoute(
                 modifier = Modifier.padding(paddingValues),
                 uiState = state.data,
                 onCollectionItemClick = navigateToCollectionDetail,
-                onFilmMoreClick = navigateToSavedFilmList,
                 onCollectionMoreClick = navigateToCollectionList,
             )
         }
@@ -58,11 +56,11 @@ fun ProfileRoute(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileUiState,
-    modifier: Modifier = Modifier, // TODO: 위치 조정
+    modifier: Modifier = Modifier,
     onCollectionItemClick: (collectionId: String) -> Unit,
     onFilmItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
+    onFilmMoreClick: () -> Unit = {},
     onCollectionMoreClick: () -> Unit,
-    onFilmMoreClick: () -> Unit,
 ) {
     val userName = uiState.profile.nickname
 
@@ -128,8 +126,6 @@ private fun ProfileScreen(
             SavedContentsSection(
                 title = "저장한 작품",
                 description = "${userName}님이 저장한 작품이에요",
-                isAllVisible = true,
-                onAllClick = onFilmMoreClick,
                 contentModelList = uiState.savedContent,
                 onItemClick = onFilmItemClick,
             )
@@ -144,7 +140,6 @@ private fun ProfileScreenPreview() {
         ProfileScreen(
             uiState = ProfileUiState.Fake,
             onCollectionItemClick = {},
-            onFilmMoreClick = {},
             onCollectionMoreClick = {},
         )
     }

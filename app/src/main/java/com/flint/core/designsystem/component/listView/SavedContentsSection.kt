@@ -32,11 +32,11 @@ import kotlinx.collections.immutable.ImmutableList
 fun SavedContentsSection(
     title: String,
     description: String,
-    isAllVisible: Boolean,
-    onAllClick: () -> Unit,
     contentModelList: ImmutableList<ContentModel>,
     onItemClick: (contentId: Long) -> Unit,
     modifier: Modifier = Modifier,
+    isAllVisible: Boolean = false,
+    onAllClick: () -> Unit = {},
 ) {
     Column(
         modifier =
