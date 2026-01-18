@@ -1,6 +1,7 @@
 package com.flint.presentation.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,12 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.core.common.type.UserRoleType
 import com.flint.core.common.util.UiState
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
-import com.flint.core.common.type.UserRoleType
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 
@@ -30,12 +32,15 @@ fun ProfileRoute(
     navigateToCollectionList: () -> Unit,
     navigateToSavedFilmList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when(val state = uiState) {
-        is UiState.Loading -> {}
+    when (val state = uiState) {
+        is UiState.Loading -> {
+            FlintLoadingIndicator()
+        }
+
         is UiState.Success -> {
             ProfileScreen(
                 modifier = Modifier.padding(paddingValues),
@@ -45,6 +50,7 @@ fun ProfileRoute(
                 onCollectionMoreClick = navigateToCollectionList,
             )
         }
+
         else -> {}
     }
 }
@@ -76,7 +82,7 @@ private fun ProfileScreen(
                     isFliner = (userRole == UserRoleType.FLINER),
                 )
             }
-         }
+        }
 
         item {
             Spacer(Modifier.height(20.dp))
