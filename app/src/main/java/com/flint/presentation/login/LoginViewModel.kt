@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.repository.AuthRepository
+import com.flint.presentation.login.event.LoginNavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -35,9 +36,3 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-
-sealed interface LoginNavigationEvent {
-    data object NavigateToHome : LoginNavigationEvent
-    data class NavigateToOnBoarding(val tempToken: String) : LoginNavigationEvent
-}

@@ -29,6 +29,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.type.ProviderType
 import com.flint.presentation.login.component.KakaoLoginButton
+import com.flint.presentation.login.event.LoginNavigationEvent
 import timber.log.Timber
 
 @Composable
