@@ -2,48 +2,37 @@ package com.flint.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.datastore.PreferencesManager
-import com.flint.core.common.util.DataStoreKey.ACCESS_TOKEN
-import com.flint.core.common.util.DataStoreKey.REFRESH_TOKEN
-import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.repository.AuthRepository
-import com.flint.presentation.login.data.VerifyStatusData
-import com.kakao.sdk.auth.model.OAuthToken
+import com.flint.presentation.login.event.LoginNavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.Locale
 import javax.inject.Inject
-
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val preferenceManager: PreferencesManager,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _verifyStatus = MutableStateFlow<UiState<VerifyStatusData>>(UiState.Empty) // 로그인 여부, tempToken(회원가입 용)
-    val verifyStatus = _verifyStatus.asStateFlow()
+    private val _navigationEvent = MutableSharedFlow<UiState<LoginNavigationEvent>>()
+    val navigationEvent = _navigationEvent.asSharedFlow()
 
     fun socialVerifyWithKakao(requestModel: SocialVerifyRequestModel) = viewModelScope.launch {
-        authRepository.socialVerify(requestModel).fold(
-            onSuccess = { result ->
-                if (result.isRegistered) {
-                    result.accessToken?.let { preferenceManager.saveString(ACCESS_TOKEN, it) }
-                    result.refreshToken?.let { preferenceManager.saveString(REFRESH_TOKEN, it) }
-                    result.userId?.let { preferenceManager.saveString(USER_ID, it.toString()) }
+        _navigationEvent.emit(UiState.Loading)
+
+        authRepository.socialVerify(requestModel)
+            .onSuccess { data ->
+                if (data.isRegistered) {
+                    _navigationEvent.emit(UiState.Success(LoginNavigationEvent.NavigateToHome))
+                } else {
+                    _navigationEvent.emit(UiState.Success(LoginNavigationEvent.NavigateToOnBoarding(data.tempToken ?: "")))
                 }
-
-                _verifyStatus.emit(UiState.Success(VerifyStatusData(result.isRegistered, result.tempToken)))
-            },
-            onFailure = {
-                _verifyStatus.emit(UiState.Failure)
             }
-        )
+            .onFailure {
+                _navigationEvent.emit(UiState.Failure)
+            }
+        }
     }
-
-}

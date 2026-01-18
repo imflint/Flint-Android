@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,16 +21,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.common.extension.dropShadow
+import com.flint.core.common.manager.KakaoLoginManager
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.type.ProviderType
 import com.flint.presentation.login.component.KakaoLoginButton
-import com.flint.presentation.login.data.VerifyStatusData
-import com.flint.core.common.manager.KakaoLoginManager
+import com.flint.presentation.login.event.LoginNavigationEvent
 import timber.log.Timber
 
 @Composable
@@ -43,20 +41,22 @@ fun LoginRoute(
     kakaoLoginManager: KakaoLoginManager = KakaoLoginManager()
 ) {
     val context = LocalContext.current
-    val socialVerifyStatus by viewModel.verifyStatus.collectAsStateWithLifecycle()
 
-    LaunchedEffect(socialVerifyStatus) {
-        when(socialVerifyStatus) {
-            is UiState.Success -> {
-                val data = (socialVerifyStatus as UiState.Success<VerifyStatusData>).data
-
-                if (data.isRegistered) {
-                    navigateToHome()
-                } else {
-                    navigateToOnBoarding(data.tempToken ?: "")
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { uiState ->
+            when (uiState) {
+                is UiState.Success -> {
+                    when(val event = uiState.data) {
+                        is LoginNavigationEvent.NavigateToHome -> {
+                            navigateToHome()
+                        }
+                        is LoginNavigationEvent.NavigateToOnBoarding -> {
+                            navigateToOnBoarding(event.tempToken)
+                        }
+                    }
                 }
+                else -> {}
             }
-            else -> {}
         }
     }
 
