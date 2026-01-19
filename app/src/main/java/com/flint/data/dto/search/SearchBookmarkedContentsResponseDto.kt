@@ -16,7 +16,7 @@ data class SearchBookmarkedContentsItemResponseDto(
     @SerialName("bookmarkId")
     val bookmarkId: Long,
     @SerialName("contentId")
-    val contentId: Long,
+    val contentId: String,
     @SerialName("title")
     val title: String,
     @SerialName("author")

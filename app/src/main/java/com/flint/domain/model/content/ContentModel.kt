@@ -4,7 +4,7 @@ import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.persistentListOf
 
 data class ContentModel(
-    val contentId: Long = 0,
+    val contentId: String = "",
     val title: String = "",
     val year: Int = 0,
     val posterImage: String = "",
@@ -21,7 +21,7 @@ data class ContentModel(
         val FakeList =
             persistentListOf(
                 ContentModel(
-                    contentId = 0,
+                    contentId = "0",
                     title = "드라마 제목",
                     year = 2000,
                     posterImage = "",
@@ -34,7 +34,7 @@ data class ContentModel(
                         ),
                 ),
                 ContentModel(
-                    contentId = 0,
+                    contentId = "0",
                     title = "드라마 제목2",
                     year = 2020,
                     posterImage = "",
@@ -46,7 +46,7 @@ data class ContentModel(
                         ),
                 ),
                 ContentModel(
-                    contentId = 0,
+                    contentId = "0",
                     title = "드라마 제목3",
                     year = 2003,
                     posterImage = "",
@@ -57,7 +57,7 @@ data class ContentModel(
                         ),
                 ),
                 ContentModel(
-                    contentId = 0,
+                    contentId = "0",
                     title = "드라마 제목4",
                     year = 1919,
                     posterImage = "",

@@ -5,8 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookmarkedContentListResponseDto(
-    @SerialName("contentId")
-    val contentId: Long,
+    @SerialName("contents")
+    val contents: List<BookmarkedContentResponseDto>
+)
+
+@Serializable
+data class BookmarkedContentResponseDto(
+    @SerialName("id")
+    val id: String,
     @SerialName("title")
     val title: String,
     @SerialName("year")
