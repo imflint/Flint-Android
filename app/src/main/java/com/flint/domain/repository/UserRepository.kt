@@ -11,7 +11,7 @@ class UserRepository
     constructor(
         private val apiService: UserApi,
     ) {
-        suspend fun getUserKeywords(userId: Long): Result<List<UserKeywordResponseModel>> =
+        suspend fun getUserKeywords(userId: String): Result<List<UserKeywordResponseModel>> =
             suspendRunCatching {
                 apiService.getUserKeywords(userId).data.keywords.map {
                     it.toModel()

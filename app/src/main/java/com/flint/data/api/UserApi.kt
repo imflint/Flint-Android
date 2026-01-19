@@ -17,7 +17,7 @@ interface UserApi {
     // 사용자 취향 키워드 조회
     @GET("/api/v1/users/{userId}/keywords")
     suspend fun getUserKeywords(
-        @Path("userId") userId: Long,
+        @Path("userId") userId: String,
     ): BaseResponse<UserKeywordsResponseDto>
 
     // 취향 키워드 재계산
