@@ -35,8 +35,8 @@ fun SavedContentsSection(
     contentModelList: ImmutableList<ContentModel>,
     onItemClick: (contentId: Long) -> Unit,
     modifier: Modifier = Modifier,
-    isAllVisible: Boolean = false,
-    onAllClick: () -> Unit = {},
+    isAllVisible: Boolean,
+    onAllClick: () -> Unit,
 ) {
     Column(
         modifier =

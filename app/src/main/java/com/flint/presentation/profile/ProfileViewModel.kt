@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,11 +41,9 @@ class ProfileViewModel
             viewModelScope.launch {
                 userRepository.getUserKeywords(userId = 800370427074376635).fold( // TODO: 임시 userId
                     onFailure = {
-                        Timber.d("onFailure: $it")
                         _uiState.emit(UiState.Failure)
                     },
                     onSuccess = { result ->
-                        Timber.d("onSuccess: $result")
                         _uiState.updateSuccess {
                             it.copy(
                                 keywords = result.toImmutableList(),

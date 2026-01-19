@@ -1,5 +1,6 @@
 package com.flint.domain.repository
 
+import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.AuthApi
 import com.flint.domain.mapper.auth.toDto
 import com.flint.domain.mapper.auth.toModel
@@ -15,8 +16,8 @@ class AuthRepository
         private val api: AuthApi,
     ) {
         suspend fun signup(model: SignupRequestModel): Result<SignupResponseModel> =
-            runCatching { api.signup(model.toDto()).data.toModel() }
+            suspendRunCatching { api.signup(model.toDto()).data.toModel() }
 
         suspend fun socialVerify(model: SocialVerifyRequestModel): Result<SocialVerifyResponseModel> =
-            runCatching { api.socialVerify(model.toDto()).data.toModel() }
+            suspendRunCatching { api.socialVerify(model.toDto()).data.toModel() }
     }

@@ -13,9 +13,4 @@ enum class OttType(
     Coupang(R.drawable.img_coupang, R.drawable.ic_small_coupang, "쿠팡플레이"),
     Disney(R.drawable.img_disney, R.drawable.ic_small_disney, "디즈니플러스"),
     Watcha(R.drawable.img_watcha, R.drawable.ic_small_watcha, "왓챠피디아"),
-    ;
-
-    companion object {
-        fun getOtts(): List<OttType> = entries
-    }
 }

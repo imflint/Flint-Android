@@ -129,6 +129,8 @@ private fun ProfileScreen(
                 description = "${userName}님이 저장한 작품이에요",
                 contentModelList = uiState.savedContent,
                 onItemClick = onFilmItemClick,
+                isAllVisible = false,
+                onAllClick = {},
             )
         }
     }
