@@ -223,7 +223,7 @@ private fun CollectionFileItemPreview() {
                         collectionImageUrl2 = "",
                         author =
                             AuthorModel(
-                                userId = 1,
+                                userId = "1",
                                 nickname = "Nickname",
                                 profileUrl = "",
                                 userRole = UserRoleType.FLINER,
@@ -243,7 +243,7 @@ private fun CollectionFileItemPreview() {
                         collectionImageUrl2 = "",
                         author =
                             AuthorModel(
-                                userId = 1,
+                                userId = "1",
                                 nickname = "닉네임은여덟글자",
                                 profileUrl = "",
                                 userRole = UserRoleType.FLINER,

@@ -50,7 +50,7 @@ fun CollectionItem(
                 },
     ) {
         NetworkImage(
-            imageUrl = collectionModel.collectionImageUrl,
+            imageUrl = collectionModel.thumbnailUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
@@ -125,7 +125,7 @@ private fun PreviewCollectionItem() {
                 isBookmarked = false,
                 author =
                     AuthorModel(
-                        userId = 0,
+                        userId = "0",
                         nickname = "사용자 이름",
                         profileUrl = "",
                         userRole = UserRoleType.FLINER,

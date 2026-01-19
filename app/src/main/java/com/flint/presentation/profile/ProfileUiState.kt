@@ -23,7 +23,7 @@ data class ProfileUiState(
                 keywords = persistentListOf(),
                 profile =
                     AuthorModel(
-                        userId = 0,
+                        userId = "0",
                         nickname = "",
                         profileUrl = "",
                         userRole = UserRoleType.FLINER,

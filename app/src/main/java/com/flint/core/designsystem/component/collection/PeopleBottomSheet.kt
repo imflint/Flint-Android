@@ -44,7 +44,7 @@ import com.flint.domain.type.UserRoleType
 @Composable
 fun PeopleBottomSheet(
     people: List<AuthorModel>,
-    onAuthorClick: (userId: Long) -> Unit,
+    onAuthorClick: (userId: String) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -108,7 +108,7 @@ fun PeopleBottomSheet(
 @Composable
 private fun Author(
     author: AuthorModel,
-    onClick: (userId: Long) -> Unit,
+    onClick: (userId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -187,19 +187,19 @@ private class AuthorPreviewParameterProvider : PreviewParameterProvider<AuthorMo
 private val sampleAuthors: List<AuthorModel> =
     listOf(
         AuthorModel(
-            userId = 0,
+            userId = "0",
             nickname = "관리자",
             profileUrl = "",
             userRole = UserRoleType.ADMIN,
         ),
         AuthorModel(
-            userId = 0,
+            userId = "0",
             nickname = "플리너",
             profileUrl = "",
             userRole = UserRoleType.FLINER,
         ),
         AuthorModel(
-            userId = 0,
+            userId = "0",
             nickname = "플링",
             profileUrl = "",
             userRole = UserRoleType.FLING,
