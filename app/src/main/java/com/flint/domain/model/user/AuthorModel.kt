@@ -3,10 +3,10 @@ package com.flint.domain.model.user
 import com.flint.domain.type.UserRoleType
 
 data class AuthorModel(
-    val userId: Long,
-    val nickname: String,
-    val profileUrl: String,
-    val userRole: UserRoleType,
+    val userId: Long = 0,
+    val nickname: String = "",
+    val profileUrl: String = "",
+    val userRole: UserRoleType = UserRoleType.NONE,
 ) {
     companion object {
         val Fake =

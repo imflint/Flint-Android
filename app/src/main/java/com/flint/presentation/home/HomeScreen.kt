@@ -34,8 +34,8 @@ fun HomeRoute(
     navigateToCollectionCreate: () -> Unit,
 ) {
     HomeScreen(
-        recentCollectionModelList = CollectionModel.FakeList,
         recommendCollectionModelList = CollectionModel.FakeList,
+        recentCollectionModelList = CollectionModel.FakeList,
         savedContentModelList = ContentModel.FakeList,
         navigateToCollectionCreate = {
             navigateToCollectionCreate()

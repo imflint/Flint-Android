@@ -4,16 +4,18 @@ import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.persistentListOf
 
 data class ContentModel(
-    val contentId: Long,
-    val title: String,
-    val year: Int,
-    val posterImage: String,
-    val ottSimpleList: List<OttType>,
+    val contentId: Long = 0,
+    val title: String = "",
+    val year: Int = 0,
+    val posterImage: String = "",
+    val ottSimpleList: List<OttType> = emptyList(),
     val director: String = "",
     val isBookmarked: Boolean = false,
     val bookmarkCount: Int = 0,
     val description: String = "",
     val isSpoiler: Boolean = false,
+    val bookmarkId: Long = 0,
+    val author: String = "",
 ) {
     companion object {
         val FakeList =
