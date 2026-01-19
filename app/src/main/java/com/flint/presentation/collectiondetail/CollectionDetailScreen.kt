@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,14 +49,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintSaveDoneButton
 import com.flint.core.designsystem.component.button.FlintSaveNoneButton
 import com.flint.core.designsystem.component.collection.PeopleBottomSheet
 import com.flint.core.designsystem.component.collection.Spoiler
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.progressbar.UnderImageProgressBar
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
@@ -63,28 +68,83 @@ import com.flint.domain.model.content.ContentModel
 import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
+import com.flint.presentation.toast.ShowSaveToast
+import com.flint.presentation.toast.ShowToast
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CollectionDetailRoute(
     paddingValues: PaddingValues,
-    collectionId: String,
     navigateToCollectionList: () -> Unit,
+    viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
-    CollectionDetailScreen(
-        paddingValues = paddingValues,
-        title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-        authorId = 2L,
-        userId = 1L,
-        isBookmarked = false,
-        authorNickname = "키카",
-        authorUserRoleType = UserRoleType.FLINER,
-        createdAt = "2026. 01. 07.",
-        collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
-        contents = ContentModel.FakeList,
-        people = persistentListOf(),
-    )
+    val uiState: UiState<CollectionDetailUiState> by viewModel.uiState.collectAsStateWithLifecycle()
+    var showCancelToast: Boolean by remember { mutableStateOf(false) }
+    var showSaveToast: Boolean by remember { mutableStateOf(false) }
+
+    if (showCancelToast) {
+        ShowToast(
+            text = "컬렉션 저장이 취소되었어요",
+            imageVector = null,
+            yOffset = 12.dp,
+            hide = {
+                showCancelToast = false
+            }
+        )
+    }
+
+    if (showSaveToast) {
+        ShowSaveToast(
+            navigateToSavedCollection = {
+                navigateToCollectionList()
+            },
+            yOffset = 12.dp,
+            hide = {
+                showSaveToast = false
+            })
+    }
+
+    when (val uiState = uiState) {
+        UiState.Loading -> {
+            FlintLoadingIndicator()
+        }
+
+        is UiState.Success<CollectionDetailUiState> -> {
+            CollectionDetailScreen(
+                paddingValues = paddingValues,
+                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
+                authorId = 2L,
+                userId = 1L,
+                isBookmarked = uiState.data.isBookmarked,
+                authorNickname = "키카",
+                authorUserRoleType = UserRoleType.FLINER,
+                createdAt = "2026. 01. 07.",
+                collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
+                contents = ContentModel.FakeList,
+                people = persistentListOf(),
+                onSaveDoneButtonClick = viewModel::toggleCollectionBookmark,
+                onSaveNoneButtonClick = viewModel::toggleCollectionBookmark
+            )
+        }
+
+        else -> {}
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event: CollectionDetailEvent ->
+            when (event) {
+                CollectionDetailEvent.ToggleCollectionBookmarkFailure -> {
+                }
+
+                is CollectionDetailEvent.ToggleCollectionBookmarkSuccess -> {
+                    if (event.isBookmarked) {
+                        showSaveToast = true
+                    }
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,6 +161,8 @@ fun CollectionDetailScreen(
     collectionContent: String,
     contents: ImmutableList<ContentModel>,
     people: ImmutableList<AuthorModel>,
+    onSaveDoneButtonClick: () -> Unit,
+    onSaveNoneButtonClick: () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -151,10 +213,11 @@ fun CollectionDetailScreen(
                         authorId = authorId,
                         userId = userId,
                         isBookmarked = isBookmarked,
-                        modifier =
-                            Modifier.onGloballyPositioned { coordinates: LayoutCoordinates ->
-                                thumbnailHeight = coordinates.size.height
-                            },
+                        onSaveDoneButtonClick = onSaveDoneButtonClick,
+                        onSaveNoneButtonClick = onSaveNoneButtonClick,
+                        modifier = Modifier.onGloballyPositioned { coordinates: LayoutCoordinates ->
+                            thumbnailHeight = coordinates.size.height
+                        },
                     )
 
                     if (!isProgressBarSticky) {
@@ -390,6 +453,8 @@ private fun Thumbnail(
     authorId: Long,
     userId: Long,
     isBookmarked: Boolean,
+    onSaveDoneButtonClick: () -> Unit,
+    onSaveNoneButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -424,13 +489,13 @@ private fun Thumbnail(
                 if (isBookmarked) {
                     FlintSaveDoneButton(
                         onClick = {
-                            // TODO: 저장된 컬렉션 해제
+                            onSaveDoneButtonClick()
                         },
                     )
                 } else {
                     FlintSaveNoneButton(
                         onClick = {
-                            // TODO: 컬렉션 저장
+                            onSaveNoneButtonClick()
                         },
                     )
                 }
@@ -671,6 +736,8 @@ private fun ThumbnailPreview(
             authorId = data.authorId,
             userId = data.userId,
             isBookmarked = data.isBookmarked,
+            onSaveDoneButtonClick = {},
+            onSaveNoneButtonClick = {}
         )
     }
 }
@@ -873,6 +940,8 @@ private fun CollectionDetailScreenPreview(
                 collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
                 contents = data.contents,
                 people = data.people,
+                onSaveDoneButtonClick = {},
+                onSaveNoneButtonClick = {}
             )
         }
     }
