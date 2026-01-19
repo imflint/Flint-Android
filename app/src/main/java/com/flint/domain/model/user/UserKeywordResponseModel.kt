@@ -11,8 +11,10 @@ data class UserKeywordResponseModel(
     val percentage: Float,
     val imageUrl: String,
 ) {
-    val UserKeywordResponseModel.preferenceType: PreferenceType
-        get() = PreferenceType.valueOf(color)
+    val preferenceType: PreferenceType
+        get() =
+            runCatching { PreferenceType.valueOf(color) }
+                .getOrDefault(PreferenceType.BLUE)
 
     companion object {
         val FakeList1: ImmutableList<UserKeywordResponseModel> =

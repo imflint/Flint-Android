@@ -6,13 +6,13 @@ import com.flint.core.common.extension.updateSuccess
 import com.flint.core.common.util.UiState
 import com.flint.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel

@@ -7,7 +7,7 @@ import com.flint.domain.model.auth.SignupRequestModel
 import com.flint.domain.model.auth.SignupResponseModel
 import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.model.auth.SocialVerifyResponseModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class AuthRepository
     @Inject
