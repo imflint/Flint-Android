@@ -29,7 +29,7 @@ import com.flint.presentation.profile.component.ProfileTopSection
 fun ProfileRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
-    navigateToSavedFilmList: () -> Unit, // TODO: 스프린트에서 구현
+    navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -60,8 +60,8 @@ private fun ProfileScreen(
     modifier: Modifier = Modifier,
     onRefreshClick: () -> Unit = {},
     onCollectionItemClick: (collectionId: String) -> Unit,
-    onFilmItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
-    onFilmMoreClick: () -> Unit = {},
+    onContentItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
+    onContentMoreClick: () -> Unit = {},
     onCollectionMoreClick: () -> Unit,
 ) {
     val userName = uiState.profile.nickname
@@ -128,7 +128,7 @@ private fun ProfileScreen(
                 title = "저장한 작품",
                 description = "${userName}님이 저장한 작품이에요",
                 contentModelList = uiState.savedContent,
-                onItemClick = onFilmItemClick,
+                onItemClick = onContentItemClick,
                 isAllVisible = false,
                 onAllClick = {},
             )

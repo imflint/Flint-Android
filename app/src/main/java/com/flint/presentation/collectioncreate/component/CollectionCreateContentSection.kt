@@ -17,7 +17,7 @@ import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionCreateFilmSection(
+fun CollectionCreateContentSection(
     imageUrl: String,
     title: String,
     director: String,
@@ -28,7 +28,7 @@ fun CollectionCreateFilmSection(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CollectionCreateFilmSectionImage(
+        CollectionCreateContentSectionImage(
             imageUrl = imageUrl,
             modifier =
                 Modifier
@@ -86,7 +86,7 @@ private fun CollectionCreateInfoSection(
 }
 
 @Composable
-private fun CollectionCreateFilmSectionImage(
+private fun CollectionCreateContentSectionImage(
     imageUrl: String,
     modifier: Modifier = Modifier,
 ) {
@@ -98,9 +98,9 @@ private fun CollectionCreateFilmSectionImage(
 
 @Composable
 @Preview(showBackground = false, backgroundColor = 0xFF121212)
-private fun CollectionCreateFilmSectionPreview() {
+private fun CollectionCreateContentSectionPreview() {
     FlintTheme {
-        CollectionCreateFilmSection(
+        CollectionCreateContentSection(
             imageUrl = "https://buly.kr/DEaVFRZ",
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",

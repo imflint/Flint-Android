@@ -23,21 +23,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
-import com.flint.core.designsystem.component.image.SelectedFilmItem
+import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.presentation.onboarding.component.OnboardingFilmItem
+import com.flint.presentation.onboarding.component.OnboardingContentItem
 import com.flint.presentation.onboarding.component.StepProgressBar
 
 @Composable
-fun OnboardingFilmRoute(
+fun OnboardingContentRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingOtt: () -> Unit,
     navigateUp: () -> Unit,
 ) {
-    OnboardingFilmScreen(
+    OnboardingContentScreen(
         nickname = "User",
         currentStep = 7,
         onBackClick = navigateUp,
@@ -47,7 +47,7 @@ fun OnboardingFilmRoute(
 }
 
 @Composable
-fun OnboardingFilmScreen(
+fun OnboardingContentScreen(
     nickname: String,
     currentStep: Int,
     onBackClick: () -> Unit,
@@ -130,7 +130,7 @@ fun OnboardingFilmScreen(
                         horizontalArrangement = Arrangement.spacedBy(0.dp),
                     ) {
                         items(7) { index ->
-                            SelectedFilmItem(
+                            SelectedContentItem(
                                 imageUrl = "",
                                 onRemoveClick = {},
                             )
@@ -156,7 +156,7 @@ fun OnboardingFilmScreen(
             } else {
                 // 영화 목록 그리드
                 items(9) { index ->
-                    OnboardingFilmItem(
+                    OnboardingContentItem(
                         imageUrl = "",
                         title = "은하수를 여행하는 히치하이커...",
                         director = "가스 제닝스",
@@ -187,9 +187,9 @@ fun OnboardingFilmScreen(
 
 @Preview(showBackground = true, name = "기본 목록 상태")
 @Composable
-private fun OnboardingFilmScreenListPreview() {
+private fun OnboardingContentScreenListPreview() {
     FlintTheme {
-        OnboardingFilmScreen(
+        OnboardingContentScreen(
             nickname = "안비",
             currentStep = 7,
             onBackClick = {},
@@ -201,9 +201,9 @@ private fun OnboardingFilmScreenListPreview() {
 
 @Preview(showBackground = true, name = "검색 결과 없음 상태")
 @Composable
-private fun OnboardingFilmScreenEmptyPreview() {
+private fun OnboardingContentScreenEmptyPreview() {
     FlintTheme {
-        OnboardingFilmScreen(
+        OnboardingContentScreen(
             nickname = "안비",
             currentStep = 7,
             onBackClick = {},

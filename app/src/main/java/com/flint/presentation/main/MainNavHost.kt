@@ -16,7 +16,7 @@ import com.flint.presentation.home.navigation.homeNavGraph
 import com.flint.presentation.login.navigation.loginNavGraph
 import com.flint.presentation.onboarding.navigation.onBoardingNavGraph
 import com.flint.presentation.profile.navigation.profileNavGraph
-import com.flint.presentation.savedfilm.navigation.savedFilmListNavGraph
+import com.flint.presentation.savedcontent.navigation.savedContentListNavGraph
 import com.flint.presentation.splash.navigation.splashNavGraph
 
 @Composable
@@ -76,7 +76,7 @@ fun MainNavHost(
                 navController = navigator.navController,
             )
 
-            savedFilmListNavGraph(
+            savedContentListNavGraph(
                 paddingValues = paddingValues,
             )
 
@@ -89,7 +89,7 @@ fun MainNavHost(
             profileNavGraph(
                 paddingValues = paddingValues,
                 navigateToCollectionList = navigator::navigateToCollectionList,
-                navigateToSavedFilmList = navigator::navigateToSavedFilm,
+                navigateToSavedContentList = navigator::navigateToSavedContent,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
             )
         }

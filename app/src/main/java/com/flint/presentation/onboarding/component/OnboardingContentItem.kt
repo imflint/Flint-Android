@@ -31,7 +31,7 @@ import com.flint.core.designsystem.theme.FlintColors
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun OnboardingFilmItem(
+fun OnboardingContentItem(
     imageUrl: String,
     title: String,
     director: String,
@@ -117,7 +117,7 @@ fun OnboardingFilmItem(
 
 @Preview(showBackground = true, backgroundColor = 0xFF121212)
 @Composable
-private fun OnboardingFilmItemSelectedPreview() {
+private fun OnboardingContentItemSelectedPreview() {
     FlintTheme {
         Column(
             modifier =
@@ -127,7 +127,7 @@ private fun OnboardingFilmItemSelectedPreview() {
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             // 선택된 상태
-            OnboardingFilmItem(
+            OnboardingContentItem(
                 imageUrl = "https://image.tmdb.org/t/p/w500/ulzhLuWrPK07PqYcvbBt2vWAbqB.jpg",
                 title = "김준서김나현임차민김종우박찬미",
                 director = "김준서김나현임차민김종우박찬미",
@@ -137,7 +137,7 @@ private fun OnboardingFilmItemSelectedPreview() {
             )
 
             // 선택되지 않은 상태
-            OnboardingFilmItem(
+            OnboardingContentItem(
                 imageUrl = "https://image.tmdb.org/t/p/w500/ulzhLuWrPK07PqYcvbBt2vWAbqB.jpg",
                 title = "김준서김나현",
                 director = "김준서김나현임차민김종우박찬미",

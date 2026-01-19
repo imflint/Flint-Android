@@ -1,4 +1,4 @@
-package com.flint.presentation.savedfilm
+package com.flint.presentation.savedcontent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,13 +36,13 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.type.OttType
 
 @Composable
-fun SavedFilmListItem(
-    filmImage: String,
+fun SavedContentListItem(
+    contentImage: String,
     ottList: List<OttType>,
     title: String,
     director: String,
     createdYear: String,
-    onMoreFilmClick: () -> Unit,
+    onMoreContentClick: () -> Unit,
     isBookmarked: Boolean,
     bookmarkCount: Int,
     onBookmarkClick: () -> Unit,
@@ -56,19 +56,19 @@ fun SavedFilmListItem(
                 .background(color = FlintTheme.colors.background)
                 .padding(16.dp, 12.dp),
     ) {
-        SavedFilmListItemImage(
-            filmImage = filmImage,
+        SavedContentListItemImage(
+            contentImage = contentImage,
             ottList = ottList,
             modifier = Modifier.fillMaxHeight(),
         )
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        SavedFilmListItemInfo(
+        SavedContentListItemInfo(
             title = title,
             director = director,
             createdYear = createdYear,
-            onMoreFilmClick = onMoreFilmClick,
+            onMoreContentClick = onMoreContentClick,
             modifier =
                 Modifier
                     .fillMaxHeight()
@@ -77,7 +77,7 @@ fun SavedFilmListItem(
 
         Spacer(modifier = Modifier.width(4.dp))
 
-        SavedFilmListItemBookmark(
+        SavedContentListItemBookmark(
             isBookmarked = isBookmarked,
             bookmarkCount = bookmarkCount,
             onBookmarkClick = onBookmarkClick,
@@ -86,8 +86,8 @@ fun SavedFilmListItem(
 }
 
 @Composable
-private fun SavedFilmListItemImage(
-    filmImage: String,
+private fun SavedContentListItemImage(
+    contentImage: String,
     ottList: List<OttType>,
     modifier: Modifier = Modifier,
 ) {
@@ -98,7 +98,7 @@ private fun SavedFilmListItemImage(
                 .fillMaxSize(),
     ) {
         NetworkImage(
-            imageUrl = filmImage,
+            imageUrl = contentImage,
             modifier = Modifier.fillMaxSize(),
         )
         OttHorizontalList(
@@ -109,11 +109,11 @@ private fun SavedFilmListItemImage(
 }
 
 @Composable
-private fun SavedFilmListItemInfo(
+private fun SavedContentListItemInfo(
     title: String,
     director: String,
     createdYear: String,
-    onMoreFilmClick: () -> Unit,
+    onMoreContentClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -150,7 +150,7 @@ private fun SavedFilmListItemInfo(
         }
 
         Row(
-            modifier = Modifier.clickable(onClick = onMoreFilmClick),
+            modifier = Modifier.clickable(onClick = onMoreContentClick),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -170,7 +170,7 @@ private fun SavedFilmListItemInfo(
 }
 
 @Composable
-private fun SavedFilmListItemBookmark(
+private fun SavedContentListItemBookmark(
     isBookmarked: Boolean,
     bookmarkCount: Int,
     onBookmarkClick: () -> Unit,
@@ -201,19 +201,19 @@ private fun SavedFilmListItemBookmark(
 
 @Preview
 @Composable
-private fun SavedFilmListItemBookmarkPreview() {
+private fun SavedContentListItemBookmarkPreview() {
     FlintTheme {
         var isBookmarked by remember { mutableStateOf(false) }
 
         val ottSimpleList = OttType.entries
 
-        SavedFilmListItem(
-            filmImage = "",
+        SavedContentListItem(
+            contentImage = "",
             ottList = ottSimpleList,
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005",
-            onMoreFilmClick = {},
+            onMoreContentClick = {},
             isBookmarked = isBookmarked,
             bookmarkCount = 128,
             onBookmarkClick = { isBookmarked = !isBookmarked },

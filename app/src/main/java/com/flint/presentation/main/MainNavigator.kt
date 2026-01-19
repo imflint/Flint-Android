@@ -19,7 +19,7 @@ import com.flint.presentation.home.navigation.navigateToHome
 import com.flint.presentation.login.navigation.navigateToLogin
 import com.flint.presentation.onboarding.navigation.navigateToOnboarding
 import com.flint.presentation.profile.navigation.navigateToProfile
-import com.flint.presentation.savedfilm.navigation.navigateToSavedFilmList
+import com.flint.presentation.savedcontent.navigation.navigateToSavedContentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -124,8 +124,8 @@ class MainNavigator(
         navController.navigateToCollectionCreate()
     }
 
-    fun navigateToSavedFilm() {
-        navController.navigateToSavedFilmList()
+    fun navigateToSavedContent() {
+        navController.navigateToSavedContentList()
     }
 
     fun navigateUp() {

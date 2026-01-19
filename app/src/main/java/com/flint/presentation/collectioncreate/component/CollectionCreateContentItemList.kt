@@ -32,7 +32,7 @@ import com.flint.core.designsystem.component.toggle.FlintBasicToggle
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionCreateFilmItemList(
+fun CollectionCreateContentItemList(
     onCancelClick: () -> Unit,
     imageUrl: String,
     title: String,
@@ -63,7 +63,7 @@ fun CollectionCreateFilmItemList(
 
         Spacer(Modifier.height(16.dp))
 
-        CollectionCreateFilmSection(
+        CollectionCreateContentSection(
             imageUrl = imageUrl,
             title = title,
             director = director,
@@ -122,9 +122,9 @@ fun CollectionCreateFilmItemList(
 
 @Preview(showBackground = true, backgroundColor = 0xFF121212)
 @Composable
-private fun CollectionCreateFilmItemListPreview() {
+private fun CollectionCreateContentItemListPreview() {
     FlintTheme {
-        CollectionCreateFilmItemList(
+        CollectionCreateContentItemList(
             onCancelClick = {},
             imageUrl = "https://buly.kr/DEaVFRZ",
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",

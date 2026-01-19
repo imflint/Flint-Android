@@ -22,7 +22,7 @@ import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionCreateFilmSelect(
+fun CollectionCreateContentSelect(
     onCheckClick: () -> Unit,
     isSelected: Boolean,
     imageUrl: String,
@@ -38,7 +38,7 @@ fun CollectionCreateFilmSelect(
                 .background(color = FlintTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CollectionCreateFilmSection(
+        CollectionCreateContentSection(
             imageUrl = imageUrl,
             title = title,
             director = director,
@@ -46,7 +46,7 @@ fun CollectionCreateFilmSelect(
             modifier = Modifier.weight(1f),
         )
 
-        CollectionCreateFilmSelectTag(
+        CollectionCreateContentSelectTag(
             isSelected = isSelected,
             onClick = onCheckClick,
         )
@@ -54,7 +54,7 @@ fun CollectionCreateFilmSelect(
 }
 
 @Composable
-fun CollectionCreateFilmSelectTag(
+fun CollectionCreateContentSelectTag(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -71,10 +71,10 @@ fun CollectionCreateFilmSelectTag(
 
 @Preview
 @Composable
-private fun CollectionCreateFilmSectionPreview() {
+private fun CollectionCreateContentSectionPreview() {
     FlintTheme {
         var isSelected by remember { mutableStateOf(false) }
-        CollectionCreateFilmSelect(
+        CollectionCreateContentSelect(
             onCheckClick = { isSelected = !isSelected },
             isSelected = isSelected,
             imageUrl = "https://buly.kr/DEaVFRZ",

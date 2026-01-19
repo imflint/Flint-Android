@@ -18,7 +18,7 @@ import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun SelectedFilmItem(
+fun SelectedContentItem(
     imageUrl: String,
     onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -50,14 +50,14 @@ fun SelectedFilmItem(
 
 @Preview(showBackground = true)
 @Composable
-fun SelectedFilmItemPreview() {
+fun SelectedContentItemPreview() {
     FlintTheme {
         Box(
             modifier =
                 Modifier
                     .background(FlintTheme.colors.background),
         ) {
-            SelectedFilmItem(
+            SelectedContentItem(
                 imageUrl = "",
                 onRemoveClick = {},
             )

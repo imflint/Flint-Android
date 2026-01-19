@@ -20,24 +20,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.designsystem.component.image.SelectedFilmItem
+import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.presentation.collectioncreate.component.CollectionCreateFilmSelect
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentSelect
 
 @Composable
-fun AddFilmRoute(
+fun AddContentRoute(
     paddingValues: PaddingValues,
     navigateToCollectionCreate: () -> Unit,
 ) {
-    AddFilmScreen(
+    AddContentScreen(
         onBackClick = {},
     )
 }
 
-data class CollectionFilmUiModel(
-    val filmId: Long,
+data class CollectionContentUiModel(
+    val contentId: Long,
     val imageUrl: String,
     val title: String,
     val director: String,
@@ -45,21 +45,21 @@ data class CollectionFilmUiModel(
 )
 
 @Composable
-fun AddFilmScreen(onBackClick: () -> Unit) {
+fun AddContentScreen(onBackClick: () -> Unit) {
     var searchText by remember { mutableStateOf("") }
-    var selectedFilms = remember { mutableStateListOf<CollectionFilmUiModel>() }
+    var selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
 
-    val filmList =
+    val contentList =
         remember {
             mutableStateListOf(
-                CollectionFilmUiModel(1L, "https://buly.kr/DEaVFRZ", "해리포터 불의 잔", "마이크 뉴웰", "2005"),
-                CollectionFilmUiModel(2L, "https://buly.kr/2UkIDen", "인터스텔라", "크리스토퍼 놀란", "2014"),
-                CollectionFilmUiModel(3L, "https://buly.kr/FAeqqRB", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionFilmUiModel(4L, "https://buly.kr/DPVH2Ob", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionFilmUiModel(5L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionFilmUiModel(6L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionFilmUiModel(7L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionFilmUiModel(8L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionContentUiModel(1L, "https://buly.kr/DEaVFRZ", "해리포터 불의 잔", "마이크 뉴웰", "2005"),
+                CollectionContentUiModel(2L, "https://buly.kr/2UkIDen", "인터스텔라", "크리스토퍼 놀란", "2014"),
+                CollectionContentUiModel(3L, "https://buly.kr/FAeqqRB", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionContentUiModel(4L, "https://buly.kr/DPVH2Ob", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionContentUiModel(5L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionContentUiModel(6L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionContentUiModel(7L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
+                CollectionContentUiModel(8L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
             )
         }
 
@@ -90,19 +90,19 @@ fun AddFilmScreen(onBackClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (selectedFilms.isNotEmpty()) {
+        if (selectedContents.isNotEmpty()) {
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(
-                    items = selectedFilms,
-                    key = { it.filmId },
-                ) { film: CollectionFilmUiModel ->
-                    SelectedFilmItem(
-                        imageUrl = film.imageUrl,
+                    items = selectedContents,
+                    key = { it.contentId },
+                ) { content: CollectionContentUiModel ->
+                    SelectedContentItem(
+                        imageUrl = content.imageUrl,
                         onRemoveClick = {
-                            selectedFilms.remove(film)
+                            selectedContents.remove(content)
                         },
                     )
                 }
@@ -117,24 +117,24 @@ fun AddFilmScreen(onBackClick: () -> Unit) {
         ) {
             // 작품 리스트
             items(
-                items = filmList,
-                key = { it.filmId },
-            ) { film ->
-                val isSelected = selectedFilms.contains(film)
+                items = contentList,
+                key = { it.contentId },
+            ) { content ->
+                val isSelected = selectedContents.contains(content)
 
-                CollectionCreateFilmSelect(
+                CollectionCreateContentSelect(
                     onCheckClick = {
                         if (isSelected) {
-                            selectedFilms.remove(film)
+                            selectedContents.remove(content)
                         } else {
-                            selectedFilms.add(film)
+                            selectedContents.add(content)
                         }
                     },
                     isSelected = isSelected,
-                    imageUrl = film.imageUrl,
-                    title = film.title,
-                    director = film.director,
-                    createdYear = film.createdYear,
+                    imageUrl = content.imageUrl,
+                    title = content.title,
+                    director = content.director,
+                    createdYear = content.createdYear,
                 )
             }
         }
@@ -143,9 +143,9 @@ fun AddFilmScreen(onBackClick: () -> Unit) {
 
 @Preview
 @Composable
-private fun AddFilmScreenPreview() {
+private fun AddContentScreenPreview() {
     FlintTheme {
-        AddFilmScreen(
+        AddContentScreen(
             onBackClick = {},
         )
     }

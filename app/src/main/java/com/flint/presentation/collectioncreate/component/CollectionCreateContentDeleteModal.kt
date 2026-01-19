@@ -7,7 +7,7 @@ import com.flint.core.designsystem.component.modal.TwoButtonModal
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionCreateFilmDeleteModal(
+fun CollectionCreateContentDeleteModal(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -25,9 +25,9 @@ fun CollectionCreateFilmDeleteModal(
 
 @Preview(showBackground = true)
 @Composable
-private fun CollectionCreateFilmDeleteModalPreview() {
+private fun CollectionCreateContentDeleteModalPreview() {
     FlintTheme {
-        CollectionCreateFilmDeleteModal(
+        CollectionCreateContentDeleteModal(
             onConfirm = {},
             onDismiss = {},
         )

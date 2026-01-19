@@ -11,7 +11,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectionAddFilmBottomSheet(
+fun CollectionAddContentBottomSheet(
     onGalleryClick: () -> Unit,
     onCoverDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
@@ -43,9 +43,9 @@ fun CollectionAddFilmBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun CollectionAddFilmBottomSheetPreview() {
+private fun CollectionAddContentBottomSheetPreview() {
     FlintTheme {
-        CollectionAddFilmBottomSheet(
+        CollectionAddContentBottomSheet(
             onGalleryClick = {},
             onCoverDeleteClick = {},
             onDismiss = {},

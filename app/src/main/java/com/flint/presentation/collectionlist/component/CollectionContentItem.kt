@@ -54,9 +54,7 @@ fun CollectionFileItem(
                 bookmarkCount = bookmarkCount,
                 poster1Url = collectionImageUrl1,
                 poster2Url = collectionImageUrl2,
-                modifier =
-                    Modifier
-                        .size(154.dp),
+                modifier = Modifier.size(154.dp),
             )
         }
 
