@@ -11,6 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.flint.core.navigation.MainTabRoute
+import com.flint.core.navigation.Route
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionCreate
 import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
 import com.flint.presentation.collectionlist.navigation.navigateToCollectionList
