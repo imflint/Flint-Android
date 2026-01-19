@@ -38,7 +38,7 @@ import com.flint.R
 import com.flint.core.designsystem.component.bottomsheet.FlintBasicBottomSheet
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.AuthorModel
+import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.type.UserRoleType
 
 @Composable

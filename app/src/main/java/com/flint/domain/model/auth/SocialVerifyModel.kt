@@ -4,7 +4,7 @@ import com.flint.domain.type.ProviderType
 
 data class SocialVerifyRequestModel(
     val provider: ProviderType,
-    val accessToken: String
+    val accessToken: String,
 )
 
 data class SocialVerifyResponseModel(

@@ -36,12 +36,12 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun OnboardingProfileRoute(
     paddingValues: PaddingValues,
-    navigateToOnboardingFilm: () -> Unit,
+    navigateToOnboardingContent: () -> Unit,
     navigateUp: () -> Unit,
 ) {
     OnboardingProfileScreen(
         onBackClick = navigateUp,
-        onNextClick = navigateToOnboardingFilm,
+        onNextClick = navigateToOnboardingContent,
         modifier = Modifier.padding(paddingValues),
     )
 }

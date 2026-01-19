@@ -9,51 +9,63 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.core.common.util.UiState
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
-import com.flint.domain.model.CollectionModel
-import com.flint.domain.model.ContentModel
-import com.flint.domain.model.PreferenceKeywordModel
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ProfileRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
-    navigateToSavedFilmList: () -> Unit,
+    navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel(),
 ) {
-    ProfileScreen(
-        modifier = Modifier.padding(paddingValues),
-        onCollectionItemClick = navigateToCollectionDetail,
-        onFilmMoreClick = navigateToSavedFilmList,
-        onCollectionMoreClick = navigateToCollectionList,
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (val state = uiState) {
+        is UiState.Loading -> {
+            FlintLoadingIndicator()
+        }
+
+        is UiState.Success -> {
+            ProfileScreen(
+                modifier = Modifier.padding(paddingValues),
+                uiState = state.data,
+                onRefreshClick = viewModel::refreshProfileKeyword,
+                onCollectionItemClick = navigateToCollectionDetail,
+                onCollectionMoreClick = navigateToCollectionList,
+            )
+        }
+
+        else -> {}
+    }
 }
 
 @Composable
 private fun ProfileScreen(
-    userName: String = "",
-    userRole: UserRoleType = UserRoleType.FLING,
-    keywordList: ImmutableList<PreferenceKeywordModel> = persistentListOf(),
-    createCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
-    savedCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
-    savedContentModelList: ImmutableList<ContentModel> = persistentListOf(),
+    uiState: ProfileUiState,
+    modifier: Modifier = Modifier,
+    onRefreshClick: () -> Unit = {},
     onCollectionItemClick: (collectionId: String) -> Unit,
-    onFilmItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
+    onContentItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
+    onContentMoreClick: () -> Unit = {},
     onCollectionMoreClick: () -> Unit,
-    onFilmMoreClick: () -> Unit,
-    modifier: Modifier = Modifier, // TODO: 위치 조정
 ) {
+    val userName = uiState.profile.nickname
+
     LazyColumn(
         overscrollEffect = null,
         contentPadding = PaddingValues(bottom = 70.dp),
@@ -63,22 +75,23 @@ private fun ProfileScreen(
                 .fillMaxSize(),
     ) {
         item {
-            ProfileTopSection(
-                userName = userName,
-                profileUrl = "",
-                isFliner = (userRole == UserRoleType.FLINER),
-            )
+            with(uiState.profile) {
+                ProfileTopSection(
+                    userName = nickname,
+                    profileUrl = profileUrl,
+                    isFliner = (userRole == UserRoleType.FLINER),
+                )
+            }
         }
 
         item {
             Spacer(Modifier.height(20.dp))
 
             ProfileKeywordSection(
-                nickname = userName,
-                keywordList = keywordList,
-                onRefreshClick = {},
-                modifier =
-                    Modifier.fillMaxWidth(),
+                nickname = uiState.profile.nickname,
+                keywordList = uiState.keywords,
+                onRefreshClick = onRefreshClick,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 
@@ -91,7 +104,7 @@ private fun ProfileScreen(
                 onItemClick = onCollectionItemClick,
                 isAllVisible = true,
                 onAllClick = onCollectionMoreClick,
-                collectionModelList = createCollectionModelList,
+                collectionModelList = uiState.createCollections,
             )
         }
 
@@ -104,7 +117,7 @@ private fun ProfileScreen(
                 onItemClick = onCollectionItemClick,
                 isAllVisible = true,
                 onAllClick = onCollectionMoreClick,
-                collectionModelList = savedCollectionModelList,
+                collectionModelList = uiState.savedCollections,
             )
         }
 
@@ -114,10 +127,10 @@ private fun ProfileScreen(
             SavedContentsSection(
                 title = "저장한 작품",
                 description = "${userName}님이 저장한 작품이에요",
-                isAllVisible = true,
-                onAllClick = onFilmMoreClick,
-                contentModelList = savedContentModelList,
-                onItemClick = onFilmItemClick,
+                contentModelList = uiState.savedContent,
+                onItemClick = onContentItemClick,
+                isAllVisible = false,
+                onAllClick = {},
             )
         }
     }
@@ -128,17 +141,9 @@ private fun ProfileScreen(
 private fun ProfileScreenPreview() {
     FlintTheme {
         ProfileScreen(
-            userName = "안두콩",
-            userRole = UserRoleType.FLINER,
-            keywordList = PreferenceKeywordModel.FakeList1,
-            modifier = Modifier.fillMaxSize(),
-            createCollectionModelList = CollectionModel.FakeList,
-            savedCollectionModelList = CollectionModel.FakeList,
-            savedContentModelList = ContentModel.FakeList,
+            uiState = ProfileUiState.Fake,
             onCollectionItemClick = {},
-            onFilmItemClick = {},
             onCollectionMoreClick = {},
-            onFilmMoreClick = {},
         )
     }
 }
