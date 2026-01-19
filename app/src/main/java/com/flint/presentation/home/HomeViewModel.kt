@@ -68,6 +68,9 @@ class HomeViewModel @Inject constructor(
             .onSuccess {
                 _bookmarkedContentListLoadState.emit(UiState.Success(it))
             }
+            .onFailure {
+                Log.d("Logd", it.message.toString())
+            }
     }
 
     fun getRecentCollectionList() = viewModelScope.launch {
