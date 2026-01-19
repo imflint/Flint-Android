@@ -60,7 +60,7 @@ private fun ProfileScreen(
     modifier: Modifier = Modifier,
     onRefreshClick: () -> Unit = {},
     onCollectionItemClick: (collectionId: String) -> Unit,
-    onContentItemClick: (contentId: Long) -> Unit = {}, // TODO: 바텀시트 띄우기
+    onContentItemClick: (contentId: String) -> Unit = {}, // TODO: 바텀시트 띄우기
     onContentMoreClick: () -> Unit = {},
     onCollectionMoreClick: () -> Unit,
 ) {

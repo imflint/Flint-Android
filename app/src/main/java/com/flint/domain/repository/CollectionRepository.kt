@@ -1,6 +1,9 @@
 package com.flint.domain.repository
 
+import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.CollectionApi
+import com.flint.domain.mapper.collection.toModel
+import com.flint.domain.model.collection.CollectionModel
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
 import com.flint.domain.mapper.collection.toModel
 import com.flint.domain.model.collection.CollectionDetailModel
@@ -22,4 +25,6 @@ class CollectionRepository @Inject constructor(
     }
 
     // 최근 본 컬렉션 목록 조회
+    suspend fun getRecentCollectionList() : Result<List<CollectionModel>> =
+        suspendRunCatching { apiService.getRecentCollectionList().data.toModel() }
 }

@@ -33,7 +33,7 @@ fun SavedContentsSection(
     title: String,
     description: String,
     contentModelList: ImmutableList<ContentModel>,
-    onItemClick: (contentId: Long) -> Unit,
+    onItemClick: (contentId: String) -> Unit,
     modifier: Modifier = Modifier,
     isAllVisible: Boolean,
     onAllClick: () -> Unit,

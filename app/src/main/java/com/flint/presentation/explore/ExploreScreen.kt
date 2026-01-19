@@ -248,7 +248,7 @@ private fun ExploreScreenPreview() {
             contents =
                 List(10) {
                     ContentModel(
-                        contentId = 0,
+                        contentId = "0",
                         title = "너의 모든 것",
                         year = 2000,
                         posterImage = "https://buly.kr/G3Edbfu",

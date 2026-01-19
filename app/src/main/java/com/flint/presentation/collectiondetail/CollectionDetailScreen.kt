@@ -250,7 +250,7 @@ fun CollectionDetailScreen(
                     contents.forEach { content: ContentModel ->
                         Content(
                             content = content,
-                            onBookmarkIconClick = { contentId: Long ->
+                            onBookmarkIconClick = { contentId: String ->
                                 // TODO: Content 저장
                             },
                         )
@@ -354,7 +354,7 @@ private class PeoplePreviewProvider : PreviewParameterProvider<ImmutableList<Aut
         sequenceOf(
             persistentListOf(
                 AuthorModel(
-                    userId = 1,
+                    userId = "1",
                     nickname = "유저1",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
@@ -362,31 +362,31 @@ private class PeoplePreviewProvider : PreviewParameterProvider<ImmutableList<Aut
             ),
             persistentListOf(
                 AuthorModel(
-                    userId = 1,
+                    userId = "1",
                     nickname = "유저1",
                     profileUrl = "",
                     userRole = UserRoleType.ADMIN,
                 ),
                 AuthorModel(
-                    userId = 2,
+                    userId = "2",
                     nickname = "유저2",
                     profileUrl = "",
                     userRole = UserRoleType.FLINER,
                 ),
                 AuthorModel(
-                    userId = 3,
+                    userId = "3",
                     nickname = "유저3",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
                 AuthorModel(
-                    userId = 4,
+                    userId = "4",
                     nickname = "유저4",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
                 AuthorModel(
-                    userId = 5,
+                    userId = "5",
                     nickname = "유저5",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
@@ -394,43 +394,43 @@ private class PeoplePreviewProvider : PreviewParameterProvider<ImmutableList<Aut
             ),
             persistentListOf(
                 AuthorModel(
-                    userId = 1,
+                    userId = "1",
                     nickname = "유저1",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
                 AuthorModel(
-                    userId = 2,
+                    userId = "2",
                     nickname = "유저2",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
                 AuthorModel(
-                    userId = 3,
+                    userId = "3",
                     nickname = "유저3",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
                 AuthorModel(
-                    userId = 4,
+                    userId = "4",
                     nickname = "유저4",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
                 AuthorModel(
-                    userId = 5,
+                    userId = "5",
                     nickname = "유저5",
                     profileUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
                 AuthorModel(
-                    userId = 6,
+                    userId = "6",
                     nickname = "유저6",
                     profileUrl = "",
                     userRole = UserRoleType.FLINER,
                 ),
                 AuthorModel(
-                    userId = 7,
+                    userId = "7",
                     nickname = "유저7",
                     profileUrl = "",
                     userRole = UserRoleType.ADMIN,
@@ -572,7 +572,7 @@ private fun CollectionDetailDescription(
 @Composable
 private fun Content(
     content: ContentModel,
-    onBookmarkIconClick: (contentId: Long) -> Unit,
+    onBookmarkIconClick: (contentId: String) -> Unit,
 ) {
     Column {
         NetworkImage(
@@ -797,7 +797,7 @@ private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
     override val values: Sequence<ContentModel> =
         sequenceOf(
             ContentModel(
-                contentId = 0,
+                contentId = "0",
                 title = "드라마 제목",
                 year = 2000,
                 posterImage = "",
@@ -808,7 +808,7 @@ private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
                 isBookmarked = false,
             ),
             ContentModel(
-                contentId = 1,
+                contentId = "0",
                 title = "스포일러 있는 영화",
                 year = 2024,
                 posterImage = "",
@@ -819,7 +819,7 @@ private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
                 isBookmarked = false,
             ),
             ContentModel(
-                contentId = 2,
+                contentId = "0",
                 title = "저장된 영화",
                 year = 2023,
                 posterImage = "",
@@ -860,7 +860,7 @@ private data class ScreenPreviewData(
 private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData> {
     private val sampleContent =
         ContentModel(
-            contentId = 0,
+            contentId = "0",
             title = "드라마 제목",
             year = 2000,
             posterImage = "",
@@ -872,19 +872,19 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
     private val samplePeople =
         persistentListOf(
             AuthorModel(
-                userId = 1,
+                userId = "1",
                 nickname = "유저1",
                 profileUrl = "",
                 userRole = UserRoleType.FLING,
             ),
             AuthorModel(
-                userId = 2,
+                userId = "2",
                 nickname = "유저2",
                 profileUrl = "",
                 userRole = UserRoleType.FLINER,
             ),
             AuthorModel(
-                userId = 3,
+                userId = "3",
                 nickname = "유저3",
                 profileUrl = "",
                 userRole = UserRoleType.FLING,
