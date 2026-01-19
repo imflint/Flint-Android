@@ -39,7 +39,7 @@ class ProfileViewModel
 
         fun refreshProfileKeyword() {
             viewModelScope.launch {
-                userRepository.getUserKeywords(userId = "800370427074376635").fold( // TODO: 임시 userId
+                userRepository.getUserKeywords(userId = "801159854933808613").fold( // TODO: 임시 userId
                     onFailure = {
                         _uiState.emit(UiState.Failure)
                     },
