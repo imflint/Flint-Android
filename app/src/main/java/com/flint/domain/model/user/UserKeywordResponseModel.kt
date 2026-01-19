@@ -20,7 +20,7 @@ data class UserKeywordResponseModel(
         val FakeList1: ImmutableList<UserKeywordResponseModel> =
             persistentListOf(
                 UserKeywordResponseModel(
-                    name = "영화",
+                    name = "추리",
                     imageUrl = "",
                     color = "BLUE",
                     rank = 1,
@@ -30,28 +30,28 @@ data class UserKeywordResponseModel(
                     name = "슬픈",
                     imageUrl = "",
                     color = "GREEN",
-                    rank = 2,
+                    rank = 4,
                     percentage = 75f,
                 ),
                 UserKeywordResponseModel(
                     name = "SF",
                     imageUrl = "",
                     color = "PINK",
-                    rank = 3,
+                    rank = 2,
                     percentage = 7f,
                 ),
                 UserKeywordResponseModel(
                     name = "액션",
                     imageUrl = "",
                     color = "GREEN",
-                    rank = 4,
+                    rank = 5,
                     percentage = 0f,
                 ),
                 UserKeywordResponseModel(
-                    name = "시리즈",
+                    name = "슬픈",
                     imageUrl = "",
                     color = "YELLOW",
-                    rank = 5,
+                    rank = 3,
                     percentage = 0f,
                 ),
                 UserKeywordResponseModel(
@@ -64,6 +64,16 @@ data class UserKeywordResponseModel(
             )
 
         val FakeList2: ImmutableList<UserKeywordResponseModel> =
+            persistentListOf(
+                FakeList1[0],
+                FakeList1[1],
+                FakeList1[2],
+                FakeList1[3].copy(name = "키워드"),
+                FakeList1[4].copy(name = "설레는"),
+                FakeList1[5].copy(name = "키워드"),
+            )
+
+        val FakeList3: ImmutableList<UserKeywordResponseModel> =
             persistentListOf(
                 FakeList1[0].copy(name = "시리즈"),
                 FakeList1[1].copy(name = "애니메이션"),
