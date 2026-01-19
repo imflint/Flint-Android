@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.flint.core.common.extension.updateSuccess
 import com.flint.core.common.util.UiState
-import com.flint.core.common.util.suspendRunCatching
 import com.flint.core.navigation.Route
 import com.flint.domain.model.collection.CollectionDetailModel
 import com.flint.domain.repository.BookmarkRepository
@@ -60,18 +59,17 @@ class CollectionDetailViewModel @Inject constructor(
 
     private fun getCollectionDetail(collectionId: String) {
         viewModelScope.launch {
-            suspendRunCatching {
-                collectionRepository.getCollectionDetail(collectionId)
-            }.onSuccess { collectionDetailModel: CollectionDetailModel ->
-                _uiState.update {
-                    UiState.Success(
-                        CollectionDetailUiState(
-                            collectionId = collectionDetailModel.collectionId,
-                            isBookmarked = collectionDetailModel.isBookmarked,
+            collectionRepository.getCollectionDetail(collectionId)
+                .onSuccess { collectionDetailModel: CollectionDetailModel ->
+                    _uiState.update {
+                        UiState.Success(
+                            CollectionDetailUiState(
+                                collectionId = collectionDetailModel.collectionId,
+                                isBookmarked = collectionDetailModel.isBookmarked,
+                            )
                         )
-                    )
-                }
-            }.onFailure {
+                    }
+                }.onFailure {
                 // TODO: 데이터 불러오지 못한 경우, 다이얼로그 띄우도록 구현
             }
         }
