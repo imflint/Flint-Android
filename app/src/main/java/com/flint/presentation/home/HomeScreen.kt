@@ -19,13 +19,12 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.CollectionModel
-import com.flint.domain.model.ContentModel
+import com.flint.domain.model.collection.CollectionModel
+import com.flint.domain.model.content.ContentModel
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun HomeRoute(
@@ -35,6 +34,19 @@ fun HomeRoute(
     navigateToCollectionCreate: () -> Unit,
 ) {
     HomeScreen(
+        recentCollectionModelList = CollectionModel.FakeList,
+        recommendCollectionModelList = CollectionModel.FakeList,
+        savedContentModelList = ContentModel.FakeList,
+        navigateToCollectionCreate = {
+            navigateToCollectionCreate()
+        },
+        navigateToExplore = {
+            // TODO navigate to explore
+        },
+        onRecentCollectionItemClick = { collectionId ->
+            navigateToCollectionDetail(collectionId)
+        },
+        onRecentCollectionAllClick = navigateToCollectionList,
         onRecommendCollectionItemClick = { collectionId ->
             navigateToCollectionDetail(collectionId)
         },
@@ -49,15 +61,15 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     userName: String = "",
-    recommendCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
-    savedContentModelList: ImmutableList<ContentModel> = persistentListOf(),
-    recentCollectionModelList: ImmutableList<CollectionModel> = persistentListOf(),
-    onRecommendCollectionItemClick: (collectionId: String) -> Unit = {},
-    onSavedContentItemClick: (contentId: Long) -> Unit = {},
-    onRecentCollectionItemClick: (collectionId: String) -> Unit = {},
-    onRecentCollectionAllClick: () -> Unit = {},
-    navigateToExplore: () -> Unit = {},
-    navigateToCollectionCreate: () -> Unit = {},
+    recommendCollectionModelList: ImmutableList<CollectionModel>,
+    savedContentModelList: ImmutableList<ContentModel>,
+    recentCollectionModelList: ImmutableList<CollectionModel>,
+    onRecommendCollectionItemClick: (collectionId: String) -> Unit,
+    onSavedContentItemClick: (contentId: Long) -> Unit,
+    onRecentCollectionItemClick: (collectionId: String) -> Unit,
+    onRecentCollectionAllClick: () -> Unit,
+    navigateToExplore: () -> Unit,
+    navigateToCollectionCreate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -129,7 +141,6 @@ private fun HomeScreen(
             }
         }
 
-        /** FAB **/
         HomeFab(
             onClick = navigateToCollectionCreate,
             modifier =
@@ -151,7 +162,13 @@ private fun PreviewHomeScreen() {
             userName = "종우",
             recommendCollectionModelList = collectionModelList,
             savedContentModelList = contentModelList,
-            recentCollectionModelList = collectionModelList, // or 'emptyList()'
+            recentCollectionModelList = collectionModelList,
+            onRecommendCollectionItemClick = {},
+            onSavedContentItemClick = {},
+            onRecentCollectionItemClick = {},
+            onRecentCollectionAllClick = {},
+            navigateToExplore = {},
+            navigateToCollectionCreate = {},
         )
     }
 }

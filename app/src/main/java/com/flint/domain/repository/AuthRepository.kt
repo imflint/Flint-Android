@@ -1,11 +1,23 @@
 package com.flint.domain.repository
 
+import com.flint.core.common.util.suspendRunCatching
+import com.flint.data.api.AuthApi
+import com.flint.domain.mapper.auth.toDto
+import com.flint.domain.mapper.auth.toModel
 import com.flint.domain.model.auth.SignupRequestModel
 import com.flint.domain.model.auth.SignupResponseModel
 import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.model.auth.SocialVerifyResponseModel
+import javax.inject.Inject
 
-interface AuthRepository {
-    suspend fun signup(requestModel: SignupRequestModel): Result<SignupResponseModel>
-    suspend fun socialVerify(requestModel: SocialVerifyRequestModel): Result<SocialVerifyResponseModel>
-}
+class AuthRepository
+    @Inject
+    constructor(
+        private val api: AuthApi,
+    ) {
+        suspend fun signup(model: SignupRequestModel): Result<SignupResponseModel> =
+            suspendRunCatching { api.signup(model.toDto()).data.toModel() }
+
+        suspend fun socialVerify(model: SocialVerifyRequestModel): Result<SocialVerifyResponseModel> =
+            suspendRunCatching { api.socialVerify(model.toDto()).data.toModel() }
+    }

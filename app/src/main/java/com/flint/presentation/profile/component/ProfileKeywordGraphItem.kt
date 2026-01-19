@@ -108,9 +108,9 @@ private fun ProfileKeywordGraphPreview() {
         ) {
             itemsIndexed(
                 listOf(
-                    Triple("환경", PreferenceType.Green, 75),
-                    Triple("동물", PreferenceType.Orange, 50),
-                    Triple("패션", PreferenceType.Yellow, 30),
+                    Triple("환경", PreferenceType.GREEN, 75),
+                    Triple("동물", PreferenceType.ORANGE, 50),
+                    Triple("패션", PreferenceType.YELLOW, 30),
                 ),
             ) { _, item ->
                 ProfileKeywordGraphItem(

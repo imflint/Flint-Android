@@ -28,8 +28,8 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.AuthorModel
-import com.flint.domain.model.CollectionModel
+import com.flint.domain.model.collection.CollectionModel
+import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.type.UserRoleType
 
 @Composable

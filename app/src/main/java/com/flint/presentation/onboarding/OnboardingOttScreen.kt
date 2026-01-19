@@ -83,7 +83,7 @@ fun OnboardingOttScreen(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                items(OttType.getOtts()) { ottType ->
+                items(OttType.entries) { ottType ->
                     OnboardingOttItem(
                         ottType = ottType,
                         isSelected = false, // TODO: 선택 상태 관리 추가

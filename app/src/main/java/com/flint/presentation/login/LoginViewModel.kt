@@ -34,5 +34,5 @@ class LoginViewModel @Inject constructor(
             .onFailure {
                 _navigationEvent.emit(UiState.Failure)
             }
-        }
     }
+}

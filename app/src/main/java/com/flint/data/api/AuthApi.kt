@@ -1,17 +1,21 @@
 package com.flint.data.api
 
+import com.flint.data.dto.auth.request.SignupRequestDto
+import com.flint.data.dto.auth.request.SocialVerifyRequestDto
+import com.flint.data.dto.auth.response.SignupResponseDto
+import com.flint.data.dto.auth.response.SocialVerifyResponseDto
 import com.flint.data.dto.base.BaseResponse
-import com.flint.data.dto.request.auth.SignupRequestDto
-import com.flint.data.dto.request.auth.SocialVerifyRequestDto
-import com.flint.data.dto.response.auth.SignupResponseDto
-import com.flint.data.dto.response.auth.SocialVerifyResponseDto
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthApi {
     @POST("api/v1/auth/signup")
-    suspend fun signup(@Body requestDto: SignupRequestDto): BaseResponse<SignupResponseDto>
+    suspend fun signup(
+        @Body requestDto: SignupRequestDto,
+    ): BaseResponse<SignupResponseDto>
 
     @POST("api/v1/auth/social/verify")
-    suspend fun socialVerify(@Body requestDto: SocialVerifyRequestDto): BaseResponse<SocialVerifyResponseDto>
+    suspend fun socialVerify(
+        @Body requestDto: SocialVerifyRequestDto,
+    ): BaseResponse<SocialVerifyResponseDto>
 }

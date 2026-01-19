@@ -32,7 +32,7 @@ import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.ContentModel
+import com.flint.domain.model.content.ContentModel
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -43,9 +43,12 @@ fun ExploreRoute(
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
 ) {
-//    ExploreScreen(
-//        modifier = Modifier.padding(paddingValues),
-//    )
+    ExploreScreen(
+        modifier = Modifier.padding(paddingValues),
+        contents = ContentModel.FakeList, // TODO: 수정 필요
+        onWatchCollectionButtonClick = navigateToCollectionDetail,
+        onMakeCollectionButtonClick = navigateToCollectionCreate,
+    )
 }
 
 @Composable
