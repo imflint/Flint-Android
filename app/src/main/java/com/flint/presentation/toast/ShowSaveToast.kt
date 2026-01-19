@@ -1,6 +1,7 @@
 package com.flint.presentation.toast
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun ShowSaveToast(
     navigateToSavedCollection: () -> Unit,
+    paddingValues: PaddingValues,
     yOffset: Dp,
     hide: () -> Unit,
 ) {
@@ -36,7 +38,9 @@ fun ShowSaveToast(
     ) {
         SaveToast(
             navigateToSavedCollection = navigateToSavedCollection,
-            modifier = Modifier.padding(bottom = yOffset),
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(bottom = yOffset),
         )
     }
 }
@@ -50,6 +54,7 @@ private fun ShowSaveToastPreview() {
         if (show) {
             ShowSaveToast(
                 navigateToSavedCollection = {},
+                paddingValues = PaddingValues.Zero,
                 yOffset = 80.dp,
                 hide = { show = false },
             )

@@ -83,28 +83,6 @@ fun CollectionDetailRoute(
     var showCancelToast: Boolean by remember { mutableStateOf(false) }
     var showSaveToast: Boolean by remember { mutableStateOf(false) }
 
-    if (showCancelToast) {
-        ShowToast(
-            text = "컬렉션 저장이 취소되었어요",
-            imageVector = null,
-            yOffset = 12.dp,
-            hide = {
-                showCancelToast = false
-            }
-        )
-    }
-
-    if (showSaveToast) {
-        ShowSaveToast(
-            navigateToSavedCollection = {
-                navigateToCollectionList()
-            },
-            yOffset = 12.dp,
-            hide = {
-                showSaveToast = false
-            })
-    }
-
     when (val uiState = uiState) {
         UiState.Loading -> {
             FlintLoadingIndicator()
@@ -131,15 +109,42 @@ fun CollectionDetailRoute(
         else -> {}
     }
 
+    if (showCancelToast) {
+        ShowToast(
+            text = "컬렉션 저장이 취소되었어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = {
+                showCancelToast = false
+            }
+        )
+    }
+
+    if (showSaveToast) {
+        ShowSaveToast(
+            navigateToSavedCollection = {
+                navigateToCollectionList()
+            },
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = {
+                showSaveToast = false
+            })
+    }
+
     LaunchedEffect(Unit) {
         viewModel.event.collect { event: CollectionDetailEvent ->
             when (event) {
                 CollectionDetailEvent.ToggleCollectionBookmarkFailure -> {
+                    // TODO: 컬렉션 저장 실패 다이얼로그 띄우기
                 }
 
                 is CollectionDetailEvent.ToggleCollectionBookmarkSuccess -> {
                     if (event.isBookmarked) {
                         showSaveToast = true
+                    } else {
+                        showCancelToast = true
                     }
                 }
             }

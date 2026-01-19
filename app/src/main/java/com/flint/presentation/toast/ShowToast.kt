@@ -1,6 +1,7 @@
 package com.flint.presentation.toast
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 fun ShowToast(
     text: String,
     imageVector: ImageVector?,
+    paddingValues: PaddingValues,
     yOffset: Dp,
     hide: () -> Unit,
 ) {
@@ -41,7 +43,9 @@ fun ShowToast(
         FlintToast(
             text = text,
             imageVector = imageVector,
-            modifier = Modifier.padding(bottom = yOffset),
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(bottom = yOffset),
         )
     }
 }
@@ -56,6 +60,7 @@ private fun ShowToastPreview() {
             ShowToast(
                 text = "저장되었습니다",
                 imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                paddingValues = PaddingValues.Zero,
                 yOffset = 80.dp,
                 hide = { show = false },
             )
@@ -73,6 +78,7 @@ private fun ShowToastWithoutIconPreview() {
             ShowToast(
                 text = "알림 메시지입니다",
                 imageVector = null,
+                paddingValues = PaddingValues.Zero,
                 yOffset = 80.dp,
                 hide = { show = false },
             )
