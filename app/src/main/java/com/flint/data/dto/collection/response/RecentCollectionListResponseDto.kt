@@ -1,16 +1,16 @@
-package com.flint.data.dto.home.response
+package com.flint.data.dto.collection.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RecommendCollectionResponseDto(
+data class RecentCollectionListResponseDto(
     @SerialName("collections")
-    val collections: List<RecommendCollectionItemResponseDto>
+    val collections: List<RecentCollectionItemResponseDto>
 )
 
 @Serializable
-data class RecommendCollectionItemResponseDto(
+data class RecentCollectionItemResponseDto(
     @SerialName("id")
     val id: String,
     @SerialName("thumbnailUrl")

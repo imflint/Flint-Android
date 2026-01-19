@@ -24,7 +24,7 @@ import com.flint.domain.type.OttType
 @Composable
 fun SavedContentItem(
     contentModel: ContentModel,
-    onItemClick: (contentId: Long) -> Unit,
+    onItemClick: (contentId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -66,7 +66,7 @@ fun SavedContentItem(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = "${contentModel.year}년도",
+            text = "${contentModel.year}",
             color = FlintTheme.colors.gray300,
             style = FlintTheme.typography.caption1R12,
         )
@@ -79,7 +79,7 @@ private fun PreviewSavedContentItem() {
     FlintTheme {
         val contentModel =
             ContentModel(
-                contentId = 0,
+                contentId = "0",
                 title = "드라마 제목",
                 year = 2000,
                 posterImage = "",

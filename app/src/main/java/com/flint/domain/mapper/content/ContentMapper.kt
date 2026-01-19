@@ -6,10 +6,10 @@ import com.flint.data.dto.search.SearchBookmarkedContentsResponseDto
 import com.flint.domain.model.content.ContentModel
 import com.flint.domain.type.OttType
 
-fun List<BookmarkedContentListResponseDto>.toModel() : List<ContentModel> {
-    return this.map {
+fun BookmarkedContentListResponseDto.toModel() : List<ContentModel> {
+    return contents.map {
         ContentModel(
-            contentId = it.contentId,
+            contentId = it.id,
             title = it.title,
             year = it.year,
             ottSimpleList = it.getOttSimpleList.map { ottSimple ->

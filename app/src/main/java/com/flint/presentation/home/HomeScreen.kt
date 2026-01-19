@@ -11,10 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
@@ -25,6 +30,10 @@ import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeRoute(
@@ -32,29 +41,50 @@ fun HomeRoute(
     navigateToCollectionList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-    HomeScreen(
-        recommendCollectionModelList = CollectionModel.FakeList,
-        recentCollectionModelList = CollectionModel.FakeList,
-        savedContentModelList = ContentModel.FakeList,
-        navigateToCollectionCreate = {
-            navigateToCollectionCreate()
-        },
-        navigateToExplore = {
-            // TODO navigate to explore
-        },
-        onRecentCollectionItemClick = { collectionId ->
-            navigateToCollectionDetail(collectionId)
-        },
-        onRecentCollectionAllClick = navigateToCollectionList,
-        onRecommendCollectionItemClick = { collectionId ->
-            navigateToCollectionDetail(collectionId)
-        },
-        onSavedContentItemClick = { contentId ->
-            // TODO show OttListBottomSheet
-        },
-        modifier = Modifier.padding(paddingValues),
-    )
+
+    val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getRecommendedCollectionList()
+        viewModel.getBookmarkedContentList()
+        viewModel.getRecentCollectionList()
+    }
+
+    when (uiState.loadState) {
+        is UiState.Success -> {
+            val recommendedCollectionList = (uiState.recommendedCollectionListLoadState as? UiState.Success)?.data?.toImmutableList() ?: persistentListOf()
+            val bookmarkedContentList = (uiState.bookmarkedContentListLoadState as? UiState.Success)?.data?.toImmutableList() ?: persistentListOf()
+            val recentCollectionList = (uiState.recentCollectionListLoadState as? UiState.Success)?.data?.toImmutableList() ?: persistentListOf()
+
+            if (recommendedCollectionList.isNotEmpty() && bookmarkedContentList.isNotEmpty()) {
+                HomeScreen(
+                    recommendCollectionModelList = recommendedCollectionList,
+                    recentCollectionModelList = recentCollectionList,
+                    savedContentModelList = bookmarkedContentList,
+                    navigateToCollectionCreate = {
+                        navigateToCollectionCreate()
+                    },
+                    navigateToExplore = {
+                        // TODO navigate to explore
+                    },
+                    onRecentCollectionItemClick = { collectionId ->
+                        navigateToCollectionDetail(collectionId)
+                    },
+                    onRecentCollectionAllClick = navigateToCollectionList,
+                    onRecommendCollectionItemClick = { collectionId ->
+                        navigateToCollectionDetail(collectionId)
+                    },
+                    onSavedContentItemClick = { contentId ->
+                        // TODO show OttListBottomSheet
+                    },
+                    modifier = Modifier.padding(paddingValues),
+                )
+            }
+        }
+        else -> {}
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -65,7 +95,7 @@ private fun HomeScreen(
     savedContentModelList: ImmutableList<ContentModel>,
     recentCollectionModelList: ImmutableList<CollectionModel>,
     onRecommendCollectionItemClick: (collectionId: String) -> Unit,
-    onSavedContentItemClick: (contentId: Long) -> Unit,
+    onSavedContentItemClick: (contentId: String) -> Unit,
     onRecentCollectionItemClick: (collectionId: String) -> Unit,
     onRecentCollectionAllClick: () -> Unit,
     navigateToExplore: () -> Unit,
@@ -76,8 +106,7 @@ private fun HomeScreen(
         modifier =
             modifier
                 .background(FlintTheme.colors.background)
-                .fillMaxSize()
-                .statusBarsPadding(),
+                .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         LazyColumn(
