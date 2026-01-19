@@ -5,12 +5,14 @@ import com.flint.domain.type.UserRoleType
 import kotlinx.collections.immutable.persistentListOf
 
 data class CollectionModel(
-    val collectionId: String,
-    val collectionTitle: String,
-    val collectionImageUrl: String,
-    val createdAt: String,
-    val isBookmarked: Boolean,
-    val author: AuthorModel,
+    val collectionId: String = "",
+    val collectionTitle: String = "",
+    val collectionImageUrl: String = "",
+    val createdAt: String = "",
+    val isBookmarked: Boolean = false,
+    val author: AuthorModel = AuthorModel(
+
+    ),
 ) {
     companion object {
         val FakeList =
