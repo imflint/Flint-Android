@@ -17,23 +17,23 @@ enum class PreferenceType(
     val color: Color,
     @DrawableRes val backgroundRes: Int,
 ) {
-    Green(
+    GREEN(
         color = FlintColors.green,
         backgroundRes = R.drawable.bg_tag_green,
     ),
-    Orange(
+    ORANGE(
         color = FlintColors.orange,
         backgroundRes = R.drawable.bg_tag_orange,
     ),
-    Yellow(
+    YELLOW(
         color = FlintColors.yellow,
         backgroundRes = R.drawable.bg_tag_yellow,
     ),
-    Blue(
+    BLUE(
         color = FlintColors.blue,
         backgroundRes = R.drawable.bg_tag_blue,
     ),
-    Pink(
+    PINK(
         color = FlintColors.pink,
         backgroundRes = R.drawable.bg_tag_pink,
     ),

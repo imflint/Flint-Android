@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.flint.core.navigation.MainTabRoute
 import com.flint.core.navigation.Route
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionCreate
 import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
@@ -20,7 +19,7 @@ import com.flint.presentation.home.navigation.navigateToHome
 import com.flint.presentation.login.navigation.navigateToLogin
 import com.flint.presentation.onboarding.navigation.navigateToOnboarding
 import com.flint.presentation.profile.navigation.navigateToProfile
-import com.flint.presentation.savedfilm.navigation.navigateToSavedFilmList
+import com.flint.presentation.savedcontent.navigation.navigateToSavedContentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -125,8 +124,8 @@ class MainNavigator(
         navController.navigateToCollectionCreate()
     }
 
-    fun navigateToSavedFilm() {
-        navController.navigateToSavedFilmList()
+    fun navigateToSavedContent() {
+        navController.navigateToSavedContentList()
     }
 
     fun navigateUp() {

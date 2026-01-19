@@ -6,15 +6,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.flint.core.navigation.Route
-import com.flint.presentation.collectioncreate.AddFilmRoute
+import com.flint.presentation.collectioncreate.AddContentRoute
 import com.flint.presentation.collectioncreate.CollectionCreateRoute
 
 fun NavController.navigateToCollectionCreate(navOptions: NavOptions? = null) {
     navigate(Route.CollectionCreate, navOptions)
 }
 
-fun NavController.navigateToAddFilm(navOptions: NavOptions? = null) {
-    navigate(Route.AddFilm, navOptions)
+fun NavController.navigateToAddContent(navOptions: NavOptions? = null) {
+    navigate(Route.AddContent, navOptions)
 }
 
 fun NavGraphBuilder.collectionCreateNavGraph(
@@ -24,12 +24,12 @@ fun NavGraphBuilder.collectionCreateNavGraph(
     composable<Route.CollectionCreate> {
         CollectionCreateRoute(
             paddingValues = paddingValues,
-            navigateToAddFilm = navController::navigateToAddFilm,
+            navigateToAddContent = navController::navigateToAddContent,
         )
     }
 
-    composable<Route.AddFilm> {
-        AddFilmRoute(
+    composable<Route.AddContent> {
+        AddContentRoute(
             paddingValues = paddingValues,
             navigateToCollectionCreate = navController::navigateToCollectionCreate,
         )

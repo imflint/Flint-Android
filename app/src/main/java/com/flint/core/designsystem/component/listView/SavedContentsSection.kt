@@ -25,18 +25,18 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.listItem.SavedContentItem
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.ContentModel
+import com.flint.domain.model.content.ContentModel
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SavedContentsSection(
     title: String,
     description: String,
-    isAllVisible: Boolean,
-    onAllClick: () -> Unit,
     contentModelList: ImmutableList<ContentModel>,
     onItemClick: (contentId: Long) -> Unit,
     modifier: Modifier = Modifier,
+    isAllVisible: Boolean,
+    onAllClick: () -> Unit,
 ) {
     Column(
         modifier =
@@ -95,6 +95,7 @@ fun SavedContentsSection(
                 SavedContentItem(
                     contentModel = item,
                     onItemClick = { contentId ->
+
                         onItemClick(contentId)
                     },
                 )

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,25 +22,21 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.PreferenceKeywordModel
-import com.flint.domain.model.PreferenceKeywordModel.Companion.rotateKeywordByRank
+import com.flint.domain.model.user.UserKeywordResponseModel
 import com.flint.domain.type.KeywordType
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
+import kotlin.collections.sortedBy
 
 private const val MAX = 3
 
 @Composable
 fun ProfileKeywordSection(
     nickname: String,
-    keywordList: ImmutableList<PreferenceKeywordModel>,
+    keywordList: ImmutableList<UserKeywordResponseModel>,
     onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val rotatedKeywordList =
-        remember(keywordList) {
-            rotateKeywordByRank(keywordList)
-        }
-
     Column(
         modifier =
             modifier
@@ -90,20 +85,16 @@ fun ProfileKeywordSection(
         }
         Spacer(Modifier.height(32.dp))
         KeywordChipsLayout(
-            keywordList = rotatedKeywordList,
+            keywordList = rotateKeywordByRank(keywordList),
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.height(32.dp))
-        KeywordGraphLayout(
-            keywordList = keywordList.subList(0, MAX),
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }
 
 @Composable
 fun KeywordChipsLayout(
-    keywordList: ImmutableList<PreferenceKeywordModel>,
+    keywordList: ImmutableList<UserKeywordResponseModel>,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -124,8 +115,8 @@ fun KeywordChipsLayout(
             keywordList.forEach {
                 with(it) {
                     ProfileKeywordChip(
-                        keyword = title,
-                        keywordType = if (rank <= MAX) KeywordType.Large(level) else KeywordType.Small,
+                        keyword = name,
+                        keywordType = if (rank <= MAX) KeywordType.Large(preferenceType) else KeywordType.Small,
                         keywordImageUrl = imageUrl.orEmpty(),
                     )
                 }
@@ -136,7 +127,7 @@ fun KeywordChipsLayout(
 
 @Composable
 fun KeywordGraphLayout(
-    keywordList: ImmutableList<PreferenceKeywordModel>,
+    keywordList: ImmutableList<UserKeywordResponseModel>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -146,14 +137,32 @@ fun KeywordGraphLayout(
         keywordList.forEach {
             with(it) {
                 ProfileKeywordGraphItem(
-                    keyword = title,
-                    preferenceType = level,
-                    percentage = percentage,
+                    keyword = name,
+                    preferenceType = preferenceType,
+                    percentage = percentage.toInt(),
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
     }
+}
+
+// TODO: 배치 로직 수정 필요
+private fun rotateKeywordByRank(keywordList: ImmutableList<UserKeywordResponseModel>): ImmutableList<UserKeywordResponseModel> {
+    if (keywordList.size < 2) return keywordList
+
+    val sortedByRank = keywordList.sortedBy { it.rank }
+
+    // rank 1, 2, 3 (상위 3개) → Large
+    val topRanks = sortedByRank.take(3)
+    // rank 4, 5, 6 (하위 3개) → Small
+    val bottomRanks = sortedByRank.drop(3)
+
+    // 번갈아 배치: 1, 4, 2, 5, 3, 6
+    return topRanks
+        .zip(bottomRanks)
+        .flatMap { (top, bottom) -> listOf(top, bottom) }
+        .toPersistentList()
 }
 
 @Preview(showBackground = false)
@@ -162,7 +171,7 @@ private fun ProfileKeywordSectionPreview() {
     FlintTheme {
         ProfileKeywordSection(
             nickname = "안두콩",
-            keywordList = PreferenceKeywordModel.FakeList1,
+            keywordList = UserKeywordResponseModel.FakeList1,
             modifier = Modifier.fillMaxSize(),
             onRefreshClick = {},
         )

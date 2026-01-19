@@ -15,7 +15,7 @@ interface Route {
     ) : Route
 
     @Serializable
-    data object OnboardingFilm : Route
+    data object OnboardingContent : Route
 
     @Serializable
     data object OnboardingOtt : Route
@@ -35,8 +35,8 @@ interface Route {
     data object CollectionCreate : Route
 
     @Serializable
-    data object SavedFilmList : Route
+    data object SavedContentList : Route
 
     @Serializable
-    data object AddFilm : Route
+    data object AddContent : Route
 }

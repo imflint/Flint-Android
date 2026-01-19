@@ -35,28 +35,28 @@ import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.textfield.FlintLongTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.presentation.collectioncreate.component.CollectionAddFilmBottomSheet
-import com.flint.presentation.collectioncreate.component.CollectionCreateFilmDeleteModal
-import com.flint.presentation.collectioncreate.component.CollectionCreateFilmItemList
+import com.flint.presentation.collectioncreate.component.CollectionAddContentBottomSheet
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentDeleteModal
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentItemList
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
-import com.flint.presentation.collectioncreate.model.CollectionFilmUiModel
+import com.flint.presentation.collectioncreate.model.CollectionContentUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun CollectionCreateRoute(
     paddingValues: PaddingValues,
-    navigateToAddFilm: () -> Unit,
+    navigateToAddContent: () -> Unit,
 ) {
-    val filmList =
+    val contentList =
         remember {
-            CollectionFilmUiModel.dummyFilmList.toMutableStateList()
+            CollectionContentUiModel.dummyContentList.toMutableStateList()
         }
 
     CollectionCreateScreen(
         thumbnailImageUrl = "",
-        filmList = filmList.toImmutableList(),
-        onRemoveFilm = { filmList.remove(it) },
+        contentList = contentList.toImmutableList(),
+        onRemoveContent = { contentList.remove(it) },
         onBackClick = {},
         onGalleryClick = {},
         onCoverDeleteClick = {},
@@ -66,8 +66,8 @@ fun CollectionCreateRoute(
 @Composable
 fun CollectionCreateScreen(
     thumbnailImageUrl: String,
-    filmList: ImmutableList<CollectionFilmUiModel>,
-    onRemoveFilm: (CollectionFilmUiModel) -> Unit,
+    contentList: ImmutableList<CollectionContentUiModel>,
+    onRemoveContent: (CollectionContentUiModel) -> Unit,
     onBackClick: () -> Unit,
     onGalleryClick: () -> Unit,
     onCoverDeleteClick: () -> Unit,
@@ -76,7 +76,7 @@ fun CollectionCreateScreen(
     var contentText by remember { mutableStateOf("") }
     var isSheetVisible by remember { mutableStateOf(false) }
     var isModalVisible by remember { mutableStateOf(false) }
-    var selectedFilm by remember { mutableStateOf<CollectionFilmUiModel?>(null) }
+    var selectedContent by remember { mutableStateOf<CollectionContentUiModel?>(null) }
     var isPublic by remember { mutableStateOf<Boolean?>(null) }
 
     Column(
@@ -224,7 +224,7 @@ fun CollectionCreateScreen(
                             style = FlintTheme.typography.body2R14,
                         )
                         Text(
-                            text = "${filmList.size}/10",
+                            text = "${contentList.size}/10",
                             color = FlintTheme.colors.white,
                             style = FlintTheme.typography.body2R14,
                         )
@@ -234,19 +234,19 @@ fun CollectionCreateScreen(
 
             // 작품 리스트
             items(
-                items = filmList,
-                key = { it.filmId },
-            ) { film ->
+                items = contentList,
+                key = { it.contentId },
+            ) { content ->
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    CollectionCreateFilmItemList(
+                    CollectionCreateContentItemList(
                         onCancelClick = {
-                            selectedFilm = film
+                            selectedContent = content
                             isModalVisible = true
                         },
-                        imageUrl = film.imageUrl,
-                        title = film.title,
-                        director = film.director,
-                        createdYear = film.createdYear,
+                        imageUrl = content.imageUrl,
+                        title = content.title,
+                        director = content.director,
+                        createdYear = content.createdYear,
                     )
                 }
             }
@@ -281,7 +281,7 @@ fun CollectionCreateScreen(
     }
 
     if (isSheetVisible) {
-        CollectionAddFilmBottomSheet(
+        CollectionAddContentBottomSheet(
             onGalleryClick = onGalleryClick,
             onCoverDeleteClick = onCoverDeleteClick,
             onDismiss = { isSheetVisible = false },
@@ -289,14 +289,14 @@ fun CollectionCreateScreen(
     }
 
     if (isModalVisible) {
-        CollectionCreateFilmDeleteModal(
+        CollectionCreateContentDeleteModal(
             onConfirm = {
-                selectedFilm?.let { onRemoveFilm(it) }
-                selectedFilm = null
+                selectedContent?.let { onRemoveContent(it) }
+                selectedContent = null
                 isModalVisible = false
             },
             onDismiss = {
-                selectedFilm = null
+                selectedContent = null
                 isModalVisible = false
             },
         )
@@ -309,8 +309,8 @@ fun CollectionCreateScreenPreview() {
     FlintTheme {
         CollectionCreateScreen(
             thumbnailImageUrl = "",
-            filmList = CollectionFilmUiModel.dummyFilmList,
-            onRemoveFilm = {},
+            contentList = CollectionContentUiModel.dummyContentList,
+            onRemoveContent = {},
             onBackClick = {},
             onGalleryClick = {},
             onCoverDeleteClick = {},

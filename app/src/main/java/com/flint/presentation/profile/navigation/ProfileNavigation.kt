@@ -15,14 +15,14 @@ fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.profileNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
-    navigateToSavedFilmList: () -> Unit,
+    navigateToSavedContentList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
     composable<MainTabRoute.Profile> {
         ProfileRoute(
             paddingValues = paddingValues,
             navigateToCollectionList = navigateToCollectionList,
-            navigateToSavedFilmList = navigateToSavedFilmList,
+            navigateToSavedContentList = navigateToSavedContentList,
             navigateToCollectionDetail = navigateToCollectionDetail,
         )
     }
