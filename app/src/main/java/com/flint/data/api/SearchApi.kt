@@ -1,7 +1,7 @@
 package com.flint.data.api
 
 import com.flint.data.dto.base.BaseResponse
-import com.flint.data.dto.search.BookmarkedContentsResponseDto
+import com.flint.data.dto.search.SearchBookmarkedContentsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,5 +11,5 @@ interface SearchApi {
         @Query("keyword") keyword: String,
         @Query("cursor") cursor: Int,
         @Query("size") size: Int
-    ) : BaseResponse<BookmarkedContentsResponseDto>
+    ) : BaseResponse<SearchBookmarkedContentsResponseDto>
 }

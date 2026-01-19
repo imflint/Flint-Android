@@ -4,15 +4,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BookmarkedContentsResponseDto(
+data class SearchBookmarkedContentsResponseDto(
     @SerialName("data")
-    val data: List<BookmarkedContentsItemResponseDto>,
+    val data: List<SearchBookmarkedContentsItemResponseDto>,
     @SerialName("meta")
-    val meta: List<BookmarkedContentsMetaItemResponseDto>
+    val meta: List<SearchBookmarkedContentsMetaItemResponseDto>
 )
 
 @Serializable
-data class BookmarkedContentsItemResponseDto(
+data class SearchBookmarkedContentsItemResponseDto(
     @SerialName("bookmarkId")
     val bookmarkId: Long,
     @SerialName("contentId")
@@ -28,7 +28,7 @@ data class BookmarkedContentsItemResponseDto(
 )
 
 @Serializable
-data class BookmarkedContentsMetaItemResponseDto(
+data class SearchBookmarkedContentsMetaItemResponseDto(
     @SerialName("type")
     val type: String,
     @SerialName("returned")
