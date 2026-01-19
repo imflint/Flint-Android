@@ -12,8 +12,8 @@ fun BookmarkedContentListResponseDto.toModel() : List<ContentModel> {
             contentId = it.id,
             title = it.title,
             year = it.year,
-            ottSimpleList = it.getOttSimpleList.map { ottSimple ->
-                OttType.valueOf(ottSimple.ottName)
+            ottSimpleList = it.getOttSimpleList.mapNotNull { ottSimple ->
+                runCatching { OttType.valueOf(ottSimple.ottName) }.getOrNull()
             }
         )
     }

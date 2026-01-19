@@ -36,11 +36,11 @@ class HomeViewModel @Inject constructor(
         _recommendCollectionListLoadState,
         _bookmarkedContentListLoadState,
         _recentCollectionListLoadState
-    ) { userInfo, recommended, favorite ->
+    ) { recommendedCollectionList, bookmarkedContentList, recentCollectionList ->
         HomeUiState(
-            recommendedCollectionListLoadState = userInfo,
-            bookmarkedContentListLoadState = recommended,
-            recentCollectionListLoadState = favorite
+            recommendedCollectionListLoadState = recommendedCollectionList,
+            bookmarkedContentListLoadState = bookmarkedContentList,
+            recentCollectionListLoadState = recentCollectionList
         )
     }.stateIn(
         scope = viewModelScope,
