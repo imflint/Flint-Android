@@ -15,8 +15,8 @@ data class CollectionDetailResponseDto(
     val description: String,
     @SerialName("id")
     val id: String,
-    @SerialName("imageUrl")
-    val imageUrl: String,
+    @SerialName("thumbnailUrl")
+    val thumbnailUrl: String,
     @SerialName("isBookmarked")
     val isBookmarked: Boolean,
     @SerialName("title")
@@ -48,8 +48,8 @@ data class CollectionDetailResponseDto(
         val isSpoiler: Boolean,
         @SerialName("reason")
         val reason: String,
-        @SerialName("thumbnailUrl")
-        val thumbnailUrl: String,
+        @SerialName("imageUrl")
+        val imageUrl: String,
         @SerialName("title")
         val title: String,
     )
