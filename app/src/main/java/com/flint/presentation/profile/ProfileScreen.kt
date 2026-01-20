@@ -82,7 +82,7 @@ private fun ProfileScreen(
             with(uiState.profile) {
                 ProfileTopSection(
                     userName = nickname,
-                    profileUrl = profileImageUrl,
+                    profileUrl = profileImageUrl.orEmpty(),
                     isFliner = isFliner,
                 )
             }
@@ -100,29 +100,33 @@ private fun ProfileScreen(
         }
 
         item {
-            Spacer(Modifier.height(48.dp))
+            if (uiState.createCollections.collections.isNotEmpty())  {
+                Spacer(Modifier.height(48.dp))
 
-            CollectionSection(
-                title = "${userName}님의 컬렉션",
-                description = "${userName}님이 생성한 컬렉션이에요",
-                onItemClick = onCollectionItemClick,
-                isAllVisible = true,
-                onAllClick = onCollectionMoreClick,
-                collectionListModel = uiState.createCollections,
-            )
+                CollectionSection(
+                    title = "${userName}님의 컬렉션",
+                    description = "${userName}님이 생성한 컬렉션이에요",
+                    onItemClick = onCollectionItemClick,
+                    isAllVisible = true,
+                    onAllClick = onCollectionMoreClick,
+                    collectionListModel = uiState.createCollections,
+                )
+            }
         }
 
         item {
-            Spacer(Modifier.height(48.dp))
+            if (uiState.savedCollections.collections.isNotEmpty()) {
+                Spacer(Modifier.height(48.dp))
 
-            CollectionSection(
-                title = "저장한 컬렉션",
-                description = "${userName}님이 저장한 컬렉션이에요",
-                onItemClick = onCollectionItemClick,
-                isAllVisible = true,
-                onAllClick = onCollectionMoreClick,
-                collectionListModel = uiState.savedCollections,
-            )
+                CollectionSection(
+                    title = "저장한 컬렉션",
+                    description = "${userName}님이 저장한 컬렉션이에요",
+                    onItemClick = onCollectionItemClick,
+                    isAllVisible = true,
+                    onAllClick = onCollectionMoreClick,
+                    collectionListModel = uiState.savedCollections,
+                )
+            }
         }
 
         item {
@@ -131,7 +135,7 @@ private fun ProfileScreen(
             SavedContentsSection(
                 title = "저장한 작품",
                 description = "${userName}님이 저장한 작품이에요",
-                contentModelList = uiState.savedContent,
+                contentModelList = uiState.savedContents,
                 onItemClick = onContentItemClick,
                 isAllVisible = false,
                 onAllClick = {},

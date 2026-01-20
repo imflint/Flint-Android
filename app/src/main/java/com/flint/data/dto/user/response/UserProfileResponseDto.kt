@@ -8,7 +8,7 @@ data class UserProfileResponseDto(
     @SerializedName("id")
     val id: String,
     @SerializedName("profileImageUrl")
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
     @SerializedName("isFliner")
     val isFliner: Boolean,
     @SerializedName("nickname")
