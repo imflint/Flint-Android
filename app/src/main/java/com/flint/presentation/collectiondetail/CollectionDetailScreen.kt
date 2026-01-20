@@ -70,6 +70,7 @@ import com.flint.domain.model.content.ContentModel
 import com.flint.domain.model.content.ContentModelNew
 import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
+import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import com.flint.presentation.toast.ShowSaveToast
 import com.flint.presentation.toast.ShowToast
@@ -143,13 +144,13 @@ fun CollectionDetailRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.event.collect { event: CollectionDetailEvent ->
+        viewModel.sideEffect.collect { event: CollectionDetailSideEffect ->
             when (event) {
-                CollectionDetailEvent.ToggleCollectionBookmarkFailure -> {
+                CollectionDetailSideEffect.ToggleCollectionBookmarkFailure -> {
                     // TODO: 컬렉션 저장 실패 다이얼로그 띄우기
                 }
 
-                is CollectionDetailEvent.ToggleCollectionBookmarkSuccess -> {
+                is CollectionDetailSideEffect.ToggleCollectionBookmarkSuccess -> {
                     if (event.isBookmarked) {
                         showSaveToast = true
                         showCancelToast = false

@@ -10,6 +10,7 @@ import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.CollectionRepository
+import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,8 +38,8 @@ class CollectionDetailViewModel @Inject constructor(
         MutableStateFlow(UiState.Loading)
     val uiState: StateFlow<UiState<CollectionDetailUiState>> = _uiState.asStateFlow()
 
-    private val _event: MutableSharedFlow<CollectionDetailEvent> = MutableSharedFlow()
-    val event: SharedFlow<CollectionDetailEvent> = _event.asSharedFlow()
+    private val _sideEffect: MutableSharedFlow<CollectionDetailSideEffect> = MutableSharedFlow()
+    val sideEffect: SharedFlow<CollectionDetailSideEffect> = _sideEffect.asSharedFlow()
 
     fun toggleCollectionBookmark() {
         val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
@@ -58,12 +59,12 @@ class CollectionDetailViewModel @Inject constructor(
                         )
                     }
 
-                    _event.emit(
-                        CollectionDetailEvent.ToggleCollectionBookmarkSuccess(isBookmarked)
+                    _sideEffect.emit(
+                        CollectionDetailSideEffect.ToggleCollectionBookmarkSuccess(isBookmarked)
                     )
                 }
                 .onFailure {
-                    _event.emit(CollectionDetailEvent.ToggleCollectionBookmarkFailure)
+                    _sideEffect.emit(CollectionDetailSideEffect.ToggleCollectionBookmarkFailure)
                 }
         }
     }
