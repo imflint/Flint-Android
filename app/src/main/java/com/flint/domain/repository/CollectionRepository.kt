@@ -1,13 +1,13 @@
 package com.flint.domain.repository
 
-import com.flint.core.common.datastore.PreferencesManager
 import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.CollectionApi
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
+import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.collection.toModel
-import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
+import com.flint.domain.model.collection.CollectionListModel
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -30,6 +30,6 @@ class CollectionRepository @Inject constructor(
         }
 
     // 최근 본 컬렉션 목록 조회
-    suspend fun getRecentCollectionList() : Result<CollectionListModel> =
+    suspend fun getRecentCollectionList(): Result<CollectionListModel> =
         suspendRunCatching { apiService.getRecentCollectionList().data.toModel() }
 }
