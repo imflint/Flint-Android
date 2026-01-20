@@ -38,12 +38,13 @@ import com.flint.R
 import com.flint.core.designsystem.component.bottomsheet.FlintBasicBottomSheet
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.user.AuthorModel
+import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.type.UserRoleType
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun PeopleBottomSheet(
-    people: List<AuthorModel>,
+    people: ImmutableList<CollectionBookmarkUsersModel.User>,
     onAuthorClick: (userId: String) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -86,7 +87,7 @@ fun PeopleBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                items(people) { author: AuthorModel ->
+                items(people) { author: CollectionBookmarkUsersModel.User ->
                     Author(
                         author = author,
                         onClick = onAuthorClick,
@@ -107,7 +108,7 @@ fun PeopleBottomSheet(
 
 @Composable
 private fun Author(
-    author: AuthorModel,
+    author: CollectionBookmarkUsersModel.User,
     onClick: (userId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -119,14 +120,14 @@ private fun Author(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ProfileImage(
-            imageUrl = author.profileUrl,
+            imageUrl = author.profileImageUrl,
             modifier = Modifier.size(44.dp),
         )
 
         Spacer(Modifier.width(12.dp))
 
         Text(
-            text = author.nickname,
+            text = author.nickName,
             color = FlintTheme.colors.white,
             style = FlintTheme.typography.body1Sb16,
         )
@@ -145,7 +146,7 @@ private fun Author(
 @Preview
 @Composable
 private fun PeopleBottomSheetPreview(
-    @PreviewParameter(PeopleBottomSheetPreviewParameterProvider::class) people: List<AuthorModel>,
+    @PreviewParameter(PeopleBottomSheetPreviewParameterProvider::class) people: ImmutableList<CollectionBookmarkUsersModel.User>,
 ) {
     var showBottomSheet by remember { mutableStateOf(true) }
     FlintTheme {
@@ -162,7 +163,7 @@ private fun PeopleBottomSheetPreview(
 @Preview
 @Composable
 private fun AuthorPreview(
-    @PreviewParameter(AuthorPreviewParameterProvider::class) author: AuthorModel,
+    @PreviewParameter(AuthorPreviewParameterProvider::class) author: CollectionBookmarkUsersModel.User,
 ) {
     FlintTheme {
         Author(
@@ -172,36 +173,38 @@ private fun AuthorPreview(
     }
 }
 
-private class PeopleBottomSheetPreviewParameterProvider : PreviewParameterProvider<List<AuthorModel>> {
-    override val values: Sequence<List<AuthorModel>> =
+private class PeopleBottomSheetPreviewParameterProvider :
+    PreviewParameterProvider<List<CollectionBookmarkUsersModel.User>> {
+    override val values: Sequence<List<CollectionBookmarkUsersModel.User>> =
         sequenceOf(
             sampleAuthors,
             List(4) { sampleAuthors }.flatten(),
         )
 }
 
-private class AuthorPreviewParameterProvider : PreviewParameterProvider<AuthorModel> {
-    override val values: Sequence<AuthorModel> = sampleAuthors.asSequence()
+private class AuthorPreviewParameterProvider :
+    PreviewParameterProvider<CollectionBookmarkUsersModel.User> {
+    override val values: Sequence<CollectionBookmarkUsersModel.User> = sampleAuthors.asSequence()
 }
 
-private val sampleAuthors: List<AuthorModel> =
+private val sampleAuthors: List<CollectionBookmarkUsersModel.User> =
     listOf(
-        AuthorModel(
+        CollectionBookmarkUsersModel.User(
             userId = "0",
-            nickname = "관리자",
-            profileUrl = "",
+            nickName = "관리자",
+            profileImageUrl = "",
             userRole = UserRoleType.ADMIN,
         ),
-        AuthorModel(
+        CollectionBookmarkUsersModel.User(
             userId = "0",
-            nickname = "플리너",
-            profileUrl = "",
+            nickName = "플리너",
+            profileImageUrl = "",
             userRole = UserRoleType.FLINER,
         ),
-        AuthorModel(
+        CollectionBookmarkUsersModel.User(
             userId = "0",
-            nickname = "플링",
-            profileUrl = "",
+            nickName = "플링",
+            profileImageUrl = "",
             userRole = UserRoleType.FLING,
         ),
     )
