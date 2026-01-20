@@ -17,6 +17,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToCollectionList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
+    navigateToExplore: () -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
@@ -24,6 +25,7 @@ fun NavGraphBuilder.homeNavGraph(
             navigateToCollectionList = navigateToCollectionList,
             navigateToCollectionDetail = navigateToCollectionDetail,
             navigateToCollectionCreate = navigateToCollectionCreate,
+            navigateToExplore = navigateToExplore
         )
     }
 }

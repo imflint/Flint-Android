@@ -35,6 +35,7 @@ fun HomeRoute(
     navigateToCollectionList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
+    navigateToExplore: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
@@ -60,6 +61,7 @@ fun HomeRoute(
                 },
                 navigateToExplore = {
                     // TODO navigate to explore
+                    navigateToExplore()
                 },
                 onRecentCollectionItemClick = { collectionId ->
                     navigateToCollectionDetail(collectionId)

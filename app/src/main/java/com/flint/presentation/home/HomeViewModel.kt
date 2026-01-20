@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
     fun getRecentCollectionList() = viewModelScope.launch {
         collectionRepository.getRecentCollectionList()
             .onSuccess {
-                _recentCollectionListLoadState.emit(UiState.Success(it))
+                _recentCollectionListLoadState.emit(UiState.Success(CollectionListModel()))
             }
             .onFailure {
                 Log.d("Logd", it.message.toString())
