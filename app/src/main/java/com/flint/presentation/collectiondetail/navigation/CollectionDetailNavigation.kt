@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.flint.core.navigation.Route
 import com.flint.presentation.collectiondetail.CollectionDetailRoute
 
@@ -19,13 +18,13 @@ fun NavController.navigateToCollectionDetail(
 fun NavGraphBuilder.collectionDetailNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
+    navigateUp: () -> Unit,
 ) {
     composable<Route.CollectionDetail> {
-        val collectionDetail = it.toRoute<Route.CollectionDetail>()
         CollectionDetailRoute(
             paddingValues = paddingValues,
-            collectionId = collectionDetail.collectionId,
             navigateToCollectionList = navigateToCollectionList,
+            navigateUp = navigateUp,
         )
     }
 }

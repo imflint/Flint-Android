@@ -3,6 +3,18 @@ package com.flint.domain.model.content
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.persistentListOf
 
+data class ContentModelNew(
+    val director: String,
+    val bookmarkCount: Int,
+    val id: String,
+    val isBookmarked: Boolean,
+    val isSpoiler: Boolean,
+    val reason: String,
+    val imageUrl: String,
+    val title: String,
+    val year: Int,
+)
+
 data class ContentModel(
     val contentId: String = "",
     val title: String = "",
