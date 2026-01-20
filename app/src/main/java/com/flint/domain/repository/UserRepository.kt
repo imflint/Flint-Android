@@ -10,14 +10,16 @@ import javax.inject.Inject
 class UserRepository @Inject constructor(
     private val apiService: UserApi,
 ) {
-    suspend fun getUserProfile(userId: String): Result<UserProfileResponseModel> =
+    private val myTempUserId = "801159854933808613" //TODO: 토큰 userId
+
+    suspend fun getUserProfile(userId: String?): Result<UserProfileResponseModel> =
         suspendRunCatching {
-            apiService.getUserProfile(userId).data.toModel()
+            apiService.getUserProfile(userId ?: myTempUserId).data.toModel()
         }
 
-    suspend fun getUserKeywords(userId: String): Result<List<UserKeywordResponseModel>> =
+    suspend fun getUserKeywords(userId: String?): Result<List<UserKeywordResponseModel>> =
         suspendRunCatching {
-            apiService.getUserKeywords(userId).data.keywords.map {
+            apiService.getUserKeywords(userId ?: myTempUserId).data.keywords.map {
                 it.toModel()
             }
         }

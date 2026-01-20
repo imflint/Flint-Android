@@ -2,16 +2,19 @@ package com.flint.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.extension.updateSuccess
 import com.flint.core.common.util.UiState
+import com.flint.core.common.util.suspendRunCatching
+import com.flint.domain.model.collection.CollectionModel
+import com.flint.domain.model.content.ContentModel
 import com.flint.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,53 +22,32 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<ProfileUiState>>(
-        UiState.Success(ProfileUiState.Fake)
+        UiState.Empty
     )
     val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
 
-    private val tempUserId = "801159854933808613"
-
-    init {
-        loadInitialData()
-    }
-
-    fun loadInitialData() {
+    fun getProfile() {
         viewModelScope.launch {
-            getProfile()
-        }
-    }
+            suspendRunCatching {
+                val profileDeferred = async { userRepository.getUserProfile(userId = null) }
+                val keywordsDeferred = async { userRepository.getUserKeywords(userId = null) }
 
-    private fun getProfile() {
-        viewModelScope.launch {
-            userRepository.getUserProfile(userId = tempUserId)
-                .onSuccess { myInfo ->
-                    Timber.d("getProfile success: $myInfo")
-                    _uiState.updateSuccess {
-                        it.copy(
-                            profile = myInfo
-                        )
-                    }
-                }
-                .onFailure {
-                    Timber.d("getProfile failure: $it")
-                }
-        }
-    }
+                val profileResult = profileDeferred.await()
+                val keywordsResult = keywordsDeferred.await()
 
-    fun refreshProfileKeyword() {
-        viewModelScope.launch {
-            userRepository.getUserKeywords(userId = tempUserId).fold(
-                onFailure = {
-                    _uiState.emit(UiState.Failure)
-                },
-                onSuccess = { result ->
-                    _uiState.updateSuccess {
-                        it.copy(
-                            keywords = result.toImmutableList(),
-                        )
-                    }
-                },
-            )
+                Pair(profileResult.getOrThrow(), keywordsResult.getOrThrow())
+
+                ProfileUiState(
+                    profile = profileResult.getOrThrow(),
+                    keywords = keywordsResult.getOrThrow().toImmutableList(),
+                    //TODO: 임시
+                    savedContent = ContentModel.FakeList,
+                    createCollections = CollectionModel.FakeList,
+                    savedCollections = CollectionModel.FakeList,
+                )
+            }.onSuccess { combinedState ->
+                _uiState.update { UiState.Success(combinedState) }
+            }
         }
     }
 }

@@ -58,38 +58,44 @@ fun ProfileKeywordSection(
                     color = FlintTheme.colors.gray100,
                 )
             }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier =
-                    Modifier
-                        .noRippleClickable(
-                            onClick = onRefreshClick,
-                        ),
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_refresh),
-                    contentDescription = null,
-                    tint = FlintTheme.colors.secondary400,
-                )
-                Text(
-                    text = "업데이트",
-                    style = FlintTheme.typography.micro1M10,
-                    color = FlintTheme.colors.gray100,
-                )
-            }
         }
         Spacer(Modifier.height(32.dp))
         KeywordChipsGridLayout(
             keywordList = keywordList,
             modifier = Modifier.fillMaxWidth(),
         )
-        Spacer(Modifier.height(32.dp))
     }
 }
 
 @Composable
-fun KeywordChipsGridLayout(
+private fun ProfileRefreshButton(
+    onRefreshClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier =
+            modifier
+                .noRippleClickable(
+                    onClick = onRefreshClick,
+                ),
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_refresh),
+            contentDescription = null,
+            tint = FlintTheme.colors.secondary400,
+        )
+        Text(
+            text = "업데이트",
+            style = FlintTheme.typography.micro1M10,
+            color = FlintTheme.colors.gray100,
+        )
+    }
+}
+
+@Composable
+private fun KeywordChipsGridLayout(
     keywordList: ImmutableList<UserKeywordResponseModel>,
     modifier: Modifier = Modifier,
 ) {
@@ -128,7 +134,7 @@ fun KeywordChipsGridLayout(
 }
 
 @Composable
-fun KeywordGraphLayout(
+private fun KeywordGraphLayout(
     keywordList: ImmutableList<UserKeywordResponseModel>,
     modifier: Modifier = Modifier,
 ) {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +22,6 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
-import com.flint.domain.type.UserRoleType
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 
@@ -35,6 +35,10 @@ fun ProfileRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.getProfile()
+    }
+
     when (val state = uiState) {
         is UiState.Loading -> {
             FlintLoadingIndicator()
@@ -44,7 +48,6 @@ fun ProfileRoute(
             ProfileScreen(
                 modifier = Modifier.padding(paddingValues),
                 uiState = state.data,
-                onRefreshClick = viewModel::refreshProfileKeyword,
                 onCollectionItemClick = navigateToCollectionDetail,
                 onCollectionMoreClick = navigateToCollectionList,
             )

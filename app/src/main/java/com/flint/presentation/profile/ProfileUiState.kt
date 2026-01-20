@@ -12,9 +12,9 @@ import kotlinx.collections.immutable.persistentListOf
 data class ProfileUiState(
     val keywords: ImmutableList<UserKeywordResponseModel>,
     val profile: UserProfileResponseModel,
-    val savedContent: ImmutableList<ContentModel>,
-    val createCollections: ImmutableList<CollectionModel>,
-    val savedCollections: ImmutableList<CollectionModel>,
+    val savedContent: ImmutableList<ContentModel> = persistentListOf(),
+    val createCollections: ImmutableList<CollectionModel> = persistentListOf(),
+    val savedCollections: ImmutableList<CollectionModel> = persistentListOf(),
 ) {
     companion object {
         val Empty =
