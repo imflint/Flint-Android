@@ -85,7 +85,6 @@ class CollectionDetailViewModel @Inject constructor(
             }.onSuccess { newUiState: UiState.Success<CollectionDetailUiState> ->
                 _uiState.update { newUiState }
             }.onFailure {
-                throw it
                 // TODO: 데이터 불러오지 못한 경우, 다이얼로그 띄우도록 구현
             }
         }
