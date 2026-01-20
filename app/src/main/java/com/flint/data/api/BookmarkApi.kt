@@ -8,7 +8,7 @@ import retrofit2.http.Path
 
 interface BookmarkApi {
     // 컬렉션 북마크 유저 조회
-    @GET("/api/v1/bookmarks/{collectionId}")
+    @GET("api/v1/bookmarks/{collectionId}")
     suspend fun getCollectionBookmarkUsers(
         @Path("collectionId") collectionId: String,
     ): BaseResponse<CollectionBookmarkUsersDto>
