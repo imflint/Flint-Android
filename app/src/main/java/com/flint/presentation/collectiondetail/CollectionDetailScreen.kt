@@ -101,7 +101,7 @@ fun CollectionDetailRoute(
                 paddingValues = paddingValues,
                 title = collectionDetail.title,
                 authorId = collectionDetail.author.id,
-                userId = collectionDetail.id,
+                userId = collectionDetail.userId,
                 isBookmarked = collectionDetail.isBookmarked,
                 authorNickname = collectionDetail.author.nickname,
                 authorUserRoleType = collectionDetail.author.userRole,
