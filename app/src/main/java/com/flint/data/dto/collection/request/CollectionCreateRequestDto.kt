@@ -4,15 +4,25 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CollectionCreateRequestDto (
+data class CollectionCreateRequestDto(
     @SerialName("imageUrl")
-    val imageUrl:String,
+    val imageUrl: String,
     @SerialName("title")
     val title: String,
     @SerialName("description")
     val description: String,
     @SerialName("isPublic")
     val isPublic: Boolean,
-    @SerialName("contentIds")
-    val contentIds: List<Long>,
-)
+    @SerialName("contentList")
+    val contentList: List<Content>,
+) {
+    @Serializable
+    data class Content(
+        @SerialName("contentId")
+        val contentId: Int,
+        @SerialName("isSpoiler")
+        val isSpoiler: Boolean,
+        @SerialName("reason")
+        val reason: String,
+    )
+}

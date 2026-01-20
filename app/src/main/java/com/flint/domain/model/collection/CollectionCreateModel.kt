@@ -5,5 +5,11 @@ data class CollectionCreateRequestModel(
     val title: String,
     val description: String,
     val isPublic: Boolean,
-    val contentIds: List<Long>
+    val contentList: List<CollectionCreateContentModel>,
+)
+
+data class CollectionCreateContentModel(
+    val contentId: Int,
+    val isSpoiler: Boolean,
+    val reason: String,
 )

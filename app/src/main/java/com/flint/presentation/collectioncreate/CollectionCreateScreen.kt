@@ -66,7 +66,8 @@ fun CollectionCreateRoute(
         contentList = contentList.toImmutableList(),
         onRemoveContent = { contentList.remove(it) },
         onBackClick = {},
-        onCompleteClick = navigateToAddContent,
+        onAddContentClick = navigateToAddContent,
+        onFinishClick = viewModel::onClickFinish,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -80,7 +81,9 @@ fun CollectionCreateScreen(
     contentList: ImmutableList<CollectionContentUiModel>,
     onRemoveContent: (CollectionContentUiModel) -> Unit,
     onBackClick: () -> Unit,
-    onCompleteClick: () -> Unit,
+    onAddContentClick: () -> Unit,
+    onFinishClick: () -> Unit,
+
     modifier: Modifier = Modifier,
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
@@ -257,7 +260,7 @@ fun CollectionCreateScreen(
                         text = "작품 추가하기",
                         iconRes = R.drawable.ic_plus,
                         state = FlintButtonState.ColorOutline,
-                        onClick = onCompleteClick,
+                        onClick = onAddContentClick,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -270,16 +273,16 @@ fun CollectionCreateScreen(
         }
         FlintLargeButton(
             text = "완료",
-            state = FlintButtonState.Disable,
-            onClick = {isModalVisible = true},
+            state = if (uistate.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
+            onClick = {
+                onFinishClick()
+                isModalVisible = true
+                      },
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-            enabled = when(uistate.isFinishButtonEnabled){
-                true -> true
-                false -> false
-            },
+            enabled = uistate.isFinishButtonEnabled,
         )
     }
 
@@ -311,7 +314,8 @@ fun CollectionCreateScreenPreview() {
             contentList = CollectionContentUiModel.dummyContentList,
             onRemoveContent = {},
             onBackClick = {},
-            onCompleteClick = {},
+            onAddContentClick = {},
+            onFinishClick = {},
         )
     }
 }
