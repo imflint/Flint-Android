@@ -4,12 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.flint.core.common.extension.updateSuccess
 import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
-import com.flint.domain.model.collection.CollectionDetailModel
+import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
+import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.CollectionRepository
+import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,9 +44,19 @@ class CollectionDetailViewModel @Inject constructor(
         val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
 
         viewModelScope.launch {
-            bookmarkRepository.toggleCollectionBookmark(uiState.collectionId)
+            bookmarkRepository.toggleCollectionBookmark(uiState.collectionDetail.id)
                 .onSuccess { isBookmarked: Boolean ->
-                    _uiState.updateSuccess { it.copy(isBookmarked = isBookmarked) }
+                    _uiState.update { uiState: UiState<CollectionDetailUiState> ->
+                        if (uiState !is UiState.Success) return@update uiState
+
+                        uiState.copy(
+                            data = uiState.data.copy(
+                                collectionDetail = uiState.data.collectionDetail.copy(
+                                    isBookmarked = isBookmarked
+                                )
+                            )
+                        )
+                    }
 
                     _event.emit(
                         CollectionDetailEvent.ToggleCollectionBookmarkSuccess(isBookmarked)
@@ -59,17 +70,22 @@ class CollectionDetailViewModel @Inject constructor(
 
     private fun getCollectionDetail(collectionId: String) {
         viewModelScope.launch {
-            collectionRepository.getCollectionDetail(collectionId)
-                .onSuccess { collectionDetailModel: CollectionDetailModel ->
-                    _uiState.update {
-                        UiState.Success(
-                            CollectionDetailUiState(
-                                collectionId = collectionDetailModel.collectionId,
-                                isBookmarked = collectionDetailModel.isBookmarked,
-                            )
-                        )
-                    }
-                }.onFailure {
+            runCatching {
+                val collectionDetail: CollectionDetailModelNew =
+                    collectionRepository.getCollectionDetail(collectionId).getOrThrow()
+                val collectionBookmarkUsers: CollectionBookmarkUsersModel =
+                    bookmarkRepository.getCollectionBookmarkUsers(collectionId).getOrThrow()
+
+                UiState.Success(
+                    CollectionDetailUiState(
+                        collectionDetail = collectionDetail,
+                        collectionBookmarkUsers = collectionBookmarkUsers
+                    )
+                )
+            }.onSuccess { newUiState: UiState.Success<CollectionDetailUiState> ->
+                _uiState.update { newUiState }
+            }.onFailure {
+                throw it
                 // TODO: 데이터 불러오지 못한 경우, 다이얼로그 띄우도록 구현
             }
         }

@@ -64,10 +64,14 @@ import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.progressbar.UnderImageProgressBar
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
+import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModel
+import com.flint.domain.model.content.ContentModelNew
 import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
+import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import com.flint.presentation.toast.ShowSaveToast
 import com.flint.presentation.toast.ShowToast
 import kotlinx.collections.immutable.ImmutableList
@@ -77,6 +81,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun CollectionDetailRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
+    navigateUp: () -> Unit,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
     val uiState: UiState<CollectionDetailUiState> by viewModel.uiState.collectAsStateWithLifecycle()
@@ -89,20 +94,25 @@ fun CollectionDetailRoute(
         }
 
         is UiState.Success<CollectionDetailUiState> -> {
+            val collectionDetail: CollectionDetailModelNew = uiState.data.collectionDetail
+            val collectionBookmarkUsers: ImmutableList<CollectionBookmarkUsersModel.User> =
+                uiState.data.collectionBookmarkUsers.userList
+
             CollectionDetailScreen(
                 paddingValues = paddingValues,
-                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = 2L,
-                userId = 1L,
-                isBookmarked = uiState.data.isBookmarked,
-                authorNickname = "키카",
-                authorUserRoleType = UserRoleType.FLINER,
-                createdAt = "2026. 01. 07.",
-                collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
-                contents = ContentModel.FakeList,
-                people = persistentListOf(),
+                title = collectionDetail.title,
+                authorId = collectionDetail.author.id,
+                userId = collectionDetail.id,
+                isBookmarked = collectionDetail.isBookmarked,
+                authorNickname = collectionDetail.author.nickname,
+                authorUserRoleType = collectionDetail.author.userRole,
+                createdAt = collectionDetail.createdAt,
+                description = collectionDetail.description,
+                contents = collectionDetail.contents,
+                people = collectionBookmarkUsers,
                 onSaveDoneButtonClick = viewModel::toggleCollectionBookmark,
-                onSaveNoneButtonClick = viewModel::toggleCollectionBookmark
+                onSaveNoneButtonClick = viewModel::toggleCollectionBookmark,
+                navigateUp = navigateUp
             )
         }
 
@@ -157,17 +167,18 @@ fun CollectionDetailRoute(
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
     title: String,
-    authorId: Long,
-    userId: Long,
+    authorId: String,
+    userId: String,
     isBookmarked: Boolean,
     authorNickname: String,
     authorUserRoleType: UserRoleType,
     createdAt: String,
-    collectionContent: String,
-    contents: ImmutableList<ContentModel>,
-    people: ImmutableList<AuthorModel>,
+    description: String,
+    contents: ImmutableList<ContentModelNew>,
+    people: ImmutableList<CollectionBookmarkUsersModel.User>,
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
+    navigateUp: () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -201,7 +212,7 @@ fun CollectionDetailScreen(
                     .background(color = FlintTheme.colors.background),
         ) {
             FlintBackTopAppbar(
-                onClick = { },
+                onClick = navigateUp,
                 backgroundColor = Color.Transparent,
             )
 
@@ -238,7 +249,7 @@ fun CollectionDetailScreen(
                         authorNickname = authorNickname,
                         authorUserRoleType = authorUserRoleType,
                         createdAt = createdAt,
-                        collectionContent = collectionContent,
+                        collectionContent = description,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -247,7 +258,7 @@ fun CollectionDetailScreen(
 
                     Spacer(Modifier.height(48.dp))
 
-                    contents.forEach { content: ContentModel ->
+                    contents.forEach { content: ContentModelNew ->
                         Content(
                             content = content,
                             onBookmarkIconClick = { contentId: String ->
@@ -278,7 +289,7 @@ fun CollectionDetailScreen(
 
 @Composable
 private fun PeopleWhoSavedThisCollection(
-    people: ImmutableList<AuthorModel>,
+    people: ImmutableList<CollectionBookmarkUsersModel.User>,
     onMoreClick: () -> Unit,
 ) {
     Column(
@@ -316,14 +327,14 @@ private fun PeopleWhoSavedThisCollection(
             Row(
                 horizontalArrangement = Arrangement.spacedBy((-12).dp),
             ) {
-                people.take(5).forEach { author: AuthorModel ->
+                people.take(5).forEach { author: CollectionBookmarkUsersModel.User ->
                     ProfileImage(
-                        imageUrl = author.profileUrl,
+                        imageUrl = author.profileImageUrl,
                         modifier =
                             Modifier
                                 .size(56.dp)
                                 .border(3.dp, FlintTheme.colors.background, CircleShape),
-                        contentDescription = author.nickname,
+                        contentDescription = author.nickName,
                     )
                 }
             }
@@ -442,7 +453,7 @@ private class PeoplePreviewProvider : PreviewParameterProvider<ImmutableList<Aut
 @Preview
 @Composable
 private fun PeopleWhoSavedThisCollectionPreview(
-    @PreviewParameter(PeoplePreviewProvider::class) people: ImmutableList<AuthorModel>,
+    @PreviewParameter(PeoplePreviewProvider::class) people: ImmutableList<CollectionBookmarkUsersModel.User>,
 ) {
     FlintTheme {
         PeopleWhoSavedThisCollection(
@@ -455,8 +466,8 @@ private fun PeopleWhoSavedThisCollectionPreview(
 @Composable
 private fun Thumbnail(
     title: String,
-    authorId: Long,
-    userId: Long,
+    authorId: String,
+    userId: String,
     isBookmarked: Boolean,
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
@@ -571,12 +582,12 @@ private fun CollectionDetailDescription(
 
 @Composable
 private fun Content(
-    content: ContentModel,
+    content: ContentModelNew,
     onBookmarkIconClick: (contentId: String) -> Unit,
 ) {
     Column {
         NetworkImage(
-            imageUrl = content.posterImage,
+            imageUrl = content.imageUrl,
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -620,7 +631,7 @@ private fun Content(
 
                 Row(
                     modifier =
-                        Modifier.noRippleClickable(onClick = { onBookmarkIconClick(content.contentId) }),
+                        Modifier.noRippleClickable(onClick = { onBookmarkIconClick(content.id) }),
                 ) {
                     Column(
                         modifier =
@@ -673,7 +684,7 @@ private fun Content(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = content.description,
+                        text = content.reason,
                         color = FlintTheme.colors.gray100,
                         style = FlintTheme.typography.body1R16,
                         modifier =
@@ -684,7 +695,7 @@ private fun Content(
                 }
             } else {
                 Text(
-                    text = content.description,
+                    text = content.reason,
                     color = FlintTheme.colors.gray100,
                     style = FlintTheme.typography.body1R16,
                     modifier =
@@ -701,8 +712,8 @@ private fun Content(
 
 private data class HeaderPreviewData(
     val title: String,
-    val authorId: Long,
-    val userId: Long,
+    val authorId: String,
+    val userId: String,
     val isBookmarked: Boolean,
 )
 
@@ -711,20 +722,20 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
         sequenceOf(
             HeaderPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = 0L,
-                userId = 1L,
+                authorId = "0",
+                userId = "1",
                 isBookmarked = true,
             ),
             HeaderPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = 0L,
-                userId = 1L,
+                authorId = "0",
+                userId = "1",
                 isBookmarked = false,
             ),
             HeaderPreviewData(
                 title = "내가 만든 컬렉션",
-                authorId = 1L,
-                userId = 1L,
+                authorId = "1",
+                userId = "1",
                 isBookmarked = false,
             ),
         )
@@ -836,7 +847,7 @@ private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
 @Preview
 @Composable
 private fun ContentPreview(
-    @PreviewParameter(ContentPreviewProvider::class) content: ContentModel,
+    @PreviewParameter(ContentPreviewProvider::class) content: ContentModelNew,
 ) {
     FlintTheme {
         Content(
@@ -848,45 +859,47 @@ private fun ContentPreview(
 
 private data class ScreenPreviewData(
     val title: String,
-    val authorId: Long,
-    val userId: Long,
+    val authorId: String,
+    val userId: String,
     val isBookmarked: Boolean,
     val authorNickname: String,
     val authorUserRoleType: UserRoleType,
-    val contents: ImmutableList<ContentModel>,
-    val people: ImmutableList<AuthorModel>,
+    val contents: ImmutableList<ContentModelNew>,
+    val people: ImmutableList<CollectionBookmarkUsersModel.User>,
 )
 
 private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData> {
     private val sampleContent =
-        ContentModel(
-            contentId = "0",
+        ContentModelNew(
+            id = "0",
             title = "드라마 제목",
             year = 2000,
-            posterImage = "",
-            ottSimpleList = listOf(OttType.Netflix, OttType.Disney),
+            imageUrl = "",
             director = "감독 이름",
-            description = "달라진 온도\n-\n같은 구도에 채도를 달리해 변해버린 사랑을 시각적으로 담아낸 장면들",
+            reason = "달라진 온도\n-\n같은 구도에 채도를 달리해 변해버린 사랑을 시각적으로 담아낸 장면들",
+            isBookmarked = true,
+            isSpoiler = false,
+            bookmarkCount = 9
         )
 
     private val samplePeople =
         persistentListOf(
-            AuthorModel(
+            CollectionBookmarkUsersModel.User(
                 userId = "1",
-                nickname = "유저1",
-                profileUrl = "",
+                nickName = "유저1",
+                profileImageUrl = "",
                 userRole = UserRoleType.FLING,
             ),
-            AuthorModel(
+            CollectionBookmarkUsersModel.User(
                 userId = "2",
-                nickname = "유저2",
-                profileUrl = "",
+                nickName = "유저2",
+                profileImageUrl = "",
                 userRole = UserRoleType.FLINER,
             ),
-            AuthorModel(
+            CollectionBookmarkUsersModel.User(
                 userId = "3",
-                nickname = "유저3",
-                profileUrl = "",
+                nickName = "유저3",
+                profileImageUrl = "",
                 userRole = UserRoleType.FLING,
             ),
         )
@@ -895,8 +908,8 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
         sequenceOf(
             ScreenPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = 0L,
-                userId = 1L,
+                authorId = "0",
+                userId = "1",
                 isBookmarked = true,
                 authorNickname = "키카",
                 authorUserRoleType = UserRoleType.FLINER,
@@ -905,8 +918,8 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
             ),
             ScreenPreviewData(
                 title = "새로운 컬렉션",
-                authorId = 0L,
-                userId = 1L,
+                authorId = "0",
+                userId = "1",
                 isBookmarked = false,
                 authorNickname = "일반유저",
                 authorUserRoleType = UserRoleType.FLING,
@@ -915,8 +928,8 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
             ),
             ScreenPreviewData(
                 title = "내가 만든 컬렉션",
-                authorId = 1L,
-                userId = 1L,
+                authorId = "1",
+                userId = "1",
                 isBookmarked = false,
                 authorNickname = "나",
                 authorUserRoleType = UserRoleType.FLING,
@@ -942,11 +955,12 @@ private fun CollectionDetailScreenPreview(
                 authorNickname = data.authorNickname,
                 authorUserRoleType = data.authorUserRoleType,
                 createdAt = "2026. 01. 07.",
-                collectionContent = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
+                description = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
                 contents = data.contents,
                 people = data.people,
                 onSaveDoneButtonClick = {},
-                onSaveNoneButtonClick = {}
+                onSaveNoneButtonClick = {},
+                navigateUp = {}
             )
         }
     }

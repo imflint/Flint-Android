@@ -18,11 +18,13 @@ fun NavController.navigateToCollectionDetail(
 fun NavGraphBuilder.collectionDetailNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
+    navigateUp: () -> Unit,
 ) {
     composable<Route.CollectionDetail> {
         CollectionDetailRoute(
             paddingValues = paddingValues,
             navigateToCollectionList = navigateToCollectionList,
+            navigateUp = navigateUp,
         )
     }
 }

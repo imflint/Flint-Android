@@ -24,7 +24,7 @@ data class CollectionDetailResponseDto(
 
     @Serializable
     data class Content(
-        @SerialName("authorName") val authorName: String,
+        @SerialName("director") val director: String,
         @SerialName("bookmarkCount") val bookmarkCount: Int,
         @SerialName("id") val id: String,
         @SerialName("isBookmarked") val isBookmarked: Boolean,
@@ -32,5 +32,6 @@ data class CollectionDetailResponseDto(
         @SerialName("reason") val reason: String,
         @SerialName("imageUrl") val imageUrl: String,
         @SerialName("title") val title: String,
+        @SerialName("year") val year: Int,
     )
 }
