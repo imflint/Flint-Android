@@ -4,6 +4,8 @@ import com.flint.data.dto.collection.response.RecentCollectionItemResponseDto
 import com.flint.data.dto.collection.response.RecentCollectionListResponseDto
 import com.flint.data.dto.home.response.RecommendCollectionItemResponseDto
 import com.flint.data.dto.home.response.RecommendCollectionResponseDto
+import com.flint.data.dto.user.response.BookmarkedCollectionItemResponseDto
+import com.flint.data.dto.user.response.BookmarkedCollectionListResponseDto
 import com.flint.data.dto.user.response.CreatedCollectionItemResponseDto
 import com.flint.data.dto.user.response.CreatedCollectionListResponseDto
 import com.flint.domain.model.collection.CollectionItemModel
@@ -58,7 +60,28 @@ fun CreatedCollectionListResponseDto.toModel() : CollectionListModel {
     )
 }
 
-private fun CreatedCollectionItemResponseDto.toModel() : CollectionItemModel {
+private fun CreatedCollectionItemResponseDto.toModel(): CollectionItemModel {
+    return CollectionItemModel(
+        id = id,
+        thumbnailUrl = thumbnailUrl,
+        title = title,
+        description = description,
+        imageList = imageList,
+        bookmarkCount = bookmarkCount,
+        isBookmarked = isBookmarked,
+        userId = userId,
+        nickname = nickname,
+        profileUrl = profileUrl
+    )
+}
+
+fun BookmarkedCollectionListResponseDto.toModel(): CollectionListModel {
+    return CollectionListModel(
+        collections = collections.map { it.toModel() }.toImmutableList()
+    )
+}
+
+private fun BookmarkedCollectionItemResponseDto.toModel(): CollectionItemModel {
     return CollectionItemModel(
         id = id,
         thumbnailUrl = thumbnailUrl,

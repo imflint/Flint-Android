@@ -115,16 +115,18 @@ private fun ProfileScreen(
         }
 
         item {
-            Spacer(Modifier.height(48.dp))
+            if (uiState.savedCollections.collections.isNotEmpty()) {
+                Spacer(Modifier.height(48.dp))
 
-            CollectionSection(
-                title = "저장한 컬렉션",
-                description = "${userName}님이 저장한 컬렉션이에요",
-                onItemClick = onCollectionItemClick,
-                isAllVisible = true,
-                onAllClick = onCollectionMoreClick,
-                collectionListModel = uiState.savedCollections,
-            )
+                CollectionSection(
+                    title = "저장한 컬렉션",
+                    description = "${userName}님이 저장한 컬렉션이에요",
+                    onItemClick = onCollectionItemClick,
+                    isAllVisible = true,
+                    onAllClick = onCollectionMoreClick,
+                    collectionListModel = uiState.savedCollections,
+                )
+            }
         }
 
         item {

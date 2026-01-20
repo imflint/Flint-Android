@@ -24,8 +24,13 @@ class UserRepository @Inject constructor(
             apiService.getUserKeywords(userId ?: myTempUserId).data.toModel()
         }
 
-    suspend fun getUserCreatedCollections(userId: String?) : Result<CollectionListModel> =
+    suspend fun getUserCreatedCollections(userId: String?): Result<CollectionListModel> =
         suspendRunCatching {
             apiService.getUserCreatedCollections(userId ?: myTempUserId).data.toModel()
+        }
+
+    suspend fun getUserBookmarkedCollections(userId: String?): Result<CollectionListModel> =
+        suspendRunCatching {
+            apiService.getUserBookmarkedCollections(userId ?: myTempUserId).data.toModel()
         }
 }

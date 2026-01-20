@@ -49,9 +49,13 @@ class ProfileViewModel @Inject constructor(
                 val createdCollectionsDeferred = async {
                     userRepository.getUserCreatedCollections(userId = null).getOrThrow()
                 }
+                val bookmarkedCollectionsDeferred = async {
+                    userRepository.getUserBookmarkedCollections(userId = null).getOrThrow()
+                }
 
                 currentState.copy(
                     createCollections = createdCollectionsDeferred.await(),
+                    savedCollections = bookmarkedCollectionsDeferred.await(),
                 )
             }.onSuccess { updatedState ->
                 _uiState.update { UiState.Success(updatedState) }
