@@ -11,19 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.image.ProfileImage
@@ -33,31 +28,32 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun OnboardingProfileRoute(
+    viewModel: OnboardingViewModel,
     paddingValues: PaddingValues,
     navigateToOnboardingContent: () -> Unit,
     navigateUp: () -> Unit,
-    viewModel: OnboardingViewModel = hiltViewModel(),
-    ) {
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     OnboardingProfileScreen(
+        nickname = uiState.nickname,
+        isValid = uiState.isValid,
+        onNicknameChange = viewModel::updateNickname,
         onBackClick = navigateUp,
         onNextClick = navigateToOnboardingContent,
         modifier = Modifier.padding(paddingValues),
     )
 }
 
-private const val maxLength = 10
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingProfileScreen(
+    nickname: String,
+    isValid: Boolean,
+    onNicknameChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-    var nickname by remember { mutableStateOf("") }
-
     Column(
         modifier =
             modifier
@@ -105,11 +101,11 @@ fun OnboardingProfileScreen(
                             .fillMaxHeight(),
                     placeholder = "닉네임",
                     value = nickname,
-                    maxLength = maxLength,
-                    onValueChange = { nickname = it },
+                    maxLength = OnboardingProfileUiState.MAX_LENGTH,
+                    onValueChange = onNicknameChange,
                     trailingContent = {
                         Text(
-                            text = "${nickname.length}/$maxLength",
+                            text = "${nickname.length}/${OnboardingProfileUiState.MAX_LENGTH}",
                             style = FlintTheme.typography.body1R16,
                             color = FlintTheme.colors.gray300,
                         )
@@ -118,7 +114,7 @@ fun OnboardingProfileScreen(
 
                 FlintBasicButton(
                     text = "확인",
-                    state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
+                    state = if (isValid) FlintButtonState.Able else FlintButtonState.Disable,
                     onClick = onNextClick,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                     modifier = Modifier.fillMaxHeight(),
@@ -128,7 +124,7 @@ fun OnboardingProfileScreen(
 
         FlintBasicButton(
             text = "시작하기",
-            state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
+            state = if (isValid) FlintButtonState.Able else FlintButtonState.Disable,
             onClick = onNextClick,
             contentPadding = PaddingValues(12.dp),
             modifier =
@@ -144,6 +140,9 @@ fun OnboardingProfileScreen(
 private fun OnboardingProfileScreenPreview() {
     FlintTheme {
         OnboardingProfileScreen(
+            nickname = "안비",
+            isValid = true,
+            onNicknameChange = {},
             onBackClick = {},
             onNextClick = {},
         )
