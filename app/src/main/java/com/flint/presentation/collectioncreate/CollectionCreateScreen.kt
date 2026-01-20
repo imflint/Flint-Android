@@ -38,7 +38,6 @@ import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.textfield.FlintLongTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.presentation.collectioncreate.component.CollectionAddContentBottomSheet
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentDeleteModal
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentItemList
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
@@ -114,7 +113,9 @@ fun CollectionCreateScreen(
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.head3M18,
                     )
+
                     Spacer(Modifier.height(16.dp))
+
                     FlintLongTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uistate.title,
@@ -144,6 +145,7 @@ fun CollectionCreateScreen(
                     )
 
                     Spacer(Modifier.height(16.dp))
+
                     FlintLongTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uistate.description,
@@ -163,13 +165,19 @@ fun CollectionCreateScreen(
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.head3M18,
                     )
+
                     Spacer(Modifier.height(16.dp))
 
                     Row {
                         FlintIconButton(
                             text = "공개",
                             iconRes = R.drawable.ic_share,
-                            state = if ( uistate.isPublic == true ) { FlintButtonState.ColorOutline } else if ( uistate.isPublic == false ) { FlintButtonState.Disable } else { FlintButtonState.Outline },
+                            state = when(uistate.isPublic){
+                                true -> FlintButtonState.ColorOutline
+                                false -> FlintButtonState.Disable
+                                else -> FlintButtonState.Outline
+                            },
+
                             onClick = { onPublicChanged(true) },
                             modifier = Modifier.weight(1f),
                         )
@@ -179,7 +187,11 @@ fun CollectionCreateScreen(
                         FlintIconButton(
                             text = "비공개",
                             iconRes = R.drawable.ic_lock,
-                            state = if ( uistate.isPublic == false ) { FlintButtonState.ColorOutline } else if ( uistate.isPublic == true ) { FlintButtonState.Disable } else { FlintButtonState.Outline },
+                            state = when(uistate.isPublic){
+                                true -> FlintButtonState.Disable
+                                false -> FlintButtonState.ColorOutline
+                                else -> FlintButtonState.Outline
+                            },
                             onClick = { onPublicChanged(false) },
                             modifier = Modifier.weight(1f),
                         )

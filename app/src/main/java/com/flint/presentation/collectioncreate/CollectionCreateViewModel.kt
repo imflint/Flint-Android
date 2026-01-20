@@ -40,7 +40,6 @@ class CollectionCreateViewModel @Inject constructor()
             }
         }
 
-        // 콘텐츠 선택 시 호출
         fun addSelectedContent(content: CollectionContentUiModel) {
             _uiState.update { state ->
                 val tempList: MutableList<CollectionContentUiModel> =
@@ -53,4 +52,26 @@ class CollectionCreateViewModel @Inject constructor()
                 )
             }
         }
+
+        fun removeSelectedContent(content: CollectionContentUiModel) {
+            _uiState.update { state ->
+                val tempList: MutableList<CollectionContentUiModel> =
+                    mutableListOf(content)
+
+                tempList.removeAll (state.selectedContents)
+
+                state.copy(
+                    selectedContents = tempList
+                )
+            }
+        }
+
+//        fun updateIsFinishButton(isFinishedButtonEnabled: Boolean){
+//            _uiState.update { state ->
+//                if (uiState.selectedContents.size >= 2){
+//                    state.copy(isFinishButtonEnabled = true)
+//                }
+//
+//            }
+//        }
     }

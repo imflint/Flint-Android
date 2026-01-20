@@ -8,4 +8,5 @@ data class CollectionCreateUiState(
     val description: String = "",
     val isPublic: Boolean? = null,
     val selectedContents: MutableList<CollectionContentUiModel> = mutableListOf(),
+    val isFinishButtonEnabled: Boolean = false,
 )
