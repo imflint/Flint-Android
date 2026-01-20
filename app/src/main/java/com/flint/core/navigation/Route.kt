@@ -35,6 +35,9 @@ interface Route {
     data object CollectionCreate : Route
 
     @Serializable
+    data object CollectionCreateGraph : Route
+
+    @Serializable
     data object SavedContentList : Route
 
     @Serializable

@@ -66,6 +66,8 @@ fun CollectionCreateRoute(
         contentList = contentList.toImmutableList(),
         onRemoveContent = { contentList.remove(it) },
         onBackClick = {},
+        onCompleteClick = navigateToAddContent,
+        modifier = Modifier.padding(paddingValues),
     )
 }
 
@@ -78,13 +80,15 @@ fun CollectionCreateScreen(
     contentList: ImmutableList<CollectionContentUiModel>,
     onRemoveContent: (CollectionContentUiModel) -> Unit,
     onBackClick: () -> Unit,
+    onCompleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
     var selectedContent by remember { mutableStateOf<CollectionContentUiModel?>(null) }
 
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
                 .navigationBarsPadding()
@@ -253,7 +257,7 @@ fun CollectionCreateScreen(
                         text = "작품 추가하기",
                         iconRes = R.drawable.ic_plus,
                         state = FlintButtonState.ColorOutline,
-                        onClick = {},
+                        onClick = onCompleteClick,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -303,6 +307,7 @@ fun CollectionCreateScreenPreview() {
             contentList = CollectionContentUiModel.dummyContentList,
             onRemoveContent = {},
             onBackClick = {},
+            onCompleteClick = {},
         )
     }
 }

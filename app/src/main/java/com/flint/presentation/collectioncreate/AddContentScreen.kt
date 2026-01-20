@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,10 +32,17 @@ import com.flint.presentation.collectioncreate.component.CollectionCreateContent
 fun AddContentRoute(
     paddingValues: PaddingValues,
     navigateToCollectionCreate: () -> Unit,
-    viewModel: CollectionCreateViewModel,
+    navigateUp: () -> Unit,
+    viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     AddContentScreen(
-        onBackClick = {},
+        uistate = uiState,
+        onTitleChanged = viewModel::updateTitle,
+        onBackClick = navigateUp,
+        onActionClick = navigateToCollectionCreate,
+        modifier = Modifier.padding(paddingValues),
     )
 }
 
@@ -47,7 +55,13 @@ data class CollectionContentUiModel(
 )
 
 @Composable
-fun AddContentScreen(onBackClick: () -> Unit) {
+fun AddContentScreen(
+    uistate: CollectionCreateUiState,
+    onTitleChanged: (String) -> Unit = {},
+    onBackClick: () -> Unit,
+    onActionClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     var searchText by remember { mutableStateOf("") }
     var selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
 
@@ -67,7 +81,7 @@ fun AddContentScreen(onBackClick: () -> Unit) {
 
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .background(color = FlintTheme.colors.background),
     ) {
@@ -75,6 +89,7 @@ fun AddContentScreen(onBackClick: () -> Unit) {
             onClick = onBackClick,
             title = "작품 추가하기",
             actionText = "추가",
+            onActionClick = onActionClick,
             textColor = FlintTheme.colors.gray300,
         )
 
@@ -149,6 +164,8 @@ private fun AddContentScreenPreview() {
     FlintTheme {
         AddContentScreen(
             onBackClick = {},
+            onActionClick = {},
+            uistate = CollectionCreateUiState()
         )
     }
 }
