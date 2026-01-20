@@ -15,6 +15,8 @@ import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEf
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -145,15 +147,15 @@ class CollectionDetailViewModel @Inject constructor(
     private fun getCollectionDetailAndBookmarkUsers(collectionId: String) {
         viewModelScope.launch {
             runCatching {
-                val collectionDetail: CollectionDetailModelNew =
-                    collectionRepository.getCollectionDetail(collectionId).getOrThrow()
-                val collectionBookmarkUsers: CollectionBookmarkUsersModel =
-                    bookmarkRepository.getCollectionBookmarkUsers(collectionId).getOrThrow()
+                val collectionDetail: Deferred<Result<CollectionDetailModelNew>> =
+                    async { collectionRepository.getCollectionDetail(collectionId) }
+                val collectionBookmarkUsers: Deferred<Result<CollectionBookmarkUsersModel>> =
+                    async { bookmarkRepository.getCollectionBookmarkUsers(collectionId) }
 
                 UiState.Success(
                     CollectionDetailUiState(
-                        collectionDetail = collectionDetail,
-                        collectionBookmarkUsers = collectionBookmarkUsers
+                        collectionDetail = collectionDetail.await().getOrThrow(),
+                        collectionBookmarkUsers = collectionBookmarkUsers.await().getOrThrow()
                     )
                 )
             }.onSuccess { newUiState: UiState.Success<CollectionDetailUiState> ->
