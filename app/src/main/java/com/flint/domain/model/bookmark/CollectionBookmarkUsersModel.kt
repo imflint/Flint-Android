@@ -9,7 +9,7 @@ data class CollectionBookmarkUsersModel(
 ) {
     data class User(
         val nickName: String,
-        val profileImageUrl: String,
+        val profileImageUrl: String?,
         val userId: String,
         val userRole: UserRoleType,
     )

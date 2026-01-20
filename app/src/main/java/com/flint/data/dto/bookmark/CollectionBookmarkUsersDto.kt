@@ -12,7 +12,7 @@ data class CollectionBookmarkUsersDto(
     @Serializable
     data class User(
         @SerialName("nickName") val nickName: String,
-        @SerialName("profileImageUrl") val profileImageUrl: String,
+        @SerialName("profileImageUrl") val profileImageUrl: String?,
         @SerialName("userId") val userId: String,
         @SerialName("userRole") val userRole: String,
     )
