@@ -153,8 +153,10 @@ fun CollectionDetailRoute(
                 is CollectionDetailEvent.ToggleCollectionBookmarkSuccess -> {
                     if (event.isBookmarked) {
                         showSaveToast = true
+                        showCancelToast = false
                     } else {
                         showCancelToast = true
+                        showSaveToast = false
                     }
                 }
             }
@@ -194,7 +196,7 @@ fun CollectionDetailScreen(
                 0f
             }
 
-        val isProgressBarSticky = scrollState.value >= thumbnailHeight
+        val isProgressBarSticky: Boolean = scrollState.value >= thumbnailHeight
 
         if (showPeopleBottomSheet) {
             PeopleBottomSheet(
