@@ -72,8 +72,8 @@ import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
-import com.flint.presentation.toast.ShowSaveToast
-import com.flint.presentation.toast.ShowToast
+import com.flint.core.designsystem.component.toast.ShowSaveToast
+import com.flint.core.designsystem.component.toast.ShowToast
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

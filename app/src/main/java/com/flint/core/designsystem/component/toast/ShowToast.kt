@@ -1,4 +1,4 @@
-package com.flint.presentation.toast
+package com.flint.core.designsystem.component.toast
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.designsystem.component.toast.FlintToast
 import com.flint.core.designsystem.theme.FlintTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds

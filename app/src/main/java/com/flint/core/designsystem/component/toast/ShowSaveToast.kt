@@ -1,4 +1,4 @@
-package com.flint.presentation.toast
+package com.flint.core.designsystem.component.toast
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
