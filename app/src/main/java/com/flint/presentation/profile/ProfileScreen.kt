@@ -100,16 +100,18 @@ private fun ProfileScreen(
         }
 
         item {
-            Spacer(Modifier.height(48.dp))
+            if (uiState.createCollections.collections.isNotEmpty())  {
+                Spacer(Modifier.height(48.dp))
 
-            CollectionSection(
-                title = "${userName}님의 컬렉션",
-                description = "${userName}님이 생성한 컬렉션이에요",
-                onItemClick = onCollectionItemClick,
-                isAllVisible = true,
-                onAllClick = onCollectionMoreClick,
-                collectionListModel = uiState.createCollections,
-            )
+                CollectionSection(
+                    title = "${userName}님의 컬렉션",
+                    description = "${userName}님이 생성한 컬렉션이에요",
+                    onItemClick = onCollectionItemClick,
+                    isAllVisible = true,
+                    onAllClick = onCollectionMoreClick,
+                    collectionListModel = uiState.createCollections,
+                )
+            }
         }
 
         item {

@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
-import com.flint.domain.model.collection.CollectionListModel
-import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,14 +32,29 @@ class ProfileViewModel @Inject constructor(
 
                 ProfileUiState(
                     profile = profile,
-                    keywords = keywords,
-                    //TODO: 임시
-                    savedContent = BookmarkedContentListModel.FakeList,
-                    createCollections = CollectionListModel.FakeList,
-                    savedCollections = CollectionListModel.FakeList,
+                    keywords = keywords
                 )
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }
+                getSectionInfo()
+            }
+        }
+    }
+
+    fun getSectionInfo() {
+        viewModelScope.launch {
+            val currentState = (_uiState.value as? UiState.Success)?.data ?: return@launch
+
+            suspendRunCatching {
+                val createdCollectionsDeferred = async {
+                    userRepository.getUserCreatedCollections(userId = null).getOrThrow()
+                }
+
+                currentState.copy(
+                    createCollections = createdCollectionsDeferred.await(),
+                )
+            }.onSuccess { updatedState ->
+                _uiState.update { UiState.Success(updatedState) }
             }
         }
     }

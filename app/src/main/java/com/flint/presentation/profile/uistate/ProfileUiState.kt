@@ -10,9 +10,9 @@ import com.flint.domain.model.user.UserProfileResponseModel
 data class ProfileUiState(
     val keywords: KeywordListModel,
     val profile: UserProfileResponseModel,
-    val savedContent: BookmarkedContentListModel,
-    val createCollections: CollectionListModel,
-    val savedCollections: CollectionListModel,
+    val savedContent: BookmarkedContentListModel = BookmarkedContentListModel(),
+    val createCollections: CollectionListModel = CollectionListModel(),
+    val savedCollections: CollectionListModel = CollectionListModel(),
 ) {
     companion object {
         val Empty =
