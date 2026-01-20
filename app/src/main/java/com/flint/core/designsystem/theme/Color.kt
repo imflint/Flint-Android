@@ -10,8 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.LinearGradientShader
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -109,18 +114,33 @@ val FlintColors =
         error700 = Color(0xFFB53746),
         overlay = Color(0xFF000000).copy(alpha = 0.6f),
         spoilerBlur = Color(0xFF121212).copy(alpha = 0.3f),
-        gradient900 =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF3C4256), Color(0xFF121212)),
-            ),
-        gradient700 =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF3C4256), Color(0xFF2B2F3A)),
-            ),
-        gradient400 =
-            Brush.linearGradient(
-                colors = listOf(Color(0xFF1ABFF2), Color(0xFF86EBFF)),
-            ),
+        gradient900 = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset(size.width * 0.12f, 0f),
+                    to = Offset(size.width * 0.50f, size.height * 0.59f),
+                    colors = listOf(Color(0xFF3C4256), Color(0xFF121212))
+                )
+            }
+        },
+        gradient700 = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset.Zero,
+                    to = Offset(size.width * 0.355f, size.height * 0.44f),
+                    colors = listOf(Color(0xFF3C4256), Color(0xFF2B2F3A))
+                )
+            }
+        },
+        gradient400 = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset.Zero,
+                    to = Offset(size.width * 0.25f, size.height),
+                    colors = listOf(Color(0xFF86EBFF), Color(0xFF1ABFF2))
+                )
+            }
+        },
         gradient400Secondary =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF8991FF), Color(0xFF6B75FF)),

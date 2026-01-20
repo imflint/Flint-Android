@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface SearchApi {
-    @GET("api/v1/search/bookmarked-contents")
+    @GET("/api/v1/search/bookmarked-contents")
     suspend fun getBookmarkedContentList(
         @Query("keyword") keyword: String,
         @Query("cursor") cursor: Int,

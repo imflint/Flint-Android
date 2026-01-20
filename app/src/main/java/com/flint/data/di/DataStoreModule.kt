@@ -1,4 +1,4 @@
-package com.flint.core.common.di
+package com.flint.data.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore

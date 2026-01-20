@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,14 +28,15 @@ import coil3.compose.rememberAsyncImagePainter
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
+import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.collection.CollectionModel
+import com.flint.domain.model.collection.CollectionItemModel
 import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.type.UserRoleType
 
 @Composable
 fun CollectionItem(
-    collectionModel: CollectionModel,
+    collectionItemModel: CollectionItemModel,
     onItemClick: (id: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -46,11 +48,11 @@ fun CollectionItem(
                 .clip(RoundedCornerShape(12.dp))
                 .background(FlintTheme.colors.gray200)
                 .noRippleClickable {
-                    onItemClick(collectionModel.collectionId)
+                    onItemClick(collectionItemModel.id)
                 },
     ) {
         NetworkImage(
-            imageUrl = collectionModel.thumbnailUrl,
+            imageUrl = collectionItemModel.thumbnailUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
@@ -78,22 +80,17 @@ fun CollectionItem(
                     .padding(start = 14.dp, bottom = 10.dp, end = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
-                painter =
-                    if (collectionModel.author.profileUrl.isEmpty()) {
-                        painterResource(R.drawable.ic_avatar_gray)
-                    } else {
-                        rememberAsyncImagePainter(collectionModel.author.profileUrl)
-                    },
+            ProfileImage(
+                imageUrl = collectionItemModel.profileUrl,
                 contentDescription = null,
-                modifier = Modifier.size(28.dp),
+                modifier = Modifier.size(28.dp)
             )
 
             Spacer(Modifier.width(12.dp))
 
             Column {
                 Text(
-                    text = collectionModel.collectionTitle,
+                    text = collectionItemModel.title,
                     style = FlintTheme.typography.body2M14,
                     color = FlintTheme.colors.gray50,
                     overflow = TextOverflow.Ellipsis,
@@ -101,7 +98,7 @@ fun CollectionItem(
                 )
 
                 Text(
-                    text = collectionModel.author.nickname,
+                    text = collectionItemModel.nickname,
                     style = FlintTheme.typography.caption1R12,
                     color = FlintTheme.colors.gray200,
                     overflow = TextOverflow.Ellipsis,
@@ -116,24 +113,22 @@ fun CollectionItem(
 @Composable
 private fun PreviewCollectionItem() {
     FlintTheme {
-        val collectionModel =
-            CollectionModel(
-                collectionId = "",
-                collectionTitle = "컬렉션 제목",
-                collectionImageUrl = "",
-                createdAt = "",
+        val collectionItemModel =
+            CollectionItemModel(
+                id = "0",
+                thumbnailUrl = "",
+                title = "드라마 제목",
+                description = "드라마 제목 드라마 제목 드라마 제목 드라마 제목 드라마 제목",
+                imageList = emptyList(),
+                bookmarkCount = 0,
                 isBookmarked = false,
-                author =
-                    AuthorModel(
-                        userId = "0",
-                        nickname = "사용자 이름",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLINER,
-                    ),
+                userId = "0",
+                nickname = "nickname",
+                profileUrl = null
             )
 
         CollectionItem(
-            collectionModel = collectionModel,
+            collectionItemModel = collectionItemModel,
             onItemClick = {},
         )
     }
