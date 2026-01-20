@@ -1,6 +1,6 @@
-package com.flint.core.common.di.interceptor
+package com.flint.data.di.interceptor
 
-import com.flint.core.common.datastore.PreferencesManager
+import com.flint.data.local.PreferencesManager
 import com.flint.core.common.util.DataStoreKey.ACCESS_TOKEN
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking

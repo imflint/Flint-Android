@@ -1,4 +1,4 @@
-package com.flint.core.common.di
+package com.flint.data.di
 
 import com.flint.data.api.AuthApi
 import com.flint.data.api.BookmarkApi

@@ -1,5 +1,7 @@
 package com.flint.domain.repository
 
+import com.flint.data.local.PreferencesManager
+import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.AuthApi
 import com.flint.domain.mapper.auth.toDto
@@ -12,10 +14,16 @@ import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
     private val api: AuthApi,
+    private val preferencesManager: PreferencesManager
 ) {
     suspend fun signup(model: SignupRequestModel): Result<SignupResponseModel> =
         suspendRunCatching { api.signup(model.toDto()).data.toModel() }
 
-    suspend fun socialVerify(model: SocialVerifyRequestModel): Result<SocialVerifyResponseModel> =
-        suspendRunCatching { api.socialVerify(model.toDto()).data.toModel() }
+    suspend fun socialVerify(model: SocialVerifyRequestModel): Result<SocialVerifyResponseModel> {
+        val result = api.socialVerify(model.toDto()).data.toModel()
+        preferencesManager.saveString(USER_NAME, result.userName.toString())
+
+        return suspendRunCatching { result }
+    }
+
 }

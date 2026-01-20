@@ -2,7 +2,7 @@ package com.flint.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.datastore.PreferencesManager
+import com.flint.data.local.PreferencesManager
 import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.auth.SocialVerifyRequestModel
@@ -16,7 +16,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val preferencesManager: PreferencesManager,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -30,7 +29,6 @@ class LoginViewModel @Inject constructor(
             .onSuccess { data ->
                 if (data.isRegistered) {
                     _navigationEvent.emit(UiState.Success(LoginNavigationEvent.NavigateToHome))
-                    preferencesManager.saveString(USER_NAME, data.userName.toString())
                 } else {
                     _navigationEvent.emit(UiState.Success(LoginNavigationEvent.NavigateToOnBoarding(data.tempToken ?: "")))
                 }
