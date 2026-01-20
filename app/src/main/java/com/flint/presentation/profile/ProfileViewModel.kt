@@ -2,55 +2,53 @@ package com.flint.presentation.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.extension.updateSuccess
 import com.flint.core.common.util.UiState
+import com.flint.core.common.util.suspendRunCatching
+import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.repository.UserRepository
+import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel
-    @Inject
-    constructor(
-        private val userRepository: UserRepository,
-    ) : ViewModel() {
-        private val _uiState =
-            MutableStateFlow<UiState<ProfileUiState>>(
-                UiState.Empty,
-            )
-        val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
+class ProfileViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<ProfileUiState>>(
+        UiState.Empty
+    )
+    val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
 
-        init {
-            loadInitialData()
-        }
+    fun getProfile() {
+        viewModelScope.launch {
+            suspendRunCatching {
+                val profileDeferred = async { userRepository.getUserProfile(userId = null) }
+                val keywordsDeferred = async { userRepository.getUserKeywords(userId = null) }
 
-        private fun loadInitialData() {
-            viewModelScope.launch {
-                _uiState.emit(UiState.Success(ProfileUiState.Fake)) // TODO: 임시 로직
+                val profileResult = profileDeferred.await()
+                val keywordsResult = keywordsDeferred.await()
 
-                // 프로필/컬렉션/작품 목록 등 설정 필요한 초기 데이터 로드 필요
-            }
-        }
+                Pair(profileResult.getOrThrow(), keywordsResult.getOrThrow())
 
-        fun refreshProfileKeyword() {
-            viewModelScope.launch {
-                userRepository.getUserKeywords(userId = "800370427074376635").fold( // TODO: 임시 userId
-                    onFailure = {
-                        _uiState.emit(UiState.Failure)
-                    },
-                    onSuccess = { result ->
-                        _uiState.updateSuccess {
-                            it.copy(
-                                keywords = result.toImmutableList(),
-                            )
-                        }
-                    },
+                ProfileUiState(
+                    profile = profileResult.getOrThrow(),
+                    keywords = keywordsResult.getOrThrow().toImmutableList(),
+                    //TODO: 임시
+                    savedContent = BookmarkedContentListModel.FakeList,
+                    createCollections = CollectionListModel.FakeList,
+                    savedCollections = CollectionListModel.FakeList,
                 )
+            }.onSuccess { combinedState ->
+                _uiState.update { UiState.Success(combinedState) }
             }
         }
     }
+}

@@ -1,20 +1,17 @@
-package com.flint.presentation.profile
+package com.flint.presentation.profile.uistate
 
 import androidx.compose.runtime.Immutable
 import com.flint.domain.model.collection.CollectionListModel
-import com.flint.domain.model.collection.CollectionModel
 import com.flint.domain.model.content.BookmarkedContentListModel
-import com.flint.domain.model.content.ContentModel
-import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.model.user.UserKeywordResponseModel
-import com.flint.domain.type.UserRoleType
+import com.flint.domain.model.user.UserProfileResponseModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class ProfileUiState(
     val keywords: ImmutableList<UserKeywordResponseModel>,
-    val profile: AuthorModel,
+    val profile: UserProfileResponseModel,
     val savedContent: BookmarkedContentListModel,
     val createCollections: CollectionListModel,
     val savedCollections: CollectionListModel,
@@ -23,21 +20,15 @@ data class ProfileUiState(
         val Empty =
             ProfileUiState(
                 keywords = persistentListOf(),
-                profile =
-                    AuthorModel(
-                        userId = "0",
-                        nickname = "",
-                        profileUrl = "",
-                        userRole = UserRoleType.FLINER,
-                    ),
+                profile = UserProfileResponseModel.Companion.Empty,
                 createCollections = CollectionListModel.FakeList,
                 savedCollections = CollectionListModel.FakeList,
                 savedContent = BookmarkedContentListModel.FakeList,
             )
         val Fake =
             ProfileUiState(
-                keywords = UserKeywordResponseModel.FakeList1,
-                profile = AuthorModel.Fake,
+                keywords = UserKeywordResponseModel.Companion.FakeList1,
+                profile = UserProfileResponseModel.Companion.Fake,
                 createCollections = CollectionListModel.FakeList,
                 savedCollections = CollectionListModel.FakeList,
                 savedContent = BookmarkedContentListModel.FakeList,
