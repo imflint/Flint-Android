@@ -40,10 +40,11 @@ import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.type.UserRoleType
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun PeopleBottomSheet(
-    people: List<CollectionBookmarkUsersModel.User>,
+    people: ImmutableList<CollectionBookmarkUsersModel.User>,
     onAuthorClick: (userId: String) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -145,7 +146,7 @@ private fun Author(
 @Preview
 @Composable
 private fun PeopleBottomSheetPreview(
-    @PreviewParameter(PeopleBottomSheetPreviewParameterProvider::class) people: List<CollectionBookmarkUsersModel.User>,
+    @PreviewParameter(PeopleBottomSheetPreviewParameterProvider::class) people: ImmutableList<CollectionBookmarkUsersModel.User>,
 ) {
     var showBottomSheet by remember { mutableStateOf(true) }
     FlintTheme {
