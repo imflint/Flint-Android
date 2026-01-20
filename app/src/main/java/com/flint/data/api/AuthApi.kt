@@ -9,12 +9,12 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthApi {
-    @POST("api/v1/auth/signup")
+    @POST("/api/v1/auth/signup")
     suspend fun signup(
         @Body requestDto: SignupRequestDto,
     ): BaseResponse<SignupResponseDto>
 
-    @POST("api/v1/auth/social/verify")
+    @POST("/api/v1/auth/social/verify")
     suspend fun socialVerify(
         @Body requestDto: SocialVerifyRequestDto,
     ): BaseResponse<SocialVerifyResponseDto>

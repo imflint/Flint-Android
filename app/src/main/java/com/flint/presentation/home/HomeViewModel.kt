@@ -3,7 +3,7 @@ package com.flint.presentation.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.datastore.PreferencesManager
+import com.flint.data.local.PreferencesManager
 import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.collection.CollectionListModel
