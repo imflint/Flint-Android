@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
@@ -30,6 +31,7 @@ import com.flint.presentation.collectioncreate.component.CollectionCreateContent
 fun AddContentRoute(
     paddingValues: PaddingValues,
     navigateToCollectionCreate: () -> Unit,
+    viewModel: CollectionCreateViewModel,
 ) {
     AddContentScreen(
         onBackClick = {},

@@ -63,11 +63,11 @@ private fun CollectionCreateEmptyThumbnail(
             contentDescription = null,
         )
 
-        Icon(
-            painter = painterResource(R.drawable.ic_background_photo),
-            contentDescription = null,
-            tint = Color.Unspecified,
-        )
+//        Icon(
+//            painter = painterResource(R.drawable.ic_background_photo),
+//            contentDescription = null,
+//            tint = Color.Unspecified,
+//        )
     }
 }
 
@@ -97,11 +97,11 @@ private fun CollectionCreateFillThumbnail(
                     .background(FlintTheme.colors.imgBlur),
         )
 
-        Icon(
-            painter = painterResource(R.drawable.ic_background_photo),
-            contentDescription = null,
-            tint = Color.Unspecified,
-        )
+//        Icon(
+//            painter = painterResource(R.drawable.ic_background_photo),
+//            contentDescription = null,
+//            tint = Color.Unspecified,
+//        )
     }
 }
 

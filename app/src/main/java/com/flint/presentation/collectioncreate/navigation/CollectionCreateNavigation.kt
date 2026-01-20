@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.flint.core.navigation.Route
 import com.flint.presentation.collectioncreate.AddContentRoute
 import com.flint.presentation.collectioncreate.CollectionCreateRoute
+import com.flint.presentation.collectioncreate.CollectionCreateViewModel
 
 fun NavController.navigateToCollectionCreate(navOptions: NavOptions? = null) {
     navigate(Route.CollectionCreate, navOptions)
@@ -21,10 +22,13 @@ fun NavGraphBuilder.collectionCreateNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
 ) {
+    val viewModel = CollectionCreateViewModel()
+
     composable<Route.CollectionCreate> {
         CollectionCreateRoute(
             paddingValues = paddingValues,
             navigateToAddContent = navController::navigateToAddContent,
+            viewModel = viewModel
         )
     }
 
@@ -32,6 +36,7 @@ fun NavGraphBuilder.collectionCreateNavGraph(
         AddContentRoute(
             paddingValues = paddingValues,
             navigateToCollectionCreate = navController::navigateToCollectionCreate,
+            viewModel = viewModel
         )
     }
 }

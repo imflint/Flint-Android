@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.R
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintIconButton
@@ -47,43 +50,45 @@ import kotlinx.collections.immutable.toImmutableList
 fun CollectionCreateRoute(
     paddingValues: PaddingValues,
     navigateToAddContent: () -> Unit,
+    viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     val contentList =
         remember {
             CollectionContentUiModel.dummyContentList.toMutableStateList()
         }
 
     CollectionCreateScreen(
-        thumbnailImageUrl = "",
+        uistate = uiState,
+        onTitleChanged = viewModel::updateTitle,
+        onDescriptionChanged = viewModel::updateDescription,
+        onPublicChanged = viewModel::updateIsPublic,
         contentList = contentList.toImmutableList(),
         onRemoveContent = { contentList.remove(it) },
         onBackClick = {},
-        onGalleryClick = {},
-        onCoverDeleteClick = {},
     )
 }
 
 @Composable
 fun CollectionCreateScreen(
-    thumbnailImageUrl: String,
+    uistate: CollectionCreateUiState,
+    onTitleChanged: (String) -> Unit = {},
+    onDescriptionChanged: (String) -> Unit = {},
+    onPublicChanged: (Boolean?) -> Unit = {},
     contentList: ImmutableList<CollectionContentUiModel>,
     onRemoveContent: (CollectionContentUiModel) -> Unit,
     onBackClick: () -> Unit,
-    onGalleryClick: () -> Unit,
-    onCoverDeleteClick: () -> Unit,
 ) {
-    var titleText by remember { mutableStateOf("") }
-    var contentText by remember { mutableStateOf("") }
-    var isSheetVisible by remember { mutableStateOf(false) }
     var isModalVisible by remember { mutableStateOf(false) }
     var selectedContent by remember { mutableStateOf<CollectionContentUiModel?>(null) }
-    var isPublic by remember { mutableStateOf<Boolean?>(null) }
 
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(color = FlintTheme.colors.background),
+                .background(color = FlintTheme.colors.background)
+                .navigationBarsPadding()
     ) {
         FlintBackTopAppbar(onClick = onBackClick)
 
@@ -94,8 +99,8 @@ fun CollectionCreateScreen(
             // 썸네일
             item {
                 CollectionCreateThumbnail(
-                    imageUrl = thumbnailImageUrl,
-                    onClick = { isSheetVisible = true },
+                    imageUrl = "",
+                    onClick = { },
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -112,9 +117,9 @@ fun CollectionCreateScreen(
                     Spacer(Modifier.height(16.dp))
                     FlintLongTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = titleText,
+                        value = uistate.title,
                         placeholder = "컬렉션의 제목을 입력해주세요.",
-                        onValueChanged = { titleText = it },
+                        onValueChanged = onTitleChanged,
                         maxLength = 20,
                         height = 40.dp,
                     )
@@ -141,9 +146,9 @@ fun CollectionCreateScreen(
                     Spacer(Modifier.height(16.dp))
                     FlintLongTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = contentText,
+                        value = uistate.description,
                         placeholder = "컬렉션의 소개를 작성해주세요.",
-                        onValueChanged = { contentText = it },
+                        onValueChanged = onDescriptionChanged,
                         maxLength = 200,
                         height = 104.dp,
                     )
@@ -164,19 +169,8 @@ fun CollectionCreateScreen(
                         FlintIconButton(
                             text = "공개",
                             iconRes = R.drawable.ic_share,
-                            state =
-                                if (isPublic ==
-                                    true
-                                ) {
-                                    FlintButtonState.ColorOutline
-                                } else if (isPublic ==
-                                    false
-                                ) {
-                                    FlintButtonState.Disable
-                                } else {
-                                    FlintButtonState.Outline
-                                },
-                            onClick = { isPublic = true },
+                            state = if ( uistate.isPublic == true ) { FlintButtonState.ColorOutline } else if ( uistate.isPublic == false ) { FlintButtonState.Disable } else { FlintButtonState.Outline },
+                            onClick = { onPublicChanged(true) },
                             modifier = Modifier.weight(1f),
                         )
 
@@ -185,19 +179,8 @@ fun CollectionCreateScreen(
                         FlintIconButton(
                             text = "비공개",
                             iconRes = R.drawable.ic_lock,
-                            state =
-                                if (isPublic ==
-                                    false
-                                ) {
-                                    FlintButtonState.ColorOutline
-                                } else if (isPublic ==
-                                    true
-                                ) {
-                                    FlintButtonState.Disable
-                                } else {
-                                    FlintButtonState.Outline
-                                },
-                            onClick = { isPublic = false },
+                            state = if ( uistate.isPublic == false ) { FlintButtonState.ColorOutline } else if ( uistate.isPublic == true ) { FlintButtonState.Disable } else { FlintButtonState.Outline },
+                            onClick = { onPublicChanged(false) },
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -280,13 +263,6 @@ fun CollectionCreateScreen(
         )
     }
 
-    if (isSheetVisible) {
-        CollectionAddContentBottomSheet(
-            onGalleryClick = onGalleryClick,
-            onCoverDeleteClick = onCoverDeleteClick,
-            onDismiss = { isSheetVisible = false },
-        )
-    }
 
     if (isModalVisible) {
         CollectionCreateContentDeleteModal(
@@ -308,12 +284,13 @@ fun CollectionCreateScreen(
 fun CollectionCreateScreenPreview() {
     FlintTheme {
         CollectionCreateScreen(
-            thumbnailImageUrl = "",
+            uistate = CollectionCreateUiState(),
+            onTitleChanged = {},
+            onDescriptionChanged = {},
+            onPublicChanged = {},
             contentList = CollectionContentUiModel.dummyContentList,
             onRemoveContent = {},
             onBackClick = {},
-            onGalleryClick = {},
-            onCoverDeleteClick = {},
         )
     }
 }
