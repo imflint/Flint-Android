@@ -118,7 +118,7 @@ private fun CollectionDetailResponseDto.Author.toModel(): AuthorModelNew {
     return AuthorModelNew(
         id = id,
         nickname = nickname,
-        profileUrl = profileUrl,
+        profileImageUrl = profileImageUrl,
         userRole = runCatching { UserRoleType.valueOf(userRole) }.getOrDefault(UserRoleType.NONE)
     )
 }

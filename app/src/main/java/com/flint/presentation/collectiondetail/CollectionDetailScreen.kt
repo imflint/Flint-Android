@@ -68,7 +68,6 @@ import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModel
 import com.flint.domain.model.content.ContentModelNew
-import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
@@ -362,90 +361,91 @@ private fun PeopleWhoSavedThisCollection(
     }
 }
 
-private class PeoplePreviewProvider : PreviewParameterProvider<ImmutableList<AuthorModel>> {
-    override val values: Sequence<ImmutableList<AuthorModel>> =
+private class PeoplePreviewProvider :
+    PreviewParameterProvider<ImmutableList<CollectionBookmarkUsersModel.User>> {
+    override val values: Sequence<ImmutableList<CollectionBookmarkUsersModel.User>> =
         sequenceOf(
             persistentListOf(
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "1",
-                    nickname = "유저1",
-                    profileUrl = "",
+                    nickName = "유저1",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
             ),
             persistentListOf(
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "1",
-                    nickname = "유저1",
-                    profileUrl = "",
+                    nickName = "유저1",
+                    profileImageUrl = "",
                     userRole = UserRoleType.ADMIN,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "2",
-                    nickname = "유저2",
-                    profileUrl = "",
+                    nickName = "유저2",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLINER,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "3",
-                    nickname = "유저3",
-                    profileUrl = "",
+                    nickName = "유저3",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "4",
-                    nickname = "유저4",
-                    profileUrl = "",
+                    nickName = "유저4",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "5",
-                    nickname = "유저5",
-                    profileUrl = "",
+                    nickName = "유저5",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
             ),
             persistentListOf(
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "1",
-                    nickname = "유저1",
-                    profileUrl = "",
+                    nickName = "유저1",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "2",
-                    nickname = "유저2",
-                    profileUrl = "",
+                    nickName = "유저2",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "3",
-                    nickname = "유저3",
-                    profileUrl = "",
+                    nickName = "유저3",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "4",
-                    nickname = "유저4",
-                    profileUrl = "",
+                    nickName = "유저4",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "5",
-                    nickname = "유저5",
-                    profileUrl = "",
+                    nickName = "유저5",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLING,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "6",
-                    nickname = "유저6",
-                    profileUrl = "",
+                    nickName = "유저6",
+                    profileImageUrl = "",
                     userRole = UserRoleType.FLINER,
                 ),
-                AuthorModel(
+                CollectionBookmarkUsersModel.User(
                     userId = "7",
-                    nickname = "유저7",
-                    profileUrl = "",
+                    nickName = "유저7",
+                    profileImageUrl = "",
                     userRole = UserRoleType.ADMIN,
                 ),
             ),

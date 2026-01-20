@@ -18,7 +18,7 @@ data class CollectionDetailResponseDto(
     data class Author(
         @SerialName("id") val id: String,
         @SerialName("nickname") val nickname: String,
-        @SerialName("profileUrl") val profileUrl: String?,
+        @SerialName("profileImageUrl") val profileImageUrl: String?,
         @SerialName("userRole") val userRole: String,
     )
 
