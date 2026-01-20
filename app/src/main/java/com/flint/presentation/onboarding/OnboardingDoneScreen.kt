@@ -49,7 +49,6 @@ fun OnboardingDoneScreen(
             modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
-                .statusBarsPadding(),
     ) {
         FlintBackTopAppbar(
             onClick = onBackClick,
