@@ -8,11 +8,13 @@ import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
+import com.flint.domain.model.content.ContentModelNew
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.CollectionRepository
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -67,6 +69,34 @@ class CollectionDetailViewModel @Inject constructor(
                 }
                 .onFailure {
                     _sideEffect.emit(CollectionDetailSideEffect.ToggleCollectionBookmarkFailure)
+                }
+        }
+    }
+
+    fun toggleContentBookmark(contentId: String) {
+        viewModelScope.launch {
+            bookmarkRepository.toggleContentBookmark(contentId)
+                .onSuccess { isBookmarked: Boolean ->
+                    _uiState.update { uiState: UiState<CollectionDetailUiState> ->
+                        if (uiState !is UiState.Success) return@update uiState
+
+                        uiState.copy(
+                            data = uiState.data.copy(
+                                collectionDetail = uiState.data.collectionDetail.copy(
+                                    contents = uiState.data.collectionDetail.contents.map { content: ContentModelNew ->
+                                        if (content.id == contentId) {
+                                            content.copy(
+                                                isBookmarked = isBookmarked,
+                                                bookmarkCount = if (isBookmarked) content.bookmarkCount + 1 else content.bookmarkCount - 1
+                                            )
+                                        } else content
+                                    }.toImmutableList()
+                                )
+                            )
+                        )
+                    }
+                }.onFailure {
+
                 }
         }
     }

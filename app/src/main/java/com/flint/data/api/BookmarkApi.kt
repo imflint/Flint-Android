@@ -20,4 +20,8 @@ interface BookmarkApi {
     ): BaseResponse<Boolean>
 
     // 콘텐츠 북마크 토글
+    @POST("/api/v1/bookmarks/contents/{contentId}")
+    suspend fun toggleContentBookmark(
+        @Path("contentId") contentId: String,
+    ): BaseResponse<Boolean>
 }

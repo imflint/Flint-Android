@@ -62,6 +62,8 @@ import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.progressbar.UnderImageProgressBar
+import com.flint.core.designsystem.component.toast.ShowSaveToast
+import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
@@ -72,8 +74,6 @@ import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
-import com.flint.core.designsystem.component.toast.ShowSaveToast
-import com.flint.core.designsystem.component.toast.ShowToast
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -112,7 +112,8 @@ fun CollectionDetailRoute(
                 people = collectionBookmarkUsers,
                 onSaveDoneButtonClick = viewModel::toggleCollectionBookmark,
                 onSaveNoneButtonClick = viewModel::toggleCollectionBookmark,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                onBookmarkIconClick = viewModel::toggleContentBookmark
             )
         }
 
@@ -181,6 +182,7 @@ fun CollectionDetailScreen(
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
     navigateUp: () -> Unit,
+    onBookmarkIconClick: (String) -> Unit,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -263,9 +265,7 @@ fun CollectionDetailScreen(
                     contents.forEach { content: ContentModelNew ->
                         Content(
                             content = content,
-                            onBookmarkIconClick = { contentId: String ->
-                                // TODO: Content 저장
-                            },
+                            onBookmarkIconClick = onBookmarkIconClick,
                         )
                     }
 
@@ -963,7 +963,8 @@ private fun CollectionDetailScreenPreview(
                 people = data.people,
                 onSaveDoneButtonClick = {},
                 onSaveNoneButtonClick = {},
-                navigateUp = {}
+                navigateUp = {},
+                onBookmarkIconClick = {},
             )
         }
     }
