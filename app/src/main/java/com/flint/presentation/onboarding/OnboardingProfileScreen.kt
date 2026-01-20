@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -25,11 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheet
-import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheetData
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
-import com.flint.core.designsystem.component.image.EditProfileImage
+import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
@@ -78,9 +75,8 @@ fun OnboardingProfileScreen(
                     .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            EditProfileImage(
+            ProfileImage(
                 imageUrl = "",
-                onEditClick = { showBottomSheet = true },
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -139,25 +135,6 @@ fun OnboardingProfileScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 20.dp),
-        )
-    }
-
-    if (showBottomSheet) {
-        MenuBottomSheet(
-            sheetState = sheetState,
-            onDismiss = { showBottomSheet = false },
-            menuBottomSheetDataList =
-                listOf(
-                    MenuBottomSheetData(
-                        label = "갤러리에서 선택",
-                        clickAction = { showBottomSheet = false },
-                    ),
-                    MenuBottomSheetData(
-                        label = "프로필 사진 삭제",
-                        color = FlintTheme.colors.error500,
-                        clickAction = { showBottomSheet = false },
-                    ),
-                ),
         )
     }
 }
