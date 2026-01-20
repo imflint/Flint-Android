@@ -18,7 +18,7 @@ data class CollectionDetailModelNew(
     val thumbnailUrl: String,
     val isBookmarked: Boolean,
     val title: String,
-    val userId: String,
+    private val userId: String,
 ) {
     constructor(
         collectionDetail: CollectionDetailResponseDto,
@@ -34,6 +34,8 @@ data class CollectionDetailModelNew(
         title = collectionDetail.title,
         userId = userId
     )
+
+    val isMine: Boolean = author.id == userId
 }
 
 data class CollectionDetailModel(

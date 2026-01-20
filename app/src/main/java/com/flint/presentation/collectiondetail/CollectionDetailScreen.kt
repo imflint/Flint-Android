@@ -101,8 +101,7 @@ fun CollectionDetailRoute(
             CollectionDetailScreen(
                 paddingValues = paddingValues,
                 title = collectionDetail.title,
-                authorId = collectionDetail.author.id,
-                userId = collectionDetail.userId,
+                isMine = collectionDetail.isMine,
                 isBookmarked = collectionDetail.isBookmarked,
                 authorNickname = collectionDetail.author.nickname,
                 authorUserRoleType = collectionDetail.author.userRole,
@@ -113,7 +112,7 @@ fun CollectionDetailRoute(
                 onSaveDoneButtonClick = viewModel::toggleCollectionBookmark,
                 onSaveNoneButtonClick = viewModel::toggleCollectionBookmark,
                 navigateUp = navigateUp,
-                onBookmarkIconClick = viewModel::toggleContentBookmark
+                onBookmarkIconClick = viewModel::toggleContentBookmark,
             )
         }
 
@@ -170,8 +169,7 @@ fun CollectionDetailRoute(
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
     title: String,
-    authorId: String,
-    userId: String,
+    isMine: Boolean,
     isBookmarked: Boolean,
     authorNickname: String,
     authorUserRoleType: UserRoleType,
@@ -230,8 +228,7 @@ fun CollectionDetailScreen(
                 ) {
                     Thumbnail(
                         title = title,
-                        authorId = authorId,
-                        userId = userId,
+                        isMine = isMine,
                         isBookmarked = isBookmarked,
                         onSaveDoneButtonClick = onSaveDoneButtonClick,
                         onSaveNoneButtonClick = onSaveNoneButtonClick,
@@ -469,8 +466,7 @@ private fun PeopleWhoSavedThisCollectionPreview(
 @Composable
 private fun Thumbnail(
     title: String,
-    authorId: String,
-    userId: String,
+    isMine: Boolean,
     isBookmarked: Boolean,
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
@@ -504,7 +500,7 @@ private fun Thumbnail(
                 style = FlintTheme.typography.display2M28,
                 modifier = Modifier.fillMaxWidth(),
             )
-            if (authorId != userId) {
+            if (isMine) {
                 if (isBookmarked) {
                     FlintSaveDoneButton(
                         onClick = {
@@ -715,8 +711,7 @@ private fun Content(
 
 private data class HeaderPreviewData(
     val title: String,
-    val authorId: String,
-    val userId: String,
+    val isMine: Boolean,
     val isBookmarked: Boolean,
 )
 
@@ -725,20 +720,17 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
         sequenceOf(
             HeaderPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = true,
             ),
             HeaderPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = false,
             ),
             HeaderPreviewData(
                 title = "내가 만든 컬렉션",
-                authorId = "1",
-                userId = "1",
+                isMine = true,
                 isBookmarked = false,
             ),
         )
@@ -752,8 +744,7 @@ private fun ThumbnailPreview(
     FlintTheme {
         Thumbnail(
             title = data.title,
-            authorId = data.authorId,
-            userId = data.userId,
+            isMine = data.isMine,
             isBookmarked = data.isBookmarked,
             onSaveDoneButtonClick = {},
             onSaveNoneButtonClick = {}
@@ -862,8 +853,7 @@ private fun ContentPreview(
 
 private data class ScreenPreviewData(
     val title: String,
-    val authorId: String,
-    val userId: String,
+    val isMine: Boolean,
     val isBookmarked: Boolean,
     val authorNickname: String,
     val authorUserRoleType: UserRoleType,
@@ -911,8 +901,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
         sequenceOf(
             ScreenPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = true,
                 authorNickname = "키카",
                 authorUserRoleType = UserRoleType.FLINER,
@@ -921,8 +910,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
             ),
             ScreenPreviewData(
                 title = "새로운 컬렉션",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = false,
                 authorNickname = "일반유저",
                 authorUserRoleType = UserRoleType.FLING,
@@ -931,8 +919,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
             ),
             ScreenPreviewData(
                 title = "내가 만든 컬렉션",
-                authorId = "1",
-                userId = "1",
+                isMine = true,
                 isBookmarked = false,
                 authorNickname = "나",
                 authorUserRoleType = UserRoleType.FLING,
@@ -952,8 +939,7 @@ private fun CollectionDetailScreenPreview(
             CollectionDetailScreen(
                 paddingValues = paddingValues,
                 title = data.title,
-                authorId = data.authorId,
-                userId = data.userId,
+                isMine = data.isMine,
                 isBookmarked = data.isBookmarked,
                 authorNickname = data.authorNickname,
                 authorUserRoleType = data.authorUserRoleType,
