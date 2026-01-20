@@ -1,7 +1,7 @@
-package com.flint.core.common.di
+package com.flint.data.di
 
 import com.flint.BuildConfig
-import com.flint.core.common.di.interceptor.TokenInterceptor
+import com.flint.data.di.interceptor.TokenInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

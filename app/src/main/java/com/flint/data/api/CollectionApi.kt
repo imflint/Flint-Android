@@ -18,6 +18,6 @@ interface CollectionApi {
     ): BaseResponse<CollectionDetailResponseDto>
 
     // 최근 본 컬렉션 목록 조회
-    @GET("api/v1/collections/recent")
+    @GET("/api/v1/collections/recent")
     suspend fun getRecentCollectionList(): BaseResponse<RecentCollectionListResponseDto>
 }

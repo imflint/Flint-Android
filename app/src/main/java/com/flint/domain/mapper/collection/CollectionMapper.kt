@@ -1,44 +1,53 @@
 package com.flint.domain.mapper.collection
 
+import com.flint.data.dto.collection.response.RecentCollectionItemResponseDto
 import com.flint.data.dto.collection.response.RecentCollectionListResponseDto
+import com.flint.data.dto.home.response.RecommendCollectionItemResponseDto
 import com.flint.data.dto.home.response.RecommendCollectionResponseDto
+import com.flint.domain.model.collection.CollectionItemModel
+import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.collection.CollectionModel
 import com.flint.domain.model.user.AuthorModel
+import kotlinx.collections.immutable.toImmutableList
 
-fun RecommendCollectionResponseDto.toModel() : List<CollectionModel> {
-    return collections.map {
-        CollectionModel(
-            collectionId = it.id,
-            thumbnailUrl = it.thumbnailUrl,
-            collectionTitle = it.title,
-            description = it.description,
-            imageList = it.imageList,
-            bookmarkCount = it.bookmarkCount,
-            isBookmarked = it.isBookmarked,
-            author = AuthorModel(
-                userId = it.userId,
-                nickname = it.nickname,
-                profileUrl = it.profileUrl ?: ""
-            )
-        )
-    }
+fun RecommendCollectionResponseDto.toModel() : CollectionListModel {
+    return CollectionListModel(
+        collections = collections.map { it.toModel() }.toImmutableList()
+    )
 }
 
-fun RecentCollectionListResponseDto.toModel() : List<CollectionModel> {
-    return collections.map {
-        CollectionModel(
-            collectionId = it.id,
-            thumbnailUrl = it.thumbnailUrl,
-            collectionTitle = it.title,
-            description = it.description,
-            imageList = it.imageList,
-            bookmarkCount = it.bookmarkCount,
-            isBookmarked = it.isBookmarked,
-            author = AuthorModel(
-                userId = it.userId,
-                nickname = it.nickname,
-                profileUrl = it.profileUrl ?: ""
-            )
-        )
-    }
+private fun RecommendCollectionItemResponseDto.toModel() : CollectionItemModel {
+    return CollectionItemModel(
+        id = id,
+        thumbnailUrl = thumbnailUrl,
+        title = title,
+        description = description,
+        imageList = imageList,
+        bookmarkCount = bookmarkCount,
+        isBookmarked = isBookmarked,
+        userId = userId,
+        nickname = nickname,
+        profileUrl = profileUrl
+    )
+}
+
+fun RecentCollectionListResponseDto.toModel() : CollectionListModel {
+    return CollectionListModel(
+        collections = collections.map { it.toModel() }.toImmutableList()
+    )
+}
+
+private fun RecentCollectionItemResponseDto.toModel() : CollectionItemModel {
+    return CollectionItemModel(
+        id = id,
+        thumbnailUrl = thumbnailUrl,
+        title = title,
+        description = description,
+        imageList = imageList,
+        bookmarkCount = bookmarkCount,
+        isBookmarked = isBookmarked,
+        userId = userId,
+        nickname = nickname,
+        profileUrl = profileUrl
+    )
 }
