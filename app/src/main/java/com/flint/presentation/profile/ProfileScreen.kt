@@ -24,6 +24,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
+import com.flint.presentation.profile.uistate.ProfileUiState
 
 @Composable
 fun ProfileRoute(

@@ -1,4 +1,4 @@
-package com.flint.presentation.profile
+package com.flint.presentation.profile.uistate
 
 import androidx.compose.runtime.Immutable
 import com.flint.domain.model.collection.CollectionModel
@@ -20,18 +20,18 @@ data class ProfileUiState(
         val Empty =
             ProfileUiState(
                 keywords = persistentListOf(),
-                profile = UserProfileResponseModel.Empty,
+                profile = UserProfileResponseModel.Companion.Empty,
                 createCollections = persistentListOf(),
                 savedCollections = persistentListOf(),
                 savedContent = persistentListOf(),
             )
         val Fake =
             ProfileUiState(
-                keywords = UserKeywordResponseModel.FakeList1,
-                profile = UserProfileResponseModel.Fake,
-                createCollections = CollectionModel.FakeList,
-                savedCollections = CollectionModel.FakeList,
-                savedContent = ContentModel.FakeList,
+                keywords = UserKeywordResponseModel.Companion.FakeList1,
+                profile = UserProfileResponseModel.Companion.Fake,
+                createCollections = CollectionModel.Companion.FakeList,
+                savedCollections = CollectionModel.Companion.FakeList,
+                savedContent = ContentModel.Companion.FakeList,
             )
     }
 }

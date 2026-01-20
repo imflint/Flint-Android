@@ -7,6 +7,7 @@ import com.flint.core.common.util.suspendRunCatching
 import com.flint.domain.model.collection.CollectionModel
 import com.flint.domain.model.content.ContentModel
 import com.flint.domain.repository.UserRepository
+import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
