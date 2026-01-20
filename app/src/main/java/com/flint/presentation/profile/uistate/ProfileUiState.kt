@@ -1,8 +1,8 @@
 package com.flint.presentation.profile.uistate
 
 import androidx.compose.runtime.Immutable
-import com.flint.domain.model.collection.CollectionModel
-import com.flint.domain.model.content.ContentModel
+import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.user.UserKeywordResponseModel
 import com.flint.domain.model.user.UserProfileResponseModel
 import kotlinx.collections.immutable.ImmutableList
@@ -12,26 +12,26 @@ import kotlinx.collections.immutable.persistentListOf
 data class ProfileUiState(
     val keywords: ImmutableList<UserKeywordResponseModel>,
     val profile: UserProfileResponseModel,
-    val savedContent: ImmutableList<ContentModel> = persistentListOf(),
-    val createCollections: ImmutableList<CollectionModel> = persistentListOf(),
-    val savedCollections: ImmutableList<CollectionModel> = persistentListOf(),
+    val savedContent: BookmarkedContentListModel,
+    val createCollections: CollectionListModel,
+    val savedCollections: CollectionListModel,
 ) {
     companion object {
         val Empty =
             ProfileUiState(
                 keywords = persistentListOf(),
                 profile = UserProfileResponseModel.Companion.Empty,
-                createCollections = persistentListOf(),
-                savedCollections = persistentListOf(),
-                savedContent = persistentListOf(),
+                createCollections = CollectionListModel.FakeList,
+                savedCollections = CollectionListModel.FakeList,
+                savedContent = BookmarkedContentListModel.FakeList,
             )
         val Fake =
             ProfileUiState(
                 keywords = UserKeywordResponseModel.Companion.FakeList1,
                 profile = UserProfileResponseModel.Companion.Fake,
-                createCollections = CollectionModel.Companion.FakeList,
-                savedCollections = CollectionModel.Companion.FakeList,
-                savedContent = ContentModel.Companion.FakeList,
+                createCollections = CollectionListModel.FakeList,
+                savedCollections = CollectionListModel.FakeList,
+                savedContent = BookmarkedContentListModel.FakeList,
             )
     }
 }

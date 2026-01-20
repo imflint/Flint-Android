@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
-import com.flint.domain.model.collection.CollectionModel
-import com.flint.domain.model.content.ContentModel
+import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,9 +42,9 @@ class ProfileViewModel @Inject constructor(
                     profile = profileResult.getOrThrow(),
                     keywords = keywordsResult.getOrThrow().toImmutableList(),
                     //TODO: 임시
-                    savedContent = ContentModel.FakeList,
-                    createCollections = CollectionModel.FakeList,
-                    savedCollections = CollectionModel.FakeList,
+                    savedContent = BookmarkedContentListModel.FakeList,
+                    createCollections = CollectionListModel.FakeList,
+                    savedCollections = CollectionListModel.FakeList,
                 )
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }
