@@ -1,13 +1,14 @@
-package com.flint.presentation.home.uiState
+package com.flint.presentation.home.uistate
 
 import com.flint.core.common.util.UiState
-import com.flint.domain.model.collection.CollectionModel
-import com.flint.domain.model.content.ContentModel
+import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 
 data class HomeUiState(
-    val recommendedCollectionListLoadState: UiState<List<CollectionModel>> = UiState.Loading,
-    val bookmarkedContentListLoadState: UiState<List<ContentModel>> = UiState.Loading,
-    val recentCollectionListLoadState: UiState<List<CollectionModel>> = UiState.Loading
+    val userName: String = "",
+    val recommendedCollectionListLoadState: UiState<CollectionListModel> = UiState.Loading,
+    val bookmarkedContentListLoadState: UiState<BookmarkedContentListModel> = UiState.Loading,
+    val recentCollectionListLoadState: UiState<CollectionListModel> = UiState.Loading
 ) {
     val loadState: UiState<Unit>
         get() = when {

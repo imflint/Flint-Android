@@ -25,6 +25,7 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.listItem.SavedContentItem
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.content.ContentModel
 import kotlinx.collections.immutable.ImmutableList
 
@@ -32,7 +33,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun SavedContentsSection(
     title: String,
     description: String,
-    contentModelList: ImmutableList<ContentModel>,
+    contentModelList: BookmarkedContentListModel,
     onItemClick: (contentId: String) -> Unit,
     modifier: Modifier = Modifier,
     isAllVisible: Boolean,
@@ -91,7 +92,7 @@ fun SavedContentsSection(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            itemsIndexed(contentModelList) { _, item ->
+            itemsIndexed(contentModelList.contents) { _, item ->
                 SavedContentItem(
                     contentModel = item,
                     onItemClick = { contentId ->
@@ -108,7 +109,7 @@ fun SavedContentsSection(
 @Composable
 private fun PreviewHomeSavedContents() {
     FlintTheme {
-        val contentModelList = ContentModel.FakeList
+        val contentModelList = BookmarkedContentListModel.FakeList
 
         SavedContentsSection(
             title = "최근 저장한 콘텐츠",

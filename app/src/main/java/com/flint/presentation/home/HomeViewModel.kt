@@ -3,14 +3,15 @@ package com.flint.presentation.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.datastore.PreferencesManager
+import com.flint.data.local.PreferencesManager
+import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.core.common.util.UiState
-import com.flint.domain.model.collection.CollectionModel
-import com.flint.domain.model.content.ContentModel
+import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.repository.CollectionRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.HomeRepository
-import com.flint.presentation.home.uiState.HomeUiState
+import com.flint.presentation.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,16 +29,19 @@ class HomeViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository
 ) : ViewModel() {
 
-    private val _recommendCollectionListLoadState = MutableStateFlow<UiState<List<CollectionModel>>>(UiState.Loading)
-    private val _bookmarkedContentListLoadState = MutableStateFlow<UiState<List<ContentModel>>>(UiState.Loading)
-    private val _recentCollectionListLoadState = MutableStateFlow<UiState<List<CollectionModel>>>(UiState.Loading)
+    private val _userName = preferencesManager.getString(USER_NAME)
+    private val _recommendCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
+    private val _bookmarkedContentListLoadState = MutableStateFlow<UiState<BookmarkedContentListModel>>(UiState.Loading)
+    private val _recentCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
 
     val homeUiState: StateFlow<HomeUiState> = combine(
+        _userName,
         _recommendCollectionListLoadState,
         _bookmarkedContentListLoadState,
         _recentCollectionListLoadState
-    ) { recommendedCollectionList, bookmarkedContentList, recentCollectionList ->
+    ) { userName, recommendedCollectionList, bookmarkedContentList, recentCollectionList ->
         HomeUiState(
+            userName = userName,
             recommendedCollectionListLoadState = recommendedCollectionList,
             bookmarkedContentListLoadState = bookmarkedContentList,
             recentCollectionListLoadState = recentCollectionList
@@ -46,12 +50,12 @@ class HomeViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
         initialValue = HomeUiState(
+            userName = "",
             recommendedCollectionListLoadState = UiState.Loading,
             bookmarkedContentListLoadState = UiState.Loading,
             recentCollectionListLoadState = UiState.Loading
         )
     )
-
 
     fun getRecommendedCollectionList() = viewModelScope.launch {
         homeRepository.getRecommendedCollectionList()

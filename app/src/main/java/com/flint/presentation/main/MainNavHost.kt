@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
+import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectioncreate.navigation.collectionCreateNavGraph
 import com.flint.presentation.collectiondetail.navigation.collectionDetailNavGraph
 import com.flint.presentation.collectionlist.navigation.collectionListNavGraph
@@ -29,7 +30,7 @@ fun MainNavHost(
         modifier =
             modifier
                 .fillMaxSize()
-                .background(color = Color.White),
+                .background(color = FlintTheme.colors.background),
     ) {
         NavHost(
             navController = navigator.navController,

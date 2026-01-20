@@ -6,6 +6,6 @@ import retrofit2.http.GET
 
 interface HomeApi {
 
-    @GET("api/v1/home/recommended-collections")
+    @GET("/api/v1/home/recommended-collections")
     suspend fun getRecommendedCollections() : BaseResponse<RecommendCollectionResponseDto>
 }
