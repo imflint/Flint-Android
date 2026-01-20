@@ -11,46 +11,61 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel
-    @Inject
-    constructor(
-        private val userRepository: UserRepository,
-    ) : ViewModel() {
-        private val _uiState =
-            MutableStateFlow<UiState<ProfileUiState>>(
-                UiState.Empty,
-            )
-        val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
+class ProfileViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<ProfileUiState>>(
+        UiState.Success(ProfileUiState.Fake)
+    )
+    val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
 
-        init {
-            loadInitialData()
-        }
+    private val tempUserId = "801159854933808613"
 
-        private fun loadInitialData() {
-            viewModelScope.launch {
-                _uiState.emit(UiState.Success(ProfileUiState.Fake)) // TODO: 임시 로직
+    init {
+        loadInitialData()
+    }
 
-                // 프로필/컬렉션/작품 목록 등 설정 필요한 초기 데이터 로드 필요
-            }
-        }
-
-        fun refreshProfileKeyword() {
-            viewModelScope.launch {
-                userRepository.getUserKeywords(userId = "801159854933808613").fold( // TODO: 임시 userId
-                    onFailure = {
-                        _uiState.emit(UiState.Failure)
-                    },
-                    onSuccess = { result ->
-                        _uiState.updateSuccess {
-                            it.copy(
-                                keywords = result.toImmutableList(),
-                            )
-                        }
-                    },
-                )
-            }
+    fun loadInitialData() {
+        viewModelScope.launch {
+            getProfile()
         }
     }
+
+    private fun getProfile() {
+        viewModelScope.launch {
+            userRepository.getUserProfile(userId = tempUserId)
+                .onSuccess { myInfo ->
+                    Timber.d("getProfile success: $myInfo")
+                    _uiState.updateSuccess {
+                        it.copy(
+                            profile = myInfo
+                        )
+                    }
+                }
+                .onFailure {
+                    Timber.d("getProfile failure: $it")
+                }
+        }
+    }
+
+    fun refreshProfileKeyword() {
+        viewModelScope.launch {
+            userRepository.getUserKeywords(userId = tempUserId).fold(
+                onFailure = {
+                    _uiState.emit(UiState.Failure)
+                },
+                onSuccess = { result ->
+                    _uiState.updateSuccess {
+                        it.copy(
+                            keywords = result.toImmutableList(),
+                        )
+                    }
+                },
+            )
+        }
+    }
+}
