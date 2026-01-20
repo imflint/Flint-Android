@@ -25,8 +25,8 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.listItem.CollectionItem
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.collection.CollectionModel
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun CollectionSection(
@@ -35,7 +35,7 @@ fun CollectionSection(
     modifier: Modifier = Modifier,
     isAllVisible: Boolean,
     onAllClick: () -> Unit,
-    collectionModelList: ImmutableList<CollectionModel>,
+    collectionListModel: CollectionListModel,
     onItemClick: (id: String) -> Unit,
 ) {
     Column(
@@ -90,9 +90,9 @@ fun CollectionSection(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            itemsIndexed(collectionModelList) { _, item ->
+            itemsIndexed(collectionListModel.collections) { _, item ->
                 CollectionItem(
-                    collectionModel = item,
+                    collectionItemModel = item,
                     onItemClick = { id ->
                         onItemClick(id)
                     },
@@ -106,10 +106,10 @@ fun CollectionSection(
 @Composable
 private fun CollectionSectionPreview() {
     FlintTheme {
-        val collectionModelList = CollectionModel.FakeList
+        val collectionListModel = CollectionListModel.FakeList
 
         CollectionSection(
-            collectionModelList = collectionModelList,
+            collectionListModel = collectionListModel,
             title = "저장한 컬렉션",
             description = "키카님이 저장한 작품이에요.",
             onAllClick = {},
