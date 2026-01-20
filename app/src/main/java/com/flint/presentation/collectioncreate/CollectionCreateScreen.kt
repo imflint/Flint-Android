@@ -271,11 +271,15 @@ fun CollectionCreateScreen(
         FlintLargeButton(
             text = "완료",
             state = FlintButtonState.Disable,
-            onClick = {},
+            onClick = {isModalVisible = true},
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
+            enabled = when(uistate.isFinishButtonEnabled){
+                true -> true
+                false -> false
+            },
         )
     }
 

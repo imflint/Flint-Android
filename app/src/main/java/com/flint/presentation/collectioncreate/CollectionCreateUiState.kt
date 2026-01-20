@@ -1,6 +1,7 @@
 package com.flint.presentation.collectioncreate
 
 import androidx.compose.runtime.Immutable
+import com.flint.presentation.collectioncreate.model.CollectionContentUiModel
 
 @Immutable
 data class CollectionCreateUiState(
@@ -8,5 +9,11 @@ data class CollectionCreateUiState(
     val description: String = "",
     val isPublic: Boolean? = null,
     val selectedContents: MutableList<CollectionContentUiModel> = mutableListOf(),
-    val isFinishButtonEnabled: Boolean = false,
-)
+){
+    val isFinishButtonEnabled: Boolean
+        =
+        title.isNotEmpty() &&
+        isPublic != null
+//                &&
+//        selectedContents.size >= 2
+}
