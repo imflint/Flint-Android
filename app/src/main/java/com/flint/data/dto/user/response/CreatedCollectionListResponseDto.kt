@@ -14,7 +14,7 @@ data class CreatedCollectionItemResponseDto(
     @SerialName("id")
     val id: String,
     @SerialName("thumbnailUrl")
-    val thumbnailUrl: String,
+    val thumbnailUrl: String?,
     @SerialName("title")
     val title: String,
     @SerialName("description")
@@ -29,6 +29,6 @@ data class CreatedCollectionItemResponseDto(
     val userId: String,
     @SerialName("nickname")
     val nickname: String,
-    @SerialName("profileUrl")
+    @SerialName("profileImageUrl")
     val profileUrl: String?
 )

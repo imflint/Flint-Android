@@ -29,7 +29,7 @@ data class CollectionListModel(
 
 data class CollectionItemModel(
     val id: String = "",
-    val thumbnailUrl: String = "",
+    val thumbnailUrl: String? = null,
     val title: String = "",
     val description: String = "",
     val imageList: List<String> = listOf(),
