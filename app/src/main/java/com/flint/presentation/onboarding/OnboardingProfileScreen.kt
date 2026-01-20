@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheet
 import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheetData
 import com.flint.core.designsystem.component.button.FlintBasicButton
@@ -38,7 +39,8 @@ fun OnboardingProfileRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingContent: () -> Unit,
     navigateUp: () -> Unit,
-) {
+    viewModel: OnboardingViewModel = hiltViewModel(),
+    ) {
     OnboardingProfileScreen(
         onBackClick = navigateUp,
         onNextClick = navigateToOnboardingContent,

@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.image.SelectedContentItem
@@ -36,7 +37,8 @@ fun OnboardingContentRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingOtt: () -> Unit,
     navigateUp: () -> Unit,
-) {
+    viewModel: OnboardingViewModel = hiltViewModel(),
+    ) {
     OnboardingContentScreen(
         nickname = "User",
         currentStep = 7,
