@@ -31,7 +31,7 @@ class CollectionDetailViewModel @Inject constructor(
 ) : ViewModel() {
     init {
         val collectionId: String = savedStateHandle.toRoute<Route.CollectionDetail>().collectionId
-        getCollectionDetail(collectionId)
+        getCollectionDetailAndBookmarkUsers(collectionId)
     }
 
     private val _uiState: MutableStateFlow<UiState<CollectionDetailUiState>> =
@@ -59,6 +59,8 @@ class CollectionDetailViewModel @Inject constructor(
                         )
                     }
 
+                    getCollectionBookmarkUsers()
+
                     _sideEffect.emit(
                         CollectionDetailSideEffect.ToggleCollectionBookmarkSuccess(isBookmarked)
                     )
@@ -69,7 +71,28 @@ class CollectionDetailViewModel @Inject constructor(
         }
     }
 
-    private fun getCollectionDetail(collectionId: String) {
+    private fun getCollectionBookmarkUsers() {
+        val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
+
+        viewModelScope.launch {
+            bookmarkRepository.getCollectionBookmarkUsers(uiState.collectionDetail.id)
+                .onSuccess { collectionBookmarkUsers: CollectionBookmarkUsersModel ->
+                    _uiState.update { uiState: UiState<CollectionDetailUiState> ->
+                        if (uiState !is UiState.Success) return@update uiState
+
+                        uiState.copy(
+                            data = uiState.data.copy(
+                                collectionBookmarkUsers = collectionBookmarkUsers
+                            )
+                        )
+                    }
+                }.onFailure {
+                    // TODO: 데이터 불러오지 못한 경우, 다이얼로그 띄우도록 구현
+                }
+        }
+    }
+
+    private fun getCollectionDetailAndBookmarkUsers(collectionId: String) {
         viewModelScope.launch {
             runCatching {
                 val collectionDetail: CollectionDetailModelNew =
