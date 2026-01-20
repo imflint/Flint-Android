@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
+import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val contentRepository: ContentRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<ProfileUiState>>(
         UiState.Empty
@@ -52,10 +54,14 @@ class ProfileViewModel @Inject constructor(
                 val bookmarkedCollectionsDeferred = async {
                     userRepository.getUserBookmarkedCollections(userId = null).getOrThrow()
                 }
+                val savedContentListDeferred = async {
+                    contentRepository.getBookmarkedContentList().getOrThrow()
+                }
 
                 currentState.copy(
                     createCollections = createdCollectionsDeferred.await(),
                     savedCollections = bookmarkedCollectionsDeferred.await(),
+                    savedContents = savedContentListDeferred.await()
                 )
             }.onSuccess { updatedState ->
                 _uiState.update { UiState.Success(updatedState) }

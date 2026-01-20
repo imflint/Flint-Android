@@ -135,7 +135,7 @@ private fun ProfileScreen(
             SavedContentsSection(
                 title = "저장한 작품",
                 description = "${userName}님이 저장한 작품이에요",
-                contentModelList = uiState.savedContent,
+                contentModelList = uiState.savedContents,
                 onItemClick = onContentItemClick,
                 isAllVisible = false,
                 onAllClick = {},

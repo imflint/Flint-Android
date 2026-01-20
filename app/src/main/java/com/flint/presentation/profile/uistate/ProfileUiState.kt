@@ -10,7 +10,7 @@ import com.flint.domain.model.user.UserProfileResponseModel
 data class ProfileUiState(
     val keywords: KeywordListModel,
     val profile: UserProfileResponseModel,
-    val savedContent: BookmarkedContentListModel = BookmarkedContentListModel(),
+    val savedContents: BookmarkedContentListModel = BookmarkedContentListModel(),
     val createCollections: CollectionListModel = CollectionListModel(),
     val savedCollections: CollectionListModel = CollectionListModel(),
 ) {
@@ -21,7 +21,7 @@ data class ProfileUiState(
                 profile = UserProfileResponseModel.Companion.Empty,
                 createCollections = CollectionListModel.FakeList,
                 savedCollections = CollectionListModel.FakeList,
-                savedContent = BookmarkedContentListModel.FakeList,
+                savedContents = BookmarkedContentListModel.FakeList,
             )
         val Fake =
             ProfileUiState(
@@ -29,7 +29,7 @@ data class ProfileUiState(
                 profile = UserProfileResponseModel.Companion.Fake,
                 createCollections = CollectionListModel.FakeList,
                 savedCollections = CollectionListModel.FakeList,
-                savedContent = BookmarkedContentListModel.FakeList,
+                savedContents = BookmarkedContentListModel.FakeList,
             )
     }
 }
