@@ -28,7 +28,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun Spoiler(
-    spoil: () -> Unit,
+    onSpoilClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -63,7 +63,7 @@ fun Spoiler(
                 style = FlintTheme.typography.head3Sb18,
             )
 
-            TextButton(onClick = spoil) {
+            TextButton(onClick = onSpoilClick) {
                 Text(
                     text = "보기",
                     color = FlintTheme.colors.primary300,
@@ -88,7 +88,7 @@ private fun SpoilerPreview(
     @PreviewParameter(SpoilerPreviewParameterProvider::class) text: String,
 ) {
     FlintTheme {
-        Spoiler(spoil = {}) {
+        Spoiler(onSpoilClick = {}) {
             Text(
                 text = text,
                 style = FlintTheme.typography.body1R16,

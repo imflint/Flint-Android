@@ -101,6 +101,26 @@ class CollectionDetailViewModel @Inject constructor(
         }
     }
 
+    fun spoil(contentId: String) {
+        _uiState.update { uiState: UiState<CollectionDetailUiState> ->
+            if (uiState !is UiState.Success) return@update uiState
+
+            uiState.copy(
+                data = uiState.data.copy(
+                    collectionDetail = uiState.data.collectionDetail.copy(
+                        contents = uiState.data.collectionDetail.contents.map { content: ContentModelNew ->
+                            if (content.id == contentId) {
+                                content.copy(
+                                    isSpoiler = false
+                                )
+                            } else content
+                        }.toImmutableList()
+                    )
+                )
+            )
+        }
+    }
+
     private fun getCollectionBookmarkUsers() {
         val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
 

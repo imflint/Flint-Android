@@ -113,6 +113,7 @@ fun CollectionDetailRoute(
                 onSaveNoneButtonClick = viewModel::toggleCollectionBookmark,
                 navigateUp = navigateUp,
                 onBookmarkIconClick = viewModel::toggleContentBookmark,
+                onSpoilClick = viewModel::spoil,
             )
         }
 
@@ -181,6 +182,7 @@ fun CollectionDetailScreen(
     onSaveNoneButtonClick: () -> Unit,
     navigateUp: () -> Unit,
     onBookmarkIconClick: (String) -> Unit,
+    onSpoilClick: (String) -> Unit,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -263,6 +265,7 @@ fun CollectionDetailScreen(
                         Content(
                             content = content,
                             onBookmarkIconClick = onBookmarkIconClick,
+                            onSpoilClick = onSpoilClick,
                         )
                     }
 
@@ -583,6 +586,7 @@ private fun CollectionDetailDescription(
 private fun Content(
     content: ContentModelNew,
     onBookmarkIconClick: (contentId: String) -> Unit,
+    onSpoilClick: (contentId: String) -> Unit,
 ) {
     Column {
         NetworkImage(
@@ -677,9 +681,7 @@ private fun Content(
 
             if (content.isSpoiler) {
                 Spoiler(
-                    spoil = {
-                        // TODO: State 변경을 통해 isSpoiler 값 변경
-                    },
+                    onSpoilClick = { onSpoilClick(content.id) },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
@@ -838,6 +840,7 @@ private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
         )
 }
 
+
 @Preview
 @Composable
 private fun ContentPreview(
@@ -847,6 +850,7 @@ private fun ContentPreview(
         Content(
             content = content,
             onBookmarkIconClick = {},
+            onSpoilClick = {}
         )
     }
 }
@@ -951,6 +955,7 @@ private fun CollectionDetailScreenPreview(
                 onSaveNoneButtonClick = {},
                 navigateUp = {},
                 onBookmarkIconClick = {},
+                onSpoilClick = {}
             )
         }
     }
