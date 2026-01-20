@@ -82,7 +82,7 @@ private fun ProfileScreen(
             with(uiState.profile) {
                 ProfileTopSection(
                     userName = nickname,
-                    profileUrl = profileImageUrl,
+                    profileUrl = profileImageUrl.orEmpty(),
                     isFliner = isFliner,
                 )
             }
