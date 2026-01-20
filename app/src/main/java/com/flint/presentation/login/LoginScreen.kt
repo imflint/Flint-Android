@@ -30,6 +30,7 @@ import com.flint.domain.model.auth.SocialVerifyRequestModel
 import com.flint.domain.type.ProviderType
 import com.flint.presentation.login.component.KakaoLoginButton
 import com.flint.presentation.login.event.LoginNavigationEvent
+import com.flint.presentation.login.data.VerifyStatusData
 import timber.log.Timber
 
 @Composable

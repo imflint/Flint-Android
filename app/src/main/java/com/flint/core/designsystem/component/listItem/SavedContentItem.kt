@@ -18,12 +18,14 @@ import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.content.BookmarkedContentItemModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.content.ContentModel
 import com.flint.domain.type.OttType
 
 @Composable
 fun SavedContentItem(
-    contentModel: ContentModel,
+    contentModel: BookmarkedContentItemModel,
     onItemClick: (contentId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -32,7 +34,7 @@ fun SavedContentItem(
             modifier
                 .width(120.dp)
                 .noRippleClickable {
-                    onItemClick(contentModel.contentId)
+                    onItemClick(contentModel.id)
                 },
     ) {
         Box(
@@ -42,13 +44,13 @@ fun SavedContentItem(
                     .height(180.dp),
         ) {
             NetworkImage(
-                imageUrl = contentModel.posterImage,
+                imageUrl = contentModel.imageUrl,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxSize(),
             )
 
             OttHorizontalList(
-                ottList = contentModel.ottSimpleList,
+                ottList = contentModel.getOttSimpleList,
                 modifier =
                     Modifier
                         .padding(top = 10.dp, start = 8.dp),
@@ -78,12 +80,12 @@ fun SavedContentItem(
 private fun PreviewSavedContentItem() {
     FlintTheme {
         val contentModel =
-            ContentModel(
-                contentId = "0",
+            BookmarkedContentItemModel(
+                id = "0",
                 title = "드라마 제목",
                 year = 2000,
-                posterImage = "",
-                ottSimpleList =
+                imageUrl = "",
+                getOttSimpleList =
                     listOf(
                         OttType.Netflix,
                         OttType.Disney,
@@ -93,6 +95,8 @@ private fun PreviewSavedContentItem() {
                         OttType.Watcha,
                     ),
             )
+
+
 
         SavedContentItem(
             contentModel = contentModel,

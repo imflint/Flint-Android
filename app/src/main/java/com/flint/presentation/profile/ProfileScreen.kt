@@ -108,7 +108,7 @@ private fun ProfileScreen(
                 onItemClick = onCollectionItemClick,
                 isAllVisible = true,
                 onAllClick = onCollectionMoreClick,
-                collectionModelList = uiState.createCollections,
+                collectionListModel = uiState.createCollections,
             )
         }
 
@@ -121,7 +121,7 @@ private fun ProfileScreen(
                 onItemClick = onCollectionItemClick,
                 isAllVisible = true,
                 onAllClick = onCollectionMoreClick,
-                collectionModelList = uiState.savedCollections,
+                collectionListModel = uiState.savedCollections,
             )
         }
 

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,16 +23,11 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.collection.CollectionModel
-import com.flint.domain.model.content.ContentModel
+import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeRoute(
@@ -43,7 +37,6 @@ fun HomeRoute(
     navigateToCollectionCreate: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -54,34 +47,32 @@ fun HomeRoute(
 
     when (uiState.loadState) {
         is UiState.Success -> {
-            val recommendedCollectionList = (uiState.recommendedCollectionListLoadState as? UiState.Success)?.data?.toImmutableList() ?: persistentListOf()
-            val bookmarkedContentList = (uiState.bookmarkedContentListLoadState as? UiState.Success)?.data?.toImmutableList() ?: persistentListOf()
-            val recentCollectionList = (uiState.recentCollectionListLoadState as? UiState.Success)?.data?.toImmutableList() ?: persistentListOf()
+            val recommendedCollectionList = (uiState.recommendedCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
+            val bookmarkedContentList = (uiState.bookmarkedContentListLoadState as? UiState.Success)?.data ?: BookmarkedContentListModel()
+            val recentCollectionList = (uiState.recentCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
 
-            if (recommendedCollectionList.isNotEmpty() && bookmarkedContentList.isNotEmpty()) {
-                HomeScreen(
-                    recommendCollectionModelList = recommendedCollectionList,
-                    recentCollectionModelList = recentCollectionList,
-                    savedContentModelList = bookmarkedContentList,
-                    navigateToCollectionCreate = {
-                        navigateToCollectionCreate()
-                    },
-                    navigateToExplore = {
-                        // TODO navigate to explore
-                    },
-                    onRecentCollectionItemClick = { collectionId ->
-                        navigateToCollectionDetail(collectionId)
-                    },
-                    onRecentCollectionAllClick = navigateToCollectionList,
-                    onRecommendCollectionItemClick = { collectionId ->
-                        navigateToCollectionDetail(collectionId)
-                    },
-                    onSavedContentItemClick = { contentId ->
-                        // TODO show OttListBottomSheet
-                    },
-                    modifier = Modifier.padding(paddingValues),
-                )
-            }
+            HomeScreen(
+                recommendCollectionModelList = recommendedCollectionList,
+                recentCollectionModelList = recentCollectionList,
+                savedContentModelList = bookmarkedContentList,
+                navigateToCollectionCreate = {
+                    navigateToCollectionCreate()
+                },
+                navigateToExplore = {
+                    // TODO navigate to explore
+                },
+                onRecentCollectionItemClick = { collectionId ->
+                    navigateToCollectionDetail(collectionId)
+                },
+                onRecentCollectionAllClick = navigateToCollectionList,
+                onRecommendCollectionItemClick = { collectionId ->
+                    navigateToCollectionDetail(collectionId)
+                },
+                onSavedContentItemClick = { contentId ->
+                    // TODO show OttListBottomSheet
+                },
+                modifier = Modifier.padding(paddingValues),
+            )
         }
         else -> {}
     }
@@ -91,9 +82,9 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     userName: String = "",
-    recommendCollectionModelList: ImmutableList<CollectionModel>,
-    savedContentModelList: ImmutableList<ContentModel>,
-    recentCollectionModelList: ImmutableList<CollectionModel>,
+    recommendCollectionModelList: CollectionListModel,
+    savedContentModelList: BookmarkedContentListModel,
+    recentCollectionModelList: CollectionListModel,
     onRecommendCollectionItemClick: (collectionId: String) -> Unit,
     onSavedContentItemClick: (contentId: String) -> Unit,
     onRecentCollectionItemClick: (collectionId: String) -> Unit,
@@ -134,7 +125,7 @@ private fun HomeScreen(
                     description = "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요",
                     isAllVisible = false,
                     onAllClick = {},
-                    collectionModelList = recommendCollectionModelList,
+                    collectionListModel = recommendCollectionModelList,
                     onItemClick = onRecommendCollectionItemClick,
                 )
             }
@@ -155,7 +146,7 @@ private fun HomeScreen(
             item {
                 Spacer(Modifier.height(48.dp))
 
-                if (recentCollectionModelList.isEmpty()) {
+                if (recentCollectionModelList.collections.isEmpty()) {
                     HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)
                 } else {
                     CollectionSection(
@@ -163,7 +154,7 @@ private fun HomeScreen(
                         description = "${userName}님이 최근 살펴본 컬렉션이에요",
                         isAllVisible = true,
                         onAllClick = onRecentCollectionAllClick,
-                        collectionModelList = recentCollectionModelList,
+                        collectionListModel = recentCollectionModelList,
                         onItemClick = onRecentCollectionItemClick,
                     )
                 }
@@ -184,8 +175,8 @@ private fun HomeScreen(
 @Composable
 private fun PreviewHomeScreen() {
     FlintTheme {
-        val collectionModelList = CollectionModel.FakeList
-        val contentModelList = ContentModel.FakeList
+        val collectionModelList = CollectionListModel.FakeList
+        val contentModelList = BookmarkedContentListModel.FakeList
 
         HomeScreen(
             userName = "종우",
