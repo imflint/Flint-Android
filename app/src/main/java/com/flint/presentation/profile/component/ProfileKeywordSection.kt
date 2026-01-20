@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
@@ -192,4 +194,27 @@ private fun ProfileKeywordSectionPreview() {
             onRefreshClick = {},
         )
     }
+}
+
+@Preview(showBackground = false)
+@Composable
+private fun ProfileKeywordGraphLayoutPreview(
+    @PreviewParameter(KeywordListPreviewParameterProvider::class)
+    keywordList: ImmutableList<UserKeywordResponseModel>,
+) {
+    FlintTheme {
+        KeywordChipsGridLayout(
+            keywordList = keywordList,
+            modifier = Modifier,
+        )
+    }
+}
+
+private class KeywordListPreviewParameterProvider :
+    PreviewParameterProvider<ImmutableList<UserKeywordResponseModel>> {
+    override val values: Sequence<ImmutableList<UserKeywordResponseModel>> = sequenceOf(
+        UserKeywordResponseModel.FakeList1,
+        UserKeywordResponseModel.FakeList2,
+        UserKeywordResponseModel.FakeList3,
+    )
 }
