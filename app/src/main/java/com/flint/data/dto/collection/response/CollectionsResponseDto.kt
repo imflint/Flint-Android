@@ -11,10 +11,10 @@ data class CollectionsResponseDto(
     @Serializable
     data class Collection(
         @SerialName("collectionId") val collectionId: String,
-        @SerialName("createdAt") val createdAt: String,
-        @SerialName("description") val description: String,
         @SerialName("imageUrl") val imageUrl: String,
         @SerialName("title") val title: String,
+        @SerialName("description") val description: String,
+        @SerialName("createdAt") val createdAt: String,
     )
 
     @Serializable
