@@ -32,47 +32,18 @@ class CollectionListViewModel @Inject constructor(
         getCollectionList()
     }
 
-    fun getCollectionList() {
+    private fun getCollectionList() {
         viewModelScope.launch {
+            _uiState.update { it.copy(collectionList = UiState.Loading) }
+
             when (routeType) {
-                CollectionListRouteType.CREATED -> {
-                    userRepository.getUserCreatedCollections(userId = null)
-                        .onSuccess { result ->
-                            _uiState.update {
-                                it.copy(collectionList = UiState.Success(result))
-                            }
-                        }.onFailure { error ->
-                            _uiState.update {
-                                it.copy(collectionList = UiState.Failure)
-                            }
-                        }
-                }
-
-                CollectionListRouteType.SAVED -> {
-                    userRepository.getUserBookmarkedCollections(userId = null)
-                        .onSuccess { result ->
-                            _uiState.update {
-                                it.copy(collectionList = UiState.Success(result))
-                            }
-                        }.onFailure { error ->
-                            _uiState.update {
-                                it.copy(collectionList = UiState.Failure)
-                            }
-                        }
-                }
-
-                CollectionListRouteType.RECENT -> {
-                    collectionRepository.getRecentCollectionList()
-                        .onSuccess { result ->
-                            _uiState.update {
-                                it.copy(collectionList = UiState.Success(result))
-                            }
-                        }.onFailure { error ->
-                            _uiState.update {
-                                it.copy(collectionList = UiState.Failure)
-                            }
-                        }
-                }
+                CollectionListRouteType.CREATED -> userRepository.getUserCreatedCollections(userId = null)
+                CollectionListRouteType.SAVED -> userRepository.getUserBookmarkedCollections(userId = null)
+                CollectionListRouteType.RECENT -> collectionRepository.getRecentCollectionList()
+            }.onSuccess { result ->
+                _uiState.update { it.copy(collectionList = UiState.Success(result)) }
+            }.onFailure {
+                _uiState.update { it.copy(collectionList = UiState.Failure) }
             }
         }
     }
