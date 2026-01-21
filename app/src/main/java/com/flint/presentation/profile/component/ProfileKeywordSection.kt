@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.user.UserKeywordResponseModel
+import com.flint.domain.model.user.KeywordItemModel
+import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.type.KeywordType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -31,7 +32,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun ProfileKeywordSection(
     nickname: String,
-    keywordList: ImmutableList<UserKeywordResponseModel>,
+    keywordList: KeywordListModel,
     onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,7 +64,7 @@ fun ProfileKeywordSection(
         }
         Spacer(Modifier.height(32.dp))
         KeywordChipsGridLayout(
-            keywordList = keywordList,
+            keywordList = keywordList.keywords,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -98,7 +99,7 @@ private fun ProfileRefreshButton(
 
 @Composable
 private fun KeywordChipsGridLayout(
-    keywordList: ImmutableList<UserKeywordResponseModel>,
+    keywordList: ImmutableList<KeywordItemModel>,
     modifier: Modifier = Modifier,
 ) {
     val (arrangedKeywords, itemsPerRow) = remember(keywordList) {
@@ -137,7 +138,7 @@ private fun KeywordChipsGridLayout(
 
 @Composable
 private fun KeywordGraphLayout(
-    keywordList: ImmutableList<UserKeywordResponseModel>,
+    keywordList: ImmutableList<KeywordItemModel>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -158,8 +159,8 @@ private fun KeywordGraphLayout(
 }
 
 private fun arrangeKeywordsByRank(
-    keywordList: ImmutableList<UserKeywordResponseModel>
-): Pair<ImmutableList<UserKeywordResponseModel>, Int> {
+    keywordList: ImmutableList<KeywordItemModel>
+): Pair<ImmutableList<KeywordItemModel>, Int> {
     if (keywordList.size < 6) return keywordList to 3
 
     val sortedByRank = keywordList.sortedBy { it.rank }
@@ -189,7 +190,7 @@ private fun ProfileKeywordSectionPreview() {
     FlintTheme {
         ProfileKeywordSection(
             nickname = "안두콩",
-            keywordList = UserKeywordResponseModel.FakeList3,
+            keywordList = KeywordListModel.FakeList3,
             modifier = Modifier.fillMaxSize(),
             onRefreshClick = {},
         )
@@ -200,21 +201,21 @@ private fun ProfileKeywordSectionPreview() {
 @Composable
 private fun ProfileKeywordGraphLayoutPreview(
     @PreviewParameter(KeywordListPreviewParameterProvider::class)
-    keywordList: ImmutableList<UserKeywordResponseModel>,
+    keywordList: KeywordListModel,
 ) {
     FlintTheme {
         KeywordChipsGridLayout(
-            keywordList = keywordList,
+            keywordList = keywordList.keywords,
             modifier = Modifier,
         )
     }
 }
 
 private class KeywordListPreviewParameterProvider :
-    PreviewParameterProvider<ImmutableList<UserKeywordResponseModel>> {
-    override val values: Sequence<ImmutableList<UserKeywordResponseModel>> = sequenceOf(
-        UserKeywordResponseModel.FakeList1,
-        UserKeywordResponseModel.FakeList2,
-        UserKeywordResponseModel.FakeList3,
+    PreviewParameterProvider<KeywordListModel> {
+    override val values: Sequence<KeywordListModel> = sequenceOf(
+        KeywordListModel.FakeList1,
+        KeywordListModel.FakeList2,
+        KeywordListModel.FakeList3,
     )
 }

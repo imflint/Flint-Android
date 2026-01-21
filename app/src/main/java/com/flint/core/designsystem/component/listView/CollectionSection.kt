@@ -26,7 +26,6 @@ import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.listItem.CollectionItem
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
-import com.flint.domain.model.collection.CollectionModel
 
 @Composable
 fun CollectionSection(
