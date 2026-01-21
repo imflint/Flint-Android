@@ -216,7 +216,7 @@ fun OnboardingContentScreen(
         FlintBasicButton(
             text = "다음",
             state = if (contentUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = onNextClick,
+            onClick = { if (contentUiState.canProceed) { onNextClick() } },
             contentPadding = PaddingValues(vertical = 14.dp),
             modifier =
                 Modifier
