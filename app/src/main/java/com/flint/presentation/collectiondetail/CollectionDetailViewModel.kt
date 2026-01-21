@@ -45,18 +45,40 @@ class CollectionDetailViewModel @Inject constructor(
     private val _sideEffect: MutableSharedFlow<CollectionDetailSideEffect> = MutableSharedFlow()
     val sideEffect: SharedFlow<CollectionDetailSideEffect> = _sideEffect.asSharedFlow()
 
+    private var lastBookmarkToggleTime: Long = 0L
+    private val throttleDelayMs: Long = 2000L
+
     fun toggleCollectionBookmark() {
+        val currentTime: Long = System.currentTimeMillis()
+        if (currentTime - lastBookmarkToggleTime < throttleDelayMs) {
+            return
+        }
+        lastBookmarkToggleTime = currentTime
+
         val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
+        val previousBookmarkState: Boolean = uiState.collectionDetail.isBookmarked
+
+        _uiState.update { currentUiState: UiState<CollectionDetailUiState> ->
+            if (currentUiState !is UiState.Success) return@update currentUiState
+
+            currentUiState.copy(
+                data = currentUiState.data.copy(
+                    collectionDetail = currentUiState.data.collectionDetail.copy(
+                        isBookmarked = !previousBookmarkState
+                    )
+                )
+            )
+        }
 
         viewModelScope.launch {
             bookmarkRepository.toggleCollectionBookmark(uiState.collectionDetail.id)
                 .onSuccess { isBookmarked: Boolean ->
-                    _uiState.update { uiState: UiState<CollectionDetailUiState> ->
-                        if (uiState !is UiState.Success) return@update uiState
+                    _uiState.update { currentUiState: UiState<CollectionDetailUiState> ->
+                        if (currentUiState !is UiState.Success) return@update currentUiState
 
-                        uiState.copy(
-                            data = uiState.data.copy(
-                                collectionDetail = uiState.data.collectionDetail.copy(
+                        currentUiState.copy(
+                            data = currentUiState.data.copy(
+                                collectionDetail = currentUiState.data.collectionDetail.copy(
                                     isBookmarked = isBookmarked
                                 )
                             )
@@ -70,6 +92,18 @@ class CollectionDetailViewModel @Inject constructor(
                     )
                 }
                 .onFailure {
+                    _uiState.update { currentUiState: UiState<CollectionDetailUiState> ->
+                        if (currentUiState !is UiState.Success) return@update currentUiState
+
+                        currentUiState.copy(
+                            data = currentUiState.data.copy(
+                                collectionDetail = currentUiState.data.collectionDetail.copy(
+                                    isBookmarked = previousBookmarkState
+                                )
+                            )
+                        )
+                    }
+
                     _sideEffect.emit(CollectionDetailSideEffect.ToggleCollectionBookmarkFailure)
                 }
         }
