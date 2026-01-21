@@ -28,7 +28,7 @@ fun CollectionCreateContentSelect(
     imageUrl: String,
     title: String,
     director: String,
-    createdYear: String,
+    createdYear: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -80,7 +80,7 @@ private fun CollectionCreateContentSectionPreview() {
             imageUrl = "https://buly.kr/DEaVFRZ",
             title = "해리포터 불의 잔",
             director = "메롱",
-            createdYear = "2005",
+            createdYear = 2005,
         )
     }
 }

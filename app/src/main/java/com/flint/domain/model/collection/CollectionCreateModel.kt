@@ -9,7 +9,7 @@ data class CollectionCreateRequestModel(
 )
 
 data class CollectionCreateContentModel(
-    val contentId: Int,
+    val contentId: String,
     val isSpoiler: Boolean,
     val reason: String,
 )

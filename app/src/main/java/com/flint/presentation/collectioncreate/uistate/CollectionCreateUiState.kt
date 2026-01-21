@@ -1,11 +1,7 @@
 package com.flint.presentation.collectioncreate
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import com.flint.presentation.collectioncreate.model.CollectionContentUiModel
+import com.flint.domain.model.search.SearchContentItemModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -14,15 +10,19 @@ data class CollectionCreateUiState(
     val title: String = "",
     val description: String = "",
     val isPublic: Boolean? = null,
-    val selectedContents: ImmutableList<CollectionContentUiModel> = persistentListOf(),
-
+    val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
+    val contentDetailsMap: Map<String, ContentDetail> = emptyMap(),  // 추가
+    val contents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val searchText: String = "",
-    val isSpoiler: Boolean = false,
-    val selectedReason: String = "",
-){
-    val isFinishButtonEnabled: Boolean
-            =
+) {
+    val isFinishButtonEnabled: Boolean =
         title.isNotEmpty() &&
-        isPublic != null &&
-        selectedContents.size >= 2
+                isPublic != null &&
+                selectedContents.size >= 2
 }
+
+@Immutable
+data class ContentDetail(
+    val isSpoiler: Boolean = false,
+    val reason: String = ""
+)

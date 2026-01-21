@@ -38,10 +38,11 @@ import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.textfield.FlintLongTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.search.SearchContentItemModel
+import com.flint.domain.model.search.SearchContentListModel
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentDeleteModal
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentItemList
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
-import com.flint.presentation.collectioncreate.model.CollectionContentUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -61,10 +62,12 @@ fun CollectionCreateRoute(
         onDescriptionChanged = viewModel::updateDescription,
         onPublicChanged = viewModel::updateIsPublic,
         selectedContents = uiState.selectedContents,
+        contentDetailsMap = uiState.contentDetailsMap,
+        contentList = uiState.contents,
         onRemoveContent = viewModel::removeContent,
         onBackClick = navigateUp,
         onSpoilerChanged = viewModel::updateSpoiler,
-        onSelectedReasonChanged = viewModel::updateSelectedReason,
+        onReasonChanged = viewModel::updateReason,
         onAddContentClick = navigateToAddContent,
         onFinishClick = viewModel::onClickFinish,
         modifier = Modifier.padding(paddingValues),
@@ -77,17 +80,19 @@ fun CollectionCreateScreen(
     onTitleChanged: (String) -> Unit = {},
     onDescriptionChanged: (String) -> Unit = {},
     onPublicChanged: (Boolean?) -> Unit = {},
-    selectedContents: ImmutableList<CollectionContentUiModel>,
-    onRemoveContent: (CollectionContentUiModel) -> Unit,
+    selectedContents: ImmutableList<SearchContentItemModel>,
+    contentDetailsMap: Map<String, ContentDetail>,
+    contentList: ImmutableList<SearchContentItemModel>,
+    onRemoveContent: (SearchContentItemModel) -> Unit,
     onBackClick: () -> Unit,
-    onSpoilerChanged: (Boolean) -> Unit = {},
-    onSelectedReasonChanged: (String) -> Unit = {},
+    onSpoilerChanged: (String, Boolean) -> Unit = { _, _ -> },
+    onReasonChanged: (String, String) -> Unit = { _, _ -> },
     onAddContentClick: () -> Unit,
     onFinishClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
-    var contentToDelete by remember { mutableStateOf<CollectionContentUiModel?>(null) }
+    var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
 
 
 
@@ -238,22 +243,28 @@ fun CollectionCreateScreen(
             // 작품 리스트
             items(
                 items = selectedContents,
-                key = { it.contentId },
+                key = { it.id },
             ) { content ->
+                val detail = contentDetailsMap[content.id] ?: ContentDetail()
+
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     CollectionCreateContentItemList(
                         onCancelClick = {
                             contentToDelete = content
                             isModalVisible = true
                         },
-                        imageUrl = content.imageUrl,
+                        imageUrl = content.posterUrl,
                         title = content.title,
-                        director = content.director,
-                        createdYear = content.createdYear,
-                        isSpoiler = uiState.isSpoiler,
-                        onSpoilerChanged = { onSpoilerChanged },
-                        selectedReason = uiState.selectedReason,
-                        onSelectedReasonChanged = onSelectedReasonChanged,
+                        director = content.author,
+                        createdYear = content.year,
+                        isSpoiler = detail.isSpoiler,
+                        onSpoilerChanged = { isSpoiler ->
+                            onSpoilerChanged(content.id, isSpoiler)
+                        },
+                        selectedReason = detail.reason,
+                        onSelectedReasonChanged = { reason ->
+                            onReasonChanged(content.id, reason)
+                        },
                     )
                 }
             }
@@ -313,11 +324,13 @@ fun CollectionCreateScreenPreview() {
             onTitleChanged = {},
             onDescriptionChanged = {},
             onPublicChanged = {},
-            selectedContents = CollectionContentUiModel.dummyContentList,
+            selectedContents = SearchContentListModel.FakeList,
+            contentDetailsMap = emptyMap(),
+            contentList = SearchContentListModel.FakeList,
             onRemoveContent = {},
             onBackClick = {},
-            onSpoilerChanged = {},
-            onSelectedReasonChanged = {},
+            onSpoilerChanged = { _, _ -> },
+            onReasonChanged = { _, _ -> },
             onAddContentClick = {},
             onFinishClick = {},
         )

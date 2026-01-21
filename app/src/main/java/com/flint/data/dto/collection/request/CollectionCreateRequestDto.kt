@@ -19,7 +19,7 @@ data class CollectionCreateRequestDto(
     @Serializable
     data class Content(
         @SerialName("contentId")
-        val contentId: Int,
+        val contentId: String,
         @SerialName("isSpoiler")
         val isSpoiler: Boolean,
         @SerialName("reason")
