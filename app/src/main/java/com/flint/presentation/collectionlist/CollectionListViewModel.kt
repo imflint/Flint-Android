@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
+import com.flint.domain.repository.CollectionRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.domain.type.CollectionListRouteType
 import com.flint.presentation.collectionlist.uistate.CollectionListUiState
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CollectionListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
+    val collectionRepository: CollectionRepository,
 ) : ViewModel() {
 
     val routeType = savedStateHandle.toRoute<Route.CollectionList>().routeType
@@ -31,7 +33,6 @@ class CollectionListViewModel @Inject constructor(
     }
 
     fun getCollectionList() {
-        //TODO: routeType에 따라 조회 데이터 변경 필요
         viewModelScope.launch {
             when (routeType) {
                 CollectionListRouteType.CREATED -> {
@@ -48,10 +49,29 @@ class CollectionListViewModel @Inject constructor(
                 }
 
                 CollectionListRouteType.SAVED -> {
-
+                    userRepository.getUserBookmarkedCollections(userId = null)
+                        .onSuccess { result ->
+                            _uiState.update {
+                                it.copy(collectionList = UiState.Success(result))
+                            }
+                        }.onFailure { error ->
+                            _uiState.update {
+                                it.copy(collectionList = UiState.Failure)
+                            }
+                        }
                 }
-                CollectionListRouteType.RECENT -> {
 
+                CollectionListRouteType.RECENT -> {
+                    collectionRepository.getRecentCollectionList()
+                        .onSuccess { result ->
+                            _uiState.update {
+                                it.copy(collectionList = UiState.Success(result))
+                            }
+                        }.onFailure { error ->
+                            _uiState.update {
+                                it.copy(collectionList = UiState.Failure)
+                            }
+                        }
                 }
             }
         }
