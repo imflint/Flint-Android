@@ -86,8 +86,10 @@ fun CollectionDetailRoute(
     viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
     val uiState: UiState<CollectionDetailUiState> by viewModel.uiState.collectAsStateWithLifecycle()
-    var showCancelToast: Boolean by remember { mutableStateOf(false) }
-    var showSaveToast: Boolean by remember { mutableStateOf(false) }
+    var showCollectionCancelToast: Boolean by remember { mutableStateOf(false) }
+    var showCollectionSaveToast: Boolean by remember { mutableStateOf(false) }
+    var showContentSaveToast: Boolean by remember { mutableStateOf(false) }
+    var showContentCancelToast: Boolean by remember { mutableStateOf(false) }
 
     when (val uiState = uiState) {
         UiState.Loading -> {
@@ -122,19 +124,19 @@ fun CollectionDetailRoute(
         else -> {}
     }
 
-    if (showCancelToast) {
+    if (showCollectionCancelToast) {
         ShowToast(
             text = "컬렉션 저장이 취소되었어요",
             imageVector = null,
             paddingValues = paddingValues,
             yOffset = 12.dp,
             hide = {
-                showCancelToast = false
+                showCollectionCancelToast = false
             }
         )
     }
 
-    if (showSaveToast) {
+    if (showCollectionSaveToast) {
         ShowSaveToast(
             navigateToSavedCollection = {
                 navigateToCollectionList()
@@ -142,8 +144,32 @@ fun CollectionDetailRoute(
             paddingValues = paddingValues,
             yOffset = 12.dp,
             hide = {
-                showSaveToast = false
+                showCollectionSaveToast = false
             })
+    }
+
+    if (showContentSaveToast) {
+        ShowToast(
+            text = "작품을 저장했어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = {
+                showContentSaveToast = false
+            }
+        )
+    }
+
+    if (showContentCancelToast) {
+        ShowToast(
+            text = "작품 저장이 취소되었어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = {
+                showContentCancelToast = false
+            }
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -155,11 +181,21 @@ fun CollectionDetailRoute(
 
                 is CollectionDetailSideEffect.ToggleCollectionBookmarkSuccess -> {
                     if (event.isBookmarked) {
-                        showSaveToast = true
-                        showCancelToast = false
+                        showCollectionSaveToast = true
+                        showCollectionCancelToast = false
                     } else {
-                        showCancelToast = true
-                        showSaveToast = false
+                        showCollectionCancelToast = true
+                        showCollectionSaveToast = false
+                    }
+                }
+
+                is CollectionDetailSideEffect.ToggleContentBookmarkSuccess -> {
+                    if (event.isBookmarked) {
+                        showContentSaveToast = true
+                        showContentCancelToast = false
+                    } else {
+                        showContentCancelToast = true
+                        showContentSaveToast = false
                     }
                 }
             }

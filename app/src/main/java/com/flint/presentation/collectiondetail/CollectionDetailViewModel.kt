@@ -104,6 +104,9 @@ class CollectionDetailViewModel @Inject constructor(
                         contentId = contentId,
                         isBookmarked = isBookmarked
                     )
+                    _sideEffect.emit(
+                        CollectionDetailSideEffect.ToggleContentBookmarkSuccess(isBookmarked)
+                    )
                 }
                 .onFailure {
                     updateContentBookmarkState(
