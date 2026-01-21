@@ -18,6 +18,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -34,7 +35,7 @@ class CollectionListViewModel @Inject constructor(
     val routeType = savedStateHandle.toRoute<Route.CollectionList>().routeType
 
     private val _uiState = MutableStateFlow<CollectionListUiState>(CollectionListUiState())
-    val uiState: MutableStateFlow<CollectionListUiState> = _uiState
+    val uiState: StateFlow<CollectionListUiState> = _uiState
 
     private val _sideEffect: MutableSharedFlow<CollectionListSideEffect> = MutableSharedFlow()
     val sideEffect: SharedFlow<CollectionListSideEffect> = _sideEffect.asSharedFlow()

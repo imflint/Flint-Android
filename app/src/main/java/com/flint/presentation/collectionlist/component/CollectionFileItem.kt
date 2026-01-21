@@ -52,8 +52,8 @@ fun CollectionFileItem(
                 nickname = nickname,
                 isBookmarked = isBookmarked,
                 bookmarkCount = bookmarkCount,
-                poster1Url = imageList[0],
-                poster2Url = if (imageList.size >= 2) imageList[1] else "",
+                poster1Url = imageList.getOrElse(0) { "" },
+                poster2Url = imageList.getOrElse(1) { "" },
                 onBookmarkClick = onBookmarkClick,
                 modifier = Modifier.size(154.dp),
             )
