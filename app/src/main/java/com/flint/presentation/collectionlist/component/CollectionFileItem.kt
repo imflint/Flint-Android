@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.dropShadow
+import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
@@ -38,6 +39,7 @@ import com.flint.domain.model.collection.CollectionItemModel
 @Composable
 fun CollectionFileItem(
     collection: CollectionItemModel,
+    onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -52,6 +54,7 @@ fun CollectionFileItem(
                 bookmarkCount = bookmarkCount,
                 poster1Url = imageList[0],
                 poster2Url = if (imageList.size >= 2) imageList[1] else "",
+                onBookmarkClick = onBookmarkClick,
                 modifier = Modifier.size(154.dp),
             )
         }
@@ -88,6 +91,7 @@ private fun CollectionFileContent(
     bookmarkCount: Int,
     poster1Url: String,
     poster2Url: String,
+    onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -142,7 +146,9 @@ private fun CollectionFileContent(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(2.dp),
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .noRippleClickable(onClick = onBookmarkClick),
                 ) {
                     Image(
                         imageVector =
@@ -222,7 +228,8 @@ private fun CollectionFileItemPreview() {
                     isBookmarked = false,
                     bookmarkCount = 0,
                     imageList = listOf("", ""),
-                )
+                ),
+                onBookmarkClick = {},
             )
             CollectionFileItem(
                 collection = CollectionItemModel(
@@ -234,7 +241,8 @@ private fun CollectionFileItemPreview() {
                     isBookmarked = true,
                     bookmarkCount = 10,
                     imageList = listOf("", ""),
-                )
+                ),
+                onBookmarkClick = {},
             )
         }
     }

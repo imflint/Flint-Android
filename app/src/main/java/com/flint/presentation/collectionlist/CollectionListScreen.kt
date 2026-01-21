@@ -15,7 +15,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,27 +29,77 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
+import com.flint.core.designsystem.component.toast.ShowSaveToast
+import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.type.CollectionListRouteType
 import com.flint.presentation.collectionlist.component.CollectionFileItem
+import com.flint.presentation.collectionlist.sideeffect.CollectionListSideEffect
 
 @Composable
 fun CollectionListRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionList: (CollectionListRouteType) -> Unit,
     viewModel: CollectionListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showCancelToast: Boolean by remember { mutableStateOf(false) }
+    var showSaveToast: Boolean by remember { mutableStateOf(false) }
 
     CollectionListScreen(
         modifier = Modifier.padding(paddingValues),
         title = viewModel.routeType.title,
         onBackClick = navigateUp,
         onCollectionItemClick = navigateToCollectionDetail,
+        onBookmarkClick = viewModel::toggleCollectionBookmark,
         collectionList = uiState.collectionList,
     )
+
+    if (showCancelToast) {
+        ShowToast(
+            text = "컬렉션 저장이 취소되었어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 14.dp,
+            hide = {
+                showCancelToast = false
+            }
+        )
+    }
+
+    if (showSaveToast) {
+        ShowSaveToast(
+            navigateToSavedCollection = {
+                navigateToCollectionList(CollectionListRouteType.SAVED)
+            },
+            paddingValues = paddingValues,
+            yOffset = 16.dp,
+            hide = {
+                showSaveToast = false
+            }
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { event: CollectionListSideEffect ->
+            when (event) {
+                is CollectionListSideEffect.ToggleCollectionBookmarkSuccess -> {
+                    if (event.isBookmarked) {
+                        showSaveToast = true
+                        showCancelToast = false
+                    } else {
+                        showCancelToast = true
+                        showSaveToast = false
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
 }
 
 @Composable
@@ -54,6 +108,7 @@ private fun CollectionListScreen(
     title: String,
     collectionList: UiState<CollectionListModel>,
     onCollectionItemClick: (collectionId: String) -> Unit,
+    onBookmarkClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -113,6 +168,7 @@ private fun CollectionListScreen(
                             ) {
                                 CollectionFileItem(
                                     collection = collection,
+                                    onBookmarkClick = { onBookmarkClick(collection.id) },
                                     modifier =
                                         Modifier
                                             .align(Alignment.Center)
@@ -140,7 +196,8 @@ private fun CollectionListScreenPreview() {
             onBackClick = {},
             title = "전체 컬렉션",
             collectionList = UiState.Success(CollectionListModel.FakeList),
-            onCollectionItemClick = {}
+            onCollectionItemClick = {},
+            onBookmarkClick = {},
         )
     }
 }

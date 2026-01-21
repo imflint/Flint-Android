@@ -25,12 +25,14 @@ fun NavGraphBuilder.collectionListNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionList: (CollectionListRouteType) -> Unit,
 ) {
     composable<Route.CollectionList> {
         CollectionListRoute(
             paddingValues = paddingValues,
             navigateUp = navigateUp,
             navigateToCollectionDetail = navigateToCollectionDetail,
+            navigateToCollectionList = navigateToCollectionList,
         )
     }
 }
