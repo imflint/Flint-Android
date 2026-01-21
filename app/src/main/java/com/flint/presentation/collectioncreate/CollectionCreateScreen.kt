@@ -60,7 +60,7 @@ fun CollectionCreateRoute(
         }
 
     CollectionCreateScreen(
-        uistate = uiState,
+        uiState = uiState,
         onTitleChanged = viewModel::updateTitle,
         onDescriptionChanged = viewModel::updateDescription,
         onPublicChanged = viewModel::updateIsPublic,
@@ -75,7 +75,7 @@ fun CollectionCreateRoute(
 
 @Composable
 fun CollectionCreateScreen(
-    uistate: CollectionCreateUiState,
+    uiState: CollectionCreateUiState,
     onTitleChanged: (String) -> Unit = {},
     onDescriptionChanged: (String) -> Unit = {},
     onPublicChanged: (Boolean?) -> Unit = {},
@@ -84,7 +84,6 @@ fun CollectionCreateScreen(
     onBackClick: () -> Unit,
     onAddContentClick: () -> Unit,
     onFinishClick: () -> Unit,
-
     modifier: Modifier = Modifier,
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
@@ -125,7 +124,7 @@ fun CollectionCreateScreen(
 
                     FlintLongTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = uistate.title,
+                        value = uiState.title,
                         placeholder = "컬렉션의 제목을 입력해주세요.",
                         onValueChanged = onTitleChanged,
                         maxLength = 20,
@@ -155,7 +154,7 @@ fun CollectionCreateScreen(
 
                     FlintLongTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = uistate.description,
+                        value = uiState.description,
                         placeholder = "컬렉션의 소개를 작성해주세요.",
                         onValueChanged = onDescriptionChanged,
                         maxLength = 200,
@@ -179,7 +178,7 @@ fun CollectionCreateScreen(
                         FlintIconButton(
                             text = "공개",
                             iconRes = R.drawable.ic_share,
-                            state = when(uistate.isPublic){
+                            state = when(uiState.isPublic){
                                 true -> FlintButtonState.ColorOutline
                                 false -> FlintButtonState.Disable
                                 else -> FlintButtonState.Outline
@@ -194,7 +193,7 @@ fun CollectionCreateScreen(
                         FlintIconButton(
                             text = "비공개",
                             iconRes = R.drawable.ic_lock,
-                            state = when(uistate.isPublic){
+                            state = when(uiState.isPublic){
                                 true -> FlintButtonState.Disable
                                 false -> FlintButtonState.ColorOutline
                                 else -> FlintButtonState.Outline
@@ -273,13 +272,13 @@ fun CollectionCreateScreen(
         }
         FlintLargeButton(
             text = "완료",
-            state = if (uistate.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
+            state = if (uiState.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
             onClick = {onFinishClick()},
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-            enabled = uistate.isFinishButtonEnabled,
+            enabled = uiState.isFinishButtonEnabled,
         )
     }
 
@@ -304,7 +303,7 @@ fun CollectionCreateScreen(
 fun CollectionCreateScreenPreview() {
     FlintTheme {
         CollectionCreateScreen(
-            uistate = CollectionCreateUiState(),
+            uiState = CollectionCreateUiState(),
             onTitleChanged = {},
             onDescriptionChanged = {},
             onPublicChanged = {},

@@ -38,7 +38,7 @@ fun AddContentRoute(
     val uiState by viewModel.uiState.collectAsState()
 
     AddContentScreen(
-        uistate = uiState,
+        uiState = uiState,
         onSearchTextChanged = viewModel::updateSearch,
         onBackClick = navigateUp,
         onActionClick = navigateToCollectionCreate,
@@ -56,7 +56,7 @@ data class CollectionContentUiModel(
 
 @Composable
 fun AddContentScreen(
-    uistate: CollectionCreateUiState,
+    uiState: CollectionCreateUiState,
     onSearchTextChanged: (String) -> Unit = {},
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
@@ -96,7 +96,7 @@ fun AddContentScreen(
 
         FlintSearchTextField(
             placeholder = "추천하고 싶은 작품을 검색해보세요",
-            value = uistate.searchText,
+            value = uiState.searchText,
             onValueChanged = onSearchTextChanged,
             modifier =
                 Modifier
@@ -165,7 +165,7 @@ private fun AddContentScreenPreview() {
             onSearchTextChanged = {},
             onBackClick = {},
             onActionClick = {},
-            uistate = CollectionCreateUiState()
+            uiState = CollectionCreateUiState()
         )
     }
 }
