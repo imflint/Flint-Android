@@ -141,7 +141,7 @@ private fun HomeScreen(
     ) {
         LazyColumn(
             overscrollEffect = null,
-            contentPadding = PaddingValues(bottom = 80.dp),
+            contentPadding = PaddingValues(bottom = 20.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
             stickyHeader {
