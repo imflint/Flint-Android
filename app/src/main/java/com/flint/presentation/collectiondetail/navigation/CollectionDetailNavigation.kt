@@ -19,12 +19,14 @@ fun NavGraphBuilder.collectionDetailNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
     navigateUp: () -> Unit,
+    navigateToProfile: (userId: String) -> Unit,
 ) {
     composable<Route.CollectionDetail> {
         CollectionDetailRoute(
             paddingValues = paddingValues,
             navigateToCollectionList = navigateToCollectionList,
             navigateUp = navigateUp,
+            navigateToProfile = navigateToProfile
         )
     }
 }

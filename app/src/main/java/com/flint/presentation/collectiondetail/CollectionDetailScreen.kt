@@ -81,6 +81,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun CollectionDetailRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: () -> Unit,
+    navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
@@ -114,6 +115,7 @@ fun CollectionDetailRoute(
                 navigateUp = navigateUp,
                 onBookmarkIconClick = viewModel::toggleContentBookmark,
                 onSpoilClick = viewModel::spoil,
+                onAuthorClick = navigateToProfile,
             )
         }
 
@@ -183,6 +185,7 @@ fun CollectionDetailScreen(
     navigateUp: () -> Unit,
     onBookmarkIconClick: (String) -> Unit,
     onSpoilClick: (String) -> Unit,
+    onAuthorClick: (authorId: String) -> Unit,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -203,7 +206,10 @@ fun CollectionDetailScreen(
         if (showPeopleBottomSheet) {
             PeopleBottomSheet(
                 people = people,
-                onAuthorClick = { /* TODO: 프로필 화면으로 이동 */ },
+                onAuthorClick = { userId: String ->
+                    showPeopleBottomSheet = false
+                    onAuthorClick(userId)
+                },
                 onDismiss = { showPeopleBottomSheet = false },
             )
         }
@@ -955,7 +961,8 @@ private fun CollectionDetailScreenPreview(
                 onSaveNoneButtonClick = {},
                 navigateUp = {},
                 onBookmarkIconClick = {},
-                onSpoilClick = {}
+                onSpoilClick = {},
+                onAuthorClick = {}
             )
         }
     }
