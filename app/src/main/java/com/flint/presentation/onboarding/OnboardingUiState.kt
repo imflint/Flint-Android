@@ -53,3 +53,13 @@ data class OnboardingOttUiState(
         selectedOtts.contains(ottType)
     }
 }
+
+data class OnboardingSignupUiState(
+    val signupState: UiState<Unit> = UiState.Empty,
+) {
+    val isLoading: Boolean
+        get() = signupState is UiState.Loading
+
+    val isSuccess: Boolean
+        get() = signupState is UiState.Success
+}

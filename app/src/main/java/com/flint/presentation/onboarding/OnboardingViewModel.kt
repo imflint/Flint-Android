@@ -1,10 +1,16 @@
 package com.flint.presentation.onboarding
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
+import com.flint.core.navigation.Route
+import com.flint.domain.model.auth.SignupRequestModel
+import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.SearchRepository
 import com.flint.domain.repository.UserRepository
+import com.flint.domain.type.OttType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,20 +21,29 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import com.flint.domain.model.search.SearchContentItemModel
-import com.flint.domain.type.OttType
 
 @HiltViewModel
 class OnboardingViewModel
 @Inject constructor(
     private val userRepository: UserRepository,
     private val searchRepository: SearchRepository,
+    private val authRepository: AuthRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val tempToken: String = savedStateHandle.toRoute<Route.OnboardingGraph>().tempToken
 
     private val _uiState = MutableStateFlow(OnboardingProfileUiState())
     val uiState: StateFlow<OnboardingProfileUiState> = _uiState.asStateFlow()
 
     private val _contentUiState = MutableStateFlow(OnboardingContentUiState())
     val contentUiState: StateFlow<OnboardingContentUiState> = _contentUiState.asStateFlow()
+
+    private val _ottUiState = MutableStateFlow(OnboardingOttUiState())
+    val ottUiState: StateFlow<OnboardingOttUiState> = _ottUiState.asStateFlow()
+
+    private val _signupUiState = MutableStateFlow(OnboardingSignupUiState())
+    val signupUiState: StateFlow<OnboardingSignupUiState> = _signupUiState.asStateFlow()
 
     // ---------- onboarding profile ----------
     fun updateNickname(nickname: String) {
@@ -112,9 +127,6 @@ class OnboardingViewModel
     }
 
     // ---------- onboarding ott ----------
-    private val _ottUiState = MutableStateFlow(OnboardingOttUiState())
-    val ottUiState: StateFlow<OnboardingOttUiState> = _ottUiState.asStateFlow()
-
     fun toggleOttSelection(ottType: OttType) {
         _ottUiState.update { currentState ->
             val isAlreadySelected = currentState.selectedOtts.contains(ottType)
@@ -129,6 +141,28 @@ class OnboardingViewModel
         }
     }
 
-    // ---------- onboarding done ----------
+    // ---------- onboarding signup ----------
+    fun signup() {
+        viewModelScope.launch {
+            _signupUiState.update { it.copy(signupState = UiState.Loading) }
 
+            val signupRequest = SignupRequestModel(
+                tempToken = tempToken,
+                nickname = _uiState.value.nickname,
+                favoriteContentIds = _contentUiState.value.selectedContents.map { it.id.toLong() },
+                subscribedOttIds = _ottUiState.value.selectedOtts.map { it.id }
+            )
+
+            authRepository.signup(signupRequest)
+                .onSuccess { response ->
+                    _signupUiState.update { it.copy(signupState = UiState.Success(Unit)) }
+                    Timber.d("Signup success: userId=${response.userId}")
+                    // TODO: accessToken과 refreshToken 저장
+                }
+                .onFailure { error ->
+                    _signupUiState.update { it.copy(signupState = UiState.Failure) }
+                    Timber.e(error, "Signup failed")
+                }
+        }
+    }
 }
