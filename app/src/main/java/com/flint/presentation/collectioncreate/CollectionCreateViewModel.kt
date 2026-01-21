@@ -75,38 +75,4 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
-//        fun addSelectedContent(content: CollectionContentUiModel) {
-//            _uiState.update { state ->
-//                val tempList: MutableList<CollectionContentUiModel> =
-//                    mutableListOf(content)
-//
-//                tempList.addAll(state.selectedContents)
-//
-//                state.copy(
-//                    selectedContents = tempList
-//                )
-//            }
-//        }
-//
-//        fun removeSelectedContent(content: CollectionContentUiModel) {
-//            _uiState.update { state ->
-//                val tempList: MutableList<CollectionContentUiModel> =
-//                    mutableListOf(content)
-//
-//                tempList.removeAll (state.selectedContents)
-//
-//                state.copy(
-//                    selectedContents = tempList
-//                )
-//            }
-//        }
-
-//        fun updateIsFinishButton(isFinishedButtonEnabled: Boolean){
-//            _uiState.update { state ->
-//                if (uiState.selectedContents.size >= 2){
-//                    state.copy(isFinishButtonEnabled = true)
-//                }
-//
-//            }
-//        }
     }
