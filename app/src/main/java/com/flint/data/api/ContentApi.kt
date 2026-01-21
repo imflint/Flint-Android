@@ -13,7 +13,9 @@ interface ContentApi {
 
     // 콘텐츠별 OTT 목록 조회
     @GET("/api/v1/contents/ott/{contentId}")
-    suspend fun getOttListPerContent(@Path("contentId") contentId: String): BaseResponse<OttListResponseDto>
+    suspend fun getOttListPerContent(
+        @Path("contentId") contentId: String
+    ): BaseResponse<OttListResponseDto>
 
     // 콘텐츠 검색
 }

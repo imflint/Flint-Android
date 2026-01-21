@@ -1,11 +1,10 @@
 package com.flint.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.data.local.PreferencesManager
 import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.core.common.util.UiState
+import com.flint.data.local.PreferencesManager
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.repository.CollectionRepository
@@ -22,6 +21,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(
                 _recommendCollectionListLoadState.emit(UiState.Success(it))
             }
             .onFailure {
-                Log.d("Logd", it.message.toString())
+                Timber.e(it.message)
             }
     }
 
@@ -79,7 +79,7 @@ class HomeViewModel @Inject constructor(
                 _bookmarkedContentListLoadState.emit(UiState.Success(it))
             }
             .onFailure {
-                Log.d("Logd", it.message.toString())
+                Timber.e(it.message)
             }
     }
 
@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
                 _recentCollectionListLoadState.emit(UiState.Success(it))
             }
             .onFailure {
-                Log.d("Logd", it.message.toString())
+                Timber.e(it.message)
             }
     }
 
@@ -99,7 +99,7 @@ class HomeViewModel @Inject constructor(
                 _homeSideEffect.emit(HomeSideEffect.ShowOttListBottomSheet(it))
             }
             .onFailure {
-                Log.d("Logd", it.message.toString())
+                Timber.e(it.message)
             }
     }
 }
