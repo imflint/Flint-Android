@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
@@ -123,8 +124,6 @@ private fun CollectionListScreen(
             backgroundColor = FlintTheme.colors.background,
         )
 
-        Spacer(Modifier.height(12.dp))
-
         when (collectionList) {
             is UiState.Loading -> {
                 FlintLoadingIndicator()
@@ -132,30 +131,29 @@ private fun CollectionListScreen(
 
             is UiState.Success -> {
                 with(collectionList.data) {
-                    Text(
-                        text = "총 ${collections.size}개",
-                        color = FlintTheme.colors.gray100,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                    )
-
-                    Spacer(Modifier.height(24.dp))
-
                     LazyVerticalGrid(
                         contentPadding = PaddingValues(10.dp),
                         columns = GridCells.Fixed(2),
-                        horizontalArrangement =
-                            Arrangement.spacedBy(
-                                12.dp,
-                                Alignment.CenterHorizontally,
-                            ),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier =
-                            Modifier
-                                .padding(horizontal = 10.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp),
                     ) {
+                        item(
+                            span = { GridItemSpan(maxLineSpan) }
+                        ) {
+                            Spacer(Modifier.height(12.dp))
+
+                            Text(
+                                text = "총 ${collections.size}개",
+                                color = FlintTheme.colors.gray100,
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 6.dp)
+                                        .padding(bottom = 14.dp),
+                            )
+                        }
+
                         items(
                             items = collections,
                             key = { it.id },
@@ -180,7 +178,6 @@ private fun CollectionListScreen(
                         }
                     }
                 }
-
             }
 
             else -> {}
