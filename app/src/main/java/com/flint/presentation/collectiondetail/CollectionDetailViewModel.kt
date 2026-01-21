@@ -45,15 +45,14 @@ class CollectionDetailViewModel @Inject constructor(
     private val _sideEffect: MutableSharedFlow<CollectionDetailSideEffect> = MutableSharedFlow()
     val sideEffect: SharedFlow<CollectionDetailSideEffect> = _sideEffect.asSharedFlow()
 
-    private var lastBookmarkToggleTime: Long = 0L
+    private var lastCollectionBookmarkToggleTime: Long = 0L
+    private val lastContentBookmarkToggleTime: MutableMap<String, Long> = mutableMapOf()
     private val throttleDelayMs: Long = 2000L
 
     fun toggleCollectionBookmark() {
         val currentTime: Long = System.currentTimeMillis()
-        if (currentTime - lastBookmarkToggleTime < throttleDelayMs) {
-            return
-        }
-        lastBookmarkToggleTime = currentTime
+        if (currentTime - lastCollectionBookmarkToggleTime < throttleDelayMs) return
+        lastCollectionBookmarkToggleTime = currentTime
 
         val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
         val previousBookmarkState: Boolean = uiState.collectionDetail.isBookmarked
@@ -110,20 +109,70 @@ class CollectionDetailViewModel @Inject constructor(
     }
 
     fun toggleContentBookmark(contentId: String) {
+        val currentTime: Long = System.currentTimeMillis()
+        val lastToggleTime: Long = lastContentBookmarkToggleTime[contentId] ?: 0L
+        if (currentTime - lastToggleTime < throttleDelayMs) return
+        lastContentBookmarkToggleTime[contentId] = currentTime
+
+        val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
+        val targetContent: ContentModelNew =
+            uiState.collectionDetail.contents.find { it.id == contentId } ?: return
+        val previousBookmarkState: Boolean = targetContent.isBookmarked
+        val previousBookmarkCount: Int = targetContent.bookmarkCount
+
+        _uiState.update { currentUiState: UiState<CollectionDetailUiState> ->
+            if (currentUiState !is UiState.Success) return@update currentUiState
+
+            currentUiState.copy(
+                data = currentUiState.data.copy(
+                    collectionDetail = currentUiState.data.collectionDetail.copy(
+                        contents = currentUiState.data.collectionDetail.contents.map { content: ContentModelNew ->
+                            if (content.id == contentId) {
+                                content.copy(
+                                    isBookmarked = !previousBookmarkState,
+                                    bookmarkCount = if (!previousBookmarkState) previousBookmarkCount + 1 else previousBookmarkCount - 1
+                                )
+                            } else {
+                                content
+                            }
+                        }.toImmutableList()
+                    )
+                )
+            )
+        }
+
         viewModelScope.launch {
             bookmarkRepository.toggleContentBookmark(contentId)
                 .onSuccess { isBookmarked: Boolean ->
-                    _uiState.update { uiState: UiState<CollectionDetailUiState> ->
-                        if (uiState !is UiState.Success) return@update uiState
+                    _uiState.update { currentUiState: UiState<CollectionDetailUiState> ->
+                        if (currentUiState !is UiState.Success) return@update currentUiState
 
-                        uiState.copy(
-                            data = uiState.data.copy(
-                                collectionDetail = uiState.data.collectionDetail.copy(
-                                    contents = uiState.data.collectionDetail.contents.map { content: ContentModelNew ->
+                        currentUiState.copy(
+                            data = currentUiState.data.copy(
+                                collectionDetail = currentUiState.data.collectionDetail.copy(
+                                    contents = currentUiState.data.collectionDetail.contents.map { content: ContentModelNew ->
+                                        if (content.id == contentId) {
+                                            content.copy(isBookmarked = isBookmarked)
+                                        } else {
+                                            content
+                                        }
+                                    }.toImmutableList()
+                                )
+                            )
+                        )
+                    }
+                }.onFailure {
+                    _uiState.update { currentUiState: UiState<CollectionDetailUiState> ->
+                        if (currentUiState !is UiState.Success) return@update currentUiState
+
+                        currentUiState.copy(
+                            data = currentUiState.data.copy(
+                                collectionDetail = currentUiState.data.collectionDetail.copy(
+                                    contents = currentUiState.data.collectionDetail.contents.map { content: ContentModelNew ->
                                         if (content.id == contentId) {
                                             content.copy(
-                                                isBookmarked = isBookmarked,
-                                                bookmarkCount = if (isBookmarked) content.bookmarkCount + 1 else content.bookmarkCount - 1
+                                                isBookmarked = previousBookmarkState,
+                                                bookmarkCount = previousBookmarkCount
                                             )
                                         } else content
                                     }.toImmutableList()
@@ -131,8 +180,6 @@ class CollectionDetailViewModel @Inject constructor(
                             )
                         )
                     }
-                }.onFailure {
-
                 }
         }
     }
