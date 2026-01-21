@@ -74,13 +74,14 @@ import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
+import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CollectionDetailRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionList: () -> Unit,
+    navigateToCollectionList: (CollectionListRouteType) -> Unit,
     navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
@@ -139,7 +140,7 @@ fun CollectionDetailRoute(
     if (showCollectionSaveToast) {
         ShowSaveToast(
             navigateToSavedCollection = {
-                navigateToCollectionList()
+                navigateToCollectionList(CollectionListRouteType.SAVED)
             },
             paddingValues = paddingValues,
             yOffset = 12.dp,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,19 +22,24 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
-import com.flint.domain.type.UserRoleType
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
+import com.flint.presentation.profile.uistate.ProfileUiState
 
 @Composable
 fun ProfileRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionList: () -> Unit,
+    navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
     navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getProfile()
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -44,9 +50,17 @@ fun ProfileRoute(
             ProfileScreen(
                 modifier = Modifier.padding(paddingValues),
                 uiState = state.data,
-                onRefreshClick = viewModel::refreshProfileKeyword,
                 onCollectionItemClick = navigateToCollectionDetail,
-                onCollectionMoreClick = navigateToCollectionList,
+                onCreatedCollectionMoreClick =  {
+                    navigateToCollectionList(
+                        CollectionListRouteType.CREATED,
+                    )
+                },
+                onSavedCollectionMoreClick = {
+                    navigateToCollectionList(
+                        CollectionListRouteType.SAVED,
+                    )
+                },
             )
         }
 
@@ -62,7 +76,8 @@ private fun ProfileScreen(
     onCollectionItemClick: (collectionId: String) -> Unit,
     onContentItemClick: (contentId: String) -> Unit = {}, // TODO: 바텀시트 띄우기
     onContentMoreClick: () -> Unit = {},
-    onCollectionMoreClick: () -> Unit,
+    onCreatedCollectionMoreClick: () -> Unit,
+    onSavedCollectionMoreClick: () -> Unit
 ) {
     val userName = uiState.profile.nickname
 
@@ -78,8 +93,8 @@ private fun ProfileScreen(
             with(uiState.profile) {
                 ProfileTopSection(
                     userName = nickname,
-                    profileUrl = profileUrl,
-                    isFliner = (userRole == UserRoleType.FLINER),
+                    profileUrl = profileImageUrl.orEmpty(),
+                    isFliner = isFliner,
                 )
             }
         }
@@ -96,29 +111,33 @@ private fun ProfileScreen(
         }
 
         item {
-            Spacer(Modifier.height(48.dp))
+            if (uiState.createCollections.collections.isNotEmpty())  {
+                Spacer(Modifier.height(48.dp))
 
-            CollectionSection(
-                title = "${userName}님의 컬렉션",
-                description = "${userName}님이 생성한 컬렉션이에요",
-                onItemClick = onCollectionItemClick,
-                isAllVisible = true,
-                onAllClick = onCollectionMoreClick,
-                collectionListModel = uiState.createCollections,
-            )
+                CollectionSection(
+                    title = "${userName}님의 컬렉션",
+                    description = "${userName}님이 생성한 컬렉션이에요",
+                    onItemClick = onCollectionItemClick,
+                    isAllVisible = true,
+                    onAllClick = onCreatedCollectionMoreClick,
+                    collectionListModel = uiState.createCollections,
+                )
+            }
         }
 
         item {
-            Spacer(Modifier.height(48.dp))
+            if (uiState.savedCollections.collections.isNotEmpty()) {
+                Spacer(Modifier.height(48.dp))
 
-            CollectionSection(
-                title = "저장한 컬렉션",
-                description = "${userName}님이 저장한 컬렉션이에요",
-                onItemClick = onCollectionItemClick,
-                isAllVisible = true,
-                onAllClick = onCollectionMoreClick,
-                collectionListModel = uiState.savedCollections,
-            )
+                CollectionSection(
+                    title = "저장한 컬렉션",
+                    description = "${userName}님이 저장한 컬렉션이에요",
+                    onItemClick = onCollectionItemClick,
+                    isAllVisible = true,
+                    onAllClick = onSavedCollectionMoreClick,
+                    collectionListModel = uiState.savedCollections,
+                )
+            }
         }
 
         item {
@@ -127,7 +146,7 @@ private fun ProfileScreen(
             SavedContentsSection(
                 title = "저장한 작품",
                 description = "${userName}님이 저장한 작품이에요",
-                contentModelList = uiState.savedContent,
+                contentModelList = uiState.savedContents,
                 onItemClick = onContentItemClick,
                 isAllVisible = false,
                 onAllClick = {},
@@ -143,7 +162,8 @@ private fun ProfileScreenPreview() {
         ProfileScreen(
             uiState = ProfileUiState.Fake,
             onCollectionItemClick = {},
-            onCollectionMoreClick = {},
+            onCreatedCollectionMoreClick = {},
+            onSavedCollectionMoreClick = {}
         )
     }
 }
