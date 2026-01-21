@@ -3,16 +3,15 @@ package com.flint.domain.model.collection
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
 import com.flint.domain.model.AuthorModelNew
 import com.flint.domain.model.content.ContentModelNew
-import com.flint.domain.model.user.AuthorModel
 import com.flint.domain.type.UserRoleType
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import java.time.LocalDate
 
 data class CollectionDetailModelNew(
     val author: AuthorModelNew,
     val contents: ImmutableList<ContentModelNew>,
-    val createdAt: String,
+    val createdAt: LocalDate,
     val description: String,
     val id: String,
     val thumbnailUrl: String,
@@ -26,7 +25,7 @@ data class CollectionDetailModelNew(
     ) : this(
         author = collectionDetail.author.toModel(),
         contents = collectionDetail.contents.map { it.toModel() }.toImmutableList(),
-        createdAt = collectionDetail.createdAt,
+        createdAt = LocalDate.parse(collectionDetail.createdAt),
         description = collectionDetail.description,
         id = collectionDetail.id,
         thumbnailUrl = collectionDetail.thumbnailUrl,
