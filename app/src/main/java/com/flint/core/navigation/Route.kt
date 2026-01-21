@@ -1,6 +1,6 @@
 package com.flint.core.navigation
 
-import com.flint.domain.type.CollectionListRouteType
+import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.serialization.Serializable
 
 interface Route {

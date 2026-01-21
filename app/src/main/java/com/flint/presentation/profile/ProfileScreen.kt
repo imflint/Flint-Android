@@ -22,7 +22,7 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
-import com.flint.domain.type.CollectionListRouteType
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 import com.flint.presentation.profile.uistate.ProfileUiState

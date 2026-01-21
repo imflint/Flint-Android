@@ -74,7 +74,7 @@ import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEf
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import com.flint.core.designsystem.component.toast.ShowSaveToast
 import com.flint.core.designsystem.component.toast.ShowToast
-import com.flint.domain.type.CollectionListRouteType
+import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

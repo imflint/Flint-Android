@@ -1,4 +1,4 @@
-package com.flint.domain.type
+package com.flint.core.navigation.model
 
 enum class CollectionListRouteType(
     val title: String

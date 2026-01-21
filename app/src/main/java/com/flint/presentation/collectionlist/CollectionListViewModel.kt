@@ -10,7 +10,7 @@ import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.CollectionRepository
 import com.flint.domain.repository.UserRepository
-import com.flint.domain.type.CollectionListRouteType
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectionlist.sideeffect.CollectionListSideEffect
 import com.flint.presentation.collectionlist.uistate.CollectionListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -34,7 +34,7 @@ import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
-import com.flint.domain.type.CollectionListRouteType
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectionlist.component.CollectionFileItem
 import com.flint.presentation.collectionlist.sideeffect.CollectionListSideEffect
 

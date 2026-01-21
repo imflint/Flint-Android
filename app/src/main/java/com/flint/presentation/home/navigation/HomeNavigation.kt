@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.flint.core.navigation.MainTabRoute
-import com.flint.domain.type.CollectionListRouteType
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.home.HomeRoute
 
 fun NavController.navigateToHome(navOptions: NavOptions? = null) {
