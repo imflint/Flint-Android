@@ -29,12 +29,12 @@ class ProfileViewModel @Inject constructor(
     fun getProfile() {
         viewModelScope.launch {
             suspendRunCatching {
-                val profile = userRepository.getUserProfile(userId = null).getOrThrow()
-                val keywords = userRepository.getUserKeywords(userId = null).getOrThrow()
+                val profileDeferred = async { userRepository.getUserProfile(userId = null).getOrThrow() }
+                val keywordsDeferred = async { userRepository.getUserKeywords(userId = null).getOrThrow() }
 
                 ProfileUiState(
-                    profile = profile,
-                    keywords = keywords
+                    profile = profileDeferred.await(),
+                    keywords = keywordsDeferred.await()
                 )
             }.onSuccess { combinedState ->
                 _uiState.update { UiState.Success(combinedState) }

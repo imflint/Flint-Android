@@ -76,6 +76,6 @@ data class KeywordItemModel(
 ) {
     val preferenceType: PreferenceType
         get() =
-            runCatching { PreferenceType.valueOf(color) }
+            runCatching { PreferenceType.valueOf(color.uppercase()) }
                 .getOrDefault(PreferenceType.BLUE)
 }
