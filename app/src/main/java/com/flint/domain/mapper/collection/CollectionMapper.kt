@@ -15,7 +15,10 @@ import com.flint.domain.model.collection.CollectionsModel
 import kotlinx.collections.immutable.toImmutableList
 
 fun CollectionsResponseDto.toModel(): CollectionsModel {
-    return CollectionsModel(data = data.map { it.toModel() }, meta = meta.toModel())
+    return CollectionsModel(
+        data = data.map { it.toModel() }.toImmutableList(),
+        meta = meta.toModel()
+    )
 }
 
 

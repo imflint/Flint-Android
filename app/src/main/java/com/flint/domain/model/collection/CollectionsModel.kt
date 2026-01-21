@@ -1,7 +1,9 @@
 package com.flint.domain.model.collection
 
+import kotlinx.collections.immutable.ImmutableList
+
 data class CollectionsModel(
-    val data: List<Collection>,
+    val data: ImmutableList<Collection>,
     val meta: Meta,
 ) {
     data class Collection(

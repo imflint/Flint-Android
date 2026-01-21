@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,10 +28,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.NetworkImage
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionsModel
@@ -44,12 +48,19 @@ fun ExploreRoute(
     navigateToCollectionCreate: () -> Unit,
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
-    ExploreScreen(
-        modifier = Modifier.padding(paddingValues),
-        collections = emptyList<CollectionsModel.Collection>().toImmutableList(), // TODO: ViewModel에서 데이터 가져오기
-        onWatchCollectionButtonClick = navigateToCollectionDetail,
-        onMakeCollectionButtonClick = navigateToCollectionCreate,
-    )
+    val uiState: UiState<CollectionsModel> by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (val uiState = uiState) {
+        UiState.Loading -> FlintLoadingIndicator()
+        is UiState.Success<CollectionsModel> -> ExploreScreen(
+            collections = uiState.data.data.toImmutableList(),
+            onWatchCollectionButtonClick = navigateToCollectionDetail,
+            onMakeCollectionButtonClick = navigateToCollectionCreate,
+            modifier = Modifier.padding(paddingValues),
+        )
+
+        else -> {}
+    }
 }
 
 @Composable
