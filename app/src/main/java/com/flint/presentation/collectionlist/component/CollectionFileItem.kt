@@ -133,7 +133,7 @@ private fun CollectionFileContent(
                     .paint(
                         painter = painterResource(id = R.drawable.img_folder_fg),
                         contentScale = ContentScale.FillWidth,
-                    ).padding(start = 12.dp, top = 12.dp, end = 5.dp, bottom = 9.dp),
+                    ).padding(start = 12.dp, top = 12.dp, bottom = 9.dp),
         ) {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -189,6 +189,7 @@ private fun CollectionFileContent(
                     color = FlintTheme.colors.gray50,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(end = 5.dp)
                 )
             }
         }
