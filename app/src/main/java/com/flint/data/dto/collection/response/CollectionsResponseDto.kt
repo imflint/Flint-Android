@@ -19,11 +19,8 @@ data class CollectionsResponseDto(
 
     @Serializable
     data class Meta(
-        @SerialName("currentPage") val currentPage: Int,
-        @SerialName("nextCursor") val nextCursor: String,
-        @SerialName("returned") val returned: Int,
-        @SerialName("totalElements") val totalElements: Int,
-        @SerialName("totalPages") val totalPages: Int,
         @SerialName("type") val type: String,
+        @SerialName("returned") val returned: Int,
+        @SerialName("nextCursor") val nextCursor: String?,
     )
 }

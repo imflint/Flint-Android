@@ -12,7 +12,7 @@ interface CollectionApi {
     // 컬렉션 목록 조회 (페이지네이션)
     @GET("/api/v1/collections")
     suspend fun getCollections(
-        @Query("cursor") cursor: Int,
+        @Query("cursor") cursor: Long?,
         @Query("size") size: Int,
     ): BaseResponse<CollectionsResponseDto>
 

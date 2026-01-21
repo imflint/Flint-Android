@@ -7,6 +7,8 @@ import com.flint.domain.model.collection.CollectionsModel
 import com.flint.domain.repository.CollectionRepository
 import com.flint.presentation.explore.uistate.ExploreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +31,8 @@ class ExploreViewModel @Inject constructor(
     }
 
     private fun getCollections() {
-        val currentState = (_uiState.value as? UiState.Success)?.data ?: ExploreUiState()
+        val currentState: ExploreUiState =
+            (_uiState.value as? UiState.Success)?.data ?: ExploreUiState(persistentListOf())
         if (currentState.isLoadingMore || currentState.isLastPage) return
 
         if (currentState.collections.isEmpty()) {
@@ -40,19 +43,18 @@ class ExploreViewModel @Inject constructor(
 
         viewModelScope.launch {
             collectionRepository.getCollections(
-                cursor = currentState.currentCursor,
+                cursor = currentState.nextCursor,
                 size = PAGE_SIZE
             ).onSuccess { collectionsModel: CollectionsModel ->
-                val newData =
+                val newData: ImmutableList<CollectionsModel.Collection> =
                     (currentState.collections + collectionsModel.data).toImmutableList()
 
                 _uiState.update {
                     UiState.Success(
                         ExploreUiState(
                             collections = newData,
-                            currentCursor = collectionsModel.meta.nextCursor.toIntOrNull() ?: 0,
-                            isLastPage = collectionsModel.meta.nextCursor.isEmpty() ||
-                                    collectionsModel.data.isEmpty(),
+                            nextCursor = collectionsModel.meta.nextCursor,
+                            isLastPage = collectionsModel.meta.nextCursor == null,
                             isLoadingMore = false
                         )
                     )

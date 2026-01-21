@@ -15,11 +15,8 @@ data class CollectionsModel(
     )
 
     data class Meta(
-        val currentPage: Int,
-        val nextCursor: String,
-        val returned: Int,
-        val totalElements: Int,
-        val totalPages: Int,
         val type: String,
+        val returned: Int,
+        val nextCursor: Long?,
     )
 }

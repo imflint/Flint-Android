@@ -117,10 +117,7 @@ private fun CollectionsResponseDto.Collection.toModel(): CollectionsModel.Collec
 
 private fun CollectionsResponseDto.Meta.toModel(): CollectionsModel.Meta =
     CollectionsModel.Meta(
-        currentPage = currentPage,
-        nextCursor = nextCursor,
+        type = type,
         returned = returned,
-        totalElements = totalElements,
-        totalPages = totalPages,
-        type = type
+        nextCursor = nextCursor?.toLongOrNull(),
     )
