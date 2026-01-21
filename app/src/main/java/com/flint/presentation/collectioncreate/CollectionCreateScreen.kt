@@ -54,18 +54,14 @@ fun CollectionCreateRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val contentList =
-        remember {
-            CollectionContentUiModel.dummyContentList.toMutableStateList()
-        }
 
     CollectionCreateScreen(
         uiState = uiState,
         onTitleChanged = viewModel::updateTitle,
         onDescriptionChanged = viewModel::updateDescription,
         onPublicChanged = viewModel::updateIsPublic,
-        contentList = contentList.toImmutableList(),
-        onRemoveContent = { contentList.remove(it) },
+        selectedContents = uiState.selectedContents,
+        onRemoveContent = viewModel::removeContent,
         onBackClick = navigateUp,
         onAddContentClick = navigateToAddContent,
         onFinishClick = viewModel::onClickFinish,
@@ -79,7 +75,7 @@ fun CollectionCreateScreen(
     onTitleChanged: (String) -> Unit = {},
     onDescriptionChanged: (String) -> Unit = {},
     onPublicChanged: (Boolean?) -> Unit = {},
-    contentList: ImmutableList<CollectionContentUiModel>,
+    selectedContents: ImmutableList<CollectionContentUiModel>,
     onRemoveContent: (CollectionContentUiModel) -> Unit,
     onBackClick: () -> Unit,
     onAddContentClick: () -> Unit,
@@ -87,7 +83,9 @@ fun CollectionCreateScreen(
     modifier: Modifier = Modifier,
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
-    var selectedContent by remember { mutableStateOf<CollectionContentUiModel?>(null) }
+    var contentToDelete by remember { mutableStateOf<CollectionContentUiModel?>(null) }
+
+
 
     Column(
         modifier =
@@ -225,7 +223,7 @@ fun CollectionCreateScreen(
                             style = FlintTheme.typography.body2R14,
                         )
                         Text(
-                            text = "${contentList.size}/10",
+                            text = "${selectedContents.size}/10",
                             color = FlintTheme.colors.white,
                             style = FlintTheme.typography.body2R14,
                         )
@@ -235,13 +233,13 @@ fun CollectionCreateScreen(
 
             // 작품 리스트
             items(
-                items = contentList,
+                items = selectedContents,
                 key = { it.contentId },
             ) { content ->
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     CollectionCreateContentItemList(
                         onCancelClick = {
-                            selectedContent = content
+                            contentToDelete = content
                             isModalVisible = true
                         },
                         imageUrl = content.imageUrl,
@@ -286,12 +284,12 @@ fun CollectionCreateScreen(
     if (isModalVisible) {
         CollectionCreateContentDeleteModal(
             onConfirm = {
-                selectedContent?.let { onRemoveContent(it) }
-                selectedContent = null
+                contentToDelete?.let { onRemoveContent(it) }
+                contentToDelete = null
                 isModalVisible = false
             },
             onDismiss = {
-                selectedContent = null
+                contentToDelete = null
                 isModalVisible = false
             },
         )
@@ -307,7 +305,7 @@ fun CollectionCreateScreenPreview() {
             onTitleChanged = {},
             onDescriptionChanged = {},
             onPublicChanged = {},
-            contentList = CollectionContentUiModel.dummyContentList,
+            selectedContents = CollectionContentUiModel.dummyContentList,
             onRemoveContent = {},
             onBackClick = {},
             onAddContentClick = {},

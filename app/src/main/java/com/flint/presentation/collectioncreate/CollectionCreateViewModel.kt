@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.flint.presentation.collectioncreate.model.CollectionContentUiModel
+import kotlinx.collections.immutable.toImmutableList
 
 import javax.inject.Inject
 
@@ -64,7 +65,6 @@ class CollectionCreateViewModel @Inject constructor(
 
     fun updateDescription(description: String) {
         _uiState.update { state ->
-            // description만 교체
             state.copy(description = description)
         }
     }
@@ -79,6 +79,28 @@ class CollectionCreateViewModel @Inject constructor(
         _uiState.update { state ->
             state.copy(searchText = searchText)
         }
+    }
 
+    fun toggleContent(content: CollectionContentUiModel) {
+        _uiState.update { state ->
+            val currentList = state.selectedContents
+            val newList = if (currentList.contains(content)) {
+                currentList.filterNot { it.contentId == content.contentId }
+            } else {
+                if (currentList.size < 10) {
+                    currentList + content
+                } else {
+                    currentList
+                }
+            }
+            state.copy(selectedContents = newList.toImmutableList())
+        }
+    }
+
+    fun removeContent(content: CollectionContentUiModel) {
+        _uiState.update { state ->
+            val newList = state.selectedContents.filterNot { it.contentId == content.contentId }
+            state.copy(selectedContents = newList.toImmutableList())
+        }
     }
 }

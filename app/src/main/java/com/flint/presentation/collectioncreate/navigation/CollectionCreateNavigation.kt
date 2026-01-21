@@ -37,6 +37,7 @@ fun NavGraphBuilder.collectionCreateNavGraph(
             CollectionCreateRoute(
                 paddingValues = paddingValues,
                 navigateToAddContent = navController::navigateToAddContent,
+                navigateUp = navController::navigateUp,
                 viewModel = viewModel
             )
         }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,9 @@ import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentSelect
+import com.flint.presentation.collectioncreate.model.CollectionContentUiModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun AddContentRoute(
@@ -37,46 +41,36 @@ fun AddContentRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val contentList =
+        remember {
+            CollectionContentUiModel.dummyContentList.toMutableStateList()
+        }
+
     AddContentScreen(
         uiState = uiState,
+        contentList = contentList.toImmutableList(),
+        selectedContents = uiState.selectedContents,
         onSearchTextChanged = viewModel::updateSearch,
+        onToggleContent = viewModel::toggleContent,
         onBackClick = navigateUp,
         onActionClick = navigateToCollectionCreate,
         modifier = Modifier.padding(paddingValues),
     )
 }
 
-data class CollectionContentUiModel(
-    val contentId: Long,
-    val imageUrl: String,
-    val title: String,
-    val director: String,
-    val createdYear: String,
-)
 
 @Composable
 fun AddContentScreen(
     uiState: CollectionCreateUiState,
+    contentList: ImmutableList<CollectionContentUiModel>,
+    selectedContents: ImmutableList<CollectionContentUiModel>,
     onSearchTextChanged: (String) -> Unit = {},
+    onToggleContent: (CollectionContentUiModel) -> Unit = {},
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
-
-    val contentList =
-        remember {
-            mutableStateListOf(
-                CollectionContentUiModel(1L, "https://buly.kr/DEaVFRZ", "해리포터 불의 잔", "마이크 뉴웰", "2005"),
-                CollectionContentUiModel(2L, "https://buly.kr/2UkIDen", "인터스텔라", "크리스토퍼 놀란", "2014"),
-                CollectionContentUiModel(3L, "https://buly.kr/FAeqqRB", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(4L, "https://buly.kr/DPVH2Ob", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(5L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(6L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(7L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(8L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-            )
-        }
+    //val selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
 
     Column(
         modifier =
@@ -114,11 +108,11 @@ fun AddContentScreen(
                 items(
                     items = selectedContents,
                     key = { it.contentId },
-                ) { content: CollectionContentUiModel ->
+                ) { content ->
                     SelectedContentItem(
                         imageUrl = content.imageUrl,
                         onRemoveClick = {
-                            selectedContents.remove(content)
+                            onToggleContent(content)
                         },
                     )
                 }
@@ -140,11 +134,7 @@ fun AddContentScreen(
 
                 CollectionCreateContentSelect(
                     onCheckClick = {
-                        if (isSelected) {
-                            selectedContents.remove(content)
-                        } else {
-                            selectedContents.add(content)
-                        }
+                        onToggleContent(content)
                     },
                     isSelected = isSelected,
                     imageUrl = content.imageUrl,
@@ -162,10 +152,12 @@ fun AddContentScreen(
 private fun AddContentScreenPreview() {
     FlintTheme {
         AddContentScreen(
+            uiState = CollectionCreateUiState(),
+            selectedContents = CollectionContentUiModel.dummyContentList,
             onSearchTextChanged = {},
             onBackClick = {},
             onActionClick = {},
-            uiState = CollectionCreateUiState()
+            contentList = CollectionContentUiModel.dummyContentList,
         )
     }
 }
