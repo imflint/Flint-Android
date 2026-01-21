@@ -19,7 +19,7 @@ data class BookmarkedContentListModel(
                         OttType.Netflix,
                         OttType.Disney,
                         OttType.Tving,
-                        OttType.Coupang,
+                        OttType.CoupangPlay,
                     )
                 )
             )

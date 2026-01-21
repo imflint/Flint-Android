@@ -264,8 +264,8 @@ private fun ExploreScreenPreview() {
                                 OttType.Netflix,
                                 OttType.Disney,
                                 OttType.Tving,
-                                OttType.Coupang,
-                                OttType.Wave,
+                                OttType.CoupangPlay,
+                                OttType.Wavve,
                                 OttType.Watcha,
                             ),
                     )

@@ -107,7 +107,7 @@ private fun OnboardingOttItemPreview() {
 
             // 선택되지 않은 상태
             OnboardingOttItem(
-                ottType = OttType.Wave,
+                ottType = OttType.Wavve,
                 isSelected = false,
                 onClick = {},
             )

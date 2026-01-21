@@ -873,7 +873,7 @@ private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
                 title = "저장된 영화",
                 year = 2023,
                 posterImage = "",
-                ottSimpleList = listOf(OttType.Watcha, OttType.Wave),
+                ottSimpleList = listOf(OttType.Watcha, OttType.Wavve),
                 director = "다른 감독",
                 description = "내가 저장한 영화입니다.",
                 isSpoiler = false,

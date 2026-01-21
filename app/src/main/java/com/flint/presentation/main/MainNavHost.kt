@@ -58,6 +58,7 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
                 navigateToCollectionCreate = navigator::navigateToCollectionCreate,
+                navigateToExplore = { navigator.navigate(MainTab.EXPLORE) },
             )
 
             collectionListNavGraph(
