@@ -20,13 +20,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.rememberAsyncImagePainter
+import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTypography
+import com.flint.domain.model.ott.OttListModel
+import com.flint.domain.model.ott.OttModel
 import com.flint.domain.type.OttType
 
 @Composable
 fun OttShortCutListItem(
-    ottType: OttType,
+    ottModel: OttModel,
     onMoveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -39,7 +43,7 @@ fun OttShortCutListItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            painter = painterResource(ottType.iconRes),
+            painter = painterResource(OttType.valueOf(ottModel.name).iconRes),
             contentDescription = null,
             modifier = Modifier.size(44.dp),
         )
@@ -47,7 +51,7 @@ fun OttShortCutListItem(
         Spacer(Modifier.width(12.dp))
 
         Text(
-            text = ottType.ottName,
+            text = OttType.valueOf(ottModel.name).ottName,
             style = FlintTheme.typography.body1Sb16,
             color = FlintTheme.colors.white,
         )
@@ -79,27 +83,12 @@ private fun PreviewOttShortCutListItem() {
     FlintTheme {
         Column {
             OttShortCutListItem(
-                ottType = OttType.Netflix,
-                onMoveClick = {},
-            )
-            OttShortCutListItem(
-                ottType = OttType.Wave,
-                onMoveClick = {},
-            )
-            OttShortCutListItem(
-                ottType = OttType.Tving,
-                onMoveClick = {},
-            )
-            OttShortCutListItem(
-                ottType = OttType.Disney,
-                onMoveClick = {},
-            )
-            OttShortCutListItem(
-                ottType = OttType.Coupang,
-                onMoveClick = {},
-            )
-            OttShortCutListItem(
-                ottType = OttType.Watcha,
+                ottModel = OttModel(
+                    ottId = "",
+                    name = "Netflix",
+                    logoUrl = "",
+                    contentUrl = "",
+                ),
                 onMoveClick = {},
             )
         }

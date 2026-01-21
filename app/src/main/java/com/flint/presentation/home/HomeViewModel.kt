@@ -11,11 +11,14 @@ import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.repository.CollectionRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.HomeRepository
+import com.flint.presentation.home.sideeffect.HomeSideEffect
 import com.flint.presentation.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -33,6 +36,9 @@ class HomeViewModel @Inject constructor(
     private val _recommendCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
     private val _bookmarkedContentListLoadState = MutableStateFlow<UiState<BookmarkedContentListModel>>(UiState.Loading)
     private val _recentCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
+
+    private val _homeSideEffect = MutableSharedFlow<HomeSideEffect>()
+    val homeSideEffect = _homeSideEffect.asSharedFlow()
 
     val homeUiState: StateFlow<HomeUiState> = combine(
         _userName,
@@ -80,7 +86,17 @@ class HomeViewModel @Inject constructor(
     fun getRecentCollectionList() = viewModelScope.launch {
         collectionRepository.getRecentCollectionList()
             .onSuccess {
-                _recentCollectionListLoadState.emit(UiState.Success(CollectionListModel()))
+                _recentCollectionListLoadState.emit(UiState.Success(it))
+            }
+            .onFailure {
+                Log.d("Logd", it.message.toString())
+            }
+    }
+
+    fun getOttListPerContent(contentId: String) = viewModelScope.launch {
+        contentRepository.getOttListPerContent(contentId)
+            .onSuccess {
+                _homeSideEffect.emit(HomeSideEffect.ShowOttListBottomSheet(it))
             }
             .onFailure {
                 Log.d("Logd", it.message.toString())
