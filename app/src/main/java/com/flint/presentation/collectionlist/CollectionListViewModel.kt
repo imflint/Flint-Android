@@ -32,7 +32,7 @@ class CollectionListViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
 ) : ViewModel() {
 
-    val routeType = savedStateHandle.toRoute<Route.CollectionList>().routeType
+    val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
 
     private val _uiState = MutableStateFlow<CollectionListUiState>(CollectionListUiState())
     val uiState: StateFlow<CollectionListUiState> = _uiState
@@ -45,12 +45,14 @@ class CollectionListViewModel @Inject constructor(
     }
 
     private fun getCollectionList() {
+        val userId = routeReceiveData.userId
+
         viewModelScope.launch {
             _uiState.update { it.copy(collectionList = UiState.Loading) }
 
-            when (routeType) {
-                CollectionListRouteType.CREATED -> userRepository.getUserCreatedCollections(userId = null)
-                CollectionListRouteType.SAVED -> userRepository.getUserBookmarkedCollections(userId = null)
+            when (routeReceiveData.routeType) {
+                CollectionListRouteType.CREATED -> userRepository.getUserCreatedCollections(userId = userId)
+                CollectionListRouteType.SAVED -> userRepository.getUserBookmarkedCollections(userId = userId)
                 CollectionListRouteType.RECENT -> collectionRepository.getRecentCollectionList()
             }.onSuccess { result ->
                 _uiState.update { it.copy(collectionList = UiState.Success(result)) }

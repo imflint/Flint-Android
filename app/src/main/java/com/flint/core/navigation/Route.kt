@@ -32,6 +32,7 @@ interface Route {
     @Serializable
     data class CollectionList(
         val routeType: CollectionListRouteType,
+        val userId: String? = null
     ) : Route
 
     @Serializable

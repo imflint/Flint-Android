@@ -47,6 +47,7 @@ class ProfileViewModel @Inject constructor(
                 val keywordsDeferred = async { userRepository.getUserKeywords(userId = userId).getOrThrow() }
 
                 ProfileUiState(
+                    userId = userId,
                     profile = profileDeferred.await(),
                     keywords = keywordsDeferred.await()
                 )

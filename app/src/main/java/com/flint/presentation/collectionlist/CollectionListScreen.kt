@@ -53,7 +53,7 @@ fun CollectionListRoute(
 
     CollectionListScreen(
         modifier = Modifier.padding(paddingValues),
-        title = viewModel.routeType.title,
+        title = viewModel.routeReceiveData.routeType.title,
         onBackClick = navigateUp,
         onCollectionItemClick = navigateToCollectionDetail,
         onBookmarkClick = viewModel::toggleCollectionBookmark,

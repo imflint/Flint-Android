@@ -40,7 +40,7 @@ import com.flint.presentation.profile.uistate.ProfileUiState
 @Composable
 fun ProfileRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
+    navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
@@ -83,11 +83,13 @@ fun ProfileRoute(
                 onCreatedCollectionMoreClick =  {
                     navigateToCollectionList(
                         CollectionListRouteType.CREATED,
+                        state.data.userId
                     )
                 },
                 onSavedCollectionMoreClick = {
                     navigateToCollectionList(
                         CollectionListRouteType.SAVED,
+                        state.data.userId
                     )
                 },
             )

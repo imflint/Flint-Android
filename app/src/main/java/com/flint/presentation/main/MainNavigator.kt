@@ -114,8 +114,8 @@ class MainNavigator(
         )
     }
 
-    fun navigateToCollectionList(routeType: CollectionListRouteType) {
-        navController.navigateToCollectionList(routeType =  routeType)
+    fun navigateToCollectionList(routeType: CollectionListRouteType, userId: String? = null) {
+        navController.navigateToCollectionList(routeType =  routeType, userId = userId)
     }
 
     fun navigateToCollectionDetail(collectionId: String) {
