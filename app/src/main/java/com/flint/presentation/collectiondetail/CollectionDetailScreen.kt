@@ -847,7 +847,7 @@ private class DescriptionPreviewProvider : PreviewParameterProvider<DescriptionP
                 authorNickname = "일반유저",
                 authorUserRoleType = UserRoleType.FLING,
                 createdAt = "2026. 01. 15.",
-                collectionContent = "제가 좋아하는 영화 모음입니다",
+                collectionContent = "한글자 두글자 세글자 네글자 다섯글자 ".repeat(10),
             ),
             DescriptionPreviewData(
                 authorNickname = "관리자",
