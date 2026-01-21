@@ -78,6 +78,9 @@ import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEf
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import java.time.format.DateTimeFormatter
+
+private const val DATE_FORMAT_TO_SHOW = "yyyy. MM. dd."
 
 @Composable
 fun CollectionDetailRoute(
@@ -110,7 +113,9 @@ fun CollectionDetailRoute(
                 isBookmarked = collectionDetail.isBookmarked,
                 authorNickname = collectionDetail.author.nickname,
                 authorUserRoleType = collectionDetail.author.userRole,
-                createdAt = collectionDetail.createdAt,
+                createdAt = collectionDetail.createdAt.format(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT_TO_SHOW)
+                ),
                 description = collectionDetail.description,
                 contents = collectionDetail.contents,
                 people = collectionBookmarkUsers,
