@@ -15,37 +15,53 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.collection.CollectionDetailModel
+import com.flint.domain.model.collection.CollectionListModel
 import com.flint.presentation.collectionlist.component.CollectionFileItem
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun CollectionListRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    viewModel: CollectionListViewModel = hiltViewModel()
 ) {
-    CollectionListScreen(
-        modifier = Modifier.padding(paddingValues),
-        title = "전체 컬렉션", // TODO: 타이틀 변경 필요
-        onBackClick = navigateUp,
-        onCollectionItemClick = navigateToCollectionDetail,
-        collections = CollectionDetailModel.FakeList, // TODO: 변경 필요
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (val state = uiState) {
+        is UiState.Loading -> {
+
+        }
+
+        is UiState.Success -> {
+            CollectionListScreen(
+                modifier = Modifier.padding(paddingValues),
+                title = "전체 컬렉션", // TODO: 타이틀 변경 필요
+                onBackClick = navigateUp,
+                onCollectionItemClick = navigateToCollectionDetail,
+                collectionList = state.data.collectionList,
+            )
+        }
+
+        else -> {}
+    }
 }
 
 @Composable
 private fun CollectionListScreen(
     onBackClick: () -> Unit,
     title: String,
-    collections: ImmutableList<CollectionDetailModel>,
+    collectionList: CollectionListModel,
     onCollectionItemClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -64,7 +80,7 @@ private fun CollectionListScreen(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = "총 ${collections.size}개",
+            text = "총 ${collectionList.collections.size}개",
             color = FlintTheme.colors.gray100,
             modifier =
                 Modifier
@@ -84,8 +100,8 @@ private fun CollectionListScreen(
                     .padding(horizontal = 10.dp),
         ) {
             items(
-                items = collections,
-                key = { it.collectionId },
+                items = collectionList.collections,
+                key = { it.id },
             ) { collection ->
                 Box(modifier = Modifier.fillMaxSize(1f).align(Alignment.CenterHorizontally)) {
                     CollectionFileItem(
@@ -94,7 +110,7 @@ private fun CollectionListScreen(
                             Modifier
                                 .align(Alignment.Center)
                                 .noRippleClickable(
-                                    onClick = { onCollectionItemClick(collection.collectionId) }
+                                    onClick = { onCollectionItemClick(collection.id) }
                                 )
                     )
                 }
@@ -110,7 +126,7 @@ private fun CollectionListScreenPreview() {
         CollectionListScreen(
             onBackClick = {},
             title = "전체 컬렉션",
-            collections = CollectionDetailModel.FakeList,
+            collectionList = CollectionListModel.FakeList,
             onCollectionItemClick = {}
         )
     }
