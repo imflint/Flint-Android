@@ -2,6 +2,7 @@ package com.flint.presentation.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flint.domain.repository.SearchRepository
 import com.flint.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,12 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel
 @Inject constructor(
     private val userRepository: UserRepository,
+    private val searchRepository: SearchRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingProfileUiState())
@@ -48,6 +51,16 @@ class OnboardingViewModel
     }
 
     // ---------- onboarding content ----------
+    fun getSearchContentList(keyword: String?) {
+        //TODO: 데이터 표시 필요
+        viewModelScope.launch {
+            searchRepository.getSearchContentList(keyword).onSuccess { result ->
+                Timber.d("result: $result")
+            }.onFailure {
+                Timber.e(it)
+            }
+        }
+    }
 
     // ---------- onboarding ott ----------
 

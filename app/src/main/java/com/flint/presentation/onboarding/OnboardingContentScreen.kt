@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +39,11 @@ fun OnboardingContentRoute(
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
     ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getSearchContentList(null) // 인기 목록 받아오기
+    }
+
     OnboardingContentScreen(
         nickname = "User",
         currentStep = 7,

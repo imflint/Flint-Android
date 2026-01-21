@@ -8,6 +8,7 @@ import com.flint.data.dto.user.response.UserKeywordsResponseDto
 import com.flint.data.dto.user.response.UserProfileResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserApi {
     // 사용자 프로필 조회

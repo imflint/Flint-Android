@@ -8,7 +8,6 @@ import com.flint.domain.model.user.NicknameCheckModel
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.model.user.UserProfileResponseModel
-import com.flint.domain.model.user.UserKeywordResponseModel
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
