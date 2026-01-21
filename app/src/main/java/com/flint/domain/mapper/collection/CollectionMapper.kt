@@ -109,7 +109,6 @@ private fun BookmarkedCollectionItemResponseDto.toModel(): CollectionItemModel {
 private fun CollectionsResponseDto.Collection.toModel(): CollectionsModel.Collection =
     CollectionsModel.Collection(
         collectionId = collectionId,
-        createdAt = createdAt,
         description = description,
         imageUrl = imageUrl,
         title = title

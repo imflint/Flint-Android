@@ -14,7 +14,6 @@ data class CollectionsResponseDto(
         @SerialName("imageUrl") val imageUrl: String,
         @SerialName("title") val title: String,
         @SerialName("description") val description: String,
-        @SerialName("createdAt") val createdAt: String,
     )
 
     @Serializable

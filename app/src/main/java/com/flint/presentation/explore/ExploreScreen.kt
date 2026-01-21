@@ -287,7 +287,6 @@ private fun ExploreScreenPreview() {
                             하지만 훈훈했던 그의 첫인상은 잠시일 뿐,
                             감추어진 조의 뒤틀린 이면이 드러난다.
                             """.trimIndent(),
-                        createdAt = "2024-01-01",
                     )
                 }.toImmutableList(),
             onWatchCollectionButtonClick = {},

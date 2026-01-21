@@ -8,7 +8,6 @@ data class CollectionsModel(
 ) {
     data class Collection(
         val collectionId: String,
-        val createdAt: String,
         val description: String,
         val imageUrl: String,
         val title: String,
