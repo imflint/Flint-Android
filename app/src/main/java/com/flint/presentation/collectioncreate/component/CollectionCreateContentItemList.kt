@@ -38,9 +38,12 @@ fun CollectionCreateContentItemList(
     title: String,
     director: String,
     createdYear: String,
+    isSpoiler: Boolean,
+    onSpoilerChanged: (Boolean?) -> Unit = {},
+    selectedReason: String,
+    onSelectedReasonChanged: (String) -> Unit = {},
 ) {
-    var toggleChecked by remember { mutableStateOf(false) }
-    var reasonText by remember { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier.background(color = FlintTheme.colors.background),
@@ -95,8 +98,8 @@ fun CollectionCreateContentItemList(
                 Spacer(Modifier.width(8.dp))
 
                 FlintBasicToggle(
-                    isChecked = toggleChecked,
-                    onCheckedChange = { toggleChecked = it },
+                    isChecked = isSpoiler,
+                    onCheckedChange = onSpoilerChanged,
                 )
             }
         }
@@ -105,8 +108,8 @@ fun CollectionCreateContentItemList(
 
         FlintBasicTextField(
             placeholder = "이 작품의 매력 포인트를 적어주세요.",
-            value = reasonText,
-            onValueChange = { reasonText = it },
+            value = selectedReason,
+            onValueChange = onSelectedReasonChanged,
             modifier = Modifier.fillMaxWidth(),
             height = 108.dp,
             maxLines = Int.MAX_VALUE,
@@ -130,6 +133,10 @@ private fun CollectionCreateContentItemListPreview() {
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005",
+            isSpoiler = false,
+            selectedReason = "더미 이유",
+            onSpoilerChanged = {},
+            onSelectedReasonChanged = {},
         )
     }
 }

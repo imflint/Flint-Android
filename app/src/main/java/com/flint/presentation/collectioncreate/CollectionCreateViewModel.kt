@@ -81,6 +81,18 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
+    fun updateSpoiler(isSpoiler: Boolean) {
+        _uiState.update { state ->
+            state.copy(isSpoiler = isSpoiler)
+        }
+    }
+
+    fun updateSelectedReason(selectedReason: String) {
+        _uiState.update { state ->
+            state.copy(selectedReason = selectedReason)
+        }
+    }
+
     fun toggleContent(content: CollectionContentUiModel) {
         _uiState.update { state ->
             val currentList = state.selectedContents

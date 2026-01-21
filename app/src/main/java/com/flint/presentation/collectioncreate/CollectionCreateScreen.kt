@@ -63,6 +63,8 @@ fun CollectionCreateRoute(
         selectedContents = uiState.selectedContents,
         onRemoveContent = viewModel::removeContent,
         onBackClick = navigateUp,
+        onSpoilerChanged = viewModel::updateSpoiler,
+        onSelectedReasonChanged = viewModel::updateSelectedReason,
         onAddContentClick = navigateToAddContent,
         onFinishClick = viewModel::onClickFinish,
         modifier = Modifier.padding(paddingValues),
@@ -78,6 +80,8 @@ fun CollectionCreateScreen(
     selectedContents: ImmutableList<CollectionContentUiModel>,
     onRemoveContent: (CollectionContentUiModel) -> Unit,
     onBackClick: () -> Unit,
+    onSpoilerChanged: (Boolean) -> Unit = {},
+    onSelectedReasonChanged: (String) -> Unit = {},
     onAddContentClick: () -> Unit,
     onFinishClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -246,6 +250,10 @@ fun CollectionCreateScreen(
                         title = content.title,
                         director = content.director,
                         createdYear = content.createdYear,
+                        isSpoiler = uiState.isSpoiler,
+                        onSpoilerChanged = { onSpoilerChanged },
+                        selectedReason = uiState.selectedReason,
+                        onSelectedReasonChanged = onSelectedReasonChanged,
                     )
                 }
             }
@@ -308,6 +316,8 @@ fun CollectionCreateScreenPreview() {
             selectedContents = CollectionContentUiModel.dummyContentList,
             onRemoveContent = {},
             onBackClick = {},
+            onSpoilerChanged = {},
+            onSelectedReasonChanged = {},
             onAddContentClick = {},
             onFinishClick = {},
         )

@@ -70,8 +70,6 @@ fun AddContentScreen(
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    //val selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
-
     Column(
         modifier =
             modifier
@@ -82,8 +80,9 @@ fun AddContentScreen(
             onClick = onBackClick,
             title = "작품 추가하기",
             actionText = "추가",
-            onActionClick = onActionClick,
-            textColor = FlintTheme.colors.gray300,
+            onActionClick = if (selectedContents.isNotEmpty()) onActionClick else {{}},
+            textStyle = if (selectedContents.isNotEmpty()) FlintTheme.typography.body1M16 else FlintTheme.typography.body1Sb16,
+            textColor = if (selectedContents.isNotEmpty()) FlintTheme.colors.secondary400 else FlintTheme.colors.gray300,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
