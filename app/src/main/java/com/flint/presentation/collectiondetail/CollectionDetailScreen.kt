@@ -46,6 +46,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -564,6 +565,8 @@ private fun Thumbnail(
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 modifier = Modifier.fillMaxWidth(),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             if (!isMine) {
                 if (isBookmarked) {
@@ -788,7 +791,7 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
     override val values: Sequence<HeaderPreviewData> =
         sequenceOf(
             HeaderPreviewData(
-                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
+                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기".repeat(2),
                 isMine = false,
                 isBookmarked = true,
             ),
