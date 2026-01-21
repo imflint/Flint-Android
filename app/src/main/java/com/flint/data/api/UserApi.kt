@@ -1,14 +1,20 @@
 package com.flint.data.api
 
 import com.flint.data.dto.base.BaseResponse
+import com.flint.data.dto.user.response.NicknameCheckResponseDto
 import com.flint.data.dto.user.response.UserKeywordsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserApi {
     // 사용자 프로필 조회
 
     // 닉네임 중복 체크
+    @GET("/api/v1/users/nickname/check")
+    suspend fun checkNickname(
+        @Query("nickname") nickname: String
+    ): BaseResponse<NicknameCheckResponseDto>
 
     // 사용자 북마크 컬렉션 조회
 

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
@@ -28,17 +29,20 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun OnboardingProfileRoute(
-    viewModel: OnboardingViewModel,
     paddingValues: PaddingValues,
     navigateToOnboardingContent: () -> Unit,
     navigateUp: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     OnboardingProfileScreen(
         nickname = uiState.nickname,
         isValid = uiState.isValid,
+        isNicknameAvailable = uiState.isNicknameAvailable,
+        canProceed = uiState.canProceed,
         onNicknameChange = viewModel::updateNickname,
+        onCheckNickname = viewModel::checkNicknameDuplication,
         onBackClick = navigateUp,
         onNextClick = navigateToOnboardingContent,
         modifier = Modifier.padding(paddingValues),
@@ -49,7 +53,10 @@ fun OnboardingProfileRoute(
 fun OnboardingProfileScreen(
     nickname: String,
     isValid: Boolean,
+    isNicknameAvailable: Boolean?,
+    canProceed: Boolean,
     onNicknameChange: (String) -> Unit,
+    onCheckNickname: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -101,6 +108,7 @@ fun OnboardingProfileScreen(
                             .fillMaxHeight(),
                     placeholder = "닉네임",
                     value = nickname,
+                    maxLines = 1,
                     maxLength = OnboardingProfileUiState.MAX_LENGTH,
                     onValueChange = onNicknameChange,
                     trailingContent = {
@@ -114,18 +122,25 @@ fun OnboardingProfileScreen(
 
                 FlintBasicButton(
                     text = "확인",
-                    state = if (isValid) FlintButtonState.Able else FlintButtonState.Disable,
-                    onClick = onNextClick,
+                    state = when {
+                        !isValid -> FlintButtonState.Disable
+                        isNicknameAvailable == true -> FlintButtonState.Able
+                        else -> FlintButtonState.Able
+                    },
+                    onClick = onCheckNickname,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                     modifier = Modifier.fillMaxHeight(),
                 )
             }
+
+            // TODO: 닉네임 중복 체크 결과 토스트
+            // isNicknameAvailable == true
         }
 
         FlintBasicButton(
             text = "시작하기",
-            state = if (isValid) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = onNextClick,
+            state = if (canProceed) FlintButtonState.Able else FlintButtonState.Disable,
+            onClick = { if (canProceed) { onNextClick() } },
             contentPadding = PaddingValues(12.dp),
             modifier =
                 Modifier
@@ -142,7 +157,27 @@ private fun OnboardingProfileScreenPreview() {
         OnboardingProfileScreen(
             nickname = "안비",
             isValid = true,
+            isNicknameAvailable = true,
+            canProceed = true,
             onNicknameChange = {},
+            onCheckNickname = {},
+            onBackClick = {},
+            onNextClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun OnboardingProfileScreenErrorPreview() {
+    FlintTheme {
+        OnboardingProfileScreen(
+            nickname = "안비",
+            isValid = true,
+            isNicknameAvailable = false,
+            canProceed = false,
+            onNicknameChange = {},
+            onCheckNickname = {},
             onBackClick = {},
             onNextClick = {},
         )
