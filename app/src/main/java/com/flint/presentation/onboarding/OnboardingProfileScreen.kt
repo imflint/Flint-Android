@@ -11,24 +11,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheet
-import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheetData
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
-import com.flint.core.designsystem.component.image.EditProfileImage
+import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
@@ -38,33 +32,40 @@ fun OnboardingProfileRoute(
     paddingValues: PaddingValues,
     navigateToOnboardingContent: () -> Unit,
     navigateUp: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     OnboardingProfileScreen(
+        nickname = uiState.nickname,
+        isValid = uiState.isValid,
+        isNicknameAvailable = uiState.isNicknameAvailable,
+        canProceed = uiState.canProceed,
+        onNicknameChange = viewModel::updateNickname,
+        onCheckNickname = viewModel::checkNicknameDuplication,
         onBackClick = navigateUp,
         onNextClick = navigateToOnboardingContent,
         modifier = Modifier.padding(paddingValues),
     )
 }
 
-private const val maxLength = 10
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingProfileScreen(
+    nickname: String,
+    isValid: Boolean,
+    isNicknameAvailable: Boolean?,
+    canProceed: Boolean,
+    onNicknameChange: (String) -> Unit,
+    onCheckNickname: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-    var nickname by remember { mutableStateOf("") }
-
     Column(
         modifier =
             modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
-                .statusBarsPadding(),
     ) {
         FlintBackTopAppbar(
             onClick = onBackClick,
@@ -77,15 +78,14 @@ fun OnboardingProfileScreen(
                     .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            EditProfileImage(
+            ProfileImage(
                 imageUrl = "",
-                onEditClick = { showBottomSheet = true },
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "플린트에서 사용할 이름을 정해주세요.",
+                text = "어떤 이름으로 불러드릴까요?",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.head3M18,
                 modifier = Modifier.fillMaxWidth(),
@@ -108,11 +108,12 @@ fun OnboardingProfileScreen(
                             .fillMaxHeight(),
                     placeholder = "닉네임",
                     value = nickname,
-                    maxLength = maxLength,
-                    onValueChange = { nickname = it },
+                    maxLines = 1,
+                    maxLength = OnboardingProfileUiState.MAX_LENGTH,
+                    onValueChange = onNicknameChange,
                     trailingContent = {
                         Text(
-                            text = "${nickname.length}/$maxLength",
+                            text = "${nickname.length}/${OnboardingProfileUiState.MAX_LENGTH}",
                             style = FlintTheme.typography.body1R16,
                             color = FlintTheme.colors.gray300,
                         )
@@ -121,42 +122,28 @@ fun OnboardingProfileScreen(
 
                 FlintBasicButton(
                     text = "확인",
-                    state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
-                    onClick = onNextClick,
+                    state = if (isValid) FlintButtonState.Able else FlintButtonState.Disable,
+                    onClick = onCheckNickname,
+                    enabled = isValid,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                     modifier = Modifier.fillMaxHeight(),
                 )
             }
+
+            // TODO: 닉네임 중복 체크 결과 토스트
+            // isNicknameAvailable == true
         }
 
         FlintBasicButton(
             text = "시작하기",
-            state = if (nickname.isNotEmpty()) FlintButtonState.Able else FlintButtonState.Disable,
+            state = if (canProceed) FlintButtonState.Able else FlintButtonState.Disable,
             onClick = onNextClick,
+            enabled = canProceed,
             contentPadding = PaddingValues(12.dp),
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 20.dp),
-        )
-    }
-
-    if (showBottomSheet) {
-        MenuBottomSheet(
-            sheetState = sheetState,
-            onDismiss = { showBottomSheet = false },
-            menuBottomSheetDataList =
-                listOf(
-                    MenuBottomSheetData(
-                        label = "갤러리에서 선택",
-                        clickAction = { showBottomSheet = false },
-                    ),
-                    MenuBottomSheetData(
-                        label = "프로필 사진 삭제",
-                        color = FlintTheme.colors.error500,
-                        clickAction = { showBottomSheet = false },
-                    ),
-                ),
         )
     }
 }
@@ -166,6 +153,29 @@ fun OnboardingProfileScreen(
 private fun OnboardingProfileScreenPreview() {
     FlintTheme {
         OnboardingProfileScreen(
+            nickname = "안비",
+            isValid = true,
+            isNicknameAvailable = true,
+            canProceed = true,
+            onNicknameChange = {},
+            onCheckNickname = {},
+            onBackClick = {},
+            onNextClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun OnboardingProfileScreenErrorPreview() {
+    FlintTheme {
+        OnboardingProfileScreen(
+            nickname = "안비",
+            isValid = true,
+            isNicknameAvailable = false,
+            canProceed = false,
+            onNicknameChange = {},
+            onCheckNickname = {},
             onBackClick = {},
             onNextClick = {},
         )

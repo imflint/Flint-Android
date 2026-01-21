@@ -30,16 +30,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.dropShadow
+import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.collection.CollectionDetailModel
-import com.flint.domain.model.user.AuthorModel
-import com.flint.domain.type.UserRoleType
+import com.flint.domain.model.collection.CollectionItemModel
 
 @Composable
 fun CollectionFileItem(
-    collection: CollectionDetailModel,
+    collection: CollectionItemModel,
+    onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -48,12 +48,13 @@ fun CollectionFileItem(
     ) {
         with(collection) {
             CollectionFileContent(
-                profileImageUrl = author.profileUrl,
-                nickname = author.nickname,
+                profileImageUrl = profileUrl.orEmpty(),
+                nickname = nickname,
                 isBookmarked = isBookmarked,
                 bookmarkCount = bookmarkCount,
-                poster1Url = collectionImageUrl1,
-                poster2Url = collectionImageUrl2,
+                poster1Url = imageList.getOrElse(0) { "" },
+                poster2Url = imageList.getOrElse(1) { "" },
+                onBookmarkClick = onBookmarkClick,
                 modifier = Modifier.size(154.dp),
             )
         }
@@ -63,7 +64,7 @@ fun CollectionFileItem(
             modifier = Modifier.width(154.dp),
         ) {
             Text(
-                text = collection.collectionTitle,
+                text = collection.title,
                 style = FlintTheme.typography.body1M16,
                 color = FlintTheme.colors.white,
                 maxLines = 2,
@@ -71,7 +72,7 @@ fun CollectionFileItem(
             )
 
             Text(
-                text = collection.collectionContent,
+                text = collection.description,
                 style = FlintTheme.typography.caption1R12,
                 color = FlintTheme.colors.gray300,
                 maxLines = 2,
@@ -90,6 +91,7 @@ private fun CollectionFileContent(
     bookmarkCount: Int,
     poster1Url: String,
     poster2Url: String,
+    onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -99,14 +101,14 @@ private fun CollectionFileContent(
                 .background(FlintTheme.colors.gray800),
     ) {
         CollectionPocketPoster(
-            imageUrl = poster1Url,
+            imageUrl = poster2Url,
             modifier =
                 Modifier
                     .offset(x = 16.dp, y = 8.dp),
         )
 
         CollectionPocketPoster(
-            imageUrl = poster2Url,
+            imageUrl = poster1Url,
             modifier =
                 Modifier
                     .rotate(15f)
@@ -131,7 +133,7 @@ private fun CollectionFileContent(
                     .paint(
                         painter = painterResource(id = R.drawable.img_folder_fg),
                         contentScale = ContentScale.FillWidth,
-                    ).padding(start = 12.dp, top = 12.dp, end = 5.dp, bottom = 9.dp),
+                    ).padding(start = 12.dp, top = 12.dp, bottom = 9.dp),
         ) {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -144,7 +146,9 @@ private fun CollectionFileContent(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(2.dp),
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .noRippleClickable(onClick = onBookmarkClick),
                 ) {
                     Image(
                         imageVector =
@@ -185,6 +189,7 @@ private fun CollectionFileContent(
                     color = FlintTheme.colors.gray50,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(end = 5.dp)
                 )
             }
         }
@@ -215,44 +220,30 @@ private fun CollectionFileItemPreview() {
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             CollectionFileItem(
-                collection =
-                    CollectionDetailModel(
-                        collectionId = "1",
-                        collectionTitle = "컬렉션 내용",
-                        collectionContent = "컬렉션 내용",
-                        collectionImageUrl1 = "",
-                        collectionImageUrl2 = "",
-                        author =
-                            AuthorModel(
-                                userId = "1",
-                                nickname = "Nickname",
-                                profileUrl = "",
-                                userRole = UserRoleType.FLINER,
-                            ),
-                        isBookmarked = true,
-                        bookmarkCount = 10,
-                        createdAt = "",
-                    ),
+                collection = CollectionItemModel(
+                    id = "1",
+                    title = "컬렉션 제목",
+                    description = "컬렉션 내용",
+                    profileUrl = "",
+                    nickname = "닉네임",
+                    isBookmarked = false,
+                    bookmarkCount = 0,
+                    imageList = listOf("", ""),
+                ),
+                onBookmarkClick = {},
             )
             CollectionFileItem(
-                collection =
-                    CollectionDetailModel(
-                        collectionId = "1",
-                        collectionTitle = "컬렉션 제목이 마구 길어질 때 두줄까지 표시됩니다.",
-                        collectionContent = "컬렉션 내용이 마구 길어질 때 두줄까지 표시됩니다. 내용이 작으니까 조금 더 표시",
-                        collectionImageUrl1 = "",
-                        collectionImageUrl2 = "",
-                        author =
-                            AuthorModel(
-                                userId = "1",
-                                nickname = "닉네임은여덟글자",
-                                profileUrl = "",
-                                userRole = UserRoleType.FLINER,
-                            ),
-                        isBookmarked = true,
-                        bookmarkCount = 10,
-                        createdAt = "",
-                    ),
+                collection = CollectionItemModel(
+                    id = "1",
+                    title = "컬렉션 제목이 마구 길어질 때 두줄까지 표시됩니다.",
+                    description = "컬렉션 내용이 마구 길어질 때 두줄까지 표시됩니다. 내용이 작으니까 조금 더 표시",
+                    profileUrl = "",
+                    nickname = "닉네임은여덟글자",
+                    isBookmarked = true,
+                    bookmarkCount = 10,
+                    imageList = listOf("", ""),
+                ),
+                onBookmarkClick = {},
             )
         }
     }

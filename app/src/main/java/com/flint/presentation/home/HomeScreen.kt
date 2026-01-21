@@ -33,6 +33,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.ott.OttListModel
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty
@@ -42,7 +43,7 @@ import com.flint.presentation.home.sideeffect.HomeSideEffect
 @Composable
 fun HomeRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionList: () -> Unit,
+    navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
     navigateToExplore: () -> Unit,
@@ -92,7 +93,7 @@ fun HomeRoute(
                 onRecentCollectionItemClick = { collectionId ->
                     navigateToCollectionDetail(collectionId)
                 },
-                onRecentCollectionAllClick = navigateToCollectionList,
+                onRecentCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.RECENT) },
                 onRecommendCollectionItemClick = { collectionId ->
                     navigateToCollectionDetail(collectionId)
                 },
