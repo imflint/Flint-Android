@@ -10,5 +10,7 @@ interface MainTabRoute : Route {
     data object Explore : MainTabRoute
 
     @Serializable
-    data object Profile : MainTabRoute
+    data class Profile(
+        val userId: String? = null,
+    ) : MainTabRoute
 }
