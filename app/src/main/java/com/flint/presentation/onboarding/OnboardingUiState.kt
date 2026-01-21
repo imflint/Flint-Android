@@ -1,5 +1,6 @@
 package com.flint.presentation.onboarding
 
+import com.flint.core.common.util.UiState
 import com.flint.domain.model.search.SearchContentItemModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -14,14 +15,14 @@ data class OnboardingProfileUiState(
         const val MIN_LENGTH = 2
     }
 
-    //다믐단게 활성화
+    //다음단계 활성화
     val canProceed: Boolean
         get() = isValid && isNicknameAvailable == true
 }
 
 data class OnboardingContentUiState(
     val searchKeyword: String = "",
-    val searchResults: ImmutableList<SearchContentItemModel> = persistentListOf(),
+    val searchResults: UiState<ImmutableList<SearchContentItemModel>> = UiState.Empty,
     val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val isSearching: Boolean = false,
 ) {

@@ -96,7 +96,7 @@ fun OnboardingDoneScreen(
 
         FlintBasicButton(
             text = "시작하기",
-            state = FlintButtonState.Disable,
+            state = FlintButtonState.Able,
             onClick = onNextClick,
             contentPadding = PaddingValues(vertical = 14.dp),
             modifier =

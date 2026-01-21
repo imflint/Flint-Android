@@ -14,14 +14,22 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.image.SelectedContentItem
@@ -29,6 +37,7 @@ import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.presentation.onboarding.component.OnboardingContentItem
 import com.flint.presentation.onboarding.component.StepProgressBar
 
@@ -38,17 +47,23 @@ fun OnboardingContentRoute(
     navigateToOnboardingOtt: () -> Unit,
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
-    ) {
+) {
+    val profileUiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val contentUiState by viewModel.contentUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.getSearchContentList(null) // 인기 목록 받아오기
+        viewModel.loadInitialContents()
     }
 
     OnboardingContentScreen(
-        nickname = "User",
-        currentStep = 7,
+        nickname = profileUiState.nickname,
+        contentUiState = contentUiState,
         onBackClick = navigateUp,
         onNextClick = navigateToOnboardingOtt,
+        onSearchKeywordChanged = viewModel::updateSearchKeyword,
+        onSearchAction = viewModel::searchContents,
+        onContentClick = viewModel::toggleContentSelection,
+        onRemoveContent = viewModel::toggleContentSelection,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -56,11 +71,13 @@ fun OnboardingContentRoute(
 @Composable
 fun OnboardingContentScreen(
     nickname: String,
-    currentStep: Int,
+    contentUiState: OnboardingContentUiState,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
-    // UI 테스트를 위한 임시 파라미터 (실제 로직 연결 시 ViewModel 상태로 대체)
-    isEmptyParams: Boolean = false,
+    onSearchKeywordChanged: (String) -> Unit,
+    onSearchAction: () -> Unit,
+    onContentClick: (SearchContentItemModel) -> Unit,
+    onRemoveContent: (SearchContentItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -68,7 +85,7 @@ fun OnboardingContentScreen(
             modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background),
-        ) {
+    ) {
         FlintBackTopAppbar(
             onClick = onBackClick,
         )
@@ -76,8 +93,8 @@ fun OnboardingContentScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         StepProgressBar(
-            currentStep = currentStep,
-            totalSteps = 7,
+            currentStep = contentUiState.selectedContents.size,
+            totalSteps = OnboardingContentUiState.REQUIRED_SELECTION_COUNT,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
 
@@ -87,7 +104,6 @@ fun OnboardingContentScreen(
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             modifier = Modifier.weight(1f),
-            overscrollEffect = null,
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
@@ -122,9 +138,13 @@ fun OnboardingContentScreen(
                 ) {
                     FlintSearchTextField(
                         placeholder = "작품 이름",
-                        value = "",
-                        onValueChanged = {},
-                        onSearchAction = {},
+                        value = contentUiState.searchKeyword,
+                        onValueChanged = onSearchKeywordChanged,
+                        onSearchAction = onSearchAction,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(
+                            onSearch = { onSearchAction() }
+                        ),
                     )
                 }
             }
@@ -132,55 +152,70 @@ fun OnboardingContentScreen(
             // 선택된 영화 가로 스크롤
             item(span = { GridItemSpan(3) }) {
                 Column {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(0.dp),
-                    ) {
-                        items(7) { index ->
-                            SelectedContentItem(
-                                imageUrl = "",
-                                onRemoveClick = {},
-                            )
+                    if (contentUiState.selectedContents.isNotEmpty()) {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            items(
+                                items = contentUiState.selectedContents,
+                                key = { it.id }
+                            ) { content ->
+                                SelectedContentItem(
+                                    imageUrl = content.posterUrl,
+                                    onRemoveClick = { onRemoveContent(content) },
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
 
-            // 영화 검색 목록 [비어있을 때 || 리스트 있을 때]
-            if (isEmptyParams) {
-                item(span = { GridItemSpan(3) }) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(300.dp), // 대강 // TODO: 위아래 중앙 배치
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        FlintSearchEmptyView()
+            // 영화 검색 목록
+            when (val searchResultsState = contentUiState.searchResults) {
+                is UiState.Empty, is UiState.Failure -> {
+                    item(span = { GridItemSpan(3) }) {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(300.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            FlintSearchEmptyView(
+                                title = "작품을 찾을 수 없어요"
+                            )
+                        }
                     }
                 }
-            } else {
-                // 영화 목록 그리드
-                items(9) { index ->
-                    OnboardingContentItem(
-                        imageUrl = "",
-                        title = "은하수를 여행하는 히치하이커...",
-                        director = "가스 제닝스",
-                        releaseYear = "2005",
-                        isSelected = false,
-                        onClick = {},
-                        modifier =
-                            Modifier.padding(
-                                top = if (index >= 3) 20.dp else 0.dp,
-                            ),
-                    )
+                is UiState.Loading -> {
+                   // 로딩
+                }
+                is UiState.Success -> {
+                    // 영화 목록 그리드
+                    itemsIndexed(
+                        items = searchResultsState.data,
+                        key = { _, content -> content.id }
+                    ) { index, content ->
+                        val topPadding = if (index >= 3) 20.dp else 0.dp
+
+                        OnboardingContentItem(
+                            imageUrl = content.posterUrl,
+                            title = content.title,
+                            director = content.author,
+                            releaseYear = content.year.toString(),
+                            isSelected = contentUiState.isContentSelected(content.id),
+                            onClick = { onContentClick(content) },
+                            modifier = Modifier.padding(top = topPadding),
+                        )
+                    }
                 }
             }
         }
 
         FlintBasicButton(
             text = "다음",
-            state = FlintButtonState.Disable,
+            state = if (contentUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
             onClick = onNextClick,
             contentPadding = PaddingValues(vertical = 14.dp),
             modifier =
@@ -197,10 +232,17 @@ private fun OnboardingContentScreenListPreview() {
     FlintTheme {
         OnboardingContentScreen(
             nickname = "안비",
-            currentStep = 7,
+            contentUiState = OnboardingContentUiState(
+                searchResults = UiState.Success(
+                    com.flint.domain.model.search.SearchContentListModel.FakeList
+                ),
+            ),
             onBackClick = {},
             onNextClick = {},
-            isEmptyParams = false,
+            onSearchKeywordChanged = {},
+            onSearchAction = {},
+            onContentClick = {},
+            onRemoveContent = {},
         )
     }
 }
@@ -211,10 +253,13 @@ private fun OnboardingContentScreenEmptyPreview() {
     FlintTheme {
         OnboardingContentScreen(
             nickname = "안비",
-            currentStep = 7,
+            contentUiState = OnboardingContentUiState(),
             onBackClick = {},
             onNextClick = {},
-            isEmptyParams = true,
+            onSearchKeywordChanged = {},
+            onSearchAction = {},
+            onContentClick = {},
+            onRemoveContent = {},
         )
     }
 }
