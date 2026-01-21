@@ -45,6 +45,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -66,6 +67,7 @@ import com.flint.core.designsystem.component.toast.ShowSaveToast
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModel
@@ -74,7 +76,6 @@ import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
-import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -548,6 +549,8 @@ private fun Thumbnail(
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 modifier = Modifier.fillMaxWidth(),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             if (!isMine) {
                 if (isBookmarked) {
@@ -771,7 +774,7 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
     override val values: Sequence<HeaderPreviewData> =
         sequenceOf(
             HeaderPreviewData(
-                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
+                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기".repeat(2),
                 isMine = false,
                 isBookmarked = true,
             ),
