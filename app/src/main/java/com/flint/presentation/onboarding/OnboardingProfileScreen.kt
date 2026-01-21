@@ -122,12 +122,9 @@ fun OnboardingProfileScreen(
 
                 FlintBasicButton(
                     text = "확인",
-                    state = when {
-                        !isValid -> FlintButtonState.Disable
-                        isNicknameAvailable == true -> FlintButtonState.Able
-                        else -> FlintButtonState.Able
-                    },
+                    state = if (isValid) FlintButtonState.Able else FlintButtonState.Disable,
                     onClick = onCheckNickname,
+                    enabled = isValid,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                     modifier = Modifier.fillMaxHeight(),
                 )
@@ -140,7 +137,8 @@ fun OnboardingProfileScreen(
         FlintBasicButton(
             text = "시작하기",
             state = if (canProceed) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = { if (canProceed) { onNextClick() } },
+            onClick = onNextClick,
+            enabled = canProceed,
             contentPadding = PaddingValues(12.dp),
             modifier =
                 Modifier
