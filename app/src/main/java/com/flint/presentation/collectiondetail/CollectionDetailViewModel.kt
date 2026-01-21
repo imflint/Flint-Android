@@ -50,11 +50,12 @@ class CollectionDetailViewModel @Inject constructor(
     private val throttleDelayMs: Long = 2000L
 
     fun toggleCollectionBookmark() {
+        val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
+        
         val currentTime: Long = System.currentTimeMillis()
         if (currentTime - lastCollectionBookmarkToggleTime < throttleDelayMs) return
         lastCollectionBookmarkToggleTime = currentTime
 
-        val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
         val previousBookmarkState: Boolean = uiState.collectionDetail.isBookmarked
 
         updateCollectionBookmarkState(!previousBookmarkState)
@@ -76,12 +77,13 @@ class CollectionDetailViewModel @Inject constructor(
     }
 
     fun toggleContentBookmark(contentId: String) {
+        val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
+
         val currentTime: Long = System.currentTimeMillis()
         val lastToggleTime: Long = lastContentBookmarkToggleTime[contentId] ?: 0L
         if (currentTime - lastToggleTime < throttleDelayMs) return
         lastContentBookmarkToggleTime[contentId] = currentTime
 
-        val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
         val targetContent: ContentModelNew =
             uiState.collectionDetail.contents.find { it.id == contentId } ?: return
         val previousBookmarkState: Boolean = targetContent.isBookmarked
