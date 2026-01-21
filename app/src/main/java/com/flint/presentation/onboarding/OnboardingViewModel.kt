@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import com.flint.domain.model.search.SearchContentItemModel
+import com.flint.domain.type.OttType
 
 @HiltViewModel
 class OnboardingViewModel
@@ -111,6 +112,22 @@ class OnboardingViewModel
     }
 
     // ---------- onboarding ott ----------
+    private val _ottUiState = MutableStateFlow(OnboardingOttUiState())
+    val ottUiState: StateFlow<OnboardingOttUiState> = _ottUiState.asStateFlow()
+
+    fun toggleOttSelection(ottType: OttType) {
+        _ottUiState.update { currentState ->
+            val isAlreadySelected = currentState.selectedOtts.contains(ottType)
+
+            val newSelectedOtts = if (isAlreadySelected) {
+                currentState.selectedOtts.filterNot { it == ottType }
+            } else {
+                currentState.selectedOtts + ottType
+            }
+
+            currentState.copy(selectedOtts = newSelectedOtts.toImmutableList())
+        }
+    }
 
     // ---------- onboarding done ----------
 

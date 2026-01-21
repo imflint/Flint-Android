@@ -2,6 +2,7 @@ package com.flint.presentation.onboarding
 
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.search.SearchContentItemModel
+import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -35,5 +36,20 @@ data class OnboardingContentUiState(
 
     val isContentSelected: (String) -> Boolean = { contentId ->
         selectedContents.any { it.id == contentId }
+    }
+}
+
+data class OnboardingOttUiState(
+    val selectedOtts: ImmutableList<OttType> = persistentListOf(),
+) {
+    companion object {
+        const val MIN_SELECTION_COUNT = 1
+    }
+
+    val canProceed: Boolean
+        get() = selectedOtts.size >= MIN_SELECTION_COUNT
+
+    val isOttSelected: (OttType) -> Boolean = { ottType ->
+        selectedOtts.contains(ottType)
     }
 }
