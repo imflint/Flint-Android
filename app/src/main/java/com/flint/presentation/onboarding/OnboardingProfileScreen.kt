@@ -85,7 +85,7 @@ fun OnboardingProfileScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "플린트에서 사용할 이름을 정해주세요.",
+                text = "어떤 이름으로 불러드릴까요?",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.head3M18,
                 modifier = Modifier.fillMaxWidth(),
