@@ -118,6 +118,7 @@ fun CollectionDetailRoute(
                 navigateUp = navigateUp,
                 onBookmarkIconClick = viewModel::toggleContentBookmark,
                 onSpoilClick = viewModel::spoil,
+                onAuthorNicknameClick = { navigateToProfile(collectionDetail.author.id) },
                 onAuthorClick = navigateToProfile,
             )
         }
@@ -222,6 +223,7 @@ fun CollectionDetailScreen(
     navigateUp: () -> Unit,
     onBookmarkIconClick: (String) -> Unit,
     onSpoilClick: (String) -> Unit,
+    onAuthorNicknameClick: () -> Unit,
     onAuthorClick: (authorId: String) -> Unit,
 ) {
     CompositionLocalProvider(
@@ -296,6 +298,7 @@ fun CollectionDetailScreen(
                         authorUserRoleType = authorUserRoleType,
                         createdAt = createdAt,
                         collectionContent = description,
+                        onAuthorNicknameClick = onAuthorNicknameClick,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -571,6 +574,7 @@ private fun CollectionDetailDescription(
     authorUserRoleType: UserRoleType,
     createdAt: String,
     collectionContent: String,
+    onAuthorNicknameClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -585,6 +589,9 @@ private fun CollectionDetailDescription(
                 text = authorNickname,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.head2Sb20,
+                modifier = Modifier.noRippleClickable(
+                    onClick = { onAuthorNicknameClick() }
+                )
             )
 
             if (authorUserRoleType == UserRoleType.FLINER) {
@@ -839,6 +846,7 @@ private fun CollectionDetailDescriptionPreview(
             authorUserRoleType = data.authorUserRoleType,
             createdAt = data.createdAt,
             collectionContent = data.collectionContent,
+            onAuthorNicknameClick = {}
         )
     }
 }
@@ -999,7 +1007,8 @@ private fun CollectionDetailScreenPreview(
                 navigateUp = {},
                 onBookmarkIconClick = {},
                 onSpoilClick = {},
-                onAuthorClick = {}
+                onAuthorClick = {},
+                onAuthorNicknameClick = {}
             )
         }
     }
