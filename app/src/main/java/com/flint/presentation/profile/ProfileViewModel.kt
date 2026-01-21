@@ -12,11 +12,15 @@ import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.flint.presentation.profile.sideeffect.ProfileSideEffect
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,6 +36,9 @@ class ProfileViewModel @Inject constructor(
         UiState.Empty
     )
     val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<ProfileSideEffect>()
+    val sideEffect = _sideEffect.asSharedFlow()
 
     fun getProfile() {
         viewModelScope.launch {
@@ -74,5 +81,15 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update { UiState.Success(updatedState) }
             }
         }
+    }
+
+    fun getOttListPerContent(contentId: String) = viewModelScope.launch {
+        contentRepository.getOttListPerContent(contentId)
+            .onSuccess {
+                _sideEffect.emit(ProfileSideEffect.ShowOttListBottomSheet(it))
+            }
+            .onFailure {
+                Timber.e(it)
+            }
     }
 }
