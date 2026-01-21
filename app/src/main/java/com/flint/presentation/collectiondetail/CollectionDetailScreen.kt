@@ -503,7 +503,7 @@ private fun Thumbnail(
                 style = FlintTheme.typography.display2M28,
                 modifier = Modifier.fillMaxWidth(),
             )
-            if (isMine) {
+            if (!isMine) {
                 if (isBookmarked) {
                     FlintSaveDoneButton(
                         onClick = {
