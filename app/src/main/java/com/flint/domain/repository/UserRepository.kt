@@ -4,6 +4,7 @@ import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.UserApi
 import com.flint.domain.mapper.collection.toModel
 import com.flint.domain.mapper.user.toModel
+import com.flint.domain.model.user.NicknameCheckModel
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.model.user.UserProfileResponseModel
@@ -32,5 +33,11 @@ class UserRepository @Inject constructor(
     suspend fun getUserBookmarkedCollections(userId: String?): Result<CollectionListModel> =
         suspendRunCatching {
             apiService.getUserBookmarkedCollections(userId ?: myTempUserId).data.toModel()
+        }
+
+    // 닉네임 중복 체크
+    suspend fun checkNickname(nickname: String): Result<NicknameCheckModel> =
+        suspendRunCatching {
+            apiService.checkNickname(nickname).data.toModel()
         }
 }
