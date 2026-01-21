@@ -39,6 +39,7 @@ import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionsModel
+import com.flint.presentation.explore.uistate.ExploreUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -49,17 +50,23 @@ fun ExploreRoute(
     navigateToCollectionCreate: () -> Unit,
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
-    val uiState: UiState<CollectionsModel> by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState: UiState<ExploreUiState> by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when (val uiState = uiState) {
-        UiState.Loading -> FlintLoadingIndicator()
-        is UiState.Success<CollectionsModel> -> ExploreScreen(
-            collections = uiState.data.data.toImmutableList(),
-            onWatchCollectionButtonClick = navigateToCollectionDetail,
-            onMakeCollectionButtonClick = navigateToCollectionCreate,
-            onLoadNextPage = viewModel::loadNextPage,
-            modifier = Modifier.padding(paddingValues),
-        )
+    when (uiState) {
+        UiState.Loading -> {
+            FlintLoadingIndicator()
+        }
+
+        is UiState.Success -> {
+            val uiState = (uiState as UiState.Success<ExploreUiState>).data
+            ExploreScreen(
+                collections = uiState.collections,
+                onWatchCollectionButtonClick = navigateToCollectionDetail,
+                onMakeCollectionButtonClick = navigateToCollectionCreate,
+                onLoadNextPage = viewModel::loadNextPage,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
 
         else -> {}
     }
