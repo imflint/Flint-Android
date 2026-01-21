@@ -12,7 +12,7 @@ interface CollectionApi {
     // 컬렉션 생성
 
     // 컬렉션 상세 조회
-    @GET("api/v1/collections/{collectionId}")
+    @GET("/api/v1/collections/{collectionId}")
     suspend fun getCollectionDetail(
         @Path("collectionId") collectionId: String,
     ): BaseResponse<CollectionDetailResponseDto>

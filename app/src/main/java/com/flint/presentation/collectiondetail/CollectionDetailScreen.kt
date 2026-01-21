@@ -62,6 +62,8 @@ import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.progressbar.UnderImageProgressBar
+import com.flint.core.designsystem.component.toast.ShowSaveToast
+import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
@@ -72,8 +74,6 @@ import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
-import com.flint.core.designsystem.component.toast.ShowSaveToast
-import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -82,12 +82,15 @@ import kotlinx.collections.immutable.persistentListOf
 fun CollectionDetailRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
+    navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
     val uiState: UiState<CollectionDetailUiState> by viewModel.uiState.collectAsStateWithLifecycle()
-    var showCancelToast: Boolean by remember { mutableStateOf(false) }
-    var showSaveToast: Boolean by remember { mutableStateOf(false) }
+    var showCollectionCancelToast: Boolean by remember { mutableStateOf(false) }
+    var showCollectionSaveToast: Boolean by remember { mutableStateOf(false) }
+    var showContentSaveToast: Boolean by remember { mutableStateOf(false) }
+    var showContentCancelToast: Boolean by remember { mutableStateOf(false) }
 
     when (val uiState = uiState) {
         UiState.Loading -> {
@@ -102,8 +105,7 @@ fun CollectionDetailRoute(
             CollectionDetailScreen(
                 paddingValues = paddingValues,
                 title = collectionDetail.title,
-                authorId = collectionDetail.author.id,
-                userId = collectionDetail.userId,
+                isMine = collectionDetail.isMine,
                 isBookmarked = collectionDetail.isBookmarked,
                 authorNickname = collectionDetail.author.nickname,
                 authorUserRoleType = collectionDetail.author.userRole,
@@ -113,26 +115,29 @@ fun CollectionDetailRoute(
                 people = collectionBookmarkUsers,
                 onSaveDoneButtonClick = viewModel::toggleCollectionBookmark,
                 onSaveNoneButtonClick = viewModel::toggleCollectionBookmark,
-                navigateUp = navigateUp
+                navigateUp = navigateUp,
+                onBookmarkIconClick = viewModel::toggleContentBookmark,
+                onSpoilClick = viewModel::spoil,
+                onAuthorClick = navigateToProfile,
             )
         }
 
         else -> {}
     }
 
-    if (showCancelToast) {
+    if (showCollectionCancelToast) {
         ShowToast(
             text = "컬렉션 저장이 취소되었어요",
             imageVector = null,
             paddingValues = paddingValues,
             yOffset = 12.dp,
             hide = {
-                showCancelToast = false
+                showCollectionCancelToast = false
             }
         )
     }
 
-    if (showSaveToast) {
+    if (showCollectionSaveToast) {
         ShowSaveToast(
             navigateToSavedCollection = {
                 navigateToCollectionList(CollectionListRouteType.SAVED)
@@ -140,8 +145,32 @@ fun CollectionDetailRoute(
             paddingValues = paddingValues,
             yOffset = 12.dp,
             hide = {
-                showSaveToast = false
+                showCollectionSaveToast = false
             })
+    }
+
+    if (showContentSaveToast) {
+        ShowToast(
+            text = "작품을 저장했어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = {
+                showContentSaveToast = false
+            }
+        )
+    }
+
+    if (showContentCancelToast) {
+        ShowToast(
+            text = "작품 저장이 취소되었어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = {
+                showContentCancelToast = false
+            }
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -153,11 +182,21 @@ fun CollectionDetailRoute(
 
                 is CollectionDetailSideEffect.ToggleCollectionBookmarkSuccess -> {
                     if (event.isBookmarked) {
-                        showSaveToast = true
-                        showCancelToast = false
+                        showCollectionSaveToast = true
+                        showCollectionCancelToast = false
                     } else {
-                        showCancelToast = true
-                        showSaveToast = false
+                        showCollectionCancelToast = true
+                        showCollectionSaveToast = false
+                    }
+                }
+
+                is CollectionDetailSideEffect.ToggleContentBookmarkSuccess -> {
+                    if (event.isBookmarked) {
+                        showContentSaveToast = true
+                        showContentCancelToast = false
+                    } else {
+                        showContentCancelToast = true
+                        showContentSaveToast = false
                     }
                 }
             }
@@ -170,8 +209,7 @@ fun CollectionDetailRoute(
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
     title: String,
-    authorId: String,
-    userId: String,
+    isMine: Boolean,
     isBookmarked: Boolean,
     authorNickname: String,
     authorUserRoleType: UserRoleType,
@@ -182,6 +220,9 @@ fun CollectionDetailScreen(
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
     navigateUp: () -> Unit,
+    onBookmarkIconClick: (String) -> Unit,
+    onSpoilClick: (String) -> Unit,
+    onAuthorClick: (authorId: String) -> Unit,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -202,7 +243,10 @@ fun CollectionDetailScreen(
         if (showPeopleBottomSheet) {
             PeopleBottomSheet(
                 people = people,
-                onAuthorClick = { /* TODO: 프로필 화면으로 이동 */ },
+                onAuthorClick = { userId: String ->
+                    showPeopleBottomSheet = false
+                    onAuthorClick(userId)
+                },
                 onDismiss = { showPeopleBottomSheet = false },
             )
         }
@@ -229,8 +273,7 @@ fun CollectionDetailScreen(
                 ) {
                     Thumbnail(
                         title = title,
-                        authorId = authorId,
-                        userId = userId,
+                        isMine = isMine,
                         isBookmarked = isBookmarked,
                         onSaveDoneButtonClick = onSaveDoneButtonClick,
                         onSaveNoneButtonClick = onSaveNoneButtonClick,
@@ -264,9 +307,8 @@ fun CollectionDetailScreen(
                     contents.forEach { content: ContentModelNew ->
                         Content(
                             content = content,
-                            onBookmarkIconClick = { contentId: String ->
-                                // TODO: Content 저장
-                            },
+                            onBookmarkIconClick = onBookmarkIconClick,
+                            onSpoilClick = onSpoilClick,
                         )
                     }
 
@@ -470,8 +512,7 @@ private fun PeopleWhoSavedThisCollectionPreview(
 @Composable
 private fun Thumbnail(
     title: String,
-    authorId: String,
-    userId: String,
+    isMine: Boolean,
     isBookmarked: Boolean,
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
@@ -505,7 +546,7 @@ private fun Thumbnail(
                 style = FlintTheme.typography.display2M28,
                 modifier = Modifier.fillMaxWidth(),
             )
-            if (authorId != userId) {
+            if (!isMine) {
                 if (isBookmarked) {
                     FlintSaveDoneButton(
                         onClick = {
@@ -588,6 +629,7 @@ private fun CollectionDetailDescription(
 private fun Content(
     content: ContentModelNew,
     onBookmarkIconClick: (contentId: String) -> Unit,
+    onSpoilClick: (contentId: String) -> Unit,
 ) {
     Column {
         NetworkImage(
@@ -682,9 +724,7 @@ private fun Content(
 
             if (content.isSpoiler) {
                 Spoiler(
-                    spoil = {
-                        // TODO: State 변경을 통해 isSpoiler 값 변경
-                    },
+                    onSpoilClick = { onSpoilClick(content.id) },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
@@ -716,8 +756,7 @@ private fun Content(
 
 private data class HeaderPreviewData(
     val title: String,
-    val authorId: String,
-    val userId: String,
+    val isMine: Boolean,
     val isBookmarked: Boolean,
 )
 
@@ -726,20 +765,17 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
         sequenceOf(
             HeaderPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = true,
             ),
             HeaderPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = false,
             ),
             HeaderPreviewData(
                 title = "내가 만든 컬렉션",
-                authorId = "1",
-                userId = "1",
+                isMine = true,
                 isBookmarked = false,
             ),
         )
@@ -753,8 +789,7 @@ private fun ThumbnailPreview(
     FlintTheme {
         Thumbnail(
             title = data.title,
-            authorId = data.authorId,
-            userId = data.userId,
+            isMine = data.isMine,
             isBookmarked = data.isBookmarked,
             onSaveDoneButtonClick = {},
             onSaveNoneButtonClick = {}
@@ -848,6 +883,7 @@ private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
         )
 }
 
+
 @Preview
 @Composable
 private fun ContentPreview(
@@ -857,14 +893,14 @@ private fun ContentPreview(
         Content(
             content = content,
             onBookmarkIconClick = {},
+            onSpoilClick = {}
         )
     }
 }
 
 private data class ScreenPreviewData(
     val title: String,
-    val authorId: String,
-    val userId: String,
+    val isMine: Boolean,
     val isBookmarked: Boolean,
     val authorNickname: String,
     val authorUserRoleType: UserRoleType,
@@ -912,8 +948,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
         sequenceOf(
             ScreenPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = true,
                 authorNickname = "키카",
                 authorUserRoleType = UserRoleType.FLINER,
@@ -922,8 +957,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
             ),
             ScreenPreviewData(
                 title = "새로운 컬렉션",
-                authorId = "0",
-                userId = "1",
+                isMine = false,
                 isBookmarked = false,
                 authorNickname = "일반유저",
                 authorUserRoleType = UserRoleType.FLING,
@@ -932,8 +966,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
             ),
             ScreenPreviewData(
                 title = "내가 만든 컬렉션",
-                authorId = "1",
-                userId = "1",
+                isMine = true,
                 isBookmarked = false,
                 authorNickname = "나",
                 authorUserRoleType = UserRoleType.FLING,
@@ -953,8 +986,7 @@ private fun CollectionDetailScreenPreview(
             CollectionDetailScreen(
                 paddingValues = paddingValues,
                 title = data.title,
-                authorId = data.authorId,
-                userId = data.userId,
+                isMine = data.isMine,
                 isBookmarked = data.isBookmarked,
                 authorNickname = data.authorNickname,
                 authorUserRoleType = data.authorUserRoleType,
@@ -964,7 +996,10 @@ private fun CollectionDetailScreenPreview(
                 people = data.people,
                 onSaveDoneButtonClick = {},
                 onSaveNoneButtonClick = {},
-                navigateUp = {}
+                navigateUp = {},
+                onBookmarkIconClick = {},
+                onSpoilClick = {},
+                onAuthorClick = {}
             )
         }
     }

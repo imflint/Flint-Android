@@ -9,8 +9,11 @@ import com.flint.core.navigation.MainTabRoute
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.profile.ProfileRoute
 
-fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
-    navigate(MainTabRoute.Profile, navOptions)
+fun NavController.navigateToProfile(
+    userId: String? = null,
+    navOptions: NavOptions? = null,
+) {
+    navigate(MainTabRoute.Profile(userId = userId), navOptions)
 }
 
 fun NavGraphBuilder.profileNavGraph(

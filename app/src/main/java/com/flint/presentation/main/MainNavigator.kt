@@ -83,7 +83,7 @@ class MainNavigator(
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions)
             MainTab.EXPLORE -> navController.navigateToExplore(navOptions)
-            MainTab.PROFILE -> navController.navigateToProfile(navOptions)
+            MainTab.PROFILE -> navController.navigateToProfile(navOptions = navOptions)
         }
     }
 
@@ -127,6 +127,10 @@ class MainNavigator(
 
     fun navigateToSavedContent() {
         navController.navigateToSavedContentList()
+    }
+
+    fun navigateToProfile(userId: String) {
+        navController.navigateToProfile(userId)
     }
 
     fun navigateUp() {
