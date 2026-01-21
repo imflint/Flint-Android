@@ -26,14 +26,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.R
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.content.ContentModel
-import com.flint.domain.type.OttType
+import com.flint.domain.model.collection.CollectionsModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -42,10 +42,11 @@ fun ExploreRoute(
     paddingValues: PaddingValues,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
+    viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     ExploreScreen(
         modifier = Modifier.padding(paddingValues),
-        contents = ContentModel.FakeList, // TODO: 수정 필요
+        collections = emptyList<CollectionsModel.Collection>().toImmutableList(), // TODO: ViewModel에서 데이터 가져오기
         onWatchCollectionButtonClick = navigateToCollectionDetail,
         onMakeCollectionButtonClick = navigateToCollectionCreate,
     )
@@ -53,12 +54,12 @@ fun ExploreRoute(
 
 @Composable
 private fun ExploreScreen(
-    contents: ImmutableList<ContentModel>,
+    collections: ImmutableList<CollectionsModel.Collection>,
     onWatchCollectionButtonClick: (collectionId: String) -> Unit,
     onMakeCollectionButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pageCount: Int = contents.size
+    val pageCount: Int = collections.size
     val pagerState: PagerState = rememberPagerState(pageCount = { pageCount + 1 })
 
     Column(
@@ -71,7 +72,8 @@ private fun ExploreScreen(
                         FlintTheme.colors.gradient900,
                     )
                 }
-            }.fillMaxSize(),
+            }
+            .fillMaxSize(),
     ) {
         FlintLogoTopAppbar(backgroundColor = Color.Transparent)
 
@@ -79,14 +81,14 @@ private fun ExploreScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
         ) { page: Int ->
-            val content: ContentModel? = contents.getOrNull(page)
+            val collection: CollectionsModel.Collection? = collections.getOrNull(page)
 
-            if (content != null) {
+            if (collection != null) {
                 ExplorePageItem(
-                    imageUrl = content.posterImage,
-                    id = content.contentId.toString(),
-                    title = content.title,
-                    description = content.description,
+                    imageUrl = collection.imageUrl,
+                    id = collection.collectionId,
+                    title = collection.title,
+                    description = collection.description,
                     onButtonClick = onWatchCollectionButtonClick,
                 )
             } else {
@@ -245,29 +247,20 @@ private fun ExploreEndPagePreview() {
 private fun ExploreScreenPreview() {
     FlintTheme {
         ExploreScreen(
-            contents =
+            collections =
                 List(10) {
-                    ContentModel(
-                        contentId = "0",
+                    CollectionsModel.Collection(
+                        collectionId = "0",
                         title = "너의 모든 것",
-                        year = 2000,
-                        posterImage = "https://buly.kr/G3Edbfu",
+                        imageUrl = "https://buly.kr/G3Edbfu",
                         description =
                             """
-                            뉴욕의 서점 매니저이자 반듯한 독서가, 조. 
-                            그가 대학원생 벡을 만나 한눈에 반한다. 
-                            하지만 훈훈했던 그의 첫인상은 잠시일 뿐, 
+                            뉴욕의 서점 매니저이자 반듯한 독서가, 조.
+                            그가 대학원생 벡을 만나 한눈에 반한다.
+                            하지만 훈훈했던 그의 첫인상은 잠시일 뿐,
                             감추어진 조의 뒤틀린 이면이 드러난다.
                             """.trimIndent(),
-                        ottSimpleList =
-                            listOf(
-                                OttType.Netflix,
-                                OttType.Disney,
-                                OttType.Tving,
-                                OttType.Coupang,
-                                OttType.Wave,
-                                OttType.Watcha,
-                            ),
+                        createdAt = "2024-01-01",
                     )
                 }.toImmutableList(),
             onWatchCollectionButtonClick = {},
