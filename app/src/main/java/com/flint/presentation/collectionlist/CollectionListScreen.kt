@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.common.util.UiState
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
@@ -38,30 +39,20 @@ fun CollectionListRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when (val state = uiState) {
-        is UiState.Loading -> {
-
-        }
-
-        is UiState.Success -> {
-            CollectionListScreen(
-                modifier = Modifier.padding(paddingValues),
-                title = viewModel.routeType.title,
-                onBackClick = navigateUp,
-                onCollectionItemClick = navigateToCollectionDetail,
-                collectionList = state.data.collectionList,
-            )
-        }
-
-        else -> {}
-    }
+    CollectionListScreen(
+        modifier = Modifier.padding(paddingValues),
+        title = viewModel.routeType.title,
+        onBackClick = navigateUp,
+        onCollectionItemClick = navigateToCollectionDetail,
+        collectionList = uiState.collectionList,
+    )
 }
 
 @Composable
 private fun CollectionListScreen(
     onBackClick: () -> Unit,
     title: String,
-    collectionList: CollectionListModel,
+    collectionList: UiState<CollectionListModel>,
     onCollectionItemClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -79,42 +70,64 @@ private fun CollectionListScreen(
 
         Spacer(Modifier.height(12.dp))
 
-        Text(
-            text = "총 ${collectionList.collections.size}개",
-            color = FlintTheme.colors.gray100,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-        )
+        when (collectionList) {
+            is UiState.Loading -> {
+                FlintLoadingIndicator()
+            }
 
-        Spacer(Modifier.height(24.dp))
-
-        LazyVerticalGrid(
-            contentPadding = PaddingValues(10.dp),
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier =
-                Modifier
-                    .padding(horizontal = 10.dp),
-        ) {
-            items(
-                items = collectionList.collections,
-                key = { it.id },
-            ) { collection ->
-                Box(modifier = Modifier.fillMaxSize(1f).align(Alignment.CenterHorizontally)) {
-                    CollectionFileItem(
-                        collection = collection,
+            is UiState.Success -> {
+                with(collectionList.data) {
+                    Text(
+                        text = "총 ${collections.size}개",
+                        color = FlintTheme.colors.gray100,
                         modifier =
                             Modifier
-                                .align(Alignment.Center)
-                                .noRippleClickable(
-                                    onClick = { onCollectionItemClick(collection.id) }
-                                )
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                     )
+
+                    Spacer(Modifier.height(24.dp))
+
+                    LazyVerticalGrid(
+                        contentPadding = PaddingValues(10.dp),
+                        columns = GridCells.Fixed(2),
+                        horizontalArrangement =
+                            Arrangement.spacedBy(
+                                12.dp,
+                                Alignment.CenterHorizontally,
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier =
+                            Modifier
+                                .padding(horizontal = 10.dp),
+                    ) {
+                        items(
+                            items = collections,
+                            key = { it.id },
+                        ) { collection ->
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize(1f)
+                                        .align(Alignment.CenterHorizontally),
+                            ) {
+                                CollectionFileItem(
+                                    collection = collection,
+                                    modifier =
+                                        Modifier
+                                            .align(Alignment.Center)
+                                            .noRippleClickable(
+                                                onClick = { onCollectionItemClick(collection.id) },
+                                            ),
+                                )
+                            }
+                        }
+                    }
                 }
+
             }
+
+            else -> {}
         }
     }
 }
@@ -126,7 +139,7 @@ private fun CollectionListScreenPreview() {
         CollectionListScreen(
             onBackClick = {},
             title = "전체 컬렉션",
-            collectionList = CollectionListModel.FakeList,
+            collectionList = UiState.Success(CollectionListModel.FakeList),
             onCollectionItemClick = {}
         )
     }

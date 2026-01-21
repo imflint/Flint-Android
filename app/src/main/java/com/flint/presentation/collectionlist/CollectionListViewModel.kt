@@ -11,6 +11,7 @@ import com.flint.domain.type.CollectionListRouteType
 import com.flint.presentation.collectionlist.uistate.CollectionListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,10 +23,8 @@ class CollectionListViewModel @Inject constructor(
 
     val routeType = savedStateHandle.toRoute<Route.CollectionList>().routeType
 
-    private val _uiState = MutableStateFlow<UiState<CollectionListUiState>>(
-        UiState.Loading
-    )
-    val uiState: MutableStateFlow<UiState<CollectionListUiState>> = _uiState
+    private val _uiState = MutableStateFlow<CollectionListUiState>(CollectionListUiState())
+    val uiState: MutableStateFlow<CollectionListUiState> = _uiState
 
     init {
         getCollectionList()
@@ -34,16 +33,27 @@ class CollectionListViewModel @Inject constructor(
     fun getCollectionList() {
         //TODO: routeType에 따라 조회 데이터 변경 필요
         viewModelScope.launch {
-            userRepository.getUserCreatedCollections(userId = null)
-                .onSuccess { result ->
-                    _uiState.emit(
-                        UiState.Success(
-                            CollectionListUiState(
-                                collectionList = result,
-                            ),
-                        ),
-                    )
-                }.onFailure {}
+            when (routeType) {
+                CollectionListRouteType.CREATED -> {
+                    userRepository.getUserCreatedCollections(userId = null)
+                        .onSuccess { result ->
+                            _uiState.update {
+                                it.copy(collectionList = UiState.Success(result))
+                            }
+                        }.onFailure { error ->
+                            _uiState.update {
+                                it.copy(collectionList = UiState.Failure)
+                            }
+                        }
+                }
+
+                CollectionListRouteType.SAVED -> {
+
+                }
+                CollectionListRouteType.RECENT -> {
+
+                }
+            }
         }
     }
 }
