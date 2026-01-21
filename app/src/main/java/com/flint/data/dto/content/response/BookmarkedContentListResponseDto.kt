@@ -17,6 +17,8 @@ data class BookmarkedContentResponseDto(
     val title: String,
     @SerialName("year")
     val year: Int,
+    @SerialName("imageUrl")
+    val imageUrl: String,
     @SerialName("getOttSimpleList")
     val getOttSimpleList: List<OttSimpleResponseDto>
 )

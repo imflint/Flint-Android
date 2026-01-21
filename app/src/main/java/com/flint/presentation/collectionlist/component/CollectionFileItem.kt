@@ -109,6 +109,8 @@ private fun CollectionFileContent(
             imageUrl = poster2Url,
             modifier =
                 Modifier
+                    .rotate(15f)
+                    .offset(x = 20.dp, y = 15.dp)
                     .dropShadow(
                         shape = RoundedCornerShape(12.dp),
                         color = Color(0xFF000000).copy(alpha = 0.35f),
@@ -117,8 +119,7 @@ private fun CollectionFileContent(
                         blur = 10.dp,
                         spread = 0.dp,
                     ).align(Alignment.TopCenter)
-                    .rotate(15f)
-                    .offset(x = 20.dp, y = 15.dp),
+            ,
         )
 
         Box(

@@ -16,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -46,11 +44,6 @@ fun ProfileTopSection(
                         contentScale = ContentScale.FillBounds,
                     ),
         ) {
-            val gradient =
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF424BBD).copy(1f), Color(0xFF121212).copy(alpha = 0.04f)),
-                )
-
             Column(
                 modifier =
                     Modifier
@@ -62,7 +55,7 @@ fun ProfileTopSection(
                         Modifier
                             .fillMaxWidth()
                             .height(34.dp)
-                            .background(gradient),
+                            .background(FlintTheme.colors.myGradient),
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

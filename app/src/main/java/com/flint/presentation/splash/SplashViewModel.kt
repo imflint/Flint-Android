@@ -2,7 +2,7 @@ package com.flint.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.datastore.PreferencesManager
+import com.flint.data.local.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
