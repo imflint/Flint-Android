@@ -19,6 +19,7 @@ import com.flint.presentation.explore.navigation.navigateToExplore
 import com.flint.presentation.home.navigation.navigateToHome
 import com.flint.presentation.login.navigation.navigateToLogin
 import com.flint.presentation.onboarding.navigation.navigateToOnboarding
+import com.flint.presentation.profile.navigation.navigateToMyProfile
 import com.flint.presentation.profile.navigation.navigateToProfile
 import com.flint.presentation.savedcontent.navigation.navigateToSavedContentList
 import kotlinx.coroutines.CoroutineScope
@@ -83,7 +84,7 @@ class MainNavigator(
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions)
             MainTab.EXPLORE -> navController.navigateToExplore(navOptions)
-            MainTab.PROFILE -> navController.navigateToProfile(navOptions = navOptions)
+            MainTab.PROFILE -> navController.navigateToMyProfile(navOptions)
         }
     }
 

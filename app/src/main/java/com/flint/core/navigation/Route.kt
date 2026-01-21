@@ -47,4 +47,9 @@ interface Route {
 
     @Serializable
     data object AddContent : Route
+
+    @Serializable
+    data class Profile(
+        val userId: String? = null,
+    ) : Route
 }

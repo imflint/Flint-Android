@@ -6,9 +6,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
-import com.flint.core.navigation.MainTabRoute
+import com.flint.core.navigation.Route
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
+import com.flint.presentation.profile.sideeffect.ProfileSideEffect
 import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.flint.presentation.profile.sideeffect.ProfileSideEffect
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,7 +30,7 @@ class ProfileViewModel @Inject constructor(
     private val contentRepository: ContentRepository
 ) : ViewModel() {
 
-    val userId = savedStateHandle.toRoute<MainTabRoute.Profile>().userId
+    val userId = savedStateHandle.toRoute<Route.Profile>().userId
 
     private val _uiState = MutableStateFlow<UiState<ProfileUiState>>(
         UiState.Empty
