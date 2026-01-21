@@ -62,7 +62,7 @@ class ProfileViewModel @Inject constructor(
                     userRepository.getUserBookmarkedCollections(userId = userId).getOrThrow()
                 }
                 val savedContentListDeferred = async {
-                    contentRepository.getBookmarkedContentList().getOrThrow()
+                    contentRepository.getBookmarkedContentListByUserId(userId = userId).getOrThrow()
                 }
 
                 currentState.copy(
