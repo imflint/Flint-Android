@@ -73,6 +73,7 @@ data class Colors(
     val blue: Color,
     val kakao: Color,
     val buttonStroke: Brush,
+    val myGradient: Brush,
 )
 
 val FlintColors =
@@ -162,6 +163,10 @@ val FlintColors =
         buttonStroke =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFFAEAEAE), Color(0xFF666666)),
+            ),
+        myGradient =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF424BBD).copy(1f), Color(0xFF121212).copy(alpha = 0.04f)),
             ),
     )
 
