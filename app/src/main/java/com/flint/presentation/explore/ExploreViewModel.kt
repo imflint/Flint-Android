@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,11 +27,10 @@ class ExploreViewModel @Inject constructor(
     }
 
     private fun getCollections() {
-        val uiState: CollectionsModel = (_uiState.value as? UiState.Success)?.data ?: return
         viewModelScope.launch {
             collectionRepository.getCollections(cursor = 0, page = 100)
                 .onSuccess { collectionsModel: CollectionsModel ->
-                    _uiState.value = UiState.Success(collectionsModel)
+                    _uiState.update { UiState.Success(collectionsModel) }
                 }
                 .onFailure {
 
