@@ -11,7 +11,7 @@ data class SocialVerifyResponseModel(
     val isRegistered: Boolean,
     val accessToken: String?,
     val refreshToken: String?,
-    val userId: Long?,
+    val userId: String?,
     val nickName: String?,
     val tempToken: String?,
 )
