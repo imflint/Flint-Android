@@ -16,7 +16,9 @@ import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -45,76 +47,111 @@ class CollectionDetailViewModel @Inject constructor(
     private val _sideEffect: MutableSharedFlow<CollectionDetailSideEffect> = MutableSharedFlow()
     val sideEffect: SharedFlow<CollectionDetailSideEffect> = _sideEffect.asSharedFlow()
 
-    private var lastCollectionBookmarkToggleTime: Long = 0L
-    private val lastContentBookmarkToggleTime: MutableMap<String, Long> = mutableMapOf()
-    private val throttleDelayMs: Long = 2000L
+    private val debounceDelayMs: Long = 500L
+
+    private var collectionBookmarkDebounceJob: Job? = null
+    private var initialCollectionBookmarkState: Boolean? = null
+
+    private val contentBookmarkDebounceJobs: MutableMap<String, Job> = mutableMapOf()
+    private val initialContentBookmarkStates: MutableMap<String, Boolean> = mutableMapOf()
 
     fun toggleCollectionBookmark() {
         val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
-        
-        val currentTime: Long = System.currentTimeMillis()
-        if (currentTime - lastCollectionBookmarkToggleTime < throttleDelayMs) return
-        lastCollectionBookmarkToggleTime = currentTime
 
-        val previousBookmarkState: Boolean = uiState.collectionDetail.isBookmarked
+        if (initialCollectionBookmarkState == null) {
+            initialCollectionBookmarkState = uiState.collectionDetail.isBookmarked
+        }
 
-        updateCollectionBookmarkState(!previousBookmarkState)
+        updateCollectionBookmarkState(!uiState.collectionDetail.isBookmarked)
 
-        viewModelScope.launch {
-            bookmarkRepository.toggleCollectionBookmark(uiState.collectionDetail.id)
-                .onSuccess { isBookmarked: Boolean ->
-                    updateCollectionBookmarkState(isBookmarked)
-                    getCollectionBookmarkUsers()
-                    _sideEffect.emit(
-                        CollectionDetailSideEffect.ToggleCollectionBookmarkSuccess(isBookmarked)
-                    )
-                }
-                .onFailure {
-                    updateCollectionBookmarkState(previousBookmarkState)
-                    _sideEffect.emit(CollectionDetailSideEffect.ToggleCollectionBookmarkFailure)
-                }
+        collectionBookmarkDebounceJob?.cancel()
+        collectionBookmarkDebounceJob = viewModelScope.launch {
+            delay(debounceDelayMs)
+
+            val currentState: Boolean =
+                (_uiState.value as? UiState.Success)?.data?.collectionDetail?.isBookmarked ?: return@launch
+
+            if (currentState != initialCollectionBookmarkState) {
+                bookmarkRepository.toggleCollectionBookmark(uiState.collectionDetail.id)
+                    .onSuccess { isBookmarked: Boolean ->
+                        updateCollectionBookmarkState(isBookmarked)
+                        getCollectionBookmarkUsers()
+                        _sideEffect.emit(
+                            CollectionDetailSideEffect.ToggleCollectionBookmarkSuccess(isBookmarked)
+                        )
+                    }
+                    .onFailure {
+                        initialCollectionBookmarkState?.let { updateCollectionBookmarkState(it) }
+                        _sideEffect.emit(CollectionDetailSideEffect.ToggleCollectionBookmarkFailure)
+                    }
+            }
+
+            initialCollectionBookmarkState = null
         }
     }
 
     fun toggleContentBookmark(contentId: String) {
         val uiState: CollectionDetailUiState = (_uiState.value as? UiState.Success)?.data ?: return
 
-        val currentTime: Long = System.currentTimeMillis()
-        val lastToggleTime: Long = lastContentBookmarkToggleTime[contentId] ?: 0L
-        if (currentTime - lastToggleTime < throttleDelayMs) return
-        lastContentBookmarkToggleTime[contentId] = currentTime
-
         val targetContent: ContentModelNew =
             uiState.collectionDetail.contents.find { it.id == contentId } ?: return
-        val previousBookmarkState: Boolean = targetContent.isBookmarked
-        val previousBookmarkCount: Int = targetContent.bookmarkCount
+
+        if (initialContentBookmarkStates[contentId] == null) {
+            initialContentBookmarkStates[contentId] = targetContent.isBookmarked
+        }
+
+        val newBookmarkState: Boolean = !targetContent.isBookmarked
+        val initialBookmarkCount: Int = targetContent.bookmarkCount
+        val adjustedBookmarkCount: Int =
+            if (newBookmarkState) initialBookmarkCount + 1
+            else (initialBookmarkCount - 1).coerceAtLeast(0)
 
         updateContentBookmarkState(
             contentId = contentId,
-            isBookmarked = !previousBookmarkState,
-            bookmarkCount =
-                if (!previousBookmarkState) previousBookmarkCount + 1
-                else (previousBookmarkCount - 1).coerceAtLeast(0)
+            isBookmarked = newBookmarkState,
+            bookmarkCount = adjustedBookmarkCount
         )
 
-        viewModelScope.launch {
-            bookmarkRepository.toggleContentBookmark(contentId)
-                .onSuccess { isBookmarked: Boolean ->
-                    updateContentIsBookmarkedOnly(
-                        contentId = contentId,
-                        isBookmarked = isBookmarked
-                    )
-                    _sideEffect.emit(
-                        CollectionDetailSideEffect.ToggleContentBookmarkSuccess(isBookmarked)
-                    )
-                }
-                .onFailure {
-                    updateContentBookmarkState(
-                        contentId = contentId,
-                        isBookmarked = previousBookmarkState,
-                        bookmarkCount = previousBookmarkCount
-                    )
-                }
+        contentBookmarkDebounceJobs[contentId]?.cancel()
+        contentBookmarkDebounceJobs[contentId] = viewModelScope.launch {
+            delay(debounceDelayMs)
+
+            val currentContent: ContentModelNew =
+                (_uiState.value as? UiState.Success)?.data?.collectionDetail?.contents
+                    ?.find { it.id == contentId } ?: return@launch
+
+            val initialState: Boolean = initialContentBookmarkStates[contentId] ?: return@launch
+
+            if (currentContent.isBookmarked != initialState) {
+                bookmarkRepository.toggleContentBookmark(contentId)
+                    .onSuccess { isBookmarked: Boolean ->
+                        updateContentIsBookmarkedOnly(
+                            contentId = contentId,
+                            isBookmarked = isBookmarked
+                        )
+                        _sideEffect.emit(
+                            CollectionDetailSideEffect.ToggleContentBookmarkSuccess(isBookmarked)
+                        )
+                    }
+                    .onFailure {
+                        val fallbackContent: ContentModelNew =
+                            (_uiState.value as? UiState.Success)?.data?.collectionDetail?.contents
+                                ?.find { it.id == contentId } ?: return@onFailure
+
+                        val rollbackCount: Int =
+                            if (initialState) fallbackContent.bookmarkCount + 1
+                            else (fallbackContent.bookmarkCount - 1).coerceAtLeast(0)
+
+                        updateContentBookmarkState(
+                            contentId = contentId,
+                            isBookmarked = initialState,
+                            bookmarkCount = rollbackCount
+                        )
+                    }
+            }
+
+            initialContentBookmarkStates.remove(contentId)
+            contentBookmarkDebounceJobs.remove(contentId)
         }
     }
 
