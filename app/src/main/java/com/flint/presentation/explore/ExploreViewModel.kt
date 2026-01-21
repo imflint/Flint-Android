@@ -27,46 +27,54 @@ class ExploreViewModel @Inject constructor(
     val uiState: StateFlow<UiState<ExploreUiState>> = _uiState.asStateFlow()
 
     init {
-        getCollections()
-    }
-
-    private fun getCollections() {
-        val currentState: ExploreUiState =
-            (_uiState.value as? UiState.Success)?.data ?: ExploreUiState(persistentListOf())
-        if (currentState.isLoadingMore || currentState.isLastPage) return
-
-        if (currentState.collections.isEmpty()) {
-            _uiState.update { UiState.Loading }
-        } else {
-            _uiState.update { UiState.Success(currentState.copy(isLoadingMore = true)) }
-        }
-
-        viewModelScope.launch {
-            collectionRepository.getCollections(
-                cursor = currentState.nextCursor,
-                size = PAGE_SIZE
-            ).onSuccess { collectionsModel: CollectionsModel ->
-                val newData: ImmutableList<CollectionsModel.Collection> =
-                    (currentState.collections + collectionsModel.data).toImmutableList()
-
-                _uiState.update {
-                    UiState.Success(
-                        ExploreUiState(
-                            collections = newData,
-                            nextCursor = collectionsModel.meta.nextCursor,
-                            isLastPage = collectionsModel.meta.nextCursor == null,
-                            isLoadingMore = false
-                        )
-                    )
-                }
-            }.onFailure {
-
-            }
-        }
+        getInitialCollections()
     }
 
     fun loadNextPage() {
-        getCollections()
+        val currentState: ExploreUiState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (!currentState.canLoadMore) return
+
+        _uiState.update { UiState.Success(currentState.copy(isLoadingMore = true)) }
+
+        viewModelScope.launch {
+            fetchCollections(
+                cursor = currentState.nextCursor,
+                currentCollections = currentState.collections
+            )
+        }
+    }
+
+    private fun getInitialCollections() {
+        viewModelScope.launch {
+            fetchCollections(
+                cursor = null,
+                currentCollections = persistentListOf()
+            )
+        }
+    }
+
+    private suspend fun fetchCollections(
+        cursor: Long?,
+        currentCollections: ImmutableList<CollectionsModel.Collection>,
+    ) {
+        collectionRepository.getCollections(
+            cursor = cursor,
+            size = PAGE_SIZE
+        ).onSuccess { collectionsModel: CollectionsModel ->
+            val newData: ImmutableList<CollectionsModel.Collection> =
+                (currentCollections + collectionsModel.data).toImmutableList()
+
+            _uiState.update {
+                UiState.Success(
+                    ExploreUiState(
+                        collections = newData,
+                        nextCursor = collectionsModel.meta.nextCursor,
+                    )
+                )
+            }
+        }.onFailure {
+
+        }
     }
 
     companion object {
