@@ -49,6 +49,7 @@ import kotlinx.collections.immutable.toImmutableList
 fun CollectionCreateRoute(
     paddingValues: PaddingValues,
     navigateToAddContent: () -> Unit,
+    navigateUp: () -> Unit,
     viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -65,7 +66,7 @@ fun CollectionCreateRoute(
         onPublicChanged = viewModel::updateIsPublic,
         contentList = contentList.toImmutableList(),
         onRemoveContent = { contentList.remove(it) },
-        onBackClick = {},
+        onBackClick = navigateUp,
         onAddContentClick = navigateToAddContent,
         onFinishClick = viewModel::onClickFinish,
         modifier = Modifier.padding(paddingValues),
@@ -94,7 +95,6 @@ fun CollectionCreateScreen(
             modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
-                .navigationBarsPadding()
     ) {
         FlintBackTopAppbar(onClick = onBackClick)
 
@@ -274,10 +274,7 @@ fun CollectionCreateScreen(
         FlintLargeButton(
             text = "완료",
             state = if (uistate.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = {
-                onFinishClick()
-                isModalVisible = true
-                      },
+            onClick = {onFinishClick()},
             modifier =
                 Modifier
                     .fillMaxWidth()

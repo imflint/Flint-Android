@@ -75,4 +75,10 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
+    fun updateSearch(searchText: String) {
+        _uiState.update { state ->
+            state.copy(searchText = searchText)
+        }
+
     }
+}

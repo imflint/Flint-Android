@@ -39,7 +39,7 @@ fun AddContentRoute(
 
     AddContentScreen(
         uistate = uiState,
-        onTitleChanged = viewModel::updateTitle,
+        onSearchTextChanged = viewModel::updateSearch,
         onBackClick = navigateUp,
         onActionClick = navigateToCollectionCreate,
         modifier = Modifier.padding(paddingValues),
@@ -57,13 +57,12 @@ data class CollectionContentUiModel(
 @Composable
 fun AddContentScreen(
     uistate: CollectionCreateUiState,
-    onTitleChanged: (String) -> Unit = {},
+    onSearchTextChanged: (String) -> Unit = {},
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var searchText by remember { mutableStateOf("") }
-    var selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
+    val selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
 
     val contentList =
         remember {
@@ -97,8 +96,8 @@ fun AddContentScreen(
 
         FlintSearchTextField(
             placeholder = "추천하고 싶은 작품을 검색해보세요",
-            value = searchText,
-            onValueChanged = { searchText = it },
+            value = uistate.searchText,
+            onValueChanged = onSearchTextChanged,
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -163,6 +162,7 @@ fun AddContentScreen(
 private fun AddContentScreenPreview() {
     FlintTheme {
         AddContentScreen(
+            onSearchTextChanged = {},
             onBackClick = {},
             onActionClick = {},
             uistate = CollectionCreateUiState()
