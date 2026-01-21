@@ -8,15 +8,13 @@ data class ContentSearchResponseDto(
     @SerialName("data") val contents: List<ContentItemDto>,
     @SerialName("meta") val meta: PageMetaDto,
 )
-
-// TODO: null 처리를 어떻게?  어떤거가 null가능인지
 @Serializable
 data class ContentItemDto(
-    @SerialName("contentId") val contentId: Long?,
-    @SerialName("title") val title: String?,
-    @SerialName("author") val author: String?,
-    @SerialName("posterUrl") val posterUrl: String?,
-    @SerialName("year") val year: Int?,
+    @SerialName("contentId") val contentId: Long,
+    @SerialName("title") val title: String,
+    @SerialName("author") val author: String,
+    @SerialName("posterUrl") val posterUrl: String,
+    @SerialName("year") val year: Int,
 )
 
 @Serializable
