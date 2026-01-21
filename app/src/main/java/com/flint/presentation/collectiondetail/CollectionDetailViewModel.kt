@@ -90,7 +90,9 @@ class CollectionDetailViewModel @Inject constructor(
         updateContentBookmarkState(
             contentId = contentId,
             isBookmarked = !previousBookmarkState,
-            bookmarkCount = if (!previousBookmarkState) previousBookmarkCount + 1 else previousBookmarkCount - 1
+            bookmarkCount =
+                if (!previousBookmarkState) previousBookmarkCount + 1
+                else (previousBookmarkCount - 1).coerceAtLeast(0)
         )
 
         viewModelScope.launch {
