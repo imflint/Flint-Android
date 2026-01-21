@@ -46,7 +46,7 @@ fun CollectionListRoute(
         is UiState.Success -> {
             CollectionListScreen(
                 modifier = Modifier.padding(paddingValues),
-                title = "전체 컬렉션", // TODO: 타이틀 변경 필요
+                title = viewModel.routeType.title,
                 onBackClick = navigateUp,
                 onCollectionItemClick = navigateToCollectionDetail,
                 collectionList = state.data.collectionList,

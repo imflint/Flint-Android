@@ -1,9 +1,13 @@
 package com.flint.presentation.collectionlist
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
+import com.flint.core.navigation.Route
 import com.flint.domain.repository.UserRepository
+import com.flint.domain.type.CollectionListRouteType
 import com.flint.presentation.collectionlist.uistate.CollectionListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,8 +16,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CollectionListViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     val userRepository: UserRepository
 ) : ViewModel() {
+
+    val routeType = savedStateHandle.toRoute<Route.CollectionList>().routeType
 
     private val _uiState = MutableStateFlow<UiState<CollectionListUiState>>(
         UiState.Loading
@@ -25,13 +32,14 @@ class CollectionListViewModel @Inject constructor(
     }
 
     fun getCollectionList() {
+        //TODO: routeType에 따라 조회 데이터 변경 필요
         viewModelScope.launch {
             userRepository.getUserCreatedCollections(userId = null)
-                .onSuccess { myInfo ->
+                .onSuccess { result ->
                     _uiState.emit(
                         UiState.Success(
                             CollectionListUiState(
-                                collectionList = myInfo,
+                                collectionList = result,
                             ),
                         ),
                     )

@@ -25,6 +25,7 @@ import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
+import com.flint.domain.type.CollectionListRouteType
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty
@@ -32,7 +33,7 @@ import com.flint.presentation.home.component.HomeRecentCollectionEmpty
 @Composable
 fun HomeRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionList: () -> Unit,
+    navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
@@ -64,7 +65,7 @@ fun HomeRoute(
                 onRecentCollectionItemClick = { collectionId ->
                     navigateToCollectionDetail(collectionId)
                 },
-                onRecentCollectionAllClick = navigateToCollectionList,
+                onRecentCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.RECENT) },
                 onRecommendCollectionItemClick = { collectionId ->
                     navigateToCollectionDetail(collectionId)
                 },

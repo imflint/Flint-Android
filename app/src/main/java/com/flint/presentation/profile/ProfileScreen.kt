@@ -22,6 +22,7 @@ import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
+import com.flint.domain.type.CollectionListRouteType
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 import com.flint.presentation.profile.uistate.ProfileUiState
@@ -29,7 +30,7 @@ import com.flint.presentation.profile.uistate.ProfileUiState
 @Composable
 fun ProfileRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionList: () -> Unit,
+    navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
     navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
@@ -50,7 +51,16 @@ fun ProfileRoute(
                 modifier = Modifier.padding(paddingValues),
                 uiState = state.data,
                 onCollectionItemClick = navigateToCollectionDetail,
-                onCollectionMoreClick = navigateToCollectionList,
+                onCreatedCollectionMoreClick =  {
+                    navigateToCollectionList(
+                        CollectionListRouteType.CREATED,
+                    )
+                },
+                onSavedCollectionMoreClick = {
+                    navigateToCollectionList(
+                        CollectionListRouteType.SAVED,
+                    )
+                },
             )
         }
 
@@ -66,7 +76,8 @@ private fun ProfileScreen(
     onCollectionItemClick: (collectionId: String) -> Unit,
     onContentItemClick: (contentId: String) -> Unit = {}, // TODO: 바텀시트 띄우기
     onContentMoreClick: () -> Unit = {},
-    onCollectionMoreClick: () -> Unit,
+    onCreatedCollectionMoreClick: () -> Unit,
+    onSavedCollectionMoreClick: () -> Unit
 ) {
     val userName = uiState.profile.nickname
 
@@ -108,7 +119,7 @@ private fun ProfileScreen(
                     description = "${userName}님이 생성한 컬렉션이에요",
                     onItemClick = onCollectionItemClick,
                     isAllVisible = true,
-                    onAllClick = onCollectionMoreClick,
+                    onAllClick = onCreatedCollectionMoreClick,
                     collectionListModel = uiState.createCollections,
                 )
             }
@@ -123,7 +134,7 @@ private fun ProfileScreen(
                     description = "${userName}님이 저장한 컬렉션이에요",
                     onItemClick = onCollectionItemClick,
                     isAllVisible = true,
-                    onAllClick = onCollectionMoreClick,
+                    onAllClick = onSavedCollectionMoreClick,
                     collectionListModel = uiState.savedCollections,
                 )
             }
@@ -151,7 +162,8 @@ private fun ProfileScreenPreview() {
         ProfileScreen(
             uiState = ProfileUiState.Fake,
             onCollectionItemClick = {},
-            onCollectionMoreClick = {},
+            onCreatedCollectionMoreClick = {},
+            onSavedCollectionMoreClick = {}
         )
     }
 }

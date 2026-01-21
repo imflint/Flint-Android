@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.flint.core.navigation.MainTabRoute
+import com.flint.domain.type.CollectionListRouteType
 import com.flint.presentation.profile.ProfileRoute
 
 fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
@@ -14,7 +15,7 @@ fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.profileNavGraph(
     paddingValues: PaddingValues,
-    navigateToCollectionList: () -> Unit,
+    navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
     navigateToSavedContentList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
