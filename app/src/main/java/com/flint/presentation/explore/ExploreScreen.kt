@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,7 @@ fun ExploreRoute(
             collections = uiState.data.data.toImmutableList(),
             onWatchCollectionButtonClick = navigateToCollectionDetail,
             onMakeCollectionButtonClick = navigateToCollectionCreate,
+            onLoadNextPage = viewModel::loadNextPage,
             modifier = Modifier.padding(paddingValues),
         )
 
@@ -68,10 +70,17 @@ private fun ExploreScreen(
     collections: ImmutableList<CollectionsModel.Collection>,
     onWatchCollectionButtonClick: (collectionId: String) -> Unit,
     onMakeCollectionButtonClick: () -> Unit,
+    onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pageCount: Int = collections.size
     val pagerState: PagerState = rememberPagerState(pageCount = { pageCount + 1 })
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage >= pageCount - 3 && pageCount > 0) {
+            onLoadNextPage()
+        }
+    }
 
     Column(
         modifier
@@ -276,6 +285,7 @@ private fun ExploreScreenPreview() {
                 }.toImmutableList(),
             onWatchCollectionButtonClick = {},
             onMakeCollectionButtonClick = {},
+            onLoadNextPage = {},
             modifier =
                 Modifier
                     .padding(PaddingValues())

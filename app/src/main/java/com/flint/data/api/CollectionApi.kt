@@ -13,7 +13,7 @@ interface CollectionApi {
     @GET("/api/v1/collections")
     suspend fun getCollections(
         @Query("cursor") cursor: Int,
-        @Query("page") page: Int,
+        @Query("size") size: Int,
     ): BaseResponse<CollectionsResponseDto>
 
     // 컬렉션 생성

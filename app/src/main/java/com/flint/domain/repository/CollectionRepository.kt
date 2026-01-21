@@ -17,11 +17,11 @@ class CollectionRepository @Inject constructor(
     private val preferencesManager: PreferencesManager,
 ) {
     // 컬렉션 목록 조회 (페이지네이션)
-    suspend fun getCollections(cursor: Int, page: Int): Result<CollectionsModel> =
+    suspend fun getCollections(cursor: Int, size: Int): Result<CollectionsModel> =
         suspendRunCatching {
             apiService.getCollections(
                 cursor = cursor,
-                page = page
+                size = size
             ).data.toModel()
         }
 
