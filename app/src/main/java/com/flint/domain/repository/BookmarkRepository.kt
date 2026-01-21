@@ -19,4 +19,6 @@ class BookmarkRepository @Inject constructor(
         suspendRunCatching { api.toggleCollectionBookmark(collectionId).data }
 
     // 콘텐츠 북마크 토글
+    suspend fun toggleContentBookmark(contentId: String): Result<Boolean> =
+        suspendRunCatching { api.toggleContentBookmark(contentId).data }
 }

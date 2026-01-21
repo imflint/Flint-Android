@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,7 +30,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun Spoiler(
-    spoil: () -> Unit,
+    onSpoilClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -57,13 +59,20 @@ fun Spoiler(
                 modifier = Modifier.size(64.dp),
             )
 
+            Spacer(Modifier.height(8.dp))
+
             Text(
                 text = "스포일러가 포함된 내용이에요",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.head3Sb18,
             )
 
-            TextButton(onClick = spoil) {
+            Spacer(Modifier.height(16.dp))
+
+            TextButton(
+                onClick = onSpoilClick,
+                modifier = Modifier.heightIn(min = 48.dp)
+            ) {
                 Text(
                     text = "보기",
                     color = FlintTheme.colors.primary300,
@@ -88,7 +97,7 @@ private fun SpoilerPreview(
     @PreviewParameter(SpoilerPreviewParameterProvider::class) text: String,
 ) {
     FlintTheme {
-        Spoiler(spoil = {}) {
+        Spoiler(onSpoilClick = {}) {
             Text(
                 text = text,
                 style = FlintTheme.typography.body1R16,
