@@ -14,7 +14,7 @@ fun NavController.navigateToExplore(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.exploreNavGraph(
     paddingValues: PaddingValues,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, imageUrl: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
 ) {
     composable<MainTabRoute.Explore> {

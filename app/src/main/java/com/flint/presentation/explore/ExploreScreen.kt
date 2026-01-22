@@ -47,7 +47,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun ExploreRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, imageUrl: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
@@ -76,7 +76,7 @@ fun ExploreRoute(
 @Composable
 private fun ExploreScreen(
     collections: ImmutableList<CollectionsModel.Collection>,
-    onWatchCollectionButtonClick: (collectionId: String) -> Unit,
+    onWatchCollectionButtonClick: (collectionId: String, imageUrl: String) -> Unit,
     onMakeCollectionButtonClick: () -> Unit,
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
@@ -117,7 +117,7 @@ private fun ExploreScreen(
                     id = collection.collectionId,
                     title = collection.title,
                     description = collection.description,
-                    onButtonClick = onWatchCollectionButtonClick,
+                    onButtonClick = { onWatchCollectionButtonClick(it, collection.imageUrl) },
                 )
             } else {
                 ExploreEndPage(
@@ -295,7 +295,7 @@ private fun ExploreScreenPreview() {
                             """.trimIndent(),
                     )
                 }.toImmutableList(),
-            onWatchCollectionButtonClick = {},
+            onWatchCollectionButtonClick = { _, _ -> },
             onMakeCollectionButtonClick = {},
             onLoadNextPage = {},
             modifier =

@@ -118,8 +118,11 @@ class MainNavigator(
         navController.navigateToCollectionList(routeType =  routeType, userId = userId)
     }
 
-    fun navigateToCollectionDetail(collectionId: String) {
-        navController.navigateToCollectionDetail(collectionId = collectionId)
+    fun navigateToCollectionDetail(collectionId: String, targetImageUrl: String? = null) {
+        navController.navigateToCollectionDetail(
+            collectionId = collectionId,
+            targetImageUrl = targetImageUrl,
+        )
     }
 
     fun navigateToCollectionCreate() {
