@@ -7,21 +7,20 @@ import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.collection.toModel
 import com.flint.domain.mapper.content.toModel
 import com.flint.domain.mapper.user.toModel
-import com.flint.domain.model.user.NicknameCheckModel
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.user.KeywordListModel
+import com.flint.domain.model.user.NicknameCheckModel
 import com.flint.domain.model.user.UserProfileResponseModel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val apiService: UserApi,
     private val preferencesManager: PreferencesManager,
 ) {
-    private fun myUserId(): String = runBlocking {
-        preferencesManager.getString(USER_ID).first()
+    private suspend fun myUserId(): String {
+        return preferencesManager.getString(USER_ID).first()
     }
 
     // 사용자 프로필 조회
