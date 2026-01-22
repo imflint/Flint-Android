@@ -180,7 +180,6 @@ class OnboardingViewModel
                 .onSuccess { response ->
                     _signupUiState.update { it.copy(signupState = UiState.Success(Unit)) }
                     Timber.d("Signup success: userId=${response.userId}")
-                    // TODO: accessToken과 refreshToken 저장
                 }
                 .onFailure { error ->
                     _signupUiState.update { it.copy(signupState = UiState.Failure) }
