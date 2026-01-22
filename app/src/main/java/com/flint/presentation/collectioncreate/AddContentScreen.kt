@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
@@ -133,36 +135,45 @@ fun AddContentScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            items(
-                items = contentList,
-                key = { it.id },
-            ) { content ->
-                val isSelected = selectedContents.any { it.id == content.id }
+        if (contentList.isEmpty() && uiState.searchText.isNotBlank()){
+            FlintSearchEmptyView(
+                title = "아직 준비 중인 작품이에요",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        else{
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                items(
+                    items = contentList,
+                    key = { it.id },
+                ) { content ->
+                    val isSelected = selectedContents.any { it.id == content.id }
 
-                CollectionCreateContentSelect(
-                    onCheckClick = {
-                        if (isSelected){
-                            if (uiState.isCancelModalVisible) {
-                                contentToDelete = content
-                                isModalVisible = true
-                            } else {
-                                onToggleContent(content)
-                            }
-                        } else onToggleContent(content)
-                    },
-                    isSelected = isSelected,
-                    imageUrl = content.posterUrl,
-                    title = content.title,
-                    director = content.author,
-                    createdYear = content.year,
-                )
+                    CollectionCreateContentSelect(
+                        onCheckClick = {
+                            if (isSelected){
+                                if (uiState.isCancelModalVisible) {
+                                    contentToDelete = content
+                                    isModalVisible = true
+                                } else {
+                                    onToggleContent(content)
+                                }
+                            } else onToggleContent(content)
+                        },
+                        isSelected = isSelected,
+                        imageUrl = content.posterUrl,
+                        title = content.title,
+                        director = content.author,
+                        createdYear = content.year,
+                    )
+                }
             }
         }
+        
     }
     if (isModalVisible) {
         CollectionCreateContentDeleteModal(
