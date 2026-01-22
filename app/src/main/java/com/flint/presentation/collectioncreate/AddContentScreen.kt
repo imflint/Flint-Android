@@ -66,7 +66,7 @@ fun AddContentScreen(
 
     LaunchedEffect(selectedContents.size) {
         if (selectedContents.isNotEmpty()) {
-            lazyRowState.animateScrollToItem(selectedContents.size - 1)
+            lazyRowState.scrollToItem(selectedContents.size - 1)
         }
     }
 

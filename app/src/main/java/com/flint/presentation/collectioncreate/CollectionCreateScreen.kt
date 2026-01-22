@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.navOptions
 import com.flint.R
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintIconButton
 import com.flint.core.designsystem.component.button.FlintLargeButton
@@ -48,9 +54,22 @@ fun CollectionCreateRoute(
     paddingValues: PaddingValues,
     navigateToAddContent: () -> Unit,
     navigateUp: () -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navController: NavController,
     viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.createSuccess.collect { uistate ->
+            when(uistate) {
+                is UiState.Success -> {
+                    navigateToCollectionDetail(uistate.data)
+                }
+                else -> {}
+            }
+        }
+    }
 
     CollectionCreateScreen(
         uiState = uiState,
@@ -65,7 +84,9 @@ fun CollectionCreateRoute(
         onSpoilerChanged = viewModel::updateSpoiler,
         onReasonChanged = viewModel::updateReason,
         onAddContentClick = navigateToAddContent,
-        onFinishClick = viewModel::onClickFinish,
+        onFinishClick = {
+            viewModel.onClickFinish()
+        },
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -286,7 +307,9 @@ fun CollectionCreateScreen(
         FlintLargeButton(
             text = "완료",
             state = if (uiState.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = {onFinishClick()},
+            onClick = {
+                onFinishClick()
+          },
             modifier =
                 Modifier
                     .fillMaxWidth()

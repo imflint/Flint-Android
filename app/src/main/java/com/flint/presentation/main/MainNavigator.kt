@@ -33,7 +33,7 @@ class MainNavigator(
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
 ) {
-    val startDestination = Route.CollectionCreateGraph
+    val startDestination = MainTabRoute.Home
 
     // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination =

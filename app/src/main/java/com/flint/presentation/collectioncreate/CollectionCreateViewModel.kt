@@ -2,6 +2,7 @@ package com.flint.presentation.collectioncreate
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flint.core.common.util.UiState
 import com.flint.data.dto.collection.request.CollectionCreateRequestDto
 import com.flint.domain.mapper.collection.toDto
 import com.flint.domain.model.collection.CollectionCreateContentModel
@@ -37,6 +38,10 @@ class CollectionCreateViewModel @Inject constructor(
 
     private val searchQuery = MutableStateFlow("")
 
+    private val _createSuccess = MutableStateFlow<UiState<String>>(UiState.Loading)
+    val createSuccess = _createSuccess.asStateFlow()
+
+
     init {
         observeSearchQuery()
         loadInitialContents()
@@ -65,7 +70,10 @@ class CollectionCreateViewModel @Inject constructor(
 
             collectionRepository
                 .postCollectionCreate(requestModel.toDto())
-                .onSuccess { println("컬렉션 생성 성공") }
+                .onSuccess {
+                    println("컬렉션 생성 성공")
+                    _createSuccess.emit(UiState.Success(it.collectionId))
+                }
                 .onFailure { e -> println("컬렉션 생성 실패: ${e.message}") }
         }
     }

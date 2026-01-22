@@ -13,3 +13,7 @@ data class CollectionCreateContentModel(
     val isSpoiler: Boolean,
     val reason: String,
 )
+
+data class CollectionCreateModel(
+    val collectionId: String
+)

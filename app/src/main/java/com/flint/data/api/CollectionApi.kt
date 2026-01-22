@@ -2,6 +2,7 @@ package com.flint.data.api
 
 import com.flint.data.dto.base.BaseResponse
 import com.flint.data.dto.collection.request.CollectionCreateRequestDto
+import com.flint.data.dto.collection.response.CollectionCreateResponseDto
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
 import com.flint.data.dto.collection.response.CollectionsResponseDto
 import com.flint.data.dto.collection.response.RecentCollectionListResponseDto
@@ -23,7 +24,7 @@ interface CollectionApi {
     @POST("/api/v1/collections")
     suspend fun postCollectionCreate(
         @Body requestDto: CollectionCreateRequestDto,
-    ): BaseResponse<Void>
+    ): BaseResponse<CollectionCreateResponseDto>
 
     // 컬렉션 상세 조회
     @GET("/api/v1/collections/{collectionId}")

@@ -6,12 +6,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navOptions
 import androidx.navigation.navigation
 import com.flint.core.common.extension.sharedViewModel
 import com.flint.core.navigation.Route
 import com.flint.presentation.collectioncreate.AddContentRoute
 import com.flint.presentation.collectioncreate.CollectionCreateRoute
 import com.flint.presentation.collectioncreate.CollectionCreateViewModel
+import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
 
 fun NavController.navigateToCollectionCreate(
     navOptions: NavOptions? = null
@@ -39,6 +41,15 @@ fun NavGraphBuilder.collectionCreateNavGraph(
                 paddingValues = paddingValues,
                 navigateToAddContent = navController::navigateToAddContent,
                 navigateUp = navController::navigateUp,
+                navigateToCollectionDetail = {
+                    navController.navigateToCollectionDetail(it,
+                        navOptions {
+                            popUpTo(navController.graph.id) {
+                                inclusive = true
+                            }
+                        })
+                },
+                navController = navController,
                 viewModel = viewModel
             )
         }

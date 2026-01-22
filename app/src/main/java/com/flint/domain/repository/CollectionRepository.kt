@@ -7,6 +7,7 @@ import com.flint.data.dto.collection.request.CollectionCreateRequestDto
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.collection.toModel
+import com.flint.domain.model.collection.CollectionCreateModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.collection.CollectionsModel
@@ -29,10 +30,9 @@ class CollectionRepository @Inject constructor(
     // 컬렉션 생성
     suspend fun postCollectionCreate(
         requestDto: CollectionCreateRequestDto
-    ): Result<Unit> =
+    ): Result<CollectionCreateModel> =
         suspendRunCatching {
-            apiService.postCollectionCreate(requestDto)
-            Unit
+            apiService.postCollectionCreate(requestDto).data.toModel()
         }
 
 

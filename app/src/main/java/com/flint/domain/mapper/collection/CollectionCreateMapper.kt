@@ -1,7 +1,9 @@
 package com.flint.domain.mapper.collection
 
 import com.flint.data.dto.collection.request.CollectionCreateRequestDto
+import com.flint.data.dto.collection.response.CollectionCreateResponseDto
 import com.flint.domain.model.collection.CollectionCreateContentModel
+import com.flint.domain.model.collection.CollectionCreateModel
 import com.flint.domain.model.collection.CollectionCreateRequestModel
 
 fun CollectionCreateRequestModel.toDto(): CollectionCreateRequestDto =
@@ -18,4 +20,9 @@ private fun CollectionCreateContentModel.toDto(): CollectionCreateRequestDto.Con
         contentId = contentId,
         isSpoiler = isSpoiler,
         reason = reason,
+    )
+
+fun CollectionCreateResponseDto.toModel(): CollectionCreateModel =
+    CollectionCreateModel(
+        collectionId = collectionId,
     )
