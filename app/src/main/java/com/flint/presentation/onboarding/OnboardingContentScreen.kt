@@ -206,7 +206,7 @@ fun OnboardingContentScreen(
                             contentAlignment = Alignment.Center,
                         ) {
                             FlintSearchEmptyView(
-                                title = "작품을 찾을 수 없어요"
+                                title = "아직 준비 중인 작품이이요"
                             )
                         }
                     }
