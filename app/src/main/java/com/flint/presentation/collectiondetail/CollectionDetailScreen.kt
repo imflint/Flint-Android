@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -81,6 +82,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 fun CollectionDetailRoute(
     paddingValues: PaddingValues,
+    targetImageUrl: String? = null,
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
     navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
@@ -104,6 +106,7 @@ fun CollectionDetailRoute(
 
             CollectionDetailScreen(
                 paddingValues = paddingValues,
+                targetImageUrl = targetImageUrl,
                 title = collectionDetail.title,
                 isMine = collectionDetail.isMine,
                 isBookmarked = collectionDetail.isBookmarked,
@@ -209,6 +212,7 @@ fun CollectionDetailRoute(
 @Composable
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
+    targetImageUrl: String? = null,
     title: String,
     isMine: Boolean,
     isBookmarked: Boolean,
@@ -232,6 +236,8 @@ fun CollectionDetailScreen(
         var showPeopleBottomSheet: Boolean by remember { mutableStateOf(false) }
         val scrollState: ScrollState = rememberScrollState()
         var thumbnailHeight: Int by remember { mutableIntStateOf(0) }
+        val contentPositions: MutableMap<String, Int> = remember { mutableMapOf() }
+        var hasScrolledToTarget: Boolean by remember { mutableStateOf(false) }
 
         val scrollProgress: Float =
             if (scrollState.maxValue > 0) {
@@ -241,6 +247,16 @@ fun CollectionDetailScreen(
             }
 
         val isProgressBarSticky: Boolean = scrollState.value >= thumbnailHeight
+
+        LaunchedEffect(targetImageUrl, contentPositions.size) {
+            if (!hasScrolledToTarget && targetImageUrl != null && contentPositions.isNotEmpty()) {
+                val targetPosition = contentPositions[targetImageUrl]
+                if (targetPosition != null) {
+                    scrollState.animateScrollTo(targetPosition)
+                    hasScrolledToTarget = true
+                }
+            }
+        }
 
         if (showPeopleBottomSheet) {
             PeopleBottomSheet(
@@ -312,6 +328,9 @@ fun CollectionDetailScreen(
                             content = content,
                             onBookmarkIconClick = onBookmarkIconClick,
                             onSpoilClick = onSpoilClick,
+                            modifier = Modifier.onGloballyPositioned { coordinates ->
+                                contentPositions[content.imageUrl] = coordinates.positionInParent().y.toInt()
+                            },
                         )
                     }
 
@@ -637,8 +656,9 @@ private fun Content(
     content: ContentModelNew,
     onBookmarkIconClick: (contentId: String) -> Unit,
     onSpoilClick: (contentId: String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(modifier = modifier) {
         NetworkImage(
             imageUrl = content.imageUrl,
             modifier =
