@@ -1,6 +1,7 @@
 package com.flint.data.di
 
 import com.flint.BuildConfig
+import com.flint.data.di.interceptor.NetworkErrorInterceptor
 import com.flint.data.di.interceptor.TokenInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -45,6 +46,7 @@ object NetworkModule {
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         tokenInterceptor: TokenInterceptor,
+        networkErrorInterceptor: NetworkErrorInterceptor,
     ): OkHttpClient =
         OkHttpClient
             .Builder()
@@ -52,6 +54,7 @@ object NetworkModule {
                 connectTimeout(20, TimeUnit.SECONDS)
                 writeTimeout(20, TimeUnit.SECONDS)
                 readTimeout(20, TimeUnit.SECONDS)
+                addInterceptor(networkErrorInterceptor)
                 addInterceptor(tokenInterceptor)
                 addInterceptor(loggingInterceptor)
             }.build()
