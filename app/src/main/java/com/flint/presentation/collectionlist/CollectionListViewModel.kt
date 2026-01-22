@@ -33,9 +33,6 @@ class CollectionListViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
 ) : ViewModel() {
-
-    val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
-
     private val _uiState = MutableStateFlow<CollectionListUiState>(CollectionListUiState())
     val uiState: StateFlow<CollectionListUiState> = _uiState
 
@@ -47,19 +44,23 @@ class CollectionListViewModel @Inject constructor(
     private val initialCollectionBookmarkStates: MutableMap<String, Boolean> = mutableMapOf()
 
     init {
-        getCollectionList()
+        val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
+        setAppBarTitle(routeReceiveData.routeType.title)
+        getCollectionList(routeReceiveData)
     }
 
-    private fun getCollectionList() {
-        val userId = routeReceiveData.userId
+    private fun setAppBarTitle(title: String) {
+        _uiState.update { it.copy(appbarTitle = title) }
+    }
 
+    private fun getCollectionList(data: Route.CollectionList) {
         viewModelScope.launch {
             _uiState.update { it.copy(collectionList = UiState.Loading) }
 
-            when (routeReceiveData.routeType) {
-                CollectionListRouteType.CREATED -> userRepository.getUserCreatedCollections(userId = userId)
-                CollectionListRouteType.SAVED -> userRepository.getUserBookmarkedCollections(userId = userId)
-                CollectionListRouteType.RECENT -> collectionRepository.getRecentCollectionList()
+            when (data.routeType) {
+                CollectionListRouteType.CREATED -> userRepository.getUserCreatedCollections(userId = data.userId)
+                CollectionListRouteType.SAVED -> userRepository.getUserBookmarkedCollections(userId = data.userId)
+                CollectionListRouteType.RECENT -> collectionRepository.getRecentCollectionList() // 홈
             }.onSuccess { result ->
                 _uiState.update { it.copy(collectionList = UiState.Success(result)) }
             }.onFailure {
