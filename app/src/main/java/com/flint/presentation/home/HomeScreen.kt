@@ -80,6 +80,7 @@ fun HomeRoute(
             val recentCollectionList = (uiState.recentCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
 
             HomeScreen(
+                userName = uiState.userName,
                 recommendCollectionModelList = recommendedCollectionList,
                 recentCollectionModelList = recentCollectionList,
                 savedContentModelList = bookmarkedContentList,
@@ -121,7 +122,7 @@ fun HomeRoute(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeScreen(
-    userName: String = "",
+    userName: String,
     recommendCollectionModelList: CollectionListModel,
     savedContentModelList: BookmarkedContentListModel,
     recentCollectionModelList: CollectionListModel,
