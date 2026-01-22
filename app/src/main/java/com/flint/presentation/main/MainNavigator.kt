@@ -72,20 +72,36 @@ class MainNavigator(
             )
 
     fun navigate(tab: MainTab) {
-        val navOptions =
-            navOptions {
-                popUpTo(navController.graph.findStartDestination().id) {
+        val navOptions = navOptions {
+            navController.currentDestination?.route?.let {
+                popUpTo(it) {
+                    inclusive = true
                     saveState = true
                 }
-                launchSingleTop = true
                 restoreState = true
+                launchSingleTop = true
             }
+        }
+
+        val refreshNavOptions = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop
+        }
 
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions)
-            MainTab.EXPLORE -> navController.navigateToExplore(navOptions)
-            MainTab.PROFILE -> navController.navigateToMyProfile(navOptions)
+            MainTab.EXPLORE -> navController.navigateToExplore(refreshNavOptions)
+            MainTab.PROFILE -> navController.navigateToMyProfile(refreshNavOptions)
         }
+    }
+
+    private val clearStackNavOptions = navOptions {
+        popUpTo(0) {
+            inclusive = true
+        }
+        launchSingleTop = true
     }
 
     fun navigateToLogin() {
@@ -103,7 +119,7 @@ class MainNavigator(
         navController.navigateToOnboarding(tempToken)
     }
 
-    fun navigateToHome(navOptions: NavOptions? = null) {
+    fun navigateToHome(navOptions: NavOptions? = clearStackNavOptions) {
         navController.navigateToHome(
             navOptions ?: navOptions {
                 popUpTo(navController.graph.findStartDestination().id) {
@@ -130,7 +146,7 @@ class MainNavigator(
         navController.navigateToSavedContentList()
     }
 
-    fun navigateToProfile(userId: String) {
+    fun navigateToProfile(userId: String, navOptions: NavOptions? = null) {
         navController.navigateToProfile(userId)
     }
 
