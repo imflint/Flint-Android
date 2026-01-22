@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
@@ -29,18 +32,29 @@ fun OnboardingDoneRoute(
     navigateToHome: () -> Unit,
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
-    ) {
+) {
+    val signupUiState by viewModel.signupUiState.collectAsStateWithLifecycle()
+
+    // 회원가입 성공 시 Home으로 이동
+    LaunchedEffect(signupUiState.isSuccess) {
+        if (signupUiState.isSuccess) {
+            navigateToHome()
+        }
+    }
+
     OnboardingDoneScreen(
+        isLoading = signupUiState.isLoading,
         onBackClick = navigateUp,
-        onNextClick = navigateToHome,
+        onStartClick = viewModel::signup,
         modifier = Modifier.padding(paddingValues),
     )
 }
 
 @Composable
 fun OnboardingDoneScreen(
+    isLoading: Boolean,
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit,
+    onStartClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -73,7 +87,7 @@ fun OnboardingDoneScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Flint에서 끌리는 콘텐츠를\n만나러 가볼까요? ",
+                text = "Flint에서 끌리는 콘텐츠를\n만나러 가볼까요?",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 modifier =
@@ -96,8 +110,8 @@ fun OnboardingDoneScreen(
 
         FlintBasicButton(
             text = "시작하기",
-            state = FlintButtonState.Disable,
-            onClick = onNextClick,
+            state = if (isLoading) FlintButtonState.Disable else FlintButtonState.Able,
+            onClick = onStartClick,
             contentPadding = PaddingValues(vertical = 14.dp),
             modifier =
                 Modifier
@@ -112,8 +126,9 @@ fun OnboardingDoneScreen(
 private fun OnboardingDoneScreenPreview() {
     FlintTheme {
         OnboardingDoneScreen(
+            isLoading = false,
             onBackClick = {},
-            onNextClick = {},
+            onStartClick = {},
         )
     }
 }

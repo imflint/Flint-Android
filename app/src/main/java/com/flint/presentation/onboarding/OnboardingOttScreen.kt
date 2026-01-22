@@ -14,10 +14,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
@@ -31,12 +33,16 @@ fun OnboardingOttRoute(
     navigateUp: () -> Unit,
     navigateToDone: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
-    ) {
-    // 뷰모델
+) {
+    val profileUiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val ottUiState by viewModel.ottUiState.collectAsStateWithLifecycle()
+
     OnboardingOttScreen(
-        nickname = "user",
+        nickname = profileUiState.nickname,
+        ottUiState = ottUiState,
         onBackClick = navigateUp,
         onNextClick = navigateToDone,
+        onOttClick = viewModel::toggleOttSelection,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -44,8 +50,10 @@ fun OnboardingOttRoute(
 @Composable
 fun OnboardingOttScreen(
     nickname: String,
+    ottUiState: OnboardingOttUiState,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    onOttClick: (OttType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -86,8 +94,8 @@ fun OnboardingOttScreen(
                 items(OttType.entries) { ottType ->
                     OnboardingOttItem(
                         ottType = ottType,
-                        isSelected = false, // TODO: 선택 상태 관리 추가
-                        onClick = { /* TODO: 선택 토글 로직 추가 */ },
+                        isSelected = ottUiState.isOttSelected(ottType),
+                        onClick = { onOttClick(ottType) },
                     )
                 }
             }
@@ -95,8 +103,8 @@ fun OnboardingOttScreen(
 
         FlintBasicButton(
             text = "다음",
-            state = FlintButtonState.Disable, // TODO: 선택 상태에 따라 변경
-            onClick = onNextClick,
+            state = if (ottUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
+            onClick = {if (ottUiState.canProceed) onNextClick() },
             contentPadding = PaddingValues(vertical = 14.dp),
             modifier =
                 Modifier
@@ -112,8 +120,10 @@ private fun OnboardingOttScreenPreview() {
     FlintTheme {
         OnboardingOttScreen(
             nickname = "차민",
+            ottUiState = OnboardingOttUiState(),
             onBackClick = {},
             onNextClick = {},
+            onOttClick = {},
         )
     }
 }
