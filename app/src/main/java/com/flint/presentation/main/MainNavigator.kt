@@ -11,7 +11,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.flint.core.navigation.Route
-import com.flint.core.navigation.MainTabRoute
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionCreate
 import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
@@ -34,7 +33,7 @@ class MainNavigator(
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
 ) {
-    val startDestination = MainTabRoute.Home
+    val startDestination = Route.Splash
 
     // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination =
@@ -73,20 +72,36 @@ class MainNavigator(
             )
 
     fun navigate(tab: MainTab) {
-        val navOptions =
-            navOptions {
-                popUpTo(navController.graph.findStartDestination().id) {
+        val navOptions = navOptions {
+            navController.currentDestination?.route?.let {
+                popUpTo(it) {
+                    inclusive = true
                     saveState = true
                 }
-                launchSingleTop = true
                 restoreState = true
+                launchSingleTop = true
             }
+        }
+
+        val refreshNavOptions = navOptions {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
 
         when (tab) {
-            MainTab.HOME -> navController.navigateToHome(navOptions)
-            MainTab.EXPLORE -> navController.navigateToExplore(navOptions)
-            MainTab.PROFILE -> navController.navigateToMyProfile(navOptions)
+            MainTab.HOME -> navController.navigateToHome(refreshNavOptions)
+            MainTab.EXPLORE -> navController.navigateToExplore(refreshNavOptions)
+            MainTab.PROFILE -> navController.navigateToMyProfile(refreshNavOptions)
         }
+    }
+
+    private val clearStackNavOptions = navOptions {
+        popUpTo(0) {
+            inclusive = true
+        }
+        launchSingleTop = true
     }
 
     fun navigateToLogin() {
@@ -100,42 +115,44 @@ class MainNavigator(
         )
     }
 
-    fun navigateToOnBoarding(tempToken: String) {
-        navController.navigateToOnboarding(tempToken)
+    fun navigateToOnBoarding(tempToken: String, navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToOnboarding(tempToken, navOptions)
     }
 
-    fun navigateToHome(navOptions: NavOptions? = null) {
-        navController.navigateToHome(
-            navOptions ?: navOptions {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            },
-        )
+    fun navigateToHome(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToHome(navOptions)
     }
 
-    fun navigateToCollectionList(routeType: CollectionListRouteType, userId: String? = null) {
-        navController.navigateToCollectionList(routeType =  routeType, userId = userId)
+    fun navigateToCollectionList(
+        routeType: CollectionListRouteType,
+        userId: String? = null,
+        navOptions: NavOptions? = null,
+    ) {
+        navController.navigateToCollectionList(routeType = routeType, userId = userId, navOptions = navOptions)
     }
 
-    fun navigateToCollectionDetail(collectionId: String, targetImageUrl: String? = null) {
+    fun navigateToCollectionDetail(
+        collectionId: String,
+        targetImageUrl: String? = null,
+        navOptions: NavOptions? = null,
+    ) {
         navController.navigateToCollectionDetail(
             collectionId = collectionId,
             targetImageUrl = targetImageUrl,
+            navOptions = navOptions,
         )
     }
 
-    fun navigateToCollectionCreate() {
-        navController.navigateToCollectionCreate()
+    fun navigateToCollectionCreate(navOptions: NavOptions? = null) {
+        navController.navigateToCollectionCreate(navOptions)
     }
 
-    fun navigateToSavedContent() {
-        navController.navigateToSavedContentList()
+    fun navigateToSavedContent(navOptions: NavOptions? = null) {
+        navController.navigateToSavedContentList(navOptions)
     }
 
-    fun navigateToProfile(userId: String) {
-        navController.navigateToProfile(userId)
+    fun navigateToProfile(userId: String, navOptions: NavOptions? = null) {
+        navController.navigateToProfile(userId, navOptions)
     }
 
     fun navigateUp() {
