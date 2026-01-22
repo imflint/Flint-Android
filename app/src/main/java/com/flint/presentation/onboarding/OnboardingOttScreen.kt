@@ -75,7 +75,7 @@ fun OnboardingOttScreen(
                     .weight(1f)
                     .padding(horizontal = 16.dp),
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = "$nickname 님이 구독 중인\nOTT 서비스를 알려주세요",
