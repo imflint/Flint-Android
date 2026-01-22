@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,8 @@ fun FlintSearchTextField(
     onSearchAction: () -> Unit = {},
     onClearAction: () -> Unit = {},
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     FlintBasicTextField(
         modifier = modifier.fillMaxWidth(),
         placeholder = placeholder,
@@ -51,11 +54,10 @@ fun FlintSearchTextField(
                         .size(24.dp)
                         .noRippleClickable(
                             onClick = {
+                                keyboardController?.hide()
                                 if (value.isNotEmpty()) {
                                     onValueChanged("")
                                     onClearAction()
-                                } else {
-                                    onSearchAction()
                                 }
                             },
                         ),

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -87,6 +88,8 @@ fun OnboardingContentScreen(
     onRemoveContent: (SearchContentItemModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier =
             modifier
@@ -96,8 +99,6 @@ fun OnboardingContentScreen(
         FlintBackTopAppbar(
             onClick = onBackClick,
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         StepProgressBar(
             currentStep = contentUiState.selectedContents.size,
@@ -137,8 +138,8 @@ fun OnboardingContentScreen(
                             .dropShadow(
                                 shape = RectangleShape,
                                 color = Color.Black.copy(alpha = 0.75f),
-                                blur = 50.dp,
-                                offsetY = 20.dp,
+                                blur = 12.dp,
+                                offsetY = 12.dp,
                                 offsetX = 0.dp,
                                 spread = 0.dp
                             )
@@ -158,7 +159,10 @@ fun OnboardingContentScreen(
                         onClearAction = onClearAction,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         keyboardActions = KeyboardActions(
-                            onSearch = { onSearchAction() }
+                            onSearch = {
+                                keyboardController?.hide()
+                                onSearchAction()
+                            }
                         ),
                     )
 
