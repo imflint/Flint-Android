@@ -116,7 +116,7 @@ class OnboardingViewModel
                 currentState.selectedContents.filterNot { it.id == content.id }
             } else {
                 if (currentState.selectedContents.size < OnboardingContentUiState.REQUIRED_SELECTION_COUNT) {
-                    currentState.selectedContents + content
+                    listOf(content) + currentState.selectedContents
                 } else {
                     currentState.selectedContents
                 }
