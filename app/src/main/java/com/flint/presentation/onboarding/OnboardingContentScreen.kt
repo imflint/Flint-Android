@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
@@ -161,8 +162,16 @@ fun OnboardingContentScreen(
 
                     // 선택된 영화 가로 스크롤
                     if (contentUiState.selectedContents.isNotEmpty()) {
+                        val lazyListState = rememberLazyListState()
+
+                        // 새로운 아이템이 추가될 때 왼쪽 자동 스크롤
+                        LaunchedEffect(contentUiState.selectedContents.size) {
+                            lazyListState.animateScrollToItem(0)
+                        }
+
                         Spacer(modifier = Modifier.height(16.dp))
                         LazyRow(
+                            state = lazyListState,
                             horizontalArrangement = Arrangement.spacedBy(0.dp),
                         ) {
                             items(
