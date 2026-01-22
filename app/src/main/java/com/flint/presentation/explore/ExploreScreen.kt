@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -162,6 +163,8 @@ private fun ExplorePageItem(
                 text = title,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(Modifier.height(12.dp))
@@ -195,7 +198,7 @@ private fun ExplorePageItemPreview() {
         ExplorePageItem(
             imageUrl = "https://buly.kr/G3Edbfu",
             id = "",
-            title = "너의 모든 것",
+            title = "너의 모든 것".repeat(10),
             description =
                 """
                 뉴욕의 서점 매니저이자 반듯한 독서가, 조. 
