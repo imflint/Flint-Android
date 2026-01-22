@@ -42,7 +42,7 @@ data class ContentModel(
                             OttType.Netflix,
                             OttType.Disney,
                             OttType.Tving,
-                            OttType.Coupang,
+                            OttType.CoupangPlay,
                         ),
                 ),
                 ContentModel(
@@ -52,7 +52,7 @@ data class ContentModel(
                     posterImage = "",
                     ottSimpleList =
                         listOf(
-                            OttType.Wave,
+                            OttType.Wavve,
                             OttType.Watcha,
                             OttType.Tving,
                         ),

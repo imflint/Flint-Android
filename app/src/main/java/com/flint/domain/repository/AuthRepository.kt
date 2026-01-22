@@ -1,5 +1,7 @@
 package com.flint.domain.repository
 
+import com.flint.core.common.util.DataStoreKey.ACCESS_TOKEN
+import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.data.local.PreferencesManager
 import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.core.common.util.suspendRunCatching
@@ -19,11 +21,13 @@ class AuthRepository @Inject constructor(
     suspend fun signup(model: SignupRequestModel): Result<SignupResponseModel> =
         suspendRunCatching { api.signup(model.toDto()).data.toModel() }
 
-    suspend fun socialVerify(model: SocialVerifyRequestModel): Result<SocialVerifyResponseModel> {
-        val result = api.socialVerify(model.toDto()).data.toModel()
-        preferencesManager.saveString(USER_NAME, result.userName.toString())
-
-        return suspendRunCatching { result }
-    }
+    suspend fun socialVerify(model: SocialVerifyRequestModel): Result<SocialVerifyResponseModel> =
+        suspendRunCatching {
+            val result = api.socialVerify(model.toDto()).data.toModel()
+            result.accessToken?.let { preferencesManager.saveString(ACCESS_TOKEN, it) }
+            result.userId?.let { preferencesManager.saveString(USER_ID, it) }
+            result.nickName?.let { preferencesManager.saveString(USER_NAME, it) }
+            result
+        }
 
 }

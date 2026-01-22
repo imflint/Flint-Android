@@ -28,8 +28,10 @@ enum class MainTab(
     ;
 
     companion object {
-        fun find(predicate: (MainTabRoute) -> Boolean): MainTab? = MainTab.entries.find { predicate(it.route) }
+        fun find(predicate: (MainTabRoute) -> Boolean): MainTab? =
+            MainTab.entries.find { predicate(it.route) }
 
-        fun contains(predicate: (Route) -> Boolean): Boolean = MainTab.entries.map { it.route }.any { predicate(it) }
+        fun contains(predicate: (Route) -> Boolean): Boolean =
+            MainTab.entries.map { it.route }.any { predicate(it) }
     }
 }

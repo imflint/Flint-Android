@@ -39,6 +39,7 @@ fun FlintBasicBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        containerColor = FlintTheme.colors.background,
         sheetState = sheetState,
         dragHandle = null,
         shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),

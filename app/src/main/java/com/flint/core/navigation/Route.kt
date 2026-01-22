@@ -1,5 +1,6 @@
 package com.flint.core.navigation
 
+import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.serialization.Serializable
 
 interface Route {
@@ -29,7 +30,10 @@ interface Route {
     data object OnboardingDone : Route
 
     @Serializable
-    data object CollectionList : Route
+    data class CollectionList(
+        val routeType: CollectionListRouteType,
+        val userId: String? = null
+    ) : Route
 
     @Serializable
     data class CollectionDetail(
@@ -44,4 +48,9 @@ interface Route {
 
     @Serializable
     data object AddContent : Route
+
+    @Serializable
+    data class Profile(
+        val userId: String? = null,
+    ) : Route
 }

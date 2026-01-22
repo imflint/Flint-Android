@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectioncreate.navigation.collectionCreateNavGraph
@@ -16,6 +15,7 @@ import com.flint.presentation.explore.navigation.exploreNavGraph
 import com.flint.presentation.home.navigation.homeNavGraph
 import com.flint.presentation.login.navigation.loginNavGraph
 import com.flint.presentation.onboarding.navigation.onBoardingNavGraph
+import com.flint.presentation.profile.navigation.myProfileNavGraph
 import com.flint.presentation.profile.navigation.profileNavGraph
 import com.flint.presentation.savedcontent.navigation.savedContentListNavGraph
 import com.flint.presentation.splash.navigation.splashNavGraph
@@ -59,18 +59,21 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
                 navigateToCollectionCreate = navigator::navigateToCollectionCreate,
+                navigateToExplore = { navigator.navigate(MainTab.EXPLORE) },
             )
 
             collectionListNavGraph(
                 paddingValues = paddingValues,
                 navigateUp = navigator::navigateUp,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
+                navigateToCollectionList = navigator::navigateToCollectionList,
             )
 
             collectionDetailNavGraph(
                 paddingValues = paddingValues,
                 navigateToCollectionList = navigator::navigateToCollectionList,
-                navigateUp = navigator::navigateUp
+                navigateUp = navigator::navigateUp,
+                navigateToProfile = navigator::navigateToProfile
             )
 
             collectionCreateNavGraph(
@@ -86,6 +89,13 @@ fun MainNavHost(
                 paddingValues = paddingValues,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
                 navigateToCollectionCreate = navigator::navigateToCollectionCreate,
+            )
+
+            myProfileNavGraph(
+                paddingValues = paddingValues,
+                navigateToCollectionList = navigator::navigateToCollectionList,
+                navigateToSavedContentList = navigator::navigateToSavedContent,
+                navigateToCollectionDetail = navigator::navigateToCollectionDetail,
             )
 
             profileNavGraph(

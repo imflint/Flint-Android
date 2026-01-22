@@ -12,9 +12,9 @@ data class SocialVerifyResponseDto(
     @SerialName("refreshToken")
     val refreshToken: String? = null,
     @SerialName("userId")
-    val userId: Long? = null,
-    @SerialName("userName")
-    val userName: String? = null,
+    val userId: String? = null,
+    @SerialName("nickname")
+    val nickname: String? = null,
     @SerialName("tempToken")
     val tempToken: String? = null,
 )

@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.common.extension.noRippleClickable
@@ -19,8 +20,6 @@ import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.content.BookmarkedContentItemModel
-import com.flint.domain.model.content.BookmarkedContentListModel
-import com.flint.domain.model.content.ContentModel
 import com.flint.domain.type.OttType
 
 @Composable
@@ -63,6 +62,8 @@ fun SavedContentItem(
             text = contentModel.title,
             color = FlintTheme.colors.white,
             style = FlintTheme.typography.body1M16,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
 
         Spacer(Modifier.height(4.dp))
@@ -90,8 +91,8 @@ private fun PreviewSavedContentItem() {
                         OttType.Netflix,
                         OttType.Disney,
                         OttType.Tving,
-                        OttType.Coupang,
-                        OttType.Wave,
+                        OttType.CoupangPlay,
+                        OttType.Wavve,
                         OttType.Watcha,
                     ),
             )
