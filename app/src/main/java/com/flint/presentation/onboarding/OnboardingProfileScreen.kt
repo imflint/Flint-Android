@@ -148,7 +148,11 @@ fun OnboardingProfileScreen(
                         maxLines = 1,
                         maxLength = OnboardingProfileUiState.MAX_LENGTH,
                         onValueChange = onNicknameChange,
-                        borderColor = if (hasError) FlintTheme.colors.error500 else Color.Unspecified,
+                        borderColor = if (!isFormatValid || isNicknameAvailable == false) {
+                            FlintTheme.colors.error500
+                        } else {
+                            Color.Unspecified
+                        },
                         trailingContent = {
                             Text(
                                 text = "${nickname.length}/${OnboardingProfileUiState.MAX_LENGTH}",
