@@ -17,8 +17,8 @@ data class CollectionCreateUiState(
 ) {
     val isFinishButtonEnabled: Boolean =
         title.isNotEmpty() &&
-                isPublic != null &&
-                selectedContents.size >= 2
+        isPublic != null &&
+        selectedContents.size >= 2
 }
 
 @Immutable

@@ -116,7 +116,6 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
-    // contentId를 받도록 수정
     fun updateReason(contentId: String, reason: String) {
         _uiState.update { state ->
             val currentDetail = state.contentDetailsMap[contentId] ?: ContentDetail()
@@ -169,7 +168,6 @@ class CollectionCreateViewModel @Inject constructor(
                 .map { it.trim() }
                 .distinctUntilChanged()
                 .collectLatest { query ->
-                    // 빈 문자열이어도 서버에 요청
                     searchRepository.getSearchContentList(query)
                         .onSuccess { model ->
                             _uiState.update { it.copy(contents = model.contents) }

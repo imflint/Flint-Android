@@ -20,7 +20,7 @@ interface CollectionApi {
     ): BaseResponse<CollectionsResponseDto>
 
     // 컬렉션 생성
-    @POST("api/v1/collections")
+    @POST("/api/v1/collections")
     suspend fun postCollectionCreate(
         @Body requestDto: CollectionCreateRequestDto,
     ): BaseResponse<Void>
