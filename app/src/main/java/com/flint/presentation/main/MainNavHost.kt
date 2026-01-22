@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectioncreate.navigation.collectionCreateNavGraph
@@ -59,18 +58,21 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
                 navigateToCollectionCreate = navigator::navigateToCollectionCreate,
+                navigateToExplore = { navigator.navigate(MainTab.EXPLORE) },
             )
 
             collectionListNavGraph(
                 paddingValues = paddingValues,
                 navigateUp = navigator::navigateUp,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
+                navigateToCollectionList = navigator::navigateToCollectionList,
             )
 
             collectionDetailNavGraph(
                 paddingValues = paddingValues,
                 navigateToCollectionList = navigator::navigateToCollectionList,
-                navigateUp = navigator::navigateUp
+                navigateUp = navigator::navigateUp,
+                navigateToProfile = navigator::navigateToProfile
             )
 
             collectionCreateNavGraph(

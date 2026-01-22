@@ -12,14 +12,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.component.listItem.OttShortCutListItem
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.ott.OttListModel
 import com.flint.domain.type.OttType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OttListBottomSheet(
-    ottList: List<OttType>,
+    ottList: OttListModel,
     onDismiss: () -> Unit,
-    onMoveClick: (OttType) -> Unit,
+    onMoveClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
@@ -31,11 +32,11 @@ fun OttListBottomSheet(
             modifier = modifier.padding(top = 24.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(ottList.size) {
+            items(ottList.otts.size) {
                 OttShortCutListItem(
-                    ottType = ottList[it],
+                    ottModel = ottList.otts[it],
                     onMoveClick = {
-                        onMoveClick(ottList[it])
+                        onMoveClick(ottList.otts[it].contentUrl)
                         onDismiss()
                     },
                 )
@@ -49,7 +50,7 @@ fun OttListBottomSheet(
 @Composable
 private fun PreviewOttListBottomSheet() {
     FlintTheme {
-        val ottList = OttType.entries
+        val ottList = OttListModel()
 
         val sheetState = rememberModalBottomSheetState()
 
