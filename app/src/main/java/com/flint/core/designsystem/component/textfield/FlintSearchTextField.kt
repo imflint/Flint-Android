@@ -40,6 +40,8 @@ fun FlintSearchTextField(
         height = 44.dp,
         maxLines = 1,
         paddingValues = PaddingValues(start = 16.dp),
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         trailingContent = {
             Image(
                 modifier =
@@ -47,9 +49,17 @@ fun FlintSearchTextField(
                         .padding(12.dp)
                         .size(24.dp)
                         .noRippleClickable(
-                            onClick = { onSearchAction() },
+                            onClick = {
+                                if (value.isNotEmpty()) {
+                                    onValueChanged("")
+                                } else {
+                                    onSearchAction()
+                                }
+                            },
                         ),
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
+                imageVector = ImageVector.vectorResource(
+                    id = if (value.isNotEmpty()) R.drawable.ic_cancel else R.drawable.ic_search
+                ),
                 contentDescription = null,
             )
         },
