@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.chattymin.pebble.graphemeLength
 import com.flint.core.designsystem.theme.FlintTheme
 import kotlin.math.max
 import kotlin.math.sin
@@ -26,8 +27,8 @@ fun FlintLongTextField(
     onValueChanged: (String) -> Unit,
     maxLength: Int,
     placeholder: String,
-    singleLine: Boolean = false,
     modifier: Modifier = Modifier,
+    singleLine: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     height: Dp = 120.dp
@@ -50,7 +51,7 @@ fun FlintLongTextField(
         )
 
         Text(
-            text = "${value.length}/$maxLength",
+            text = "${value.graphemeLength}/$maxLength",
             style = FlintTheme.typography.caption1M12,
             color = FlintTheme.colors.white,
         )

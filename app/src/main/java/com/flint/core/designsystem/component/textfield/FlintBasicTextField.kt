@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.chattymin.pebble.graphemeLength
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -72,7 +73,7 @@ fun FlintBasicTextField(
             value = value,
             textStyle = textStyle.copy(color = FlintTheme.colors.white),
             onValueChange = {
-                if (it.length <= maxLength) { // TODO: 글자수 제한 정책 기획 확인 필요
+                if (it.graphemeLength <= maxLength) {
                     onValueChange(it)
                 }
             },
