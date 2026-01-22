@@ -33,10 +33,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.navOptions
 import com.flint.R
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
@@ -81,7 +77,6 @@ fun CollectionCreateRoute(
         onPublicChanged = viewModel::updateIsPublic,
         selectedContents = uiState.selectedContents,
         contentDetailsMap = uiState.contentDetailsMap,
-        contentList = uiState.contents,
         onRemoveContent = viewModel::removeContent,
         onBackClick = navigateUp,
         onSpoilerChanged = viewModel::updateSpoiler,
@@ -102,7 +97,6 @@ fun CollectionCreateScreen(
     onPublicChanged: (Boolean?) -> Unit = {},
     selectedContents: ImmutableList<SearchContentItemModel>,
     contentDetailsMap: Map<String, ContentDetail>,
-    contentList: ImmutableList<SearchContentItemModel>,
     onRemoveContent: (SearchContentItemModel) -> Unit,
     onBackClick: () -> Unit,
     onSpoilerChanged: (String, Boolean) -> Unit = { _, _ -> },
@@ -113,8 +107,6 @@ fun CollectionCreateScreen(
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
-
-
 
     Column(
         modifier =
@@ -355,7 +347,6 @@ fun CollectionCreateScreenPreview() {
             onPublicChanged = {},
             selectedContents = SearchContentListModel.FakeList,
             contentDetailsMap = emptyMap(),
-            contentList = SearchContentListModel.FakeList,
             onRemoveContent = {},
             onBackClick = {},
             onSpoilerChanged = { _, _ -> },
