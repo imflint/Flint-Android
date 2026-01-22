@@ -173,6 +173,8 @@ private fun ExplorePageItem(
                 text = description,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.body1R16,
+                maxLines = 8,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(Modifier.height(28.dp))
@@ -205,7 +207,8 @@ private fun ExplorePageItemPreview() {
                 그가 대학원생 벡을 만나 한눈에 반한다. 
                 하지만 훈훈했던 그의 첫인상은 잠시일 뿐, 
                 감추어진 조의 뒤틀린 이면이 드러난다.
-                """.trimIndent(),
+                
+                """.trimIndent().repeat(10),
             onButtonClick = {},
         )
     }
