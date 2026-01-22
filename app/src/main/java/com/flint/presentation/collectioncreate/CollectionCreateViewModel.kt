@@ -82,16 +82,12 @@ class CollectionCreateViewModel @Inject constructor(
         _createSuccess.emit(UiState.Empty)
     }
 
-    private fun getSearchContentList() {
-        viewModelScope.launch {
-            _uiState.update { state ->
-                state.copy(
-                    contents = SearchContentListModel.FakeList
-                )
-            }
+    fun resetSearchText() {
+        searchQuery.value = ""
+        _uiState.update { state ->
+            state.copy(searchText = "")
         }
     }
-
 
     fun updateTitle(title: String) {
         _uiState.update { state ->

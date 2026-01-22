@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,9 +27,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentDeleteModal
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentSelect
 import kotlinx.collections.immutable.ImmutableList
 
@@ -38,14 +44,25 @@ fun AddContentRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.resetSearchText()
+    }
+
     AddContentScreen(
         uiState = uiState,
         selectedContents = uiState.selectedContents,
         contentList = uiState.contents,
         onSearchTextChanged = viewModel::updateSearch,
         onToggleContent = viewModel::toggleContent,
-        onBackClick = navigateUp,
-        onActionClick = navigateToCollectionCreate,
+        onRemoveContent = viewModel::removeContent,
+        onBackClick = {
+            viewModel.resetSearchText()
+            navigateUp()
+        },
+        onActionClick = {
+            viewModel.resetSearchText()
+            navigateToCollectionCreate()
+        },
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -57,11 +74,13 @@ fun AddContentScreen(
     contentList: ImmutableList<SearchContentItemModel>,
     onSearchTextChanged: (String) -> Unit = {},
     onToggleContent: (SearchContentItemModel) -> Unit = {},
+    onRemoveContent: (SearchContentItemModel) -> Unit,
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
+    var isModalVisible by remember { mutableStateOf(false) }
+    var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     val lazyRowState = rememberLazyListState()
 
     LaunchedEffect(selectedContents.size) {
@@ -80,7 +99,9 @@ fun AddContentScreen(
             title = "작품 추가하기",
             actionText = "추가",
             onActionClick = {
-                if (selectedContents.isNotEmpty()) onActionClick()
+                if (selectedContents.isNotEmpty()) {
+                    onActionClick()
+                }
             },
             textStyle = if (selectedContents.isNotEmpty()) FlintTheme.typography.body1M16 else FlintTheme.typography.body1Sb16,
             textColor = if (selectedContents.isNotEmpty()) FlintTheme.colors.secondary400 else FlintTheme.colors.gray300,
@@ -112,34 +133,72 @@ fun AddContentScreen(
                 ) { content ->
                     SelectedContentItem(
                         imageUrl = content.posterUrl,
-                        onRemoveClick = { if(uiState.isCancelModalVisible) onToggleContent(content) },
+                        onRemoveClick = {
+                            if (uiState.isCancelModalVisible) {
+                                contentToDelete = content
+                                isModalVisible = true
+                            } else {
+                                onRemoveContent(content)
+                            }
+                        },
                     )
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            items(
-                items = contentList,
-                key = { it.id },
-            ) { content ->
-                val isSelected = selectedContents.any { it.id == content.id }
+        if (contentList.isEmpty() && uiState.searchText.isNotBlank()){
+            FlintSearchEmptyView(
+                title = "아직 준비 중인 작품이에요",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        else{
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                items(
+                    items = contentList,
+                    key = { it.id },
+                ) { content ->
+                    val isSelected = selectedContents.any { it.id == content.id }
 
-                CollectionCreateContentSelect(
-                    onCheckClick = { onToggleContent(content) },
-                    isSelected = isSelected,
-                    imageUrl = content.posterUrl,
-                    title = content.title,
-                    director = content.author,
-                    createdYear = content.year,
-                )
+                    CollectionCreateContentSelect(
+                        onCheckClick = {
+                            if (isSelected){
+                                if (uiState.isCancelModalVisible) {
+                                    contentToDelete = content
+                                    isModalVisible = true
+                                } else {
+                                    onToggleContent(content)
+                                }
+                            } else onToggleContent(content)
+                        },
+                        isSelected = isSelected,
+                        imageUrl = content.posterUrl,
+                        title = content.title,
+                        director = content.author,
+                        createdYear = content.year,
+                    )
+                }
             }
         }
+        
+    }
+    if (isModalVisible) {
+        CollectionCreateContentDeleteModal(
+            onConfirm = {
+                contentToDelete?.let { onRemoveContent(it) }
+                contentToDelete = null
+                isModalVisible = false
+            },
+            onDismiss = {
+                contentToDelete = null
+                isModalVisible = false
+            },
+        )
     }
 }
 
@@ -153,6 +212,7 @@ private fun AddContentScreenPreview() {
             selectedContents = SearchContentListModel.FakeList,
             onSearchTextChanged = {},
             onToggleContent = {},
+            onRemoveContent = {},
             onBackClick = {},
             onActionClick = {},
         )

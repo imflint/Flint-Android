@@ -19,11 +19,13 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun FlintSearchEmptyView(
-    title: String = ""
+    title: String = "",
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier,
     ) {
         Icon(
             modifier = Modifier.size(120.dp),
