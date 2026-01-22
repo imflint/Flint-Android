@@ -30,6 +30,7 @@ fun FlintSearchTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     onSearchAction: () -> Unit = {},
+    onClearAction: () -> Unit = {},
 ) {
     FlintBasicTextField(
         modifier = modifier.fillMaxWidth(),
@@ -52,6 +53,7 @@ fun FlintSearchTextField(
                             onClick = {
                                 if (value.isNotEmpty()) {
                                     onValueChanged("")
+                                    onClearAction()
                                 } else {
                                     onSearchAction()
                                 }

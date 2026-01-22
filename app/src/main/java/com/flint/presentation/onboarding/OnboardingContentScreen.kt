@@ -67,6 +67,7 @@ fun OnboardingContentRoute(
         onNextClick = navigateToOnboardingOtt,
         onSearchKeywordChanged = viewModel::updateSearchKeyword,
         onSearchAction = viewModel::searchContents,
+        onClearAction = viewModel::loadInitialContents,
         onContentClick = viewModel::toggleContentSelection,
         onRemoveContent = viewModel::toggleContentSelection,
         modifier = Modifier.padding(paddingValues),
@@ -81,6 +82,7 @@ fun OnboardingContentScreen(
     onNextClick: () -> Unit,
     onSearchKeywordChanged: (String) -> Unit,
     onSearchAction: () -> Unit,
+    onClearAction: () -> Unit,
     onContentClick: (SearchContentItemModel) -> Unit,
     onRemoveContent: (SearchContentItemModel) -> Unit,
     modifier: Modifier = Modifier,
@@ -153,6 +155,7 @@ fun OnboardingContentScreen(
                         value = contentUiState.searchKeyword,
                         onValueChanged = onSearchKeywordChanged,
                         onSearchAction = onSearchAction,
+                        onClearAction = onClearAction,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         keyboardActions = KeyboardActions(
                             onSearch = { onSearchAction() }
@@ -208,22 +211,38 @@ fun OnboardingContentScreen(
                     // 로딩
                 }
                 is UiState.Success -> {
-                    // 영화 목록 그리드
-                    itemsIndexed(
-                        items = searchResultsState.data,
-                        key = { _, content -> content.id }
-                    ) { index, content ->
-                        val topPadding = if (index >= 3) 20.dp else 0.dp
+                    if (searchResultsState.data.isEmpty()) {
+                        item(span = { GridItemSpan(3) }) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(300.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                FlintSearchEmptyView(
+                                    title = "작품을 찾을 수 없어요"
+                                )
+                            }
+                        }
+                    } else {
+                        // 영화 목록 그리드
+                        itemsIndexed(
+                            items = searchResultsState.data,
+                            key = { _, content -> content.id }
+                        ) { index, content ->
+                            val topPadding = if (index >= 3) 20.dp else 0.dp
 
-                        OnboardingContentItem(
-                            imageUrl = content.posterUrl,
-                            title = content.title,
-                            director = content.author,
-                            releaseYear = content.year.toString(),
-                            isSelected = contentUiState.isContentSelected(content.id),
-                            onClick = { onContentClick(content) },
-                            modifier = Modifier.padding(top = topPadding),
-                        )
+                            OnboardingContentItem(
+                                imageUrl = content.posterUrl,
+                                title = content.title,
+                                director = content.author,
+                                releaseYear = content.year.toString(),
+                                isSelected = contentUiState.isContentSelected(content.id),
+                                onClick = { onContentClick(content) },
+                                modifier = Modifier.padding(top = topPadding),
+                            )
+                        }
                     }
                 }
             }
@@ -257,6 +276,7 @@ private fun OnboardingContentScreenListPreview() {
             onNextClick = {},
             onSearchKeywordChanged = {},
             onSearchAction = {},
+            onClearAction = {},
             onContentClick = {},
             onRemoveContent = {},
         )
@@ -274,6 +294,7 @@ private fun OnboardingContentScreenEmptyPreview() {
             onNextClick = {},
             onSearchKeywordChanged = {},
             onSearchAction = {},
+            onClearAction = {},
             onContentClick = {},
             onRemoveContent = {},
         )
