@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.flint.core.common.extension.sharedViewModel
@@ -14,7 +15,10 @@ import com.flint.presentation.onboarding.OnboardingOttRoute
 import com.flint.presentation.onboarding.OnboardingProfileRoute
 import com.flint.presentation.onboarding.OnboardingViewModel
 
-fun NavController.navigateToOnboarding(tempToken: String) {
+fun NavController.navigateToOnboarding(
+    tempToken: String,
+    navOptions: NavOptions? = null
+    ) {
     navigate(Route.OnboardingGraph(tempToken))  // OnboardingGraph로 네비게이트
 }
 

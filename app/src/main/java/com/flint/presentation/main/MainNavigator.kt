@@ -34,7 +34,7 @@ class MainNavigator(
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
 ) {
-    val startDestination = MainTabRoute.Home
+    val startDestination = Route.Login
 
     // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination =
@@ -116,19 +116,12 @@ class MainNavigator(
         )
     }
 
-    fun navigateToOnBoarding(tempToken: String) {
-        navController.navigateToOnboarding(tempToken)
+    fun navigateToOnBoarding(tempToken: String, navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToOnboarding(tempToken, navOptions)
     }
 
     fun navigateToHome(navOptions: NavOptions? = clearStackNavOptions) {
-        navController.navigateToHome(
-            navOptions ?: navOptions {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            },
-        )
+        navController.navigateToHome(navOptions)
     }
 
     fun navigateToCollectionList(routeType: CollectionListRouteType, userId: String? = null) {
