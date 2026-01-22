@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintTheme
+import kotlin.math.max
 
 @Composable
 fun FlintLongTextField(
@@ -34,6 +35,7 @@ fun FlintLongTextField(
             placeholder = placeholder,
             value = value,
             onValueChange = onValueChanged,
+            maxLength = maxLength,
             maxLines = 5,
             height = height,
         )
