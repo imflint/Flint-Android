@@ -123,7 +123,7 @@ fun OnboardingContentScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "이번 달 가장 재미있었던 작품은?",
+                        text = contentUiState.currentStepQuestion,
                         color = FlintTheme.colors.gray300,
                         style = FlintTheme.typography.body2R14,
                     )
@@ -197,7 +197,7 @@ fun OnboardingContentScreen(
                     }
                 }
                 is UiState.Loading -> {
-                   // 로딩
+                    // 로딩
                 }
                 is UiState.Success -> {
                     // 영화 목록 그리드

@@ -29,7 +29,20 @@ data class OnboardingContentUiState(
 ) {
     companion object {
         const val REQUIRED_SELECTION_COUNT = 7
+
+        private val STEP_QUESTIONS = listOf(
+            "이번 달 가장 재미있었던 작품은?",
+            "여러번 정주행 했던 작품은 무엇인가요?",
+            "좋아하는 인물이 등장하는 작품은 무엇인가요?",
+            "요즘 밥 먹으면서 자주 보는 작품은 무엇인가요?",
+            "\"이건 꼭 봐\"라고 말했던 작품은 무엇인가요?",
+            "계절마다 생각나는 작품은 무엇인가요?",
+            "어렸을 적 즐겨봤던 추억의 작품은 무엇인가요?"
+        )
     }
+
+    val currentStepQuestion: String
+        get() = STEP_QUESTIONS.getOrElse(selectedContents.size) { STEP_QUESTIONS.first() }
 
     val canProceed: Boolean
         get() = selectedContents.size == REQUIRED_SELECTION_COUNT
