@@ -1,15 +1,11 @@
 package com.flint.domain.repository
 
-import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.ContentApi
-import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.content.toModel
 import com.flint.domain.mapper.ott.toModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.ott.OttListModel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class ContentRepository @Inject constructor(

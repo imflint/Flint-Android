@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.core.navigation.Route
+import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
@@ -43,8 +44,12 @@ class ProfileViewModel @Inject constructor(
     fun getProfile() {
         viewModelScope.launch {
             suspendRunCatching {
-                val profileDeferred = async { userRepository.getUserProfile(userId = userId).getOrThrow() }
-                val keywordsDeferred = async { userRepository.getUserKeywords(userId = userId).getOrThrow() }
+                val profileDeferred = async {
+                    userRepository.getUserProfile(userId = userId).getOrThrow()
+                }
+                val keywordsDeferred = async {
+                    userRepository.getUserKeywords(userId = userId).getOrDefault(KeywordListModel())
+                }
 
                 ProfileUiState(
                     userId = userId,
