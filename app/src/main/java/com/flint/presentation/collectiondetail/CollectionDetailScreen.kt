@@ -237,7 +237,6 @@ fun CollectionDetailScreen(
         val scrollState: ScrollState = rememberScrollState()
         var thumbnailHeight: Int by remember { mutableIntStateOf(0) }
         val contentPositions: MutableMap<String, Int> = remember { mutableMapOf() }
-        var hasScrolledToTarget: Boolean by remember { mutableStateOf(false) }
 
         val scrollProgress: Float =
             if (scrollState.maxValue > 0) {
@@ -248,14 +247,11 @@ fun CollectionDetailScreen(
 
         val isProgressBarSticky: Boolean = scrollState.value >= thumbnailHeight
 
-        LaunchedEffect(targetImageUrl, contentPositions.size) {
-            if (!hasScrolledToTarget && targetImageUrl != null && contentPositions.isNotEmpty()) {
-                val targetPosition = contentPositions[targetImageUrl]
-                if (targetPosition != null) {
-                    scrollState.animateScrollTo(targetPosition)
-                    hasScrolledToTarget = true
-                }
-            }
+        LaunchedEffect(Unit) {
+            if (targetImageUrl == null) return@LaunchedEffect
+            val targetPosition: Int = contentPositions[targetImageUrl] ?: return@LaunchedEffect
+
+            scrollState.animateScrollTo(targetPosition)
         }
 
         if (showPeopleBottomSheet) {
