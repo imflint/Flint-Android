@@ -39,6 +39,7 @@ fun FlintBasicTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    singleLine: Boolean = true,
     maxLines: Int = 1,
     maxLength: Int = Int.MAX_VALUE,
     height: Dp = 40.dp,
@@ -79,6 +80,7 @@ fun FlintBasicTextField(
             keyboardActions = keyboardActions,
             visualTransformation = visualTransformation,
             interactionSource = interactionSource,
+            singleLine = singleLine,
             maxLines = maxLines,
             cursorBrush = SolidColor(FlintTheme.colors.gray300),
             decorationBox = { innerTextField ->
