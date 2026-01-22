@@ -22,7 +22,7 @@ enum class MainTab(
     ),
     PROFILE(
         iconResId = R.drawable.ic_my_empty,
-        route = MainTabRoute.Profile(),
+        route = MainTabRoute.Profile,
         label = "MY",
     ),
     ;

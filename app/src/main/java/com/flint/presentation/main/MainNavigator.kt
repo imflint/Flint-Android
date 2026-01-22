@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.flint.core.navigation.MainTabRoute
+import com.flint.core.navigation.Route
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionCreate
 import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
@@ -19,6 +19,7 @@ import com.flint.presentation.explore.navigation.navigateToExplore
 import com.flint.presentation.home.navigation.navigateToHome
 import com.flint.presentation.login.navigation.navigateToLogin
 import com.flint.presentation.onboarding.navigation.navigateToOnboarding
+import com.flint.presentation.profile.navigation.navigateToMyProfile
 import com.flint.presentation.profile.navigation.navigateToProfile
 import com.flint.presentation.savedcontent.navigation.navigateToSavedContentList
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +33,7 @@ class MainNavigator(
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
 ) {
-    val startDestination = MainTabRoute.Home
+    val startDestination = Route.Splash
 
     // NavController의 Flow를 관찰하여 현재 Destination을 StateFlow로 변환
     private val currentDestination =
@@ -83,7 +84,7 @@ class MainNavigator(
         when (tab) {
             MainTab.HOME -> navController.navigateToHome(navOptions)
             MainTab.EXPLORE -> navController.navigateToExplore(navOptions)
-            MainTab.PROFILE -> navController.navigateToProfile(navOptions = navOptions)
+            MainTab.PROFILE -> navController.navigateToMyProfile(navOptions)
         }
     }
 
@@ -113,8 +114,8 @@ class MainNavigator(
         )
     }
 
-    fun navigateToCollectionList(routeType: CollectionListRouteType) {
-        navController.navigateToCollectionList(routeType =  routeType)
+    fun navigateToCollectionList(routeType: CollectionListRouteType, userId: String? = null) {
+        navController.navigateToCollectionList(routeType =  routeType, userId = userId)
     }
 
     fun navigateToCollectionDetail(collectionId: String) {

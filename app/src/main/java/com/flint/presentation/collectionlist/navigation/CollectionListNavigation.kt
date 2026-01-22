@@ -11,11 +11,13 @@ import com.flint.presentation.collectionlist.CollectionListRoute
 
 fun NavController.navigateToCollectionList(
     routeType: CollectionListRouteType,
+    userId: String?,
     navOptions: NavOptions? = null
 ) {
     navigate(
         Route.CollectionList(
-            routeType = routeType,
+            userId = userId,
+            routeType = routeType
         ),
         navOptions,
     )

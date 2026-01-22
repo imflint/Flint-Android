@@ -9,7 +9,7 @@ import com.flint.domain.model.ott.OttListModel
 import javax.inject.Inject
 
 class ContentRepository @Inject constructor(
-    private val apiService: ContentApi,
+    private val apiService: ContentApi
 ) {
     // 북마크한 콘텐츠 목록 조회
     suspend fun getBookmarkedContentList() : Result<BookmarkedContentListModel> =
