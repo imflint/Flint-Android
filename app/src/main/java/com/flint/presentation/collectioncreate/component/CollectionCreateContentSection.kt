@@ -21,7 +21,7 @@ fun CollectionCreateContentSection(
     imageUrl: String,
     title: String,
     director: String,
-    createdYear: String,
+    createdYear: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -50,7 +50,7 @@ fun CollectionCreateContentSection(
 private fun CollectionCreateInfoSection(
     title: String,
     director: String,
-    createdYear: String,
+    createdYear: Int,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -77,7 +77,7 @@ private fun CollectionCreateInfoSection(
         )
 
         Text(
-            text = createdYear,
+            text = createdYear.toString(),
             modifier = Modifier.fillMaxWidth(),
             color = FlintTheme.colors.gray300,
             style = FlintTheme.typography.body1R16,
@@ -104,7 +104,7 @@ private fun CollectionCreateContentSectionPreview() {
             imageUrl = "https://buly.kr/DEaVFRZ",
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
-            createdYear = "2005",
+            createdYear = 2005,
         )
     }
 }

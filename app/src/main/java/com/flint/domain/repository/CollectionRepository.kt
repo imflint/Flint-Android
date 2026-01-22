@@ -3,9 +3,11 @@ package com.flint.domain.repository
 import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.CollectionApi
+import com.flint.data.dto.collection.request.CollectionCreateRequestDto
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.collection.toModel
+import com.flint.domain.model.collection.CollectionCreateModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.collection.CollectionsModel
@@ -26,6 +28,13 @@ class CollectionRepository @Inject constructor(
         }
 
     // 컬렉션 생성
+    suspend fun postCollectionCreate(
+        requestDto: CollectionCreateRequestDto
+    ): Result<CollectionCreateModel> =
+        suspendRunCatching {
+            apiService.postCollectionCreate(requestDto).data.toModel()
+        }
+
 
     // 컬렉션 상세 조회
     suspend fun getCollectionDetail(collectionId: String): Result<CollectionDetailModelNew> =
