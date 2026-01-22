@@ -3,6 +3,8 @@ package com.flint.core.designsystem.component.textfield
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintTheme
 import kotlin.math.max
+import kotlin.math.sin
 
 @Composable
 fun FlintLongTextField(
@@ -23,8 +26,11 @@ fun FlintLongTextField(
     onValueChanged: (String) -> Unit,
     maxLength: Int,
     placeholder: String,
+    singleLine: Boolean = false,
     modifier: Modifier = Modifier,
-    height: Dp = 120.dp,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    height: Dp = 120.dp
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -36,8 +42,11 @@ fun FlintLongTextField(
             value = value,
             onValueChange = onValueChanged,
             maxLength = maxLength,
+            singleLine = singleLine,
             maxLines = 5,
             height = height,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
         )
 
         Text(

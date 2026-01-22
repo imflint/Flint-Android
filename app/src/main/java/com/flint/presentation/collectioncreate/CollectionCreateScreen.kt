@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -150,9 +153,13 @@ fun CollectionCreateScreen(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.title,
                         placeholder = "컬렉션의 제목을 입력해주세요.",
+                        singleLine = true,
                         onValueChanged = onTitleChanged,
                         maxLength = 20,
                         height = 40.dp,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next
+                        )
                     )
                 }
             }
@@ -183,6 +190,9 @@ fun CollectionCreateScreen(
                         onValueChanged = onDescriptionChanged,
                         maxLength = 200,
                         height = 104.dp,
+                        keyboardActions = KeyboardActions(
+                            onDone = {},
+                        ),
                     )
                 }
             }
