@@ -19,6 +19,8 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,14 +28,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.NetworkImage
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.content.ContentModel
-import com.flint.domain.type.OttType
+import com.flint.domain.model.collection.CollectionsModel
+import com.flint.presentation.explore.uistate.ExploreUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -42,24 +48,46 @@ fun ExploreRoute(
     paddingValues: PaddingValues,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
+    viewModel: ExploreViewModel = hiltViewModel(),
 ) {
-    ExploreScreen(
-        modifier = Modifier.padding(paddingValues),
-        contents = ContentModel.FakeList, // TODO: 수정 필요
-        onWatchCollectionButtonClick = navigateToCollectionDetail,
-        onMakeCollectionButtonClick = navigateToCollectionCreate,
-    )
+    val uiState: UiState<ExploreUiState> by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (uiState) {
+        UiState.Loading -> {
+            FlintLoadingIndicator()
+        }
+
+        is UiState.Success -> {
+            val uiState = (uiState as UiState.Success<ExploreUiState>).data
+            ExploreScreen(
+                collections = uiState.collections,
+                onWatchCollectionButtonClick = navigateToCollectionDetail,
+                onMakeCollectionButtonClick = navigateToCollectionCreate,
+                onLoadNextPage = viewModel::loadNextPage,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+
+        else -> {}
+    }
 }
 
 @Composable
 private fun ExploreScreen(
-    contents: ImmutableList<ContentModel>,
+    collections: ImmutableList<CollectionsModel.Collection>,
     onWatchCollectionButtonClick: (collectionId: String) -> Unit,
     onMakeCollectionButtonClick: () -> Unit,
+    onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pageCount: Int = contents.size
+    val pageCount: Int = collections.size
     val pagerState: PagerState = rememberPagerState(pageCount = { pageCount + 1 })
+
+    LaunchedEffect(pagerState.currentPage) {
+        if (pagerState.currentPage >= pageCount - 3 && pageCount > 0) {
+            onLoadNextPage()
+        }
+    }
 
     Column(
         modifier
@@ -71,7 +99,8 @@ private fun ExploreScreen(
                         FlintTheme.colors.gradient900,
                     )
                 }
-            }.fillMaxSize(),
+            }
+            .fillMaxSize(),
     ) {
         FlintLogoTopAppbar(backgroundColor = Color.Transparent)
 
@@ -79,14 +108,14 @@ private fun ExploreScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
         ) { page: Int ->
-            val content: ContentModel? = contents.getOrNull(page)
+            val collection: CollectionsModel.Collection? = collections.getOrNull(page)
 
-            if (content != null) {
+            if (collection != null) {
                 ExplorePageItem(
-                    imageUrl = content.posterImage,
-                    id = content.contentId.toString(),
-                    title = content.title,
-                    description = content.description,
+                    imageUrl = collection.imageUrl,
+                    id = collection.collectionId,
+                    title = collection.title,
+                    description = collection.description,
                     onButtonClick = onWatchCollectionButtonClick,
                 )
             } else {
@@ -245,33 +274,24 @@ private fun ExploreEndPagePreview() {
 private fun ExploreScreenPreview() {
     FlintTheme {
         ExploreScreen(
-            contents =
+            collections =
                 List(10) {
-                    ContentModel(
-                        contentId = "0",
+                    CollectionsModel.Collection(
+                        collectionId = "0",
                         title = "너의 모든 것",
-                        year = 2000,
-                        posterImage = "https://buly.kr/G3Edbfu",
+                        imageUrl = "https://buly.kr/G3Edbfu",
                         description =
                             """
-                            뉴욕의 서점 매니저이자 반듯한 독서가, 조. 
-                            그가 대학원생 벡을 만나 한눈에 반한다. 
-                            하지만 훈훈했던 그의 첫인상은 잠시일 뿐, 
+                            뉴욕의 서점 매니저이자 반듯한 독서가, 조.
+                            그가 대학원생 벡을 만나 한눈에 반한다.
+                            하지만 훈훈했던 그의 첫인상은 잠시일 뿐,
                             감추어진 조의 뒤틀린 이면이 드러난다.
                             """.trimIndent(),
-                        ottSimpleList =
-                            listOf(
-                                OttType.Netflix,
-                                OttType.Disney,
-                                OttType.Tving,
-                                OttType.CoupangPlay,
-                                OttType.Wavve,
-                                OttType.Watcha,
-                            ),
                     )
                 }.toImmutableList(),
             onWatchCollectionButtonClick = {},
             onMakeCollectionButtonClick = {},
+            onLoadNextPage = {},
             modifier =
                 Modifier
                     .padding(PaddingValues())
