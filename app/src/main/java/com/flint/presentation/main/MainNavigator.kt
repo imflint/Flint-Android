@@ -87,7 +87,7 @@ class MainNavigator(
             popUpTo(0) {
                 inclusive = true
             }
-            launchSingleTop
+            launchSingleTop = true
         }
 
         when (tab) {
