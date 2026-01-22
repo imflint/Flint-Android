@@ -11,14 +11,18 @@ data class CollectionCreateUiState(
     val description: String = "",
     val isPublic: Boolean? = null,
     val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
-    val contentDetailsMap: Map<String, ContentDetail> = emptyMap(),  // 추가
+    val contentDetailsMap: Map<String, ContentDetail> = emptyMap(),
     val contents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val searchText: String = "",
+
 ) {
     val isFinishButtonEnabled: Boolean =
-        title.isNotEmpty() &&
+        title.isNotBlank() &&
         isPublic != null &&
         selectedContents.size >= 2
+
+    val isCancelModalVisible: Boolean =
+        contentDetailsMap.values.any { it.reason.isNotBlank() }
 }
 
 @Immutable

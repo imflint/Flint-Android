@@ -112,7 +112,7 @@ fun AddContentScreen(
                 ) { content ->
                     SelectedContentItem(
                         imageUrl = content.posterUrl,
-                        onRemoveClick = { onToggleContent(content) },
+                        onRemoveClick = { if(uiState.isCancelModalVisible) onToggleContent(content) },
                     )
                 }
             }
