@@ -67,6 +67,7 @@ import com.flint.core.designsystem.component.toast.ShowSaveToast
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModel
@@ -75,17 +76,16 @@ import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
-import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CollectionDetailRoute(
     paddingValues: PaddingValues,
-    targetImageUrl: String? = null,
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
     navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
+    targetImageUrl: String? = null,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
     val uiState: UiState<CollectionDetailUiState> by viewModel.uiState.collectAsStateWithLifecycle()
@@ -212,7 +212,6 @@ fun CollectionDetailRoute(
 @Composable
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
-    targetImageUrl: String? = null,
     title: String,
     isMine: Boolean,
     isBookmarked: Boolean,
@@ -229,6 +228,7 @@ fun CollectionDetailScreen(
     onSpoilClick: (String) -> Unit,
     onAuthorNicknameClick: () -> Unit,
     onAuthorClick: (authorId: String) -> Unit,
+    targetImageUrl: String? = null,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -329,7 +329,8 @@ fun CollectionDetailScreen(
                             onBookmarkIconClick = onBookmarkIconClick,
                             onSpoilClick = onSpoilClick,
                             modifier = Modifier.onGloballyPositioned { coordinates ->
-                                contentPositions[content.imageUrl] = coordinates.positionInParent().y.toInt()
+                                contentPositions[content.imageUrl] =
+                                    coordinates.positionInParent().y.toInt()
                             },
                         )
                     }
