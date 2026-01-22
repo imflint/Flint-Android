@@ -39,7 +39,6 @@ fun CollectionItem(
                 .width(260.dp)
                 .height(180.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(FlintTheme.colors.gray200)
                 .noRippleClickable {
                     onItemClick(collectionItemModel.id)
                 },

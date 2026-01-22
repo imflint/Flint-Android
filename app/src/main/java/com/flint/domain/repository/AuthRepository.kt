@@ -21,7 +21,7 @@ class AuthRepository @Inject constructor(
 
     suspend fun socialVerify(model: SocialVerifyRequestModel): Result<SocialVerifyResponseModel> {
         val result = api.socialVerify(model.toDto()).data.toModel()
-        preferencesManager.saveString(USER_NAME, result.userName.toString())
+        preferencesManager.saveString(USER_NAME, result.nickName.toString())
 
         return suspendRunCatching { result }
     }

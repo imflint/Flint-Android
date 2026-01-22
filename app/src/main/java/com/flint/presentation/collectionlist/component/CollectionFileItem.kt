@@ -95,33 +95,29 @@ private fun CollectionFileContent(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier =
-            modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(FlintTheme.colors.gray800),
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(FlintTheme.colors.gray800),
     ) {
         CollectionPocketPoster(
             imageUrl = poster2Url,
-            modifier =
-                Modifier
-                    .offset(x = 16.dp, y = 8.dp),
+            modifier = Modifier.offset(x = 16.dp, y = 8.dp),
         )
 
         CollectionPocketPoster(
             imageUrl = poster1Url,
-            modifier =
-                Modifier
-                    .rotate(15f)
-                    .offset(x = 20.dp, y = 15.dp)
-                    .dropShadow(
-                        shape = RoundedCornerShape(12.dp),
-                        color = Color(0xFF000000).copy(alpha = 0.35f),
-                        offsetX = (-4).dp,
-                        offsetY = 0.dp,
-                        blur = 10.dp,
-                        spread = 0.dp,
-                    ).align(Alignment.TopCenter)
-            ,
+            modifier = Modifier
+                .rotate(15f)
+                .offset(x = 20.dp, y = 15.dp)
+                .dropShadow(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFF000000).copy(alpha = 0.35f),
+                    offsetX = (-4).dp,
+                    offsetY = 0.dp,
+                    blur = 10.dp,
+                    spread = 0.dp,
+                )
+                .align(Alignment.TopCenter),
         )
 
         Box(
@@ -133,7 +129,8 @@ private fun CollectionFileContent(
                     .paint(
                         painter = painterResource(id = R.drawable.img_folder_fg),
                         contentScale = ContentScale.FillWidth,
-                    ).padding(start = 12.dp, top = 12.dp, bottom = 9.dp),
+                    )
+                    .padding(start = 12.dp, top = 12.dp, bottom = 9.dp),
         ) {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -203,11 +200,9 @@ private fun CollectionPocketPoster(
 ) {
     NetworkImage(
         imageUrl = imageUrl,
-        modifier =
-            modifier
-                .size(width = 80.dp, height = 120.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White),
+        modifier = modifier
+            .size(width = 80.dp, height = 120.dp)
+            .clip(RoundedCornerShape(12.dp)),
     )
 }
 

@@ -1,7 +1,6 @@
 package com.flint.core.designsystem.component.image
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -10,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
@@ -25,6 +24,8 @@ fun NetworkImage(
     imageUrl: Any?,
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
+    placePainter: Painter = painterResource(R.drawable.img_network_loading),
+    errorPainter: Painter = painterResource(R.drawable.img_network_loading),
     contentScale: ContentScale = ContentScale.Crop,
     contentDescription: String? = null,
 ) {
@@ -40,7 +41,8 @@ fun NetworkImage(
             model = imageUrl,
             contentDescription = contentDescription,
             contentScale = contentScale,
-            error = ColorPainter(FlintTheme.colors.gray200),
+            placeholder = placePainter,
+            error = errorPainter,
             modifier = modifier.clip(shape),
         )
     }
