@@ -17,6 +17,6 @@ fun SocialVerifyResponseDto.toModel(): SocialVerifyResponseModel =
         accessToken = accessToken,
         refreshToken = refreshToken,
         userId = userId,
-        nickName = nickName,
+        nickName = nickname,
         tempToken = tempToken,
     )

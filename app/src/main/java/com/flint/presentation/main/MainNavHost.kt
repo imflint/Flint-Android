@@ -15,6 +15,7 @@ import com.flint.presentation.explore.navigation.exploreNavGraph
 import com.flint.presentation.home.navigation.homeNavGraph
 import com.flint.presentation.login.navigation.loginNavGraph
 import com.flint.presentation.onboarding.navigation.onBoardingNavGraph
+import com.flint.presentation.profile.navigation.myProfileNavGraph
 import com.flint.presentation.profile.navigation.profileNavGraph
 import com.flint.presentation.savedcontent.navigation.savedContentListNavGraph
 import com.flint.presentation.splash.navigation.splashNavGraph
@@ -88,6 +89,13 @@ fun MainNavHost(
                 paddingValues = paddingValues,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
                 navigateToCollectionCreate = navigator::navigateToCollectionCreate,
+            )
+
+            myProfileNavGraph(
+                paddingValues = paddingValues,
+                navigateToCollectionList = navigator::navigateToCollectionList,
+                navigateToSavedContentList = navigator::navigateToSavedContent,
+                navigateToCollectionDetail = navigator::navigateToCollectionDetail,
             )
 
             profileNavGraph(

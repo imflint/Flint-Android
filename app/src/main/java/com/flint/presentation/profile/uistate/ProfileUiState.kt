@@ -8,6 +8,7 @@ import com.flint.domain.model.user.UserProfileResponseModel
 
 @Immutable
 data class ProfileUiState(
+    val userId: String? = null,
     val keywords: KeywordListModel,
     val profile: UserProfileResponseModel,
     val savedContents: BookmarkedContentListModel = BookmarkedContentListModel(),
