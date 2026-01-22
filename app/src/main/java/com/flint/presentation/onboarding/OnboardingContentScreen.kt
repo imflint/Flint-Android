@@ -23,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -290,13 +293,19 @@ private fun OnboardingContentScreenListPreview() {
 @Preview(showBackground = true, name = "검색 결과 없음 상태")
 @Composable
 private fun OnboardingContentScreenEmptyPreview() {
+    var text by remember { mutableStateOf("") }
+
     FlintTheme {
         OnboardingContentScreen(
             nickname = "안비",
-            contentUiState = OnboardingContentUiState(),
+            contentUiState = OnboardingContentUiState(
+                searchKeyword = text
+            ),
             onBackClick = {},
             onNextClick = {},
-            onSearchKeywordChanged = {},
+            onSearchKeywordChanged = {
+                text = it
+            },
             onSearchAction = {},
             onClearAction = {},
             onContentClick = {},

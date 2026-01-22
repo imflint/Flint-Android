@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -112,8 +113,12 @@ fun CollectionCreateContentItemList(
             onValueChange = onSelectedReasonChanged,
             modifier = Modifier.fillMaxWidth(),
             height = 108.dp,
+            singleLine = false,
             maxLines = Int.MAX_VALUE,
             textStyle = FlintTheme.typography.body1R16,
+            keyboardActions = KeyboardActions(
+                onDone = {},
+            ),
             paddingValues =
                 PaddingValues(
                     horizontal = 12.dp,

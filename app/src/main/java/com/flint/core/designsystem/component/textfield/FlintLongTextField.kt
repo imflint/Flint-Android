@@ -3,6 +3,8 @@ package com.flint.core.designsystem.component.textfield
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,7 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.chattymin.pebble.graphemeLength
 import com.flint.core.designsystem.theme.FlintTheme
+import kotlin.math.max
+import kotlin.math.sin
 
 @Composable
 fun FlintLongTextField(
@@ -23,7 +28,10 @@ fun FlintLongTextField(
     maxLength: Int,
     placeholder: String,
     modifier: Modifier = Modifier,
-    height: Dp = 120.dp,
+    singleLine: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    height: Dp = 120.dp
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -34,12 +42,16 @@ fun FlintLongTextField(
             placeholder = placeholder,
             value = value,
             onValueChange = onValueChanged,
+            maxLength = maxLength,
+            singleLine = singleLine,
             maxLines = 5,
             height = height,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
         )
 
         Text(
-            text = "${value.length}/$maxLength",
+            text = "${value.graphemeLength}/$maxLength",
             style = FlintTheme.typography.caption1M12,
             color = FlintTheme.colors.white,
         )

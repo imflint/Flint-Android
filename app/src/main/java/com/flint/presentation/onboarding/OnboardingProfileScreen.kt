@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.chattymin.pebble.graphemeLength
 import com.flint.R
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
@@ -145,6 +146,7 @@ fun OnboardingProfileScreen(
                             .fillMaxHeight(),
                         placeholder = "닉네임",
                         value = nickname,
+                        singleLine = true,
                         maxLines = 1,
                         maxLength = OnboardingProfileUiState.MAX_LENGTH,
                         onValueChange = onNicknameChange,
@@ -155,7 +157,7 @@ fun OnboardingProfileScreen(
                         },
                         trailingContent = {
                             Text(
-                                text = "${nickname.length}/${OnboardingProfileUiState.MAX_LENGTH}",
+                                text = "${nickname.graphemeLength}/${OnboardingProfileUiState.MAX_LENGTH}",
                                 style = FlintTheme.typography.body1R16,
                                 color = FlintTheme.colors.gray300,
                             )
@@ -252,16 +254,18 @@ private fun OnboardingProfileScreenDuplicateErrorPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun OnboardingProfileScreenFormatErrorPreview() {
+    var text by remember { mutableStateOf("") }
+
     FlintTheme {
         OnboardingProfileScreen(
-            nickname = "안비123",
+            nickname = text,
             isValid = true,
             isFormatValid = false,
             isNicknameAvailable = null,
             canProceed = false,
             hasError = true,
             errorMessage = "사용할 수 없는 닉네임입니다",
-            onNicknameChange = {},
+            onNicknameChange = { text = it },
             onCheckNickname = {},
             onClearError = {},
             onBackClick = {},

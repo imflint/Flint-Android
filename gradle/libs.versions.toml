@@ -37,6 +37,7 @@ espressoCore = "3.7.0"
 lottieCompose = "6.6.6"
 coil = "3.3.0"
 ktlint = "14.0.1"
+pebble = "0.1.0"
 
 # Network
 okhttp = "5.1.0"
@@ -81,6 +82,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
+pebble = { group = "io.github.chattymin", name = "pebble", version.ref = "pebble" }
 
 # Coil
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
