@@ -17,9 +17,9 @@ import com.flint.presentation.onboarding.OnboardingViewModel
 
 fun NavController.navigateToOnboarding(
     tempToken: String,
-    navOptions: NavOptions? = null
-    ) {
-    navigate(Route.OnboardingGraph(tempToken))  // OnboardingGraph로 네비게이트
+    navOptions: NavOptions? = null,
+) {
+    navigate(Route.OnboardingGraph(tempToken), navOptions) // OnboardingGraph로 네비게이트
 }
 
 fun NavController.navigateToOnboardingContent() {
