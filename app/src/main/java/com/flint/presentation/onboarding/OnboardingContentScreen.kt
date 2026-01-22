@@ -122,14 +122,6 @@ fun OnboardingContentScreen(
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = contentUiState.currentStepQuestion,
-                        color = FlintTheme.colors.gray300,
-                        style = FlintTheme.typography.body2R14,
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
 
@@ -149,6 +141,13 @@ fun OnboardingContentScreen(
                                 spread = 0.dp
                             )
                 ) {
+                    Text(
+                        text = contentUiState.currentStepQuestion,
+                        color = FlintTheme.colors.gray300,
+                        style = FlintTheme.typography.body2R14,
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
                     FlintSearchTextField(
                         placeholder = "작품 이름",
                         value = contentUiState.searchKeyword,

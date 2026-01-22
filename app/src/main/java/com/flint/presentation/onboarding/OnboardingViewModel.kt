@@ -48,11 +48,18 @@ class OnboardingViewModel
     // ---------- onboarding profile ----------
     fun updateNickname(nickname: String) {
         if (nickname.length <= OnboardingProfileUiState.MAX_LENGTH) {
+            val isFormatValid = OnboardingProfileUiState.isValidFormat(nickname)
             _uiState.update { currentState ->
                 currentState.copy(
                     nickname = nickname,
                     isValid = nickname.length >= OnboardingProfileUiState.MIN_LENGTH,
+                    isFormatValid = isFormatValid,
                     isNicknameAvailable = null,
+                    nicknameErrorType = when {
+                        !isFormatValid && nickname.isNotEmpty() -> NicknameErrorType.INVALID_FORMAT
+                        currentState.nicknameErrorType == NicknameErrorType.DUPLICATE -> NicknameErrorType.DUPLICATE
+                        else -> null
+                    },
                 )
             }
         }
@@ -61,14 +68,30 @@ class OnboardingViewModel
     fun checkNicknameDuplication() {
         val currentNickname = _uiState.value.nickname
 
+        // 형식이 유효하지 않으면 중복 체크 실행하지 않음
+        if (!_uiState.value.isFormatValid) {
+            return
+        }
+
         viewModelScope.launch {
             userRepository.checkNickname(currentNickname).onSuccess { result ->
                 _uiState.update { currentState ->
                     currentState.copy(
                         isNicknameAvailable = result.isAvailable,
+                        nicknameErrorType = if (!result.isAvailable) {
+                            NicknameErrorType.DUPLICATE
+                        } else {
+                            null
+                        },
                     )
                 }
             }
+        }
+    }
+
+    fun clearNicknameError() {
+        _uiState.update { currentState ->
+            currentState.copy(nicknameErrorType = null)
         }
     }
 
