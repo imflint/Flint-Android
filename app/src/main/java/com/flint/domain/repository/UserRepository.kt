@@ -11,13 +11,16 @@ import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.model.user.UserProfileResponseModel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val apiService: UserApi,
     private val preferencesManager: PreferencesManager,
 ) {
-    private suspend fun myUserId(): String = preferencesManager.getString(USER_ID).first()
+    private fun myUserId(): String = runBlocking {
+        preferencesManager.getString(USER_ID).first()
+    }
 
     suspend fun getUserProfile(userId: String?): Result<UserProfileResponseModel> =
         suspendRunCatching {

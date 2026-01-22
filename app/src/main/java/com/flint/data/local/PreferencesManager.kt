@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,5 +38,11 @@ class PreferencesManager @Inject constructor(
         dataStore.edit { preferences ->
             preferences.clear()
         }
+    }
+
+    suspend fun getUserId(): String {
+        return dataStore.data.map { preferences ->
+            preferences[stringPreferencesKey("USER_ID")] ?: ""
+        }.first()
     }
 }
