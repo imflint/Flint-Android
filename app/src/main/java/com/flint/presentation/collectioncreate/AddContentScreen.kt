@@ -16,6 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +29,7 @@ import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentDeleteModal
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentSelect
 import kotlinx.collections.immutable.ImmutableList
 
@@ -44,6 +48,7 @@ fun AddContentRoute(
         contentList = uiState.contents,
         onSearchTextChanged = viewModel::updateSearch,
         onToggleContent = viewModel::toggleContent,
+        onRemoveContent = viewModel::removeContent,
         onBackClick = navigateUp,
         onActionClick = navigateToCollectionCreate,
         modifier = Modifier.padding(paddingValues),
@@ -57,11 +62,13 @@ fun AddContentScreen(
     contentList: ImmutableList<SearchContentItemModel>,
     onSearchTextChanged: (String) -> Unit = {},
     onToggleContent: (SearchContentItemModel) -> Unit = {},
+    onRemoveContent: (SearchContentItemModel) -> Unit,
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
+    var isModalVisible by remember { mutableStateOf(false) }
+    var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     val lazyRowState = rememberLazyListState()
 
     LaunchedEffect(selectedContents.size) {
@@ -112,7 +119,14 @@ fun AddContentScreen(
                 ) { content ->
                     SelectedContentItem(
                         imageUrl = content.posterUrl,
-                        onRemoveClick = { if(uiState.isCancelModalVisible) onToggleContent(content) },
+                        onRemoveClick = {
+                            if (uiState.isCancelModalVisible) {
+                                contentToDelete = content
+                                isModalVisible = true
+                            } else {
+                                onRemoveContent(content)
+                            }
+                        },
                     )
                 }
             }
@@ -131,7 +145,16 @@ fun AddContentScreen(
                 val isSelected = selectedContents.any { it.id == content.id }
 
                 CollectionCreateContentSelect(
-                    onCheckClick = { onToggleContent(content) },
+                    onCheckClick = {
+                        if (isSelected){
+                            if (uiState.isCancelModalVisible) {
+                                contentToDelete = content
+                                isModalVisible = true
+                            } else {
+                                onToggleContent(content)
+                            }
+                        } else onToggleContent(content)
+                    },
                     isSelected = isSelected,
                     imageUrl = content.posterUrl,
                     title = content.title,
@@ -140,6 +163,19 @@ fun AddContentScreen(
                 )
             }
         }
+    }
+    if (isModalVisible) {
+        CollectionCreateContentDeleteModal(
+            onConfirm = {
+                contentToDelete?.let { onRemoveContent(it) }
+                contentToDelete = null
+                isModalVisible = false
+            },
+            onDismiss = {
+                contentToDelete = null
+                isModalVisible = false
+            },
+        )
     }
 }
 
@@ -153,6 +189,7 @@ private fun AddContentScreenPreview() {
             selectedContents = SearchContentListModel.FakeList,
             onSearchTextChanged = {},
             onToggleContent = {},
+            onRemoveContent = {},
             onBackClick = {},
             onActionClick = {},
         )
