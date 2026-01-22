@@ -8,6 +8,7 @@ import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.collection.toModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.collection.CollectionsModel
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -16,6 +17,13 @@ class CollectionRepository @Inject constructor(
     private val preferencesManager: PreferencesManager,
 ) {
     // 컬렉션 목록 조회 (페이지네이션)
+    suspend fun getCollections(cursor: Long?, size: Int): Result<CollectionsModel> =
+        suspendRunCatching {
+            apiService.getCollections(
+                cursor = cursor,
+                size = size
+            ).data.toModel()
+        }
 
     // 컬렉션 생성
 
