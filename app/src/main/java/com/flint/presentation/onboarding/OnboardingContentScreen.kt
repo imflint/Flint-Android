@@ -257,12 +257,12 @@ fun OnboardingContentScreen(
             text = "다음",
             state = if (contentUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
             onClick = { if (contentUiState.canProceed) { onNextClick() } },
-            contentPadding = PaddingValues(vertical = 14.dp),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp),
-        )
+            contentPadding = PaddingValues(vertical = 13.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 20.dp),
+
+            )
     }
 }
 

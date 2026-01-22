@@ -105,12 +105,12 @@ fun OnboardingOttScreen(
             text = "다음",
             state = if (ottUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
             onClick = {if (ottUiState.canProceed) onNextClick() },
-            contentPadding = PaddingValues(vertical = 14.dp),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp),
-        )
+            contentPadding = PaddingValues(vertical = 13.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 20.dp),
+
+            )
     }
 }
 

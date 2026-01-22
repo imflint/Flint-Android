@@ -112,12 +112,12 @@ fun OnboardingDoneScreen(
             text = "시작하기",
             state = if (isLoading) FlintButtonState.Disable else FlintButtonState.Able,
             onClick = onStartClick,
-            contentPadding = PaddingValues(vertical = 14.dp),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp),
-        )
+            contentPadding = PaddingValues(vertical = 13.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 20.dp),
+
+            )
     }
 }
 

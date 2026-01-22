@@ -167,7 +167,7 @@ fun OnboardingProfileScreen(
 
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxHeight()
                             .clip(RoundedCornerShape(8.dp))
                             .background(
                                 if (isValid && isFormatValid) FlintTheme.colors.primary400
@@ -190,14 +190,14 @@ fun OnboardingProfileScreen(
             }
 
             FlintBasicButton(
-                text = "시작하기",
+                text = "다음",
                 state = if (canProceed) FlintButtonState.Able else FlintButtonState.Disable,
                 onClick = onNextClick,
                 enabled = canProceed,
-                contentPadding = PaddingValues(12.dp),
+                contentPadding = PaddingValues(vertical = 13.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp),
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
             )
         }
 
