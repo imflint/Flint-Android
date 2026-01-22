@@ -14,14 +14,8 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
         private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
-    val prefData = preferencesManager.getString("sampleKey")
-
     init {
-        saveTempUserData()
-    }
-
-    fun sampleSaveData() = viewModelScope.launch {
-        preferencesManager.saveString("sampleKey", "sampleValue")
+//        saveTempUserData()
     }
 
     fun saveTempUserData() = viewModelScope.launch {
