@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +27,10 @@ fun FlintSearchTextField(
     onValueChanged: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     onSearchAction: () -> Unit = {},
+    onClearAction: () -> Unit = {},
 ) {
     FlintBasicTextField(
         modifier = modifier.fillMaxWidth(),
@@ -36,6 +41,8 @@ fun FlintSearchTextField(
         height = 44.dp,
         maxLines = 1,
         paddingValues = PaddingValues(start = 16.dp),
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         trailingContent = {
             Image(
                 modifier =
@@ -43,9 +50,18 @@ fun FlintSearchTextField(
                         .padding(12.dp)
                         .size(24.dp)
                         .noRippleClickable(
-                            onClick = { onSearchAction() },
+                            onClick = {
+                                if (value.isNotEmpty()) {
+                                    onValueChanged("")
+                                    onClearAction()
+                                } else {
+                                    onSearchAction()
+                                }
+                            },
                         ),
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
+                imageVector = ImageVector.vectorResource(
+                    id = if (value.isNotEmpty()) R.drawable.ic_cancel else R.drawable.ic_search
+                ),
                 contentDescription = null,
             )
         },

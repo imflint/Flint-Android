@@ -11,99 +11,108 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.domain.model.search.SearchContentItemModel
+import com.flint.domain.model.search.SearchContentListModel
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentSelect
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun AddContentRoute(
     paddingValues: PaddingValues,
     navigateToCollectionCreate: () -> Unit,
+    navigateUp: () -> Unit,
+    viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     AddContentScreen(
-        onBackClick = {},
+        uiState = uiState,
+        selectedContents = uiState.selectedContents,
+        contentList = uiState.contents,
+        onSearchTextChanged = viewModel::updateSearch,
+        onToggleContent = viewModel::toggleContent,
+        onBackClick = navigateUp,
+        onActionClick = navigateToCollectionCreate,
+        modifier = Modifier.padding(paddingValues),
     )
 }
 
-data class CollectionContentUiModel(
-    val contentId: Long,
-    val imageUrl: String,
-    val title: String,
-    val director: String,
-    val createdYear: String,
-)
-
 @Composable
-fun AddContentScreen(onBackClick: () -> Unit) {
-    var searchText by remember { mutableStateOf("") }
-    var selectedContents = remember { mutableStateListOf<CollectionContentUiModel>() }
+fun AddContentScreen(
+    uiState: CollectionCreateUiState,
+    selectedContents: ImmutableList<SearchContentItemModel>,
+    contentList: ImmutableList<SearchContentItemModel>,
+    onSearchTextChanged: (String) -> Unit = {},
+    onToggleContent: (SearchContentItemModel) -> Unit = {},
+    onBackClick: () -> Unit,
+    onActionClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
 
-    val contentList =
-        remember {
-            mutableStateListOf(
-                CollectionContentUiModel(1L, "https://buly.kr/DEaVFRZ", "해리포터 불의 잔", "마이크 뉴웰", "2005"),
-                CollectionContentUiModel(2L, "https://buly.kr/2UkIDen", "인터스텔라", "크리스토퍼 놀란", "2014"),
-                CollectionContentUiModel(3L, "https://buly.kr/FAeqqRB", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(4L, "https://buly.kr/DPVH2Ob", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(5L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(6L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(7L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-                CollectionContentUiModel(8L, "https://buly.kr/DEaVFRZ", "라라랜드", "데이미언 셔젤", "2016"),
-            )
+    val lazyRowState = rememberLazyListState()
+
+    LaunchedEffect(selectedContents.size) {
+        if (selectedContents.isNotEmpty()) {
+            lazyRowState.scrollToItem(selectedContents.size - 1)
         }
+    }
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(color = FlintTheme.colors.background),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = FlintTheme.colors.background),
     ) {
         FlintBackTopAppbar(
             onClick = onBackClick,
             title = "작품 추가하기",
             actionText = "추가",
-            textColor = FlintTheme.colors.gray300,
+            onActionClick = {
+                if (selectedContents.isNotEmpty()) onActionClick()
+            },
+            textStyle = if (selectedContents.isNotEmpty()) FlintTheme.typography.body1M16 else FlintTheme.typography.body1Sb16,
+            textColor = if (selectedContents.isNotEmpty()) FlintTheme.colors.secondary400 else FlintTheme.colors.gray300,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         FlintSearchTextField(
             placeholder = "추천하고 싶은 작품을 검색해보세요",
-            value = searchText,
-            onValueChanged = { searchText = it },
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+            value = uiState.searchText,
+            onValueChanged = onSearchTextChanged,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         if (selectedContents.isNotEmpty()) {
             LazyRow(
+                state = lazyRowState,
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                reverseLayout = true,
             ) {
                 items(
                     items = selectedContents,
-                    key = { it.contentId },
-                ) { content: CollectionContentUiModel ->
+                    key = { it.id },
+                ) { content ->
                     SelectedContentItem(
-                        imageUrl = content.imageUrl,
-                        onRemoveClick = {
-                            selectedContents.remove(content)
-                        },
+                        imageUrl = content.posterUrl,
+                        onRemoveClick = { if(uiState.isCancelModalVisible) onToggleContent(content) },
                     )
                 }
             }
@@ -115,26 +124,19 @@ fun AddContentScreen(onBackClick: () -> Unit) {
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // 작품 리스트
             items(
                 items = contentList,
-                key = { it.contentId },
+                key = { it.id },
             ) { content ->
-                val isSelected = selectedContents.contains(content)
+                val isSelected = selectedContents.any { it.id == content.id }
 
                 CollectionCreateContentSelect(
-                    onCheckClick = {
-                        if (isSelected) {
-                            selectedContents.remove(content)
-                        } else {
-                            selectedContents.add(content)
-                        }
-                    },
+                    onCheckClick = { onToggleContent(content) },
                     isSelected = isSelected,
-                    imageUrl = content.imageUrl,
+                    imageUrl = content.posterUrl,
                     title = content.title,
-                    director = content.director,
-                    createdYear = content.createdYear,
+                    director = content.author,
+                    createdYear = content.year,
                 )
             }
         }
@@ -146,7 +148,13 @@ fun AddContentScreen(onBackClick: () -> Unit) {
 private fun AddContentScreenPreview() {
     FlintTheme {
         AddContentScreen(
+            uiState = CollectionCreateUiState(),
+            contentList = SearchContentListModel.FakeList,
+            selectedContents = SearchContentListModel.FakeList,
+            onSearchTextChanged = {},
+            onToggleContent = {},
             onBackClick = {},
+            onActionClick = {},
         )
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
@@ -24,6 +25,7 @@ fun FlintBackTopAppbar(
     closeable: Boolean = false,
     actionText: String = "",
     onActionClick: () -> Unit = {},
+    textStyle: TextStyle = FlintTheme.typography.body1M16,
     textColor: Color = Color.Unspecified,
 ) {
     FlintBasicTopAppbar(
@@ -51,7 +53,7 @@ fun FlintBackTopAppbar(
                     modifier = Modifier.noRippleClickable(onClick = onActionClick),
                     text = actionText,
                     color = textColor,
-                    style = FlintTheme.typography.body1M16,
+                    style = textStyle,
                 )
             }
         },
