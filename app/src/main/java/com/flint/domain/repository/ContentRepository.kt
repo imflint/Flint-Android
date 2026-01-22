@@ -13,13 +13,8 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class ContentRepository @Inject constructor(
-    private val apiService: ContentApi,
-    private val preferencesManager: PreferencesManager,
+    private val apiService: ContentApi
 ) {
-    private fun myUserId(): String = runBlocking {
-        preferencesManager.getString(USER_ID).first()
-    }
-
     // 북마크한 콘텐츠 목록 조회
     suspend fun getBookmarkedContentList() : Result<BookmarkedContentListModel> =
         suspendRunCatching { apiService.getBookmarkedContentList().data.toModel() }

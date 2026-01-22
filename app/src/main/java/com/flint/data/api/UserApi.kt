@@ -42,6 +42,14 @@ interface UserApi {
         @Path("userId") userId: String,
     ): BaseResponse<CreatedCollectionListResponseDto>
 
+    // 내 북마크 컬렉션 조회
+    @GET("/api/v1/users/me/bookmarked-collections")
+    suspend fun getMyBookmarkedCollections(): BaseResponse<BookmarkedCollectionListResponseDto>
+
+    // 내 컬렉션 조회
+    @GET("/api/v1/users/me/collections")
+    suspend fun getMyCreatedCollections(): BaseResponse<CreatedCollectionListResponseDto>
+
     // 사용자 취향 키워드 조회
     @GET("/api/v1/users/{userId}/keywords")
     suspend fun getUserKeywords(

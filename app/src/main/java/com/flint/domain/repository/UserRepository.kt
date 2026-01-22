@@ -24,24 +24,36 @@ class UserRepository @Inject constructor(
         preferencesManager.getString(USER_ID).first()
     }
 
+    // 사용자 프로필 조회
     suspend fun getUserProfile(userId: String?): Result<UserProfileResponseModel> =
         suspendRunCatching {
             apiService.getUserProfile(userId ?: myUserId()).data.toModel()
         }
 
+    // 사용자 취향 키워드 조회
     suspend fun getUserKeywords(userId: String?): Result<KeywordListModel> =
         suspendRunCatching {
             apiService.getUserKeywords(userId ?: myUserId()).data.toModel()
         }
 
+    // 사용자별 생성한 컬렉션 목록 조회
     suspend fun getUserCreatedCollections(userId: String?): Result<CollectionListModel> =
         suspendRunCatching {
-            apiService.getUserCreatedCollections(userId ?: myUserId()).data.toModel()
+            if (userId == null) {
+                apiService.getMyCreatedCollections().data.toModel()
+            } else {
+                apiService.getUserCreatedCollections(userId).data.toModel()
+            }
         }
 
+    // 사용자별 북마크한 컬렉션 목록 조회
     suspend fun getUserBookmarkedCollections(userId: String?): Result<CollectionListModel> =
         suspendRunCatching {
-            apiService.getUserBookmarkedCollections(userId ?: myUserId()).data.toModel()
+            if (userId == null) {
+                apiService.getMyBookmarkedCollections().data.toModel()
+            } else {
+                apiService.getUserBookmarkedCollections(userId).data.toModel()
+            }
         }
 
     // 사용자별 북마크한 콘텐츠 목록 조회
