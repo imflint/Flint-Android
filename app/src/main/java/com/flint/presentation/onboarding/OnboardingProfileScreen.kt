@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -61,6 +62,8 @@ fun OnboardingProfileScreen(
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier =
             modifier
@@ -123,7 +126,10 @@ fun OnboardingProfileScreen(
                 FlintBasicButton(
                     text = "확인",
                     state = if (isValid) FlintButtonState.Able else FlintButtonState.Disable,
-                    onClick = onCheckNickname,
+                    onClick = {
+                        keyboardController?.hide()
+                        onCheckNickname()
+                    },
                     enabled = isValid,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                     modifier = Modifier.fillMaxHeight(),
