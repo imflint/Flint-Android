@@ -78,6 +78,10 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
+    fun resetCreateSuccess() = viewModelScope.launch {
+        _createSuccess.emit(UiState.Empty)
+    }
+
     private fun getSearchContentList() {
         viewModelScope.launch {
             _uiState.update { state ->

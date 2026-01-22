@@ -55,7 +55,6 @@ fun CollectionCreateRoute(
     navigateToAddContent: () -> Unit,
     navigateUp: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
-    navController: NavController,
     viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -65,6 +64,7 @@ fun CollectionCreateRoute(
             when(uistate) {
                 is UiState.Success -> {
                     navigateToCollectionDetail(uistate.data)
+                    viewModel.resetCreateSuccess()
                 }
                 else -> {}
             }
