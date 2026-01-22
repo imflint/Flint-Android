@@ -134,15 +134,16 @@ fun OnboardingContentScreen(
                     modifier =
                         Modifier
                             .background(FlintTheme.colors.background)
-                            .padding(bottom = 16.dp)
                             .dropShadow(
                                 shape = RectangleShape,
-                                color = Color.Black.copy(alpha = 0.75f),
+                                color = Color.Black.copy(alpha = 0.25f),
                                 blur = 12.dp,
                                 offsetY = 12.dp,
                                 offsetX = 0.dp,
                                 spread = 0.dp
                             )
+                            .padding(bottom = 16.dp)
+
                 ) {
                     Text(
                         text = contentUiState.currentStepQuestion,
