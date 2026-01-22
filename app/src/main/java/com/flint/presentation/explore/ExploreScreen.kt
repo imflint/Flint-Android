@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,7 +47,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun ExploreRoute(
     paddingValues: PaddingValues,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, imageUrl: String) -> Unit,
     navigateToCollectionCreate: () -> Unit,
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
@@ -75,7 +76,7 @@ fun ExploreRoute(
 @Composable
 private fun ExploreScreen(
     collections: ImmutableList<CollectionsModel.Collection>,
-    onWatchCollectionButtonClick: (collectionId: String) -> Unit,
+    onWatchCollectionButtonClick: (collectionId: String, imageUrl: String) -> Unit,
     onMakeCollectionButtonClick: () -> Unit,
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
@@ -116,7 +117,7 @@ private fun ExploreScreen(
                     id = collection.collectionId,
                     title = collection.title,
                     description = collection.description,
-                    onButtonClick = onWatchCollectionButtonClick,
+                    onButtonClick = { onWatchCollectionButtonClick(it, collection.imageUrl) },
                 )
             } else {
                 ExploreEndPage(
@@ -162,6 +163,8 @@ private fun ExplorePageItem(
                 text = title,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(Modifier.height(12.dp))
@@ -170,6 +173,8 @@ private fun ExplorePageItem(
                 text = description,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.body1R16,
+                maxLines = 8,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(Modifier.height(28.dp))
@@ -195,14 +200,15 @@ private fun ExplorePageItemPreview() {
         ExplorePageItem(
             imageUrl = "https://buly.kr/G3Edbfu",
             id = "",
-            title = "너의 모든 것",
+            title = "너의 모든 것".repeat(10),
             description =
                 """
                 뉴욕의 서점 매니저이자 반듯한 독서가, 조. 
                 그가 대학원생 벡을 만나 한눈에 반한다. 
                 하지만 훈훈했던 그의 첫인상은 잠시일 뿐, 
                 감추어진 조의 뒤틀린 이면이 드러난다.
-                """.trimIndent(),
+                
+                """.trimIndent().repeat(10),
             onButtonClick = {},
         )
     }
@@ -289,7 +295,7 @@ private fun ExploreScreenPreview() {
                             """.trimIndent(),
                     )
                 }.toImmutableList(),
-            onWatchCollectionButtonClick = {},
+            onWatchCollectionButtonClick = { _, _ -> },
             onMakeCollectionButtonClick = {},
             onLoadNextPage = {},
             modifier =

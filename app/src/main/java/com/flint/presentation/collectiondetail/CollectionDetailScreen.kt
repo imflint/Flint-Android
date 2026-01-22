@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,6 +67,7 @@ import com.flint.core.designsystem.component.toast.ShowSaveToast
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModel
@@ -74,7 +76,6 @@ import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
-import com.flint.core.navigation.model.CollectionListRouteType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -84,6 +85,7 @@ fun CollectionDetailRoute(
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
     navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
+    targetImageUrl: String? = null,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
     val uiState: UiState<CollectionDetailUiState> by viewModel.uiState.collectAsStateWithLifecycle()
@@ -104,6 +106,7 @@ fun CollectionDetailRoute(
 
             CollectionDetailScreen(
                 paddingValues = paddingValues,
+                targetImageUrl = targetImageUrl,
                 title = collectionDetail.title,
                 isMine = collectionDetail.isMine,
                 isBookmarked = collectionDetail.isBookmarked,
@@ -225,6 +228,7 @@ fun CollectionDetailScreen(
     onSpoilClick: (String) -> Unit,
     onAuthorNicknameClick: () -> Unit,
     onAuthorClick: (authorId: String) -> Unit,
+    targetImageUrl: String? = null,
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null,
@@ -232,6 +236,7 @@ fun CollectionDetailScreen(
         var showPeopleBottomSheet: Boolean by remember { mutableStateOf(false) }
         val scrollState: ScrollState = rememberScrollState()
         var thumbnailHeight: Int by remember { mutableIntStateOf(0) }
+        val contentPositions: MutableMap<String, Int> = remember { mutableMapOf() }
 
         val scrollProgress: Float =
             if (scrollState.maxValue > 0) {
@@ -241,6 +246,13 @@ fun CollectionDetailScreen(
             }
 
         val isProgressBarSticky: Boolean = scrollState.value >= thumbnailHeight
+
+        LaunchedEffect(Unit) {
+            if (targetImageUrl == null) return@LaunchedEffect
+            val targetPosition: Int = contentPositions[targetImageUrl] ?: return@LaunchedEffect
+
+            scrollState.animateScrollTo(targetPosition)
+        }
 
         if (showPeopleBottomSheet) {
             PeopleBottomSheet(
@@ -312,6 +324,10 @@ fun CollectionDetailScreen(
                             content = content,
                             onBookmarkIconClick = onBookmarkIconClick,
                             onSpoilClick = onSpoilClick,
+                            modifier = Modifier.onGloballyPositioned { coordinates ->
+                                contentPositions[content.imageUrl] =
+                                    coordinates.positionInParent().y.toInt()
+                            },
                         )
                     }
 
@@ -637,8 +653,9 @@ private fun Content(
     content: ContentModelNew,
     onBookmarkIconClick: (contentId: String) -> Unit,
     onSpoilClick: (contentId: String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(modifier = modifier) {
         NetworkImage(
             imageUrl = content.imageUrl,
             modifier =
