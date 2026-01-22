@@ -44,6 +44,10 @@ fun AddContentRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.resetSearchText()
+    }
+
     AddContentScreen(
         uiState = uiState,
         selectedContents = uiState.selectedContents,
@@ -51,8 +55,14 @@ fun AddContentRoute(
         onSearchTextChanged = viewModel::updateSearch,
         onToggleContent = viewModel::toggleContent,
         onRemoveContent = viewModel::removeContent,
-        onBackClick = navigateUp,
-        onActionClick = navigateToCollectionCreate,
+        onBackClick = {
+            viewModel.resetSearchText()
+            navigateUp()
+        },
+        onActionClick = {
+            viewModel.resetSearchText()
+            navigateToCollectionCreate()
+        },
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -89,7 +99,9 @@ fun AddContentScreen(
             title = "작품 추가하기",
             actionText = "추가",
             onActionClick = {
-                if (selectedContents.isNotEmpty()) onActionClick()
+                if (selectedContents.isNotEmpty()) {
+                    onActionClick()
+                }
             },
             textStyle = if (selectedContents.isNotEmpty()) FlintTheme.typography.body1M16 else FlintTheme.typography.body1Sb16,
             textColor = if (selectedContents.isNotEmpty()) FlintTheme.colors.secondary400 else FlintTheme.colors.gray300,
@@ -143,7 +155,7 @@ fun AddContentScreen(
         }
         else{
             LazyColumn(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
