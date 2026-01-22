@@ -46,6 +46,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -70,14 +71,15 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
-import com.flint.domain.model.content.ContentModel
 import com.flint.domain.model.content.ContentModelNew
-import com.flint.domain.type.OttType
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import java.time.format.DateTimeFormatter
+
+private const val DATE_FORMAT_TO_SHOW = "yyyy. MM. dd."
 
 @Composable
 fun CollectionDetailRoute(
@@ -112,7 +114,9 @@ fun CollectionDetailRoute(
                 isBookmarked = collectionDetail.isBookmarked,
                 authorNickname = collectionDetail.author.nickname,
                 authorUserRoleType = collectionDetail.author.userRole,
-                createdAt = collectionDetail.createdAt,
+                createdAt = collectionDetail.createdAt.format(
+                    DateTimeFormatter.ofPattern(DATE_FORMAT_TO_SHOW)
+                ),
                 description = collectionDetail.description,
                 contents = collectionDetail.contents,
                 people = collectionBookmarkUsers,
@@ -564,6 +568,8 @@ private fun Thumbnail(
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 modifier = Modifier.fillMaxWidth(),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             if (!isMine) {
                 if (isBookmarked) {
@@ -788,7 +794,7 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
     override val values: Sequence<HeaderPreviewData> =
         sequenceOf(
             HeaderPreviewData(
-                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
+                title = "한번 보면 못 빠져나오는 여운남는 사랑이야기".repeat(2),
                 isMine = false,
                 isBookmarked = true,
             ),
@@ -841,7 +847,7 @@ private class DescriptionPreviewProvider : PreviewParameterProvider<DescriptionP
                 authorNickname = "일반유저",
                 authorUserRoleType = UserRoleType.FLING,
                 createdAt = "2026. 01. 15.",
-                collectionContent = "제가 좋아하는 영화 모음입니다",
+                collectionContent = "한글자 두글자 세글자 네글자 다섯글자 ".repeat(10),
             ),
             DescriptionPreviewData(
                 authorNickname = "관리자",
@@ -868,39 +874,38 @@ private fun CollectionDetailDescriptionPreview(
     }
 }
 
-private class ContentPreviewProvider : PreviewParameterProvider<ContentModel> {
-    override val values: Sequence<ContentModel> =
+private class ContentPreviewProvider : PreviewParameterProvider<ContentModelNew> {
+    override val values: Sequence<ContentModelNew> =
         sequenceOf(
-            ContentModel(
-                contentId = "0",
+            ContentModelNew(
+                id = "0",
                 title = "드라마 제목",
                 year = 2000,
-                posterImage = "",
-                ottSimpleList = listOf(OttType.Netflix, OttType.Disney),
+                imageUrl = "",
                 director = "가스 제닝스",
-                description = "달라진 온도\n-\n같은 구도에 채도를 달리해 변해버린 사랑을 시각적으로 담아낸 장면들",
+                reason = "달라진 온도\n-\n같은 구도에 채도를 달리해 변해버린 사랑을 시각적으로 담아낸 장면들",
                 isSpoiler = false,
                 isBookmarked = false,
+                bookmarkCount = 42,
             ),
-            ContentModel(
-                contentId = "0",
+            ContentModelNew(
+                id = "0",
                 title = "스포일러 있는 영화",
                 year = 2024,
-                posterImage = "",
-                ottSimpleList = listOf(OttType.Netflix),
+                imageUrl = "",
                 director = "감독 이름",
-                description = "이 내용은 스포일러가 포함되어 있습니다.",
+                reason = "이 내용은 스포일러가 포함되어 있습니다.",
                 isSpoiler = true,
                 isBookmarked = false,
+                bookmarkCount = 42,
             ),
-            ContentModel(
-                contentId = "0",
+            ContentModelNew(
+                id = "0",
                 title = "저장된 영화",
                 year = 2023,
-                posterImage = "",
-                ottSimpleList = listOf(OttType.Watcha, OttType.Wavve),
+                imageUrl = "",
                 director = "다른 감독",
-                description = "내가 저장한 영화입니다.",
+                reason = "내가 저장한 영화입니다.",
                 isSpoiler = false,
                 isBookmarked = true,
                 bookmarkCount = 42,
