@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -148,7 +149,6 @@ fun CollectionCreateScreen(
                         singleLine = true,
                         onValueChanged = onTitleChanged,
                         maxLength = 20,
-                        height = 40.dp,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next
                         )
@@ -176,12 +176,13 @@ fun CollectionCreateScreen(
                     Spacer(Modifier.height(16.dp))
 
                     FlintLongTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 104.dp),
                         value = uiState.description,
                         placeholder = "컬렉션의 소개를 작성해주세요.",
                         onValueChanged = onDescriptionChanged,
                         maxLength = 200,
-                        height = 104.dp,
                         keyboardActions = KeyboardActions(
                             onDone = {},
                         ),
