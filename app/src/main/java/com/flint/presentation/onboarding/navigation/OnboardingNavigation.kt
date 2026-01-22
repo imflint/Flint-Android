@@ -36,7 +36,7 @@ fun NavController.navigateToOnboardingDone() {
 
 fun NavGraphBuilder.onBoardingNavGraph(
     paddingValues: PaddingValues,
-    onNavigateToHome: () -> Unit,
+    navigateToHome: () -> Unit,
     navController: NavHostController,
 ) {
     navigation<Route.OnboardingGraph>(
@@ -81,7 +81,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
             OnboardingDoneRoute(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
-                navigateToHome = onNavigateToHome,
+                navigateToHome = navigateToHome,
                 viewModel = sharedViewModel,
                 )
         }

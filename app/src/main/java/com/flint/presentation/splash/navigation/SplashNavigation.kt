@@ -8,14 +8,14 @@ import com.flint.presentation.splash.SplashRoute
 
 fun NavGraphBuilder.splashNavGraph(
     paddingValues: PaddingValues,
-    onNavigateToLogin: () -> Unit,
-    onNavigateToHome: () -> Unit,
+    navigateToLogin: () -> Unit,
+    navigateToHome: () -> Unit,
 ) {
     composable<Route.Splash> {
         SplashRoute(
             paddingValues = paddingValues,
-            navigateToLogin = onNavigateToLogin,
-            navigateToHome = onNavigateToHome,
+            navigateToLogin = navigateToLogin,
+            navigateToHome = navigateToHome,
         )
     }
 }

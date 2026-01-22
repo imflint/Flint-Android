@@ -38,19 +38,19 @@ fun MainNavHost(
         ) {
             splashNavGraph(
                 paddingValues = paddingValues,
-                onNavigateToLogin = navigator::navigateToLogin,
-                onNavigateToHome = navigator::navigateToHome,
+                navigateToLogin = navigator::navigateToLogin,
+                navigateToHome = navigator::navigateToHome,
             )
 
             loginNavGraph(
                 paddingValues = paddingValues,
-                onNavigateToOnBoarding = navigator::navigateToOnBoarding,
-                onNavigateToHome = navigator::navigateToHome,
+                navigateToOnBoarding = navigator::navigateToOnBoarding,
+                navigateToHome = navigator::navigateToHome,
             )
 
             onBoardingNavGraph(
                 paddingValues = paddingValues,
-                onNavigateToHome = navigator::navigateToHome,
+                navigateToHome = navigator::navigateToHome,
                 navController = navigator.navController,
             )
 
