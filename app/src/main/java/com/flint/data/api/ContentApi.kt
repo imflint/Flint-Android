@@ -11,12 +11,6 @@ interface ContentApi {
     @GET("/api/v1/contents/bookmarks")
     suspend fun getBookmarkedContentList(): BaseResponse<BookmarkedContentListResponseDto>
 
-    // 사용자별 북마크한 콘텐츠 목록 조회
-    @GET("/api/v1/contents/{userId}/bookmarked-contents")
-    suspend fun getBookmarkedContentListByUserId(
-        @Path("userId") userId: String
-    ): BaseResponse<BookmarkedContentListResponseDto>
-
     // 콘텐츠별 OTT 목록 조회
     @GET("/api/v1/contents/ott/{contentId}")
     suspend fun getOttListPerContent(

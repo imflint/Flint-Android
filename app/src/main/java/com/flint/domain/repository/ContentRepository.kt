@@ -9,11 +9,8 @@ import com.flint.domain.mapper.ott.toModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.ott.OttListModel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
 import javax.inject.Inject
-import kotlin.text.first
 
 class ContentRepository @Inject constructor(
     private val apiService: ContentApi,
@@ -26,15 +23,6 @@ class ContentRepository @Inject constructor(
     // 북마크한 콘텐츠 목록 조회
     suspend fun getBookmarkedContentList() : Result<BookmarkedContentListModel> =
         suspendRunCatching { apiService.getBookmarkedContentList().data.toModel() }
-
-    // 사용자별 북마크한 콘텐츠 목록 조회
-    suspend fun getBookmarkedContentListByUserId(userId: String?) : Result<BookmarkedContentListModel> =
-        suspendRunCatching {
-//            val myUserId = runBlocking {
-//                myUserId()
-//            }
-            Timber.d("userId in getBookmarkedContentListByUserId: ${userId ?: myUserId()}")
-            apiService.getBookmarkedContentListByUserId(userId ?: "801159854933808613").data.toModel() }
 
     // 콘텐츠별 OTT 목록 조회
     suspend fun getOttListPerContent(contentId: String) : Result<OttListModel> =

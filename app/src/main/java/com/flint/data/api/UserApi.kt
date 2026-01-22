@@ -1,6 +1,7 @@
 package com.flint.data.api
 
 import com.flint.data.dto.base.BaseResponse
+import com.flint.data.dto.content.response.BookmarkedContentListResponseDto
 import com.flint.data.dto.user.response.NicknameCheckResponseDto
 import com.flint.data.dto.user.response.BookmarkedCollectionListResponseDto
 import com.flint.data.dto.user.response.CreatedCollectionListResponseDto
@@ -28,6 +29,12 @@ interface UserApi {
     suspend fun getUserBookmarkedCollections(
         @Path("userId") userId: String,
     ): BaseResponse<BookmarkedCollectionListResponseDto>
+
+    // 사용자별 북마크한 콘텐츠 목록 조회
+    @GET("/api/v1/contents/{userId}/bookmarked-contents")
+    suspend fun getBookmarkedContentListByUserId(
+        @Path("userId") userId: String
+    ): BaseResponse<BookmarkedContentListResponseDto>
 
     // 사용자 생성 컬렉션 조회
     @GET("/api/v1/users/{userId}/collections")
