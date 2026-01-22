@@ -39,7 +39,7 @@ import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintIconButton
 import com.flint.core.designsystem.component.button.FlintLargeButton
-import com.flint.core.designsystem.component.textfield.FlintLongTextField
+import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
@@ -142,13 +142,15 @@ fun CollectionCreateScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    FlintLongTextField(
+                    CollectionInputTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.title,
                         placeholder = "컬렉션의 제목을 입력해주세요.",
-                        singleLine = true,
                         onValueChanged = onTitleChanged,
                         maxLength = 20,
+                        singleLine = true,
+                        maxLines = 1,
+                        isShowLengthTitle = true,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next
                         )
@@ -175,7 +177,7 @@ fun CollectionCreateScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    FlintLongTextField(
+                    CollectionInputTextField(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 104.dp),
@@ -183,6 +185,9 @@ fun CollectionCreateScreen(
                         placeholder = "컬렉션의 소개를 작성해주세요.",
                         onValueChanged = onDescriptionChanged,
                         maxLength = 200,
+                        singleLine = false,
+                        maxLines = Int.MAX_VALUE,
+                        isShowLengthTitle = true,
                         keyboardActions = KeyboardActions(
                             onDone = {},
                         ),

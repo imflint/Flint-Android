@@ -25,7 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.designsystem.component.textfield.FlintBasicTextField
+import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.component.toggle.FlintBasicToggle
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -102,22 +102,17 @@ fun CollectionCreateContentItemList(
 
         Spacer(Modifier.height(4.dp))
 
-        FlintBasicTextField(
-            placeholder = "이 작품의 매력 포인트를 적어주세요.",
+        CollectionInputTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 104.dp),
             value = selectedReason,
-            onValueChange = onSelectedReasonChanged,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 108.dp),
+            placeholder = "이 작품의 매력 포인트를 적어주세요.",
+            onValueChanged = onSelectedReasonChanged,
             singleLine = false,
+            maxLength = Int.MAX_VALUE,
             maxLines = Int.MAX_VALUE,
-            textStyle = FlintTheme.typography.body1R16,
-            keyboardActions = KeyboardActions(
-                onDone = {},
-            ),
-            paddingValues =
-                PaddingValues(
-                    horizontal = 12.dp,
-                    vertical = 10.dp,
-                ),
+            isShowLengthTitle = false
         )
     }
 }
