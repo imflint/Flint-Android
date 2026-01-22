@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -30,7 +31,6 @@ fun SplashRoute(
         onAnimationFinished = navigateToLogin,
     )
     LaunchedEffect(Unit) {
-        // FIXME navigation test @ckals413
         delay(2000)
         navigateToLogin()
     }
@@ -60,6 +60,7 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
         LottieAnimation(
             composition = composition,
             modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
         )
     }
 }
