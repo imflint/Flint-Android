@@ -38,6 +38,7 @@ interface Route {
     @Serializable
     data class CollectionDetail(
         val collectionId: String,
+        val targetImageUrl: String? = null,
     ) : Route
 
     @Serializable
