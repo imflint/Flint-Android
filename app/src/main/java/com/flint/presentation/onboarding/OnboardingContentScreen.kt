@@ -24,11 +24,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.core.common.extension.dropShadow
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
@@ -38,6 +41,7 @@ import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
+import com.flint.domain.model.search.SearchContentListModel
 import com.flint.presentation.onboarding.component.OnboardingContentItem
 import com.flint.presentation.onboarding.component.StepProgressBar
 
@@ -134,7 +138,15 @@ fun OnboardingContentScreen(
                     modifier =
                         Modifier
                             .background(FlintTheme.colors.background)
-                            .padding(bottom = 16.dp),
+                            .padding(bottom = 16.dp)
+                            .dropShadow(
+                                shape = RectangleShape,
+                                color = Color.Black.copy(alpha = 0.75f),
+                                blur = 50.dp,
+                                offsetY = 20.dp,
+                                offsetX = 0.dp,
+                                spread = 0.dp
+                            )
                 ) {
                     FlintSearchTextField(
                         placeholder = "작품 이름",
@@ -146,15 +158,12 @@ fun OnboardingContentScreen(
                             onSearch = { onSearchAction() }
                         ),
                     )
-                }
-            }
 
-            // 선택된 영화 가로 스크롤
-            item(span = { GridItemSpan(3) }) {
-                Column {
+                    // 선택된 영화 가로 스크롤
                     if (contentUiState.selectedContents.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
                         LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(0.dp),
                         ) {
                             items(
                                 items = contentUiState.selectedContents,
@@ -167,7 +176,6 @@ fun OnboardingContentScreen(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
 
@@ -234,7 +242,7 @@ private fun OnboardingContentScreenListPreview() {
             nickname = "안비",
             contentUiState = OnboardingContentUiState(
                 searchResults = UiState.Success(
-                    com.flint.domain.model.search.SearchContentListModel.FakeList
+                    SearchContentListModel.FakeList
                 ),
             ),
             onBackClick = {},
