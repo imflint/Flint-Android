@@ -52,7 +52,6 @@ fun CollectionCreateRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-
     CollectionCreateScreen(
         uiState = uiState,
         onTitleChanged = viewModel::updateTitle,

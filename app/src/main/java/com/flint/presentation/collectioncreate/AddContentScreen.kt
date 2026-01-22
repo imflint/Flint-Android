@@ -62,6 +62,13 @@ fun AddContentScreen(
     modifier: Modifier = Modifier
 ) {
 
+    val lazyRowState = rememberLazyListState()
+
+    LaunchedEffect(selectedContents.size) {
+        if (selectedContents.isNotEmpty()) {
+            lazyRowState.animateScrollToItem(selectedContents.size - 1)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -94,6 +101,7 @@ fun AddContentScreen(
 
         if (selectedContents.isNotEmpty()) {
             LazyRow(
+                state = lazyRowState,
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 reverseLayout = true,
