@@ -232,6 +232,7 @@ fun CollectionCreateScreen(
                             },
                             onClick = { onPublicChanged(false) },
                             modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(start = 8.dp, end = 12.dp, top= 10.dp, bottom = 10.dp)
                         )
                     }
                 }
@@ -252,7 +253,7 @@ fun CollectionCreateScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "최대 10개까지 추가할 수 있어요",
+                            text = "작품을 2개 이상 추가해주세요.",
                             color = FlintTheme.colors.gray200,
                             style = FlintTheme.typography.body2R14,
                         )
@@ -306,12 +307,14 @@ fun CollectionCreateScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .defaultMinSize(minHeight = 80.dp),
+                        contentPadding = PaddingValues(vertical = 28.dp)
                     )
 
                     Spacer(Modifier.height(36.dp))
                 }
             }
         }
+
         FlintLargeButton(
             text = "완료",
             state = if (uiState.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,

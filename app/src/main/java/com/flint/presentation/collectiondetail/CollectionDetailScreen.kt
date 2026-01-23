@@ -110,7 +110,6 @@ fun CollectionDetailRoute(
                 paddingValues = paddingValues,
                 targetImageUrl = targetImageUrl,
                 title = collectionDetail.title,
-                isMine = collectionDetail.isMine,
                 isBookmarked = collectionDetail.isBookmarked,
                 authorNickname = collectionDetail.author.nickname,
                 authorUserRoleType = collectionDetail.author.userRole,
@@ -217,7 +216,6 @@ fun CollectionDetailRoute(
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
     title: String,
-    isMine: Boolean,
     isBookmarked: Boolean,
     authorNickname: String,
     authorUserRoleType: UserRoleType,
@@ -291,7 +289,6 @@ fun CollectionDetailScreen(
                 ) {
                     Thumbnail(
                         title = title,
-                        isMine = isMine,
                         isBookmarked = isBookmarked,
                         onSaveDoneButtonClick = onSaveDoneButtonClick,
                         onSaveNoneButtonClick = onSaveNoneButtonClick,
@@ -535,7 +532,6 @@ private fun PeopleWhoSavedThisCollectionPreview(
 @Composable
 private fun Thumbnail(
     title: String,
-    isMine: Boolean,
     isBookmarked: Boolean,
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
@@ -571,20 +567,18 @@ private fun Thumbnail(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            if (!isMine) {
-                if (isBookmarked) {
-                    FlintSaveDoneButton(
-                        onClick = {
-                            onSaveDoneButtonClick()
-                        },
-                    )
-                } else {
-                    FlintSaveNoneButton(
-                        onClick = {
-                            onSaveNoneButtonClick()
-                        },
-                    )
-                }
+            if (isBookmarked) {
+                FlintSaveDoneButton(
+                    onClick = {
+                        onSaveDoneButtonClick()
+                    },
+                )
+            } else {
+                FlintSaveNoneButton(
+                    onClick = {
+                        onSaveNoneButtonClick()
+                    },
+                )
             }
         }
     }
@@ -779,7 +773,7 @@ private fun Content(
                 )
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(64.dp))
         }
     }
 }
@@ -803,11 +797,6 @@ private class HeaderPreviewProvider : PreviewParameterProvider<HeaderPreviewData
                 isMine = false,
                 isBookmarked = false,
             ),
-            HeaderPreviewData(
-                title = "내가 만든 컬렉션",
-                isMine = true,
-                isBookmarked = false,
-            ),
         )
 }
 
@@ -819,7 +808,6 @@ private fun ThumbnailPreview(
     FlintTheme {
         Thumbnail(
             title = data.title,
-            isMine = data.isMine,
             isBookmarked = data.isBookmarked,
             onSaveDoneButtonClick = {},
             onSaveNoneButtonClick = {}
@@ -930,7 +918,6 @@ private fun ContentPreview(
 
 private data class ScreenPreviewData(
     val title: String,
-    val isMine: Boolean,
     val isBookmarked: Boolean,
     val authorNickname: String,
     val authorUserRoleType: UserRoleType,
@@ -978,7 +965,6 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
         sequenceOf(
             ScreenPreviewData(
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
-                isMine = false,
                 isBookmarked = true,
                 authorNickname = "키카",
                 authorUserRoleType = UserRoleType.FLINER,
@@ -987,21 +973,11 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
             ),
             ScreenPreviewData(
                 title = "새로운 컬렉션",
-                isMine = false,
                 isBookmarked = false,
                 authorNickname = "일반유저",
                 authorUserRoleType = UserRoleType.FLING,
                 contents = persistentListOf(sampleContent, sampleContent.copy(isSpoiler = true)),
                 people = persistentListOf(),
-            ),
-            ScreenPreviewData(
-                title = "내가 만든 컬렉션",
-                isMine = true,
-                isBookmarked = false,
-                authorNickname = "나",
-                authorUserRoleType = UserRoleType.FLING,
-                contents = persistentListOf(sampleContent, sampleContent.copy(isSpoiler = true)),
-                people = samplePeople,
             ),
         )
 }
@@ -1016,7 +992,6 @@ private fun CollectionDetailScreenPreview(
             CollectionDetailScreen(
                 paddingValues = paddingValues,
                 title = data.title,
-                isMine = data.isMine,
                 isBookmarked = data.isBookmarked,
                 authorNickname = data.authorNickname,
                 authorUserRoleType = data.authorUserRoleType,
