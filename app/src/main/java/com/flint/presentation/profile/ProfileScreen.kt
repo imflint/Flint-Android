@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -39,6 +40,7 @@ import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.ott.OttListModel
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.model.user.UserProfileResponseModel
+import com.flint.presentation.MainActivity
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
@@ -52,11 +54,11 @@ fun ProfileRoute(
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
-    navigateToSplash: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
 
     var showOttListBottomSheet by remember { mutableStateOf(false) }
     var ottListModel by remember { mutableStateOf(OttListModel()) }
@@ -74,7 +76,7 @@ fun ProfileRoute(
                     showOttListBottomSheet = true
                 }
                 is ProfileSideEffect.WithdrawSuccess -> {
-                    navigateToSplash()
+                    (context as? MainActivity)?.restartApplication()
                 }
             }
         }

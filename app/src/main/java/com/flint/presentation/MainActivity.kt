@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun restartApplication() {
+    fun restartApplication() {
         val packageManager: PackageManager = this.packageManager
         val intent = packageManager.getLaunchIntentForPackage(this.packageName)
         val componentName = intent!!.component
