@@ -226,6 +226,7 @@ fun CollectionCreateScreen(
                             },
                             onClick = { onPublicChanged(false) },
                             modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(start = 8.dp, end = 12.dp, top= 10.dp, bottom = 10.dp)
                         )
                     }
                 }
