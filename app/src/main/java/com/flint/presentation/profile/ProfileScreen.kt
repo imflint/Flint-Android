@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,11 +15,15 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -33,6 +38,7 @@ import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.theme.Colors
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
 import com.flint.core.navigation.model.CollectionListRouteType
@@ -45,6 +51,7 @@ import com.flint.presentation.MainActivity
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
+import com.flint.presentation.profile.uistate.ProfileSectionData
 import com.flint.presentation.profile.uistate.ProfileUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,38 +90,28 @@ fun ProfileRoute(
         }
     }
 
-    when (val state = uiState) {
-        is UiState.Loading -> {
-            FlintLoadingIndicator()
-        }
-
-        is UiState.Success -> {
-            ProfileScreen(
-                modifier = Modifier.padding(paddingValues),
-                uiState = state.data,
-                onBackClick = navigateUp,
-                onCollectionItemClick = navigateToCollectionDetail,
-                onContentItemClick = { contentId ->
-                    viewModel.getOttListPerContent(contentId)
-                },
-                onCreatedCollectionMoreClick =  {
-                    navigateToCollectionList(
-                        CollectionListRouteType.CREATED,
-                        state.data.userId
-                    )
-                },
-                onSavedCollectionMoreClick = {
-                    navigateToCollectionList(
-                        CollectionListRouteType.SAVED,
-                        state.data.userId
-                    )
-                },
-                onEasterEggWithdraw = viewModel::easterEggWithdraw,
+    ProfileScreen(
+        modifier = Modifier.padding(paddingValues),
+        uiState = uiState,
+        onBackClick = navigateUp,
+        onCollectionItemClick = navigateToCollectionDetail,
+        onContentItemClick = { contentId ->
+            viewModel.getOttListPerContent(contentId)
+        },
+        onCreatedCollectionMoreClick = {
+            navigateToCollectionList(
+                CollectionListRouteType.CREATED,
+                uiState.userId
             )
-        }
-
-        else -> {}
-    }
+        },
+        onSavedCollectionMoreClick = {
+            navigateToCollectionList(
+                CollectionListRouteType.SAVED,
+                uiState.userId
+            )
+        },
+        onEasterEggWithdraw = viewModel::easterEggWithdraw,
+    )
 
     if (showOttListBottomSheet) {
         OttListBottomSheet(
@@ -135,7 +132,7 @@ private fun ProfileScreen(
     onRefreshClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onCollectionItemClick: (collectionId: String) -> Unit,
-    onContentItemClick: (contentId: String) -> Unit = {}, // TODO: 바텀시트 띄우기
+    onContentItemClick: (contentId: String) -> Unit = {},
     onContentMoreClick: () -> Unit = {},
     onCreatedCollectionMoreClick: () -> Unit,
     onSavedCollectionMoreClick: () -> Unit,
@@ -163,58 +160,57 @@ private fun ProfileScreen(
                 }
             }
 
-            item {
-                Spacer(Modifier.height(20.dp))
-
-                ProfileKeywordSection(
-                    nickname = uiState.profile.nickname,
-                    keywordList = uiState.keywords,
-                    onRefreshClick = onRefreshClick,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-
-            item {
-                if (uiState.createCollections.collections.isNotEmpty()) {
-                    Spacer(Modifier.height(48.dp))
-
-                    CollectionSection(
-                        title = "${userName}님의 컬렉션",
-                        description = "${userName}님이 생성한 컬렉션이에요",
-                        onItemClick = onCollectionItemClick,
-                        isAllVisible = true,
-                        onAllClick = onCreatedCollectionMoreClick,
-                        collectionListModel = uiState.createCollections,
-                    )
+            when (val sectionData = uiState.sectionData) {
+                is UiState.Loading -> {
+                    item {
+                        FlintLoadingIndicator(
+                            modifier = Modifier.fillParentMaxHeight(),
+                        )
+                    }
                 }
-            }
 
-            item {
-                if (uiState.savedCollections.collections.isNotEmpty()) {
-                    Spacer(Modifier.height(48.dp))
+                is UiState.Success -> {
+                    item {
+                        Spacer(Modifier.height(20.dp))
 
-                    CollectionSection(
-                        title = "저장한 컬렉션",
-                        description = "${userName}님이 저장한 컬렉션이에요",
-                        onItemClick = onCollectionItemClick,
-                        isAllVisible = true,
-                        onAllClick = onSavedCollectionMoreClick,
-                        collectionListModel = uiState.savedCollections,
-                    )
+                        ProfileKeywordSection(
+                            nickname = uiState.profile.nickname,
+                            keywordList = sectionData.data.keywords,
+                            onRefreshClick = onRefreshClick,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+
+                    item {
+                        if (sectionData.data.savedCollections.collections.isNotEmpty()) {
+                            Spacer(Modifier.height(48.dp))
+
+                            CollectionSection(
+                                title = "저장한 컬렉션",
+                                description = "${userName}님이 저장한 컬렉션이에요",
+                                onItemClick = onCollectionItemClick,
+                                isAllVisible = true,
+                                onAllClick = onSavedCollectionMoreClick,
+                                collectionListModel = sectionData.data.savedCollections,
+                            )
+                        }
+                    }
+
+                    item {
+                        Spacer(Modifier.height(48.dp))
+
+                        SavedContentsSection(
+                            title = "저장한 작품",
+                            description = "${userName}님이 저장한 작품이에요",
+                            contentModelList = sectionData.data.savedContents,
+                            onItemClick = onContentItemClick,
+                            isAllVisible = false,
+                            onAllClick = {},
+                        )
+                    }
                 }
-            }
 
-            item {
-                Spacer(Modifier.height(48.dp))
-
-                SavedContentsSection(
-                    title = "저장한 작품",
-                    description = "${userName}님이 저장한 작품이에요",
-                    contentModelList = uiState.savedContents,
-                    onItemClick = onContentItemClick,
-                    isAllVisible = false,
-                    onAllClick = {},
-                )
+                else -> {}
             }
         }
         if (uiState.userId != null) {
@@ -242,6 +238,17 @@ private fun ProfileScreenPreview(
 
 private class ProfileUiStatePreviewParameterProvider : PreviewParameterProvider<ProfileUiState> {
     override val values: Sequence<ProfileUiState> = sequenceOf(
+        // 로딩 상태
+        ProfileUiState(
+            userId = null,
+            profile = UserProfileResponseModel(
+                id = "",
+                nickname = "닉네임",
+                profileImageUrl = "",
+                isFliner = false,
+            ),
+            sectionData = UiState.Loading
+        ),
         // 내 프로필
         ProfileUiState(
             userId = null,
@@ -251,10 +258,14 @@ private class ProfileUiStatePreviewParameterProvider : PreviewParameterProvider<
                 profileImageUrl = "",
                 isFliner = false,
             ),
-            keywords = KeywordListModel.FakeList1,
-            createCollections = CollectionListModel.FakeList,
-            savedCollections = CollectionListModel.FakeList,
-            savedContents = BookmarkedContentListModel.FakeList,
+            sectionData = UiState.Success(
+                ProfileSectionData(
+                    keywords = KeywordListModel.FakeList1,
+                    createCollections = CollectionListModel.FakeList,
+                    savedCollections = CollectionListModel.FakeList,
+                    savedContents = BookmarkedContentListModel.FakeList,
+                )
+            ),
         ),
         // 다른 사용자 프로필
         ProfileUiState(
@@ -265,10 +276,14 @@ private class ProfileUiStatePreviewParameterProvider : PreviewParameterProvider<
                 profileImageUrl = "",
                 isFliner = true,
             ),
-            keywords = KeywordListModel.FakeList3,
-            createCollections = CollectionListModel(),
-            savedCollections = CollectionListModel(),
-            savedContents = BookmarkedContentListModel.FakeList,
+            sectionData = UiState.Success(
+                ProfileSectionData(
+                    keywords = KeywordListModel.FakeList3,
+                    createCollections = CollectionListModel(),
+                    savedCollections = CollectionListModel(),
+                    savedContents = BookmarkedContentListModel.FakeList,
+                )
+            ),
         ),
     )
 }

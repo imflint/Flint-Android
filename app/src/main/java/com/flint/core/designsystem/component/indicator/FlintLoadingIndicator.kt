@@ -11,10 +11,12 @@ import androidx.compose.ui.graphics.Color
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun FlintLoadingIndicator() {
+fun FlintLoadingIndicator(
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier =
-            Modifier
+            modifier
                 .fillMaxSize()
                 .background(Color.Transparent),
         contentAlignment = Alignment.Center,
