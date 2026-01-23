@@ -56,7 +56,7 @@ fun ProfileKeywordSection(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "${nickname}님이 관심있어하는 키워드에요",
+                    text = "${nickname}님이 관심있어하는 키워드예요",
                     style = FlintTheme.typography.body2R14,
                     color = FlintTheme.colors.gray100,
                 )
