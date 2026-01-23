@@ -52,6 +52,7 @@ fun ProfileRoute(
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToSplash: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -71,6 +72,9 @@ fun ProfileRoute(
                 is ProfileSideEffect.ShowOttListBottomSheet -> {
                     ottListModel = sideEffect.ottListModel
                     showOttListBottomSheet = true
+                }
+                is ProfileSideEffect.WithdrawSuccess -> {
+                    navigateToSplash()
                 }
             }
         }
@@ -102,6 +106,7 @@ fun ProfileRoute(
                         state.data.userId
                     )
                 },
+                onEasterEggWithdraw = viewModel::easterEggWithdraw,
             )
         }
 
@@ -130,7 +135,8 @@ private fun ProfileScreen(
     onContentItemClick: (contentId: String) -> Unit = {}, // TODO: 바텀시트 띄우기
     onContentMoreClick: () -> Unit = {},
     onCreatedCollectionMoreClick: () -> Unit,
-    onSavedCollectionMoreClick: () -> Unit
+    onSavedCollectionMoreClick: () -> Unit,
+    onEasterEggWithdraw: () -> Unit = {},
 ) {
     val userName = uiState.profile.nickname
 
@@ -149,6 +155,7 @@ private fun ProfileScreen(
                         userName = nickname,
                         profileUrl = profileImageUrl.orEmpty(),
                         isFliner = isFliner,
+                        onEasterEggWithdraw = onEasterEggWithdraw,
                     )
                 }
             }

@@ -22,6 +22,7 @@ import com.flint.presentation.onboarding.navigation.navigateToOnboarding
 import com.flint.presentation.profile.navigation.navigateToMyProfile
 import com.flint.presentation.profile.navigation.navigateToProfile
 import com.flint.presentation.savedcontent.navigation.navigateToSavedContentList
+import com.flint.presentation.splash.navigation.navigateToSplash
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -157,6 +158,10 @@ class MainNavigator(
 
     fun navigateUp() {
         navController.navigateUp()
+    }
+
+    fun navigateToSplash() {
+        navController.navigateToSplash(clearStackNavOptions)
     }
 }
 

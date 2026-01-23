@@ -28,6 +28,7 @@ fun NavGraphBuilder.myProfileNavGraph(
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToSplash: () -> Unit,
 ) {
     composable<MainTabRoute.Profile> {
         ProfileRoute(
@@ -36,6 +37,7 @@ fun NavGraphBuilder.myProfileNavGraph(
             navigateToCollectionList = navigateToCollectionList,
             navigateToSavedContentList = navigateToSavedContentList,
             navigateToCollectionDetail = navigateToCollectionDetail,
+            navigateToSplash = navigateToSplash,
         )
     }
 }
@@ -46,6 +48,7 @@ fun NavGraphBuilder.profileNavGraph(
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: () -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToSplash: () -> Unit,
 ) {
     composable<Route.Profile> {
         ProfileRoute(
@@ -54,6 +57,7 @@ fun NavGraphBuilder.profileNavGraph(
             navigateToCollectionList = navigateToCollectionList,
             navigateToSavedContentList = navigateToSavedContentList,
             navigateToCollectionDetail = navigateToCollectionDetail,
+            navigateToSplash = navigateToSplash,
         )
     }
 }

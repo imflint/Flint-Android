@@ -8,6 +8,7 @@ import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.core.navigation.Route
 import com.flint.domain.model.user.KeywordListModel
+import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
@@ -27,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository
 ) : ViewModel() {
@@ -80,6 +82,16 @@ class ProfileViewModel @Inject constructor(
         contentRepository.getOttListPerContent(contentId)
             .onSuccess {
                 _sideEffect.emit(ProfileSideEffect.ShowOttListBottomSheet(it))
+            }
+            .onFailure {
+                Timber.e(it)
+            }
+    }
+
+    fun easterEggWithdraw() = viewModelScope.launch {
+        authRepository.withdraw()
+            .onSuccess {
+                _sideEffect.emit(ProfileSideEffect.WithdrawSuccess)
             }
             .onFailure {
                 Timber.e(it)
