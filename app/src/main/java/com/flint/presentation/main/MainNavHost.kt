@@ -100,6 +100,7 @@ fun MainNavHost(
 
             profileNavGraph(
                 paddingValues = paddingValues,
+                navigateUp = navigator::navigateUp,
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToSavedContentList = navigator::navigateToSavedContent,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
