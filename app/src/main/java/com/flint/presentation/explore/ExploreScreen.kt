@@ -115,8 +115,8 @@ private fun ExploreScreen(
                 ExplorePageItem(
                     imageUrl = collection.imageUrl,
                     id = collection.collectionId,
-                    title = collection.title,
-                    description = collection.description,
+                    contentTitle = collection.contentTitle,
+                    contentDescription = collection.contentDescription,
                     onButtonClick = { onWatchCollectionButtonClick(it, collection.imageUrl) },
                 )
             } else {
@@ -133,8 +133,8 @@ private fun ExploreScreen(
 private fun ExplorePageItem(
     imageUrl: String,
     id: String,
-    title: String,
-    description: String,
+    contentTitle: String,
+    contentDescription: String,
     onButtonClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -160,7 +160,7 @@ private fun ExplorePageItem(
 
         Column(modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = title,
+                text = contentTitle,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 maxLines = 2,
@@ -170,7 +170,7 @@ private fun ExplorePageItem(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = description,
+                text = contentDescription,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.body1R16,
                 maxLines = 8,
@@ -200,8 +200,8 @@ private fun ExplorePageItemPreview() {
         ExplorePageItem(
             imageUrl = "https://buly.kr/G3Edbfu",
             id = "",
-            title = "너의 모든 것".repeat(10),
-            description =
+            contentTitle = "너의 모든 것".repeat(10),
+            contentDescription =
                 """
                 뉴욕의 서점 매니저이자 반듯한 독서가, 조. 
                 그가 대학원생 벡을 만나 한눈에 반한다. 
@@ -284,9 +284,9 @@ private fun ExploreScreenPreview() {
                 List(10) {
                     CollectionsModel.Collection(
                         collectionId = "0",
-                        title = "너의 모든 것",
+                        contentTitle = "너의 모든 것",
                         imageUrl = "https://buly.kr/G3Edbfu",
-                        description =
+                        contentDescription =
                             """
                             뉴욕의 서점 매니저이자 반듯한 독서가, 조.
                             그가 대학원생 벡을 만나 한눈에 반한다.
