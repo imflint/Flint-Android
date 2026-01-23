@@ -773,7 +773,7 @@ private fun Content(
                 )
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(64.dp))
         }
     }
 }
