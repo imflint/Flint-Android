@@ -163,7 +163,11 @@ private fun ProfileScreen(
                             userName = nickname,
                             profileUrl = profileImageUrl.orEmpty(),
                             isFliner = isFliner,
-                            onEasterEggWithdraw = onEasterEggWithdraw,
+                            onEasterEggWithdraw = {
+                                if (uiState.userId == null) {
+                                    onEasterEggWithdraw()
+                                }
+                            },
                         )
                     }
                 }
@@ -239,6 +243,7 @@ private fun ProfileScreenPreview(
 ) {
     FlintTheme {
         ProfileScreen(
+            modifier = Modifier.fillMaxSize(),
             uiState = uiState,
             onCollectionItemClick = {},
             onCreatedCollectionMoreClick = {},
