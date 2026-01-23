@@ -20,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,7 +34,11 @@ import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
 import com.flint.core.navigation.model.CollectionListRouteType
+import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.ott.OttListModel
+import com.flint.domain.model.user.KeywordListModel
+import com.flint.domain.model.user.UserProfileResponseModel
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
@@ -211,13 +217,48 @@ private fun ProfileScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun ProfileScreenPreview() {
+private fun ProfileScreenPreview(
+    @PreviewParameter(ProfileUiStatePreviewParameterProvider::class) uiState: ProfileUiState,
+) {
     FlintTheme {
         ProfileScreen(
-            uiState = ProfileUiState.Fake,
+            uiState = uiState,
             onCollectionItemClick = {},
             onCreatedCollectionMoreClick = {},
             onSavedCollectionMoreClick = {}
         )
     }
+}
+
+private class ProfileUiStatePreviewParameterProvider : PreviewParameterProvider<ProfileUiState> {
+    override val values: Sequence<ProfileUiState> = sequenceOf(
+        // 내 프로필
+        ProfileUiState(
+            userId = null,
+            profile = UserProfileResponseModel(
+                id = "",
+                nickname = "닉네임",
+                profileImageUrl = "",
+                isFliner = false,
+            ),
+            keywords = KeywordListModel.FakeList1,
+            createCollections = CollectionListModel.FakeList,
+            savedCollections = CollectionListModel.FakeList,
+            savedContents = BookmarkedContentListModel.FakeList,
+        ),
+        // 다른 사용자 프로필
+        ProfileUiState(
+            userId = "1",
+            profile = UserProfileResponseModel(
+                id = "",
+                nickname = "닉네임",
+                profileImageUrl = "",
+                isFliner = true,
+            ),
+            keywords = KeywordListModel.FakeList3,
+            createCollections = CollectionListModel(),
+            savedCollections = CollectionListModel(),
+            savedContents = BookmarkedContentListModel.FakeList,
+        ),
+    )
 }
