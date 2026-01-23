@@ -115,8 +115,8 @@ fun LoginScreen(
                 Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 60.dp)
-                    .padding(horizontal = 16.dp),
+                    .padding(bottom = 108.dp)
+                    .padding(horizontal = 20.dp),
             onClick = {
                 onKakaoLoginClick()
             },
