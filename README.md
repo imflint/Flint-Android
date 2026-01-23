@@ -9,7 +9,7 @@ FLINT는 알고리즘 대신 누군가의 시선과 맥락이 담긴 **컬렉션
 ## 👥 Contributors
 | <img src="https://github.com/user-attachments/assets/2a7ce16b-46f6-4447-920b-6692ad594d04" width="140" /> | <img src="https://github.com/user-attachments/assets/b0a27858-6ad2-47c5-af32-1981e05292f8" width="140" /> | <img src="https://github.com/user-attachments/assets/76065ce6-2098-44bd-8c61-c4cf8b86cca7" width="140" /> | <img src="https://github.com/user-attachments/assets/8340174d-c7ab-4c0d-95bd-d56af5d2b916" width="140" /> | <img src="https://github.com/user-attachments/assets/2d4fe236-ea88-43b6-b40e-d8e041d2cbe1" width="140" /> |
 |:---:|:---:|:---:|:---:|:---:|
-| **[김나현](https://github.com/contributor1)** | **[김종우](https://github.com/contributor3)** | **[박찬미](https://github.com/contributor4)** | **[임차민](https://github.com/contributor5)** | **[김준서](https://github.com/contributor2)** |
+| **[김나현](https://github.com/nahy-512)** | **[김종우](https://github.com/kimjw2003)** | **[박찬미](https://github.com/chanmi1125)** | **[임차민](https://github.com/ckals413)** | **[김준서](https://github.com/giovannijunseokim)** |
 | 프로필, 컬렉션 목록 | 홈, 로그인 | 컬렉션 생성 | 스플레시, 온보딩 | 탐색, 컬렉션 상세 |
 
 <br/>
@@ -70,4 +70,5 @@ com.flint/
             └── *UiState.kt       
 ```
 
-
+## Flint 코드/ 깃/ 브랜치 컨벤션
+https://ckals413.notion.site/Flint-2f17f139a61a80268a92cd07adc59f90?source=copy_link
