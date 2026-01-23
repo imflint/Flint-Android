@@ -204,6 +204,21 @@ private fun ProfileScreen(
                     }
 
                     item {
+                        if (sectionData.data.createCollections.collections.isNotEmpty()) {
+                            Spacer(Modifier.height(48.dp))
+
+                            CollectionSection(
+                                title = "생성한 컬렉션",
+                                description = "${userName}님이 생성한 컬렉션이에요",
+                                onItemClick = onCollectionItemClick,
+                                isAllVisible = true,
+                                onAllClick = onCreatedCollectionMoreClick,
+                                collectionListModel = sectionData.data.createCollections,
+                            )
+                        }
+                    }
+
+                    item {
                         if (sectionData.data.savedCollections.collections.isNotEmpty()) {
                             Spacer(Modifier.height(48.dp))
 
