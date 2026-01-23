@@ -96,7 +96,6 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToSavedContentList = navigator::navigateToSavedContent,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
-                navigateToSplash = navigator::navigateToSplash,
             )
 
             profileNavGraph(
@@ -105,7 +104,6 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToSavedContentList = navigator::navigateToSavedContent,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
-                navigateToSplash = navigator::navigateToSplash,
             )
         }
     }

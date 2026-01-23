@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.core.common.extension.findActivity
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
@@ -76,7 +77,7 @@ fun ProfileRoute(
                     showOttListBottomSheet = true
                 }
                 is ProfileSideEffect.WithdrawSuccess -> {
-                    (context as? MainActivity)?.restartApplication()
+                    (context.findActivity() as? MainActivity)?.restartApplication()
                 }
             }
         }
