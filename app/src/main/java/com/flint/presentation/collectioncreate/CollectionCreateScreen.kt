@@ -301,6 +301,7 @@ fun CollectionCreateScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .defaultMinSize(minHeight = 80.dp),
+                        contentPadding = PaddingValues(vertical = 28.dp)
                     )
 
                     Spacer(Modifier.height(36.dp))
