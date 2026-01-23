@@ -12,8 +12,8 @@ data class CollectionsResponseDto(
     data class Collection(
         @SerialName("collectionId") val collectionId: String,
         @SerialName("imageUrl") val imageUrl: String,
-        @SerialName("title") val title: String,
-        @SerialName("description") val description: String,
+        @SerialName("contentTitle") val contentTitle: String,
+        @SerialName("contentDescription") val contentDescription: String,
     )
 
     @Serializable

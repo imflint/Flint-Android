@@ -9,10 +9,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintTheme
 
-enum class FlintButtonState(
-    val enabled: Boolean,
-) {
-    Able(enabled = true) {
+enum class FlintButtonState() {
+    Able {
         override val background: Brush
             @Composable
             @ReadOnlyComposable
@@ -29,7 +27,7 @@ enum class FlintButtonState(
             get() = null
     },
 
-    Disable(enabled = false) {
+    Disable {
         override val background: Brush
             @Composable
             @ReadOnlyComposable
@@ -46,7 +44,7 @@ enum class FlintButtonState(
             get() = null
     },
 
-    Outline(enabled = true) {
+    Outline {
         override val background: Brush
             @Composable
             @ReadOnlyComposable
@@ -63,7 +61,7 @@ enum class FlintButtonState(
             get() = BorderStroke(2.dp, FlintTheme.colors.gray500)
     },
 
-    ColorOutline(enabled = true) {
+    ColorOutline {
         override val background: Brush
             @Composable
             @ReadOnlyComposable
@@ -78,7 +76,8 @@ enum class FlintButtonState(
             @Composable
             @ReadOnlyComposable
             get() = BorderStroke(2.dp, FlintTheme.colors.primary400)
-    }, ;
+    },
+    ;
 
     abstract val background: Brush
         @Composable

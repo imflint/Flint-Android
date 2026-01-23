@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -115,8 +115,8 @@ private fun ExploreScreen(
                 ExplorePageItem(
                     imageUrl = collection.imageUrl,
                     id = collection.collectionId,
-                    title = collection.title,
-                    description = collection.description,
+                    contentTitle = collection.contentTitle,
+                    contentDescription = collection.contentDescription,
                     onButtonClick = { onWatchCollectionButtonClick(it, collection.imageUrl) },
                 )
             } else {
@@ -133,8 +133,8 @@ private fun ExploreScreen(
 private fun ExplorePageItem(
     imageUrl: String,
     id: String,
-    title: String,
-    description: String,
+    contentTitle: String,
+    contentDescription: String,
     onButtonClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -153,14 +153,20 @@ private fun ExplorePageItem(
         Box(
             modifier =
                 Modifier
-                    .background(brush = FlintTheme.colors.imgBlur)
-                    .fillMaxWidth()
-                    .aspectRatio(389f / 400f),
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF121212).copy(0f),
+                                Color(0xFF121212).copy(1f)
+                            ),
+                        )
+                    )
+                    .fillMaxSize(),
         )
 
         Column(modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = title,
+                text = contentTitle,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 maxLines = 2,
@@ -170,7 +176,7 @@ private fun ExplorePageItem(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = description,
+                text = contentDescription,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.body1R16,
                 maxLines = 8,
@@ -200,8 +206,8 @@ private fun ExplorePageItemPreview() {
         ExplorePageItem(
             imageUrl = "https://buly.kr/G3Edbfu",
             id = "",
-            title = "너의 모든 것".repeat(10),
-            description =
+            contentTitle = "너의 모든 것".repeat(10),
+            contentDescription =
                 """
                 뉴욕의 서점 매니저이자 반듯한 독서가, 조. 
                 그가 대학원생 벡을 만나 한눈에 반한다. 
@@ -284,9 +290,9 @@ private fun ExploreScreenPreview() {
                 List(10) {
                     CollectionsModel.Collection(
                         collectionId = "0",
-                        title = "너의 모든 것",
+                        contentTitle = "너의 모든 것",
                         imageUrl = "https://buly.kr/G3Edbfu",
-                        description =
+                        contentDescription =
                             """
                             뉴욕의 서점 매니저이자 반듯한 독서가, 조.
                             그가 대학원생 벡을 만나 한눈에 반한다.
