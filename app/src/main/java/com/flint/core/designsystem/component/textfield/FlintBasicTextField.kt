@@ -2,6 +2,7 @@ package com.flint.core.designsystem.component.textfield
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -54,6 +57,7 @@ fun FlintBasicTextField(
     trailingContent: @Composable () -> Unit = {},
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    val focusRequester = remember { FocusRequester() }
 
     Box(
         modifier =
@@ -64,10 +68,18 @@ fun FlintBasicTextField(
                     width = 1.dp,
                     color = borderColor,
                     shape = RoundedCornerShape(radius),
-                ),
+                )
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                ) {
+                    focusRequester.requestFocus()
+                },
     ) {
         BasicTextField(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .focusRequester(focusRequester),
             value = value,
             textStyle = textStyle.copy(color = FlintTheme.colors.white),
             onValueChange = {
@@ -84,8 +96,7 @@ fun FlintBasicTextField(
             cursorBrush = SolidColor(FlintTheme.colors.gray300),
             decorationBox = { innerTextField ->
                 Row(
-                    modifier =
-                        Modifier
+                    modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -121,7 +132,9 @@ private fun BasicTextFieldPreview() {
         var text by remember { mutableStateOf("") }
 
         FlintBasicTextField(
-            modifier = Modifier.fillMaxWidth().height(40.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
             placeholder = "PlaceHolder",
             value = text,
             onValueChange = { text = it },
