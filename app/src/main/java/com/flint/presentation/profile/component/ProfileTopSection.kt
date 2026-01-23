@@ -38,7 +38,7 @@ fun ProfileTopSection(
             modifier =
                 modifier
                     .fillMaxWidth()
-                    .height(260.dp)
+                    .height(306.dp)
                     .paint(
                         painter = painterResource(id = R.drawable.img_collection_bg2),
                         contentScale = ContentScale.FillBounds,

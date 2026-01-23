@@ -1,6 +1,7 @@
 package com.flint.presentation.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,7 @@ import com.flint.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
+import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
 import com.flint.core.navigation.model.CollectionListRouteType
@@ -40,6 +42,7 @@ import com.flint.presentation.profile.uistate.ProfileUiState
 @Composable
 fun ProfileRoute(
     paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
@@ -76,6 +79,7 @@ fun ProfileRoute(
             ProfileScreen(
                 modifier = Modifier.padding(paddingValues),
                 uiState = state.data,
+                onBackClick = navigateUp,
                 onCollectionItemClick = navigateToCollectionDetail,
                 onContentItemClick = { contentId ->
                     viewModel.getOttListPerContent(contentId)
@@ -115,6 +119,7 @@ private fun ProfileScreen(
     uiState: ProfileUiState,
     modifier: Modifier = Modifier,
     onRefreshClick: () -> Unit = {},
+    onBackClick: () -> Unit = {},
     onCollectionItemClick: (collectionId: String) -> Unit,
     onContentItemClick: (contentId: String) -> Unit = {}, // TODO: 바텀시트 띄우기
     onContentMoreClick: () -> Unit = {},
@@ -123,75 +128,82 @@ private fun ProfileScreen(
 ) {
     val userName = uiState.profile.nickname
 
-    LazyColumn(
-        overscrollEffect = null,
-        contentPadding = PaddingValues(bottom = 70.dp),
-        modifier =
-            modifier
-                .background(colors.background)
-                .fillMaxSize(),
+    Box(
+        modifier = modifier
+            .background(colors.background)
+            .fillMaxSize(),
     ) {
-        item {
-            with(uiState.profile) {
-                ProfileTopSection(
-                    userName = nickname,
-                    profileUrl = profileImageUrl.orEmpty(),
-                    isFliner = isFliner,
+        LazyColumn(
+            overscrollEffect = null,
+            contentPadding = PaddingValues(bottom = 70.dp),
+        ) {
+            item {
+                with(uiState.profile) {
+                    ProfileTopSection(
+                        userName = nickname,
+                        profileUrl = profileImageUrl.orEmpty(),
+                        isFliner = isFliner,
+                    )
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(20.dp))
+
+                ProfileKeywordSection(
+                    nickname = uiState.profile.nickname,
+                    keywordList = uiState.keywords,
+                    onRefreshClick = onRefreshClick,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
-        }
 
-        item {
-            Spacer(Modifier.height(20.dp))
+            item {
+                if (uiState.createCollections.collections.isNotEmpty()) {
+                    Spacer(Modifier.height(48.dp))
 
-            ProfileKeywordSection(
-                nickname = uiState.profile.nickname,
-                keywordList = uiState.keywords,
-                onRefreshClick = onRefreshClick,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
+                    CollectionSection(
+                        title = "${userName}님의 컬렉션",
+                        description = "${userName}님이 생성한 컬렉션이에요",
+                        onItemClick = onCollectionItemClick,
+                        isAllVisible = true,
+                        onAllClick = onCreatedCollectionMoreClick,
+                        collectionListModel = uiState.createCollections,
+                    )
+                }
+            }
 
-        item {
-            if (uiState.createCollections.collections.isNotEmpty())  {
+            item {
+                if (uiState.savedCollections.collections.isNotEmpty()) {
+                    Spacer(Modifier.height(48.dp))
+
+                    CollectionSection(
+                        title = "저장한 컬렉션",
+                        description = "${userName}님이 저장한 컬렉션이에요",
+                        onItemClick = onCollectionItemClick,
+                        isAllVisible = true,
+                        onAllClick = onSavedCollectionMoreClick,
+                        collectionListModel = uiState.savedCollections,
+                    )
+                }
+            }
+
+            item {
                 Spacer(Modifier.height(48.dp))
 
-                CollectionSection(
-                    title = "${userName}님의 컬렉션",
-                    description = "${userName}님이 생성한 컬렉션이에요",
-                    onItemClick = onCollectionItemClick,
-                    isAllVisible = true,
-                    onAllClick = onCreatedCollectionMoreClick,
-                    collectionListModel = uiState.createCollections,
+                SavedContentsSection(
+                    title = "저장한 작품",
+                    description = "${userName}님이 저장한 작품이에요",
+                    contentModelList = uiState.savedContents,
+                    onItemClick = onContentItemClick,
+                    isAllVisible = false,
+                    onAllClick = {},
                 )
             }
         }
-
-        item {
-            if (uiState.savedCollections.collections.isNotEmpty()) {
-                Spacer(Modifier.height(48.dp))
-
-                CollectionSection(
-                    title = "저장한 컬렉션",
-                    description = "${userName}님이 저장한 컬렉션이에요",
-                    onItemClick = onCollectionItemClick,
-                    isAllVisible = true,
-                    onAllClick = onSavedCollectionMoreClick,
-                    collectionListModel = uiState.savedCollections,
-                )
-            }
-        }
-
-        item {
-            Spacer(Modifier.height(48.dp))
-
-            SavedContentsSection(
-                title = "저장한 작품",
-                description = "${userName}님이 저장한 작품이에요",
-                contentModelList = uiState.savedContents,
-                onItemClick = onContentItemClick,
-                isAllVisible = false,
-                onAllClick = {},
+        if (uiState.userId != null) {
+            FlintBackTopAppbar(
+                onClick = onBackClick,
             )
         }
     }
