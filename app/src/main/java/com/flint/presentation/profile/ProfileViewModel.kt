@@ -34,7 +34,7 @@ class ProfileViewModel @Inject constructor(
     val userId = savedStateHandle.toRoute<Route.Profile>().userId
 
     private val _uiState = MutableStateFlow<UiState<ProfileUiState>>(
-        UiState.Empty
+        UiState.Loading
     )
     val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
 
@@ -50,24 +50,6 @@ class ProfileViewModel @Inject constructor(
                 val keywordsDeferred = async {
                     userRepository.getUserKeywords(userId = userId).getOrDefault(KeywordListModel())
                 }
-
-                ProfileUiState(
-                    userId = userId,
-                    profile = profileDeferred.await(),
-                    keywords = keywordsDeferred.await()
-                )
-            }.onSuccess { combinedState ->
-                _uiState.update { UiState.Success(combinedState) }
-                getSectionInfo()
-            }
-        }
-    }
-
-    fun getSectionInfo() {
-        viewModelScope.launch {
-            val currentState = (_uiState.value as? UiState.Success)?.data ?: return@launch
-
-            suspendRunCatching {
                 val createdCollectionsDeferred = async {
                     userRepository.getUserCreatedCollections(userId = userId).getOrThrow()
                 }
@@ -78,13 +60,18 @@ class ProfileViewModel @Inject constructor(
                     userRepository.getUserBookmarkedContents(userId = userId).getOrThrow()
                 }
 
-                currentState.copy(
+                ProfileUiState(
+                    userId = userId,
+                    profile = profileDeferred.await(),
+                    keywords = keywordsDeferred.await(),
                     createCollections = createdCollectionsDeferred.await(),
                     savedCollections = bookmarkedCollectionsDeferred.await(),
                     savedContents = savedContentListDeferred.await()
                 )
-            }.onSuccess { updatedState ->
-                _uiState.update { UiState.Success(updatedState) }
+            }.onSuccess { combinedState ->
+                _uiState.update { UiState.Success(combinedState) }
+            }.onFailure {
+                _uiState.update { UiState.Failure }
             }
         }
     }
