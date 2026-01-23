@@ -25,18 +25,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.common.extension.dropShadow
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
+import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
@@ -130,68 +134,82 @@ fun OnboardingContentScreen(
 
             // 검색창 - sticky header (상단에 고정)
             stickyHeader {
-                Column(
-                    modifier =
-                        Modifier
-                            .background(FlintTheme.colors.background)
-                            .dropShadow(
-                                shape = RectangleShape,
-                                color = Color.Black.copy(alpha = 0.25f),
-                                blur = 12.dp,
-                                offsetY = 12.dp,
-                                offsetX = 0.dp,
-                                spread = 0.dp
-                            )
-                            .padding(bottom = 16.dp)
-
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .zIndex(1f)
                 ) {
-                    Text(
-                        text = contentUiState.currentStepQuestion,
-                        color = FlintTheme.colors.gray300,
-                        style = FlintTheme.typography.body2R14,
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(FlintTheme.colors.background)
+                            .padding(bottom = 16.dp)
+                    ) {
+                        Text(
+                            text = contentUiState.currentStepQuestion,
+                            color = FlintTheme.colors.gray300,
+                            style = FlintTheme.typography.body2R14,
+                        )
 
-                    Spacer(modifier = Modifier.height(24.dp))
-                    FlintSearchTextField(
-                        placeholder = "작품 이름",
-                        value = contentUiState.searchKeyword,
-                        onValueChanged = onSearchKeywordChanged,
-                        onSearchAction = onSearchAction,
-                        onClearAction = onClearAction,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(
-                            onSearch = {
-                                keyboardController?.hide()
-                                onSearchAction()
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        FlintSearchTextField(
+                            placeholder = "작품 이름",
+                            value = contentUiState.searchKeyword,
+                            onValueChanged = onSearchKeywordChanged,
+                            onSearchAction = onSearchAction,
+                            onClearAction = onClearAction,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                            keyboardActions = KeyboardActions(
+                                onSearch = {
+                                    keyboardController?.hide()
+                                    onSearchAction()
+                                }
+                            ),
+                        )
+
+                        // 선택된 영화 가로 스크롤
+                        if (contentUiState.selectedContents.isNotEmpty()) {
+                            val lazyListState = rememberLazyListState()
+
+                            // 새로운 아이템이 추가될 때 왼쪽 자동 스크롤
+                            LaunchedEffect(contentUiState.selectedContents.size) {
+                                lazyListState.animateScrollToItem(0)
                             }
-                        ),
-                    )
 
-                    // 선택된 영화 가로 스크롤
-                    if (contentUiState.selectedContents.isNotEmpty()) {
-                        val lazyListState = rememberLazyListState()
-
-                        // 새로운 아이템이 추가될 때 왼쪽 자동 스크롤
-                        LaunchedEffect(contentUiState.selectedContents.size) {
-                            lazyListState.animateScrollToItem(0)
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                        LazyRow(
-                            state = lazyListState,
-                            horizontalArrangement = Arrangement.spacedBy(0.dp),
-                        ) {
-                            items(
-                                items = contentUiState.selectedContents,
-                                key = { it.id }
-                            ) { content ->
-                                SelectedContentItem(
-                                    imageUrl = content.posterUrl,
-                                    onRemoveClick = { onRemoveContent(content) },
-                                )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            LazyRow(
+                                state = lazyListState,
+                                horizontalArrangement = Arrangement.spacedBy(0.dp),
+                            ) {
+                                items(
+                                    items = contentUiState.selectedContents,
+                                    key = { it.id }
+                                ) { content ->
+                                    SelectedContentItem(
+                                        imageUrl = content.posterUrl,
+                                        onRemoveClick = { onRemoveContent(content) },
+                                    )
+                                }
                             }
                         }
                     }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(12.dp)
+                            .align(Alignment.BottomCenter)
+                            .graphicsLayer { translationY = size.height }
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Black.copy(alpha = 0.25f),
+                                        Color.Transparent
+                                    )
+                                )
+                            )
+                    )
                 }
             }
 
@@ -253,11 +271,11 @@ fun OnboardingContentScreen(
             }
         }
 
-        FlintBasicButton(
+        FlintLargeButton(
             text = "다음",
             state = if (contentUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
             onClick = { if (contentUiState.canProceed) { onNextClick() } },
-            contentPadding = PaddingValues(vertical = 13.dp),
+            enabled = contentUiState.canProceed,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 20.dp),

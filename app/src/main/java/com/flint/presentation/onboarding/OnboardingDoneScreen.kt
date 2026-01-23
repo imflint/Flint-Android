@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
-import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
+import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -108,11 +108,10 @@ fun OnboardingDoneScreen(
             )
         }
 
-        FlintBasicButton(
+        FlintLargeButton(
             text = "시작하기",
             state = if (isLoading) FlintButtonState.Disable else FlintButtonState.Able,
             onClick = onStartClick,
-            contentPadding = PaddingValues(vertical = 13.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 20.dp),

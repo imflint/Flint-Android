@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
-import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
+import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.toast.ShowToast
@@ -189,12 +189,11 @@ fun OnboardingProfileScreen(
                 }
             }
 
-            FlintBasicButton(
+            FlintLargeButton(
                 text = "다음",
                 state = if (canProceed) FlintButtonState.Able else FlintButtonState.Disable,
                 onClick = onNextClick,
                 enabled = canProceed,
-                contentPadding = PaddingValues(vertical = 13.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 20.dp),
