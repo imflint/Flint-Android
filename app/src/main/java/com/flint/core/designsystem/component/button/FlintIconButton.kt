@@ -25,6 +25,7 @@ fun FlintIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    contentPadding:  PaddingValues = PaddingValues(10.dp)
 ) {
     FlintBasicButton(
         text = text,
@@ -32,7 +33,7 @@ fun FlintIconButton(
         onClick = onClick,
         enabled = enabled,
         leadingIconRes = iconRes,
-        contentPadding = PaddingValues(10.dp),
+        contentPadding = contentPadding,
         modifier =
             modifier
                 .padding(vertical = 2.dp)

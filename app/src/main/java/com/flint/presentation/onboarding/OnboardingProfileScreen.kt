@@ -1,6 +1,7 @@
 package com.flint.presentation.onboarding
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -31,8 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chattymin.pebble.graphemeLength
 import com.flint.R
-import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
+import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.toast.ShowToast
@@ -164,29 +167,38 @@ fun OnboardingProfileScreen(
                         },
                     )
 
-                    FlintBasicButton(
-                        text = "확인",
-                        state = if (isValid && isFormatValid) FlintButtonState.Able else FlintButtonState.Disable,
-                        onClick = {
-                            keyboardController?.hide()
-                            onCheckNickname()
-                        },
-                        enabled = isValid && isFormatValid,
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-                        modifier = Modifier.fillMaxHeight(),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                if (isValid && isFormatValid) FlintTheme.colors.primary400
+                                else FlintTheme.colors.gray700
+                            )
+                            .clickable(enabled = isValid && isFormatValid) {
+                                keyboardController?.hide()
+                                onCheckNickname()
+                            }
+                            .padding(horizontal = 16.dp, vertical = 10.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = "확인",
+                            color = if (isValid && isFormatValid) FlintTheme.colors.white else FlintTheme.colors.gray400,
+                            style = if (isValid && isFormatValid) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
+                        )
+                    }
                 }
             }
 
-            FlintBasicButton(
-                text = "시작하기",
+            FlintLargeButton(
+                text = "다음",
                 state = if (canProceed) FlintButtonState.Able else FlintButtonState.Disable,
                 onClick = onNextClick,
                 enabled = canProceed,
-                contentPadding = PaddingValues(12.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp),
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
             )
         }
 

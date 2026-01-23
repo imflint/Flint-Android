@@ -232,6 +232,7 @@ fun CollectionCreateScreen(
                             },
                             onClick = { onPublicChanged(false) },
                             modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(start = 8.dp, end = 12.dp, top= 10.dp, bottom = 10.dp)
                         )
                     }
                 }
@@ -305,6 +306,8 @@ fun CollectionCreateScreen(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
+                                .defaultMinSize(minHeight = 80.dp),
+                        contentPadding = PaddingValues(vertical = 28.dp)
                     )
 
                     Spacer(Modifier.height(36.dp))

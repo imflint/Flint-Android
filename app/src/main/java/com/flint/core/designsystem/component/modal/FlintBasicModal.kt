@@ -49,11 +49,6 @@ fun FlintBasicModal(
                         .background(
                             brush = FlintTheme.colors.gradient700,
                             shape = RoundedCornerShape(12.dp),
-                        ).shadow(
-                            elevation = 4.dp,
-                            shape = RoundedCornerShape(12.dp),
-                            ambientColor = Color.Black.copy(alpha = 0.25f),
-                            spotColor = Color.Black.copy(alpha = 0.25f),
                         ).padding(
                             top = 36.dp,
                             start = 16.dp,
@@ -70,14 +65,16 @@ fun FlintBasicModal(
 @Preview(showBackground = true)
 @Composable
 private fun BasicModalPreview() {
-    FlintBasicModal(
-        onDismiss = {},
-        modifier = Modifier.background(Color.White),
-    ) {
-        Text(
-            text = "기본 모달 컨텐츠",
-            style = FlintTypography.body1M16,
-            color = FlintTheme.colors.white,
-        )
+    FlintTheme {
+        FlintBasicModal(
+            onDismiss = {},
+            modifier = Modifier.background(FlintTheme.colors.white),
+        ) {
+            Text(
+                text = "기본 모달 컨텐츠",
+                style = FlintTypography.body1M16,
+                color = FlintTheme.colors.white,
+            )
+        }
     }
 }

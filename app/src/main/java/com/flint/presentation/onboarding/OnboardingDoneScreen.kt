@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
-import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
+import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -58,19 +58,16 @@ fun OnboardingDoneScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .background(color = FlintTheme.colors.background)
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = FlintTheme.colors.background)
     ) {
         FlintBackTopAppbar(
             onClick = onBackClick,
         )
 
         Column(
-            modifier =
-                Modifier
-                    .weight(1f),
+            modifier = Modifier.weight(1f),
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -78,10 +75,9 @@ fun OnboardingDoneScreen(
                 text = "취향이 보이기 시작했어요",
                 color = FlintTheme.colors.primary200,
                 style = FlintTheme.typography.body1R16,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -90,10 +86,9 @@ fun OnboardingDoneScreen(
                 text = "Flint에서 끌리는 콘텐츠를\n만나러 가볼까요?",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -101,23 +96,21 @@ fun OnboardingDoneScreen(
             Image(
                 painter = painterResource(id = R.drawable.img_onboarding_3d),
                 contentDescription = null,
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop,
             )
         }
 
-        FlintBasicButton(
+        FlintLargeButton(
             text = "시작하기",
             state = if (isLoading) FlintButtonState.Disable else FlintButtonState.Able,
             onClick = onStartClick,
-            contentPadding = PaddingValues(vertical = 14.dp),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp),
-        )
+            enabled = !isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 20.dp),
+
+            )
     }
 }
 
