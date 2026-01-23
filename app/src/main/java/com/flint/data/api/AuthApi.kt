@@ -4,8 +4,10 @@ import com.flint.data.dto.auth.request.SignupRequestDto
 import com.flint.data.dto.auth.request.SocialVerifyRequestDto
 import com.flint.data.dto.auth.response.SignupResponseDto
 import com.flint.data.dto.auth.response.SocialVerifyResponseDto
+import com.flint.data.dto.auth.response.WithdrawResponseDto
 import com.flint.data.dto.base.BaseResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.POST
 
 interface AuthApi {
@@ -18,4 +20,7 @@ interface AuthApi {
     suspend fun socialVerify(
         @Body requestDto: SocialVerifyRequestDto,
     ): BaseResponse<SocialVerifyResponseDto>
+
+    @DELETE("/api/v1/auth/withdraw")
+    suspend fun withdraw(): WithdrawResponseDto
 }

@@ -38,4 +38,9 @@ class AuthRepository @Inject constructor(
             result
         }
 
+    suspend fun withdraw(): Result<Unit> =
+        suspendRunCatching {
+            api.withdraw()
+            preferencesManager.clearAll()
+        }
 }

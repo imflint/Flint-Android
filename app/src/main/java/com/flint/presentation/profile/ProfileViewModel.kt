@@ -8,9 +8,11 @@ import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.core.navigation.Route
 import com.flint.domain.model.user.KeywordListModel
+import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
+import com.flint.presentation.profile.uistate.ProfileSectionData
 import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -27,47 +29,40 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository
 ) : ViewModel() {
 
     val userId = savedStateHandle.toRoute<Route.Profile>().userId
 
-    private val _uiState = MutableStateFlow<UiState<ProfileUiState>>(
-        UiState.Empty
-    )
-    val uiState: StateFlow<UiState<ProfileUiState>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ProfileUiState(userId = userId))
+    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<ProfileSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
     fun getProfile() {
         viewModelScope.launch {
-            suspendRunCatching {
-                val profileDeferred = async {
-                    userRepository.getUserProfile(userId = userId).getOrThrow()
+            userRepository.getUserProfile(userId = userId)
+                .onSuccess { profile ->
+                    _uiState.update { it.copy(profile = profile) }
+                    loadSectionData()
                 }
-                val keywordsDeferred = async {
-                    userRepository.getUserKeywords(userId = userId).getOrDefault(KeywordListModel())
+                .onFailure {
+                    Timber.e(it)
                 }
-
-                ProfileUiState(
-                    userId = userId,
-                    profile = profileDeferred.await(),
-                    keywords = keywordsDeferred.await()
-                )
-            }.onSuccess { combinedState ->
-                _uiState.update { UiState.Success(combinedState) }
-                getSectionInfo()
-            }
         }
     }
 
-    fun getSectionInfo() {
+    private fun loadSectionData() {
         viewModelScope.launch {
-            val currentState = (_uiState.value as? UiState.Success)?.data ?: return@launch
+            _uiState.update { it.copy(sectionData = UiState.Loading) }
 
             suspendRunCatching {
+                val keywordsDeferred = async {
+                    userRepository.getUserKeywords(userId = userId).getOrDefault(KeywordListModel())
+                }
                 val createdCollectionsDeferred = async {
                     userRepository.getUserCreatedCollections(userId = userId).getOrThrow()
                 }
@@ -78,13 +73,17 @@ class ProfileViewModel @Inject constructor(
                     userRepository.getUserBookmarkedContents(userId = userId).getOrThrow()
                 }
 
-                currentState.copy(
+                ProfileSectionData(
+                    keywords = keywordsDeferred.await(),
                     createCollections = createdCollectionsDeferred.await(),
                     savedCollections = bookmarkedCollectionsDeferred.await(),
                     savedContents = savedContentListDeferred.await()
                 )
-            }.onSuccess { updatedState ->
-                _uiState.update { UiState.Success(updatedState) }
+            }.onSuccess { sectionData ->
+                _uiState.update { it.copy(sectionData = UiState.Success(sectionData)) }
+            }.onFailure {
+                _uiState.update { it.copy(sectionData = UiState.Failure) }
+                Timber.e(it)
             }
         }
     }
@@ -93,6 +92,16 @@ class ProfileViewModel @Inject constructor(
         contentRepository.getOttListPerContent(contentId)
             .onSuccess {
                 _sideEffect.emit(ProfileSideEffect.ShowOttListBottomSheet(it))
+            }
+            .onFailure {
+                Timber.e(it)
+            }
+    }
+
+    fun easterEggWithdraw() = viewModelScope.launch {
+        authRepository.withdraw()
+            .onSuccess {
+                _sideEffect.emit(ProfileSideEffect.WithdrawSuccess)
             }
             .onFailure {
                 Timber.e(it)

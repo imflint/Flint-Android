@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,11 +49,10 @@ fun ProfileKeywordChip(
 private fun ProfileSmallKeywordChip(keyword: String) {
     Box(
         Modifier
-            .widthIn(min = 64.dp)
             .draw9Patch(LocalContext.current, R.drawable.bg_tag_gray)
             .padding(
                 vertical = 8.dp,
-                horizontal = 7.dp,
+                horizontal = 16.dp,
             ),
     ) {
         Text(

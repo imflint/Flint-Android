@@ -2,6 +2,7 @@ package com.flint.core.designsystem.component.textfield
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,7 +50,8 @@ fun CollectionInputTextField(
             maxLines = maxLines,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            modifier = modifier,
+            paddingValues = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
+            modifier = modifier.heightIn(min = 40.dp),
         )
 
         if (!isShowLengthTitle) return

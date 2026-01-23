@@ -13,6 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -23,8 +28,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
+import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
+
+private const val EASTER_EGG_CLICK_COUNT = 5
+private const val EASTER_EGG_CLICK_TIMEOUT = 3000L
 
 @Composable
 fun ProfileTopSection(
@@ -32,13 +41,17 @@ fun ProfileTopSection(
     profileUrl: String,
     isFliner: Boolean,
     modifier: Modifier = Modifier,
+    onEasterEggWithdraw: () -> Unit = {},
 ) {
+    var clickCount by remember { mutableIntStateOf(0) }
+    var lastClickTime by remember { mutableLongStateOf(0L) }
+
     Column {
         Box(
             modifier =
                 modifier
                     .fillMaxWidth()
-                    .height(260.dp)
+                    .height(306.dp)
                     .paint(
                         painter = painterResource(id = R.drawable.img_collection_bg2),
                         contentScale = ContentScale.FillBounds,
@@ -83,7 +96,23 @@ fun ProfileTopSection(
                     Modifier
                         .offset(x = 13.dp, y = (-42).dp)
                         .align(Alignment.BottomStart)
-                        .size(128.dp),
+                        .size(128.dp)
+                        .noRippleClickable(
+                            onClick = {
+                                val currentTime = System.currentTimeMillis()
+                                if (currentTime - lastClickTime > EASTER_EGG_CLICK_TIMEOUT) {
+                                    clickCount = 1
+                                } else {
+                                    clickCount++
+                                }
+                                lastClickTime = currentTime
+
+                                if (clickCount >= EASTER_EGG_CLICK_COUNT) {
+                                    clickCount = 0
+                                    onEasterEggWithdraw()
+                                }
+                            }
+                        )
             )
         }
     }

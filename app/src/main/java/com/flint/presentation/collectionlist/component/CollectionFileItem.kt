@@ -61,7 +61,9 @@ fun CollectionFileItem(
 
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.width(154.dp),
+            modifier = Modifier
+                .width(154.dp)
+                .padding(horizontal = 8.dp),
         ) {
             Text(
                 text = collection.title,
