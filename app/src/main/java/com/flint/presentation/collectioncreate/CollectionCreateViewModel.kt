@@ -55,15 +55,15 @@ class CollectionCreateViewModel @Inject constructor(
         viewModelScope.launch {
             val requestModel = CollectionCreateRequestModel(
                 imageUrl = "",
-                title = uiState.value.title.ifBlank { "더미 컬렉션 제목" },
-                description = uiState.value.description.ifBlank { "더미 설명" },
+                title = uiState.value.title,
+                description = uiState.value.description.ifBlank { "" },
                 isPublic = uiState.value.isPublic ?: true,
                 contentList = uiState.value.selectedContents.map { content ->
                     val detail = uiState.value.contentDetailsMap[content.id] ?: ContentDetail()
                     CollectionCreateContentModel(
                         contentId = content.id,
                         isSpoiler = detail.isSpoiler,
-                        reason = detail.reason.ifBlank { "추천합니다" },
+                        reason = detail.reason.ifBlank { "" },
                     )
                 },
             )

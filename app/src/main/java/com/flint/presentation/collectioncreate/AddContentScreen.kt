@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,6 +87,8 @@ fun AddContentScreen(
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     val lazyRowState = rememberLazyListState()
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     LaunchedEffect(selectedContents.size) {
         if (selectedContents.isNotEmpty()) {
             lazyRowState.scrollToItem(selectedContents.size - 1)
@@ -120,9 +123,7 @@ fun AddContentScreen(
             onClearAction = {},
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
-                onSearch = {
-                    // TODO: 검색 진행
-                }
+                onSearch = { keyboardController?.hide() }
             ),
             modifier = Modifier
                 .fillMaxWidth()

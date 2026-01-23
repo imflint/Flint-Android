@@ -253,7 +253,7 @@ fun CollectionCreateScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "최대 10개까지 추가할 수 있어요",
+                            text = "작품을 2개 이상 추가해주세요.",
                             color = FlintTheme.colors.gray200,
                             style = FlintTheme.typography.body2R14,
                         )
@@ -314,6 +314,7 @@ fun CollectionCreateScreen(
                 }
             }
         }
+
         FlintLargeButton(
             text = "완료",
             state = if (uiState.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
