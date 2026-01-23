@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -153,9 +153,15 @@ private fun ExplorePageItem(
         Box(
             modifier =
                 Modifier
-                    .background(brush = FlintTheme.colors.imgBlur)
-                    .fillMaxWidth()
-                    .aspectRatio(389f / 400f),
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF121212).copy(0f),
+                                Color(0xFF121212).copy(1f)
+                            ),
+                        )
+                    )
+                    .fillMaxSize(),
         )
 
         Column(modifier.padding(horizontal = 16.dp)) {
