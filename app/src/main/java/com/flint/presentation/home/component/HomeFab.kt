@@ -28,7 +28,7 @@ fun HomeFab(
             modifier
                 .clip(CircleShape)
                 .background(FlintTheme.colors.gradient400Secondary)
-                .size(48.dp)
+                .size(56.dp)
                 .clickable { onClick() },
         contentAlignment = Alignment.Center,
     ) {
