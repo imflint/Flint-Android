@@ -252,7 +252,7 @@ fun CollectionCreateScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "최대 10개까지 추가할 수 있어요",
+                            text = "작품을 2개 이상 추가해주세요.",
                             color = FlintTheme.colors.gray200,
                             style = FlintTheme.typography.body2R14,
                         )
@@ -305,7 +305,8 @@ fun CollectionCreateScreen(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .defaultMinSize(minHeight = 80.dp),
+                                .defaultMinSize(minHeight = 80.dp)
+//                                .height(100.dp),
                     )
 
                     Spacer(Modifier.height(36.dp))
