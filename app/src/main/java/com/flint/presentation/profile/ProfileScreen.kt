@@ -84,7 +84,12 @@ fun ProfileRoute(
                     showOttListBottomSheet = true
                 }
                 is ProfileSideEffect.WithdrawSuccess -> {
-                    (context.findActivity() as? MainActivity)?.restartApplication()
+                    val activity = context.findActivity() as? MainActivity
+                    if (activity != null) {
+                        activity.restartApplication()
+                    } else {
+                        //TODO: Fallback: 앱 재시작이 불가능할 경우, 다른 처리 로직을 여기에 작성
+                    }
                 }
             }
         }
