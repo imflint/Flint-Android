@@ -81,7 +81,9 @@ fun ProfileRoute(
             when (sideEffect) {
                 is ProfileSideEffect.ShowOttListBottomSheet -> {
                     ottListModel = sideEffect.ottListModel
-                    showOttListBottomSheet = true
+                    if (ottListModel.otts.isNotEmpty()) {
+                        showOttListBottomSheet = true
+                    }
                 }
                 is ProfileSideEffect.WithdrawSuccess -> {
                     val activity = context.findActivity() as? MainActivity
