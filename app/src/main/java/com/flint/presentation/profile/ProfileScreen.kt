@@ -139,6 +139,9 @@ private fun ProfileScreen(
     onEasterEggWithdraw: () -> Unit = {},
 ) {
     val userName = uiState.profile.nickname
+    var topHeightPx by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+    val topHeightDp = with(density) { topHeightPx.toDp() }
 
     Box(
         modifier = modifier
@@ -150,13 +153,19 @@ private fun ProfileScreen(
             contentPadding = PaddingValues(bottom = 70.dp),
         ) {
             item {
-                with(uiState.profile) {
-                    ProfileTopSection(
-                        userName = nickname,
-                        profileUrl = profileImageUrl.orEmpty(),
-                        isFliner = isFliner,
-                        onEasterEggWithdraw = onEasterEggWithdraw,
-                    )
+                Box(
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        topHeightPx = coordinates.size.height
+                    }
+                ) {
+                    with(uiState.profile) {
+                        ProfileTopSection(
+                            userName = nickname,
+                            profileUrl = profileImageUrl.orEmpty(),
+                            isFliner = isFliner,
+                            onEasterEggWithdraw = onEasterEggWithdraw,
+                        )
+                    }
                 }
             }
 
@@ -164,7 +173,9 @@ private fun ProfileScreen(
                 is UiState.Loading -> {
                     item {
                         FlintLoadingIndicator(
-                            modifier = Modifier.fillParentMaxHeight(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = topHeightDp / 2)
                         )
                     }
                 }
