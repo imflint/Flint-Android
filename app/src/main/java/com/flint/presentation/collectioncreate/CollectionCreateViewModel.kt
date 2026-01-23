@@ -55,7 +55,7 @@ class CollectionCreateViewModel @Inject constructor(
         viewModelScope.launch {
             val requestModel = CollectionCreateRequestModel(
                 imageUrl = "",
-                title = uiState.value.title.ifBlank { "" },
+                title = uiState.value.title,
                 description = uiState.value.description.ifBlank { "" },
                 isPublic = uiState.value.isPublic ?: true,
                 contentList = uiState.value.selectedContents.map { content ->

@@ -305,14 +305,13 @@ fun CollectionCreateScreen(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .defaultMinSize(minHeight = 80.dp)
-//                                .height(100.dp),
                     )
 
                     Spacer(Modifier.height(36.dp))
                 }
             }
         }
+
         FlintLargeButton(
             text = "완료",
             state = if (uiState.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
