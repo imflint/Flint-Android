@@ -76,7 +76,7 @@ fun FlintBasicButton(
         Text(
             text = text,
             color = contentColor,
-            style = if (enabled) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
+            style = if (state == FlintButtonState.Able) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
         )
     }
 }

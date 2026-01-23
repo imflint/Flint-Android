@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,7 +39,7 @@ import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintIconButton
 import com.flint.core.designsystem.component.button.FlintLargeButton
-import com.flint.core.designsystem.component.textfield.FlintLongTextField
+import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
@@ -141,14 +142,15 @@ fun CollectionCreateScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    FlintLongTextField(
+                    CollectionInputTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.title,
                         placeholder = "컬렉션의 제목을 입력해주세요.",
-                        singleLine = true,
                         onValueChanged = onTitleChanged,
                         maxLength = 20,
-                        height = 40.dp,
+                        singleLine = true,
+                        maxLines = 1,
+                        isShowLengthTitle = true,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next
                         )
@@ -175,13 +177,17 @@ fun CollectionCreateScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    FlintLongTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                    CollectionInputTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 104.dp),
                         value = uiState.description,
                         placeholder = "컬렉션의 소개를 작성해주세요.",
                         onValueChanged = onDescriptionChanged,
                         maxLength = 200,
-                        height = 104.dp,
+                        singleLine = false,
+                        maxLines = Int.MAX_VALUE,
+                        isShowLengthTitle = true,
                         keyboardActions = KeyboardActions(
                             onDone = {},
                         ),

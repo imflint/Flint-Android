@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,10 +17,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.designsystem.component.textfield.FlintBasicTextField
+import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.component.toggle.FlintBasicToggle
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -44,8 +41,6 @@ fun CollectionCreateContentItemList(
     selectedReason: String,
     onSelectedReasonChanged: (String) -> Unit = {},
 ) {
-
-
     Column(
         modifier = Modifier.background(color = FlintTheme.colors.background),
     ) {
@@ -107,23 +102,17 @@ fun CollectionCreateContentItemList(
 
         Spacer(Modifier.height(4.dp))
 
-        FlintBasicTextField(
-            placeholder = "이 작품의 매력 포인트를 적어주세요.",
+        CollectionInputTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 104.dp),
             value = selectedReason,
-            onValueChange = onSelectedReasonChanged,
-            modifier = Modifier.fillMaxWidth(),
-            height = 108.dp,
+            placeholder = "이 작품의 매력 포인트를 적어주세요.",
+            onValueChanged = onSelectedReasonChanged,
             singleLine = false,
+            maxLength = Int.MAX_VALUE,
             maxLines = Int.MAX_VALUE,
-            textStyle = FlintTheme.typography.body1R16,
-            keyboardActions = KeyboardActions(
-                onDone = {},
-            ),
-            paddingValues =
-                PaddingValues(
-                    horizontal = 12.dp,
-                    vertical = 10.dp,
-                ),
+            isShowLengthTitle = false
         )
     }
 }

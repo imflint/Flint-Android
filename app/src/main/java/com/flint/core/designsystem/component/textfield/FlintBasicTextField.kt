@@ -43,7 +43,6 @@ fun FlintBasicTextField(
     singleLine: Boolean = true,
     maxLines: Int = 1,
     maxLength: Int = Int.MAX_VALUE,
-    height: Dp = 40.dp,
     radius: Dp = 8.dp,
     textStyle: TextStyle = FlintTheme.typography.body1R16,
     backgroundColor: Color = FlintTheme.colors.gray800,
@@ -59,7 +58,6 @@ fun FlintBasicTextField(
     Box(
         modifier =
             modifier
-                .height(height)
                 .clip(RoundedCornerShape(radius))
                 .background(backgroundColor)
                 .border(
@@ -123,7 +121,7 @@ private fun BasicTextFieldPreview() {
         var text by remember { mutableStateOf("") }
 
         FlintBasicTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(40.dp),
             placeholder = "PlaceHolder",
             value = text,
             onValueChange = { text = it },
@@ -138,14 +136,16 @@ private fun FlintTextFieldCounterPreview() {
         var text by remember { mutableStateOf("") }
 
         FlintBasicTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp),
             placeholder = "닉네임",
             value = text,
             maxLength = 20,
             onValueChange = { text = it },
             trailingContent = {
                 Text(
-                    text = "${text.length}/20",
+                    text = "${text.graphemeLength}/20",
                     style = FlintTheme.typography.body2R14,
                     color = FlintTheme.colors.gray300,
                 )

@@ -3,6 +3,7 @@ package com.flint.core.designsystem.component.textfield
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
@@ -36,12 +37,11 @@ fun FlintSearchTextField(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     FlintBasicTextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().height(48.dp),
         placeholder = placeholder,
         value = value,
         onValueChange = onValueChanged,
         radius = 36.dp,
-        height = 44.dp,
         maxLines = 1,
         paddingValues = PaddingValues(start = 16.dp),
         keyboardOptions = keyboardOptions,

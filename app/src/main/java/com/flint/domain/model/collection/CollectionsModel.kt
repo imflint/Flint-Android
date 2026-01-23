@@ -8,9 +8,9 @@ data class CollectionsModel(
 ) {
     data class Collection(
         val collectionId: String,
-        val description: String,
+        val contentDescription: String,
         val imageUrl: String,
-        val title: String,
+        val contentTitle: String,
     )
 
     data class Meta(

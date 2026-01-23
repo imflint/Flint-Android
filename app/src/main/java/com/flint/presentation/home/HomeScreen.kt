@@ -67,7 +67,10 @@ fun HomeRoute(
             when (sideEffect) {
                 is HomeSideEffect.ShowOttListBottomSheet -> {
                     ottListModel = sideEffect.ottListModel
-                    showOttListBottomSheet = true
+
+                    if(ottListModel.otts.isNotEmpty()) {
+                        showOttListBottomSheet = true
+                    }
                 }
             }
         }
