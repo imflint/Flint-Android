@@ -49,7 +49,7 @@ fun CollectionCreateContentBookmark(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(color = FlintTheme.colors.background)
+                .background(color = Color.Transparent)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.Top,
     ) {
