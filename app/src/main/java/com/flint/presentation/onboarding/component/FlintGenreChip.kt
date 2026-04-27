@@ -1,4 +1,4 @@
-package com.flint.core.designsystem.component.button
+package com.flint.presentation.onboarding.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
