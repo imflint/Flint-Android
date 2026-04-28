@@ -32,7 +32,6 @@ fun FlintGenreChip(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 9.dp),
 ) {
     val shape = CircleShape
@@ -56,7 +55,7 @@ fun FlintGenreChip(
                         this
                 }
                 .background(color = backgroundColor, shape = shape)
-                .noRippleClickable(enabled = enabled, onClick = onClick)
+                .noRippleClickable(onClick = onClick)
                 .padding(contentPadding),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
