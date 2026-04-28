@@ -44,7 +44,10 @@ fun FlintGenreChip(
 
     val contentColor = FlintTheme.colors.white
 
-    Row(
+    Text(
+        text = text,
+        color = contentColor,
+        style = FlintTheme.typography.body2M14,
         modifier =
             modifier
                 .clip(shape)
@@ -57,15 +60,7 @@ fun FlintGenreChip(
                 .background(color = backgroundColor, shape = shape)
                 .noRippleClickable(onClick = onClick)
                 .padding(contentPadding),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = text,
-            color = contentColor,
-            style = FlintTheme.typography.body2M14,
-        )
-    }
+    )
 }
 
 @Preview
