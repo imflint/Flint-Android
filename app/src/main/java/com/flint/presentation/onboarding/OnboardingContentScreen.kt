@@ -51,6 +51,7 @@ import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
+import com.flint.presentation.onboarding.component.FlintGenreChip
 import com.flint.presentation.onboarding.component.OnboardingContentItem
 import com.flint.presentation.onboarding.component.StepProgressBar
 
@@ -78,6 +79,7 @@ fun OnboardingContentRoute(
         onClearAction = viewModel::loadInitialContents,
         onContentClick = viewModel::toggleContentSelection,
         onRemoveContent = viewModel::toggleContentSelection,
+        onGenreClick = viewModel::selectGenre,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -93,6 +95,7 @@ fun OnboardingContentScreen(
     onClearAction: () -> Unit,
     onContentClick: (SearchContentItemModel) -> Unit,
     onRemoveContent: (SearchContentItemModel) -> Unit,
+    onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -148,13 +151,22 @@ fun OnboardingContentScreen(
                             .background(FlintTheme.colors.background)
                             .padding(bottom = 16.dp)
                     ) {
-                        Text(
-                            text = contentUiState.currentStepQuestion,
-                            color = FlintTheme.colors.gray300,
-                            style = FlintTheme.typography.body2R14,
-                        )
-
-                        Spacer(modifier = Modifier.height(24.dp))
+                        // 장르 칩 가로 스크롤
+                        LazyRow(
+                            modifier = Modifier.height(48.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(end = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            items(OnboardingContentUiState.GENRES) { genre ->
+                                val isSelected = genre in contentUiState.selectedGenres
+                                FlintGenreChip(
+                                    text = genre,
+                                    isSelected = isSelected,
+                                    onClick = { onGenreClick(genre) },
+                                )
+                            }
+                        }
 
                         FlintSearchTextField(
                             placeholder = "작품 이름",
@@ -305,6 +317,7 @@ private fun OnboardingContentScreenListPreview() {
             onClearAction = {},
             onContentClick = {},
             onRemoveContent = {},
+            onGenreClick = {},
         )
     }
 }
@@ -329,6 +342,39 @@ private fun OnboardingContentScreenEmptyPreview() {
             onClearAction = {},
             onContentClick = {},
             onRemoveContent = {},
+            onGenreClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "장르 칩 인터랙티브")
+@Composable
+private fun OnboardingContentScreenGenreInteractivePreview() {
+    var selectedGenres by remember { mutableStateOf(setOf<String>()) }
+
+    FlintTheme {
+        OnboardingContentScreen(
+            nickname = "안비",
+            contentUiState = OnboardingContentUiState(
+                searchResults = UiState.Success(SearchContentListModel.FakeList),
+                selectedGenres = selectedGenres.toList().let {
+                    kotlinx.collections.immutable.persistentListOf(*it.toTypedArray())
+                },
+            ),
+            onBackClick = {},
+            onNextClick = {},
+            onSearchKeywordChanged = {},
+            onSearchAction = {},
+            onClearAction = {},
+            onContentClick = {},
+            onRemoveContent = {},
+            onGenreClick = { genre ->
+                selectedGenres = if (genre in selectedGenres) {
+                    selectedGenres - genre
+                } else {
+                    selectedGenres + genre
+                }
+            },
         )
     }
 }
