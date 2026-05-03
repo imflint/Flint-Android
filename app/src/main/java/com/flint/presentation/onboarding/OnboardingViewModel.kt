@@ -121,8 +121,6 @@ class OnboardingViewModel
             }
             currentState.copy(selectedGenres = newSelectedGenres)
         }
-        val keyword = _contentUiState.value.searchKeyword
-        getSearchContentList(keyword.ifEmpty { null })
     }
 
     private fun getSearchContentList(keyword: String?) {
