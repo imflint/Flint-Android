@@ -59,7 +59,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
             OnboardingContentRoute(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
-                navigateToOnboardingOtt = navController::navigateToOnboardingOtt,
+                navigateToOnboardingDone = navController::navigateToOnboardingDone,
                 viewModel = sharedViewModel,
                 )
         }

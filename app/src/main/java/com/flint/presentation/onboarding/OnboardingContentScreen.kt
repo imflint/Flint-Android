@@ -59,7 +59,7 @@ import com.flint.presentation.onboarding.component.StepProgressBar
 @Composable
 fun OnboardingContentRoute(
     paddingValues: PaddingValues,
-    navigateToOnboardingOtt: () -> Unit,
+    navigateToOnboardingDone: () -> Unit,
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
@@ -74,7 +74,7 @@ fun OnboardingContentRoute(
         nickname = profileUiState.nickname,
         contentUiState = contentUiState,
         onBackClick = navigateUp,
-        onNextClick = navigateToOnboardingOtt,
+        onNextClick = navigateToOnboardingDone,
         onSearchKeywordChanged = viewModel::updateSearchKeyword,
         onSearchAction = viewModel::searchContents,
         onClearAction = viewModel::loadInitialContents,
