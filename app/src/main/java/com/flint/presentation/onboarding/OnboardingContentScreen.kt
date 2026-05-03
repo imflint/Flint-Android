@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -153,9 +154,21 @@ fun OnboardingContentScreen(
                     ) {
                         // 장르 칩 가로 스크롤
                         LazyRow(
-                            modifier = Modifier.height(48.dp),
+                            modifier = Modifier
+                                .height(48.dp)
+                                .layout { measurable, constraints ->
+                                    val sidePadding = 16.dp.roundToPx()
+                                    val placeable = measurable.measure(
+                                        constraints.copy(
+                                            maxWidth = constraints.maxWidth + sidePadding * 2,
+                                        ),
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.place(-sidePadding, 0)
+                                    }
+                                },
+                            contentPadding = PaddingValues(start = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(end = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             items(OnboardingContentUiState.GENRES) { genre ->
@@ -195,6 +208,18 @@ fun OnboardingContentScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             LazyRow(
                                 state = lazyListState,
+                                modifier = Modifier.layout { measurable, constraints ->
+                                    val sidePadding = 16.dp.roundToPx()
+                                    val placeable = measurable.measure(
+                                        constraints.copy(
+                                            maxWidth = constraints.maxWidth + sidePadding * 2,
+                                        ),
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.place(-sidePadding, 0)
+                                    }
+                                },
+                                contentPadding = PaddingValues(start = 16.dp),
                                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                             ) {
                                 items(
