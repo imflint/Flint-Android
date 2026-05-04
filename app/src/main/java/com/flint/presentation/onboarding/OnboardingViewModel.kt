@@ -111,6 +111,18 @@ class OnboardingViewModel
         getSearchContentList(keyword.ifEmpty { null })
     }
 
+    fun selectGenre(genre: String) {
+        _contentUiState.update { currentState ->
+            val current = currentState.selectedGenres
+            val newSelectedGenres = if (genre in current) {
+                current.filterNot { it == genre }.toImmutableList()
+            } else {
+                (current + genre).toImmutableList()
+            }
+            currentState.copy(selectedGenres = newSelectedGenres)
+        }
+    }
+
     private fun getSearchContentList(keyword: String?) {
         viewModelScope.launch {
             _contentUiState.update { it.copy(searchResults = UiState.Loading) }

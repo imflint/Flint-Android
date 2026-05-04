@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,13 +52,14 @@ import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
+import com.flint.presentation.onboarding.component.FlintGenreChip
 import com.flint.presentation.onboarding.component.OnboardingContentItem
 import com.flint.presentation.onboarding.component.StepProgressBar
 
 @Composable
 fun OnboardingContentRoute(
     paddingValues: PaddingValues,
-    navigateToOnboardingOtt: () -> Unit,
+    navigateToOnboardingDone: () -> Unit,
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
@@ -72,12 +74,13 @@ fun OnboardingContentRoute(
         nickname = profileUiState.nickname,
         contentUiState = contentUiState,
         onBackClick = navigateUp,
-        onNextClick = navigateToOnboardingOtt,
+        onNextClick = navigateToOnboardingDone,
         onSearchKeywordChanged = viewModel::updateSearchKeyword,
         onSearchAction = viewModel::searchContents,
         onClearAction = viewModel::loadInitialContents,
         onContentClick = viewModel::toggleContentSelection,
         onRemoveContent = viewModel::toggleContentSelection,
+        onGenreClick = viewModel::selectGenre,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -93,6 +96,7 @@ fun OnboardingContentScreen(
     onClearAction: () -> Unit,
     onContentClick: (SearchContentItemModel) -> Unit,
     onRemoveContent: (SearchContentItemModel) -> Unit,
+    onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -148,13 +152,34 @@ fun OnboardingContentScreen(
                             .background(FlintTheme.colors.background)
                             .padding(bottom = 16.dp)
                     ) {
-                        Text(
-                            text = contentUiState.currentStepQuestion,
-                            color = FlintTheme.colors.gray300,
-                            style = FlintTheme.typography.body2R14,
-                        )
-
-                        Spacer(modifier = Modifier.height(24.dp))
+                        // 장르 칩 가로 스크롤
+                        LazyRow(
+                            modifier = Modifier
+                                .height(48.dp)
+                                .layout { measurable, constraints ->
+                                    val sidePadding = 16.dp.roundToPx()
+                                    val placeable = measurable.measure(
+                                        constraints.copy(
+                                            maxWidth = constraints.maxWidth + sidePadding * 2,
+                                        ),
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.place(-sidePadding, 0)
+                                    }
+                                },
+                            contentPadding = PaddingValues(start = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            items(OnboardingContentUiState.GENRES) { genre ->
+                                val isSelected = genre in contentUiState.selectedGenres
+                                FlintGenreChip(
+                                    text = genre,
+                                    isSelected = isSelected,
+                                    onClick = { onGenreClick(genre) },
+                                )
+                            }
+                        }
 
                         FlintSearchTextField(
                             placeholder = "작품 이름",
@@ -183,6 +208,18 @@ fun OnboardingContentScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             LazyRow(
                                 state = lazyListState,
+                                modifier = Modifier.layout { measurable, constraints ->
+                                    val sidePadding = 16.dp.roundToPx()
+                                    val placeable = measurable.measure(
+                                        constraints.copy(
+                                            maxWidth = constraints.maxWidth + sidePadding * 2,
+                                        ),
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.place(-sidePadding, 0)
+                                    }
+                                },
+                                contentPadding = PaddingValues(start = 16.dp),
                                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                             ) {
                                 items(
@@ -305,6 +342,7 @@ private fun OnboardingContentScreenListPreview() {
             onClearAction = {},
             onContentClick = {},
             onRemoveContent = {},
+            onGenreClick = {},
         )
     }
 }
@@ -329,6 +367,39 @@ private fun OnboardingContentScreenEmptyPreview() {
             onClearAction = {},
             onContentClick = {},
             onRemoveContent = {},
+            onGenreClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "장르 칩 인터랙티브")
+@Composable
+private fun OnboardingContentScreenGenreInteractivePreview() {
+    var selectedGenres by remember { mutableStateOf(setOf<String>()) }
+
+    FlintTheme {
+        OnboardingContentScreen(
+            nickname = "안비",
+            contentUiState = OnboardingContentUiState(
+                searchResults = UiState.Success(SearchContentListModel.FakeList),
+                selectedGenres = selectedGenres.toList().let {
+                    kotlinx.collections.immutable.persistentListOf(*it.toTypedArray())
+                },
+            ),
+            onBackClick = {},
+            onNextClick = {},
+            onSearchKeywordChanged = {},
+            onSearchAction = {},
+            onClearAction = {},
+            onContentClick = {},
+            onRemoveContent = {},
+            onGenreClick = { genre ->
+                selectedGenres = if (genre in selectedGenres) {
+                    selectedGenres - genre
+                } else {
+                    selectedGenres + genre
+                }
+            },
         )
     }
 }
