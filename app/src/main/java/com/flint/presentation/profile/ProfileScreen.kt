@@ -124,9 +124,6 @@ fun ProfileRoute(
         OttListBottomSheet(
             ottList = ottListModel,
             onDismiss = { showOttListBottomSheet = false },
-            onMoveClick = { url ->
-                uriHandler.openUri(url)
-            },
             sheetState = sheetState,
         )
     }
