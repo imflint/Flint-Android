@@ -1,9 +1,11 @@
 package com.flint.presentation.home.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,12 +27,21 @@ fun HomeBanner(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(270.dp)
+                .height(230.dp)
                 .paint(
-                    painter = painterResource(id = R.drawable.img_collection_bg2),
+                    painter = painterResource(id = R.drawable.img_home_banner),
                     contentScale = ContentScale.FillBounds,
                 ),
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.img_textlogo),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(top = 54.dp)
+                .width(90.dp)
+                .height(20.dp)
+        )
+
         Text(
             text = "반가워요, $userName 님\n오늘은 어떤 작품이 끌리세요?",
             style = FlintTheme.typography.head1Sb22,
@@ -38,7 +49,7 @@ fun HomeBanner(
             modifier =
                 Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = 16.dp, bottom = 30.dp),
+                    .padding(start = 16.dp, bottom = 20.dp),
         )
     }
 }

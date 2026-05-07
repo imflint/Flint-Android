@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
 import com.flint.presentation.home.component.HomeRecentCollectionEmpty
+import com.flint.presentation.home.component.HomeRecommendCollectionList
 import com.flint.presentation.home.sideeffect.HomeSideEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -149,10 +151,6 @@ private fun HomeScreen(
             contentPadding = PaddingValues(bottom = 20.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
-            stickyHeader {
-                FlintLogoTopAppbar()
-            }
-
             item {
                 Spacer(Modifier.height(5.dp))
 
@@ -164,11 +162,7 @@ private fun HomeScreen(
             item {
                 Spacer(Modifier.height(48.dp))
 
-                CollectionSection(
-                    title = "Fliner의 추천 컬렉션을 만나보세요",
-                    description = "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요",
-                    isAllVisible = false,
-                    onAllClick = {},
+                HomeRecommendCollectionList(
                     collectionListModel = recommendCollectionModelList,
                     onItemClick = onRecommendCollectionItemClick,
                 )
@@ -194,8 +188,8 @@ private fun HomeScreen(
                     HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)
                 } else {
                     CollectionSection(
-                        title = "눈여겨보고 있는 컬렉션",
-                        description = "${userName}님이 최근 살펴본 컬렉션이에요",
+                        title = "인기 컬렉션",
+                        description = "사람들이 눈여겨보는 컬렉션들이에요",
                         isAllVisible = true,
                         onAllClick = onRecentCollectionAllClick,
                         collectionListModel = recentCollectionModelList,
