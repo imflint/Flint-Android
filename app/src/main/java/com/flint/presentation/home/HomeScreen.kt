@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +28,6 @@ import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
-import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
@@ -37,7 +35,6 @@ import com.flint.domain.model.ott.OttListModel
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
-import com.flint.presentation.home.component.HomeRecentCollectionEmpty
 import com.flint.presentation.home.component.HomeRecommendCollectionList
 import com.flint.presentation.home.sideeffect.HomeSideEffect
 
@@ -82,24 +79,21 @@ fun HomeRoute(
         is UiState.Success -> {
             val recommendedCollectionList = (uiState.recommendedCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
             val bookmarkedContentList = (uiState.bookmarkedContentListLoadState as? UiState.Success)?.data ?: BookmarkedContentListModel()
+            // TODO 종우 recent -> famous
             val recentCollectionList = (uiState.recentCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
 
             HomeScreen(
                 userName = uiState.userName,
                 recommendCollectionModelList = recommendedCollectionList,
-                recentCollectionModelList = recentCollectionList,
+                famousCollectionModelList = recentCollectionList,
                 savedContentModelList = bookmarkedContentList,
                 navigateToCollectionCreate = {
                     navigateToCollectionCreate()
                 },
-                navigateToExplore = {
-                    // TODO navigate to explore
-                    navigateToExplore()
-                },
-                onRecentCollectionItemClick = { collectionId ->
+                onFamousCollectionItemClick = { collectionId ->
                     navigateToCollectionDetail(collectionId)
                 },
-                onRecentCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.RECENT) },
+                onFamousCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.FAMOUS) },
                 onRecommendCollectionItemClick = { collectionId ->
                     navigateToCollectionDetail(collectionId)
                 },
@@ -127,12 +121,11 @@ private fun HomeScreen(
     userName: String,
     recommendCollectionModelList: CollectionListModel,
     savedContentModelList: BookmarkedContentListModel,
-    recentCollectionModelList: CollectionListModel,
+    famousCollectionModelList: CollectionListModel,
     onRecommendCollectionItemClick: (collectionId: String) -> Unit,
     onSavedContentItemClick: (contentId: String) -> Unit,
-    onRecentCollectionItemClick: (collectionId: String) -> Unit,
-    onRecentCollectionAllClick: () -> Unit,
-    navigateToExplore: () -> Unit,
+    onFamousCollectionItemClick: (collectionId: String) -> Unit,
+    onFamousCollectionAllClick: () -> Unit,
     navigateToCollectionCreate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -181,18 +174,14 @@ private fun HomeScreen(
             item {
                 Spacer(Modifier.height(42.dp))
 
-                if (recentCollectionModelList.collections.isEmpty()) {
-                    HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)
-                } else {
-                    CollectionSection(
-                        title = "인기 컬렉션",
-                        description = "사람들이 눈여겨보는 컬렉션들이에요",
-                        isAllVisible = true,
-                        onAllClick = onRecentCollectionAllClick,
-                        collectionListModel = recentCollectionModelList,
-                        onItemClick = onRecentCollectionItemClick,
-                    )
-                }
+                CollectionSection(
+                    title = "인기 컬렉션",
+                    description = "사람들이 눈여겨보는 컬렉션들이에요",
+                    isAllVisible = true,
+                    onAllClick = onFamousCollectionAllClick,
+                    collectionListModel = famousCollectionModelList,
+                    onItemClick = onFamousCollectionItemClick,
+                )
             }
         }
 
@@ -217,12 +206,11 @@ private fun PreviewHomeScreen() {
             userName = "종우",
             recommendCollectionModelList = collectionModelList,
             savedContentModelList = contentModelList,
-            recentCollectionModelList = collectionModelList,
+            famousCollectionModelList = collectionModelList,
             onRecommendCollectionItemClick = {},
             onSavedContentItemClick = {},
-            onRecentCollectionItemClick = {},
-            onRecentCollectionAllClick = {},
-            navigateToExplore = {},
+            onFamousCollectionItemClick = {},
+            onFamousCollectionAllClick = {},
             navigateToCollectionCreate = {},
         )
     }

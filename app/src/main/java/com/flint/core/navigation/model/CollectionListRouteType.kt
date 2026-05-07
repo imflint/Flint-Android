@@ -5,5 +5,5 @@ enum class CollectionListRouteType(
 ) {
     CREATED(title = "전체 컬렉션"),
     SAVED(title = "저장 컬렉션"),
-    RECENT(title = "눈여겨보고 있는 컬렉션"),
+    FAMOUS(title = "인기 컬렉션")
 }

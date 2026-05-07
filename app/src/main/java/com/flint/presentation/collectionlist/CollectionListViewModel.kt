@@ -60,7 +60,7 @@ class CollectionListViewModel @Inject constructor(
             when (data.routeType) {
                 CollectionListRouteType.CREATED -> userRepository.getUserCreatedCollections(userId = data.userId)
                 CollectionListRouteType.SAVED -> userRepository.getUserBookmarkedCollections(userId = data.userId)
-                CollectionListRouteType.RECENT -> collectionRepository.getRecentCollectionList() // 홈
+                CollectionListRouteType.FAMOUS -> collectionRepository.getRecentCollectionList() // TODO 종우 Api 나오면 붙이기
             }.onSuccess { result ->
                 _uiState.update { it.copy(collectionList = UiState.Success(result)) }
             }.onFailure {
