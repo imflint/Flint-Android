@@ -157,7 +157,7 @@ private fun HomeScreen(
             }
 
             item {
-                Spacer(Modifier.height(48.dp))
+                Spacer(Modifier.height(24.dp))
 
                 HomeRecommendCollectionList(
                     collectionListModel = recommendCollectionModelList,
@@ -166,7 +166,7 @@ private fun HomeScreen(
             }
 
             item {
-                Spacer(Modifier.height(48.dp))
+                Spacer(Modifier.height(42.dp))
 
                 SavedContentsSection(
                     title = "최근 저장한 콘텐츠",
@@ -179,7 +179,7 @@ private fun HomeScreen(
             }
 
             item {
-                Spacer(Modifier.height(48.dp))
+                Spacer(Modifier.height(42.dp))
 
                 if (recentCollectionModelList.collections.isEmpty()) {
                     HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)

@@ -27,6 +27,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
 
 private val CARD_WIDTH = 270.dp
+private const val INFINITE_PAGE_COUNT = Int.MAX_VALUE
 
 @Composable
 fun HomeRecommendCollectionList(
@@ -36,7 +37,16 @@ fun HomeRecommendCollectionList(
 ) {
     if (collectionListModel.collections.isEmpty()) return
 
-    val pagerState = rememberPagerState(pageCount = { collectionListModel.collections.size })
+    val actualCount = collectionListModel.collections.size
+
+    // 초기 페이지를 중간 아이템으로 설정하면서 양방향 무한 스크롤 가능하도록 중앙 정렬
+    val half = INFINITE_PAGE_COUNT / 2
+    val initialPage = half - (half % actualCount) + (actualCount / 2)
+
+    val pagerState = rememberPagerState(
+        initialPage = initialPage,
+        pageCount = { INFINITE_PAGE_COUNT },
+    )
 
     Column(modifier = modifier.fillMaxWidth()) {
         Column(
@@ -66,8 +76,9 @@ fun HomeRecommendCollectionList(
                 contentPadding = PaddingValues(horizontal = horizontalPadding),
                 modifier = Modifier.fillMaxWidth(),
             ) { page ->
+                val actualIndex = page % actualCount
                 RecommendCollectionCard(
-                    item = collectionListModel.collections[page],
+                    item = collectionListModel.collections[actualIndex],
                     isCurrentPage = page == pagerState.currentPage,
                     onItemClick = onItemClick,
                 )
@@ -76,17 +87,18 @@ fun HomeRecommendCollectionList(
 
         Spacer(Modifier.height(12.dp))
 
+        val currentIndex = pagerState.currentPage % actualCount
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
         ) {
-            repeat(collectionListModel.collections.size) { index ->
+            repeat(actualCount) { index ->
                 Box(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
                         .background(
-                            if (index == pagerState.currentPage) FlintTheme.colors.secondary400
+                            if (index == currentIndex) FlintTheme.colors.secondary400
                             else FlintTheme.colors.gray500
                         ),
                 )
