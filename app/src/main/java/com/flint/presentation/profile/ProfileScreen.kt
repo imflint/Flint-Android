@@ -208,7 +208,7 @@ private fun ProfileScreen(
                             Spacer(Modifier.height(48.dp))
 
                             CollectionSection(
-                                title = "생성한 컬렉션",
+                                title = "${userName}님의 컬렉션",
                                 description = "${userName}님이 생성한 컬렉션이에요",
                                 onItemClick = onCollectionItemClick,
                                 isAllVisible = true,
