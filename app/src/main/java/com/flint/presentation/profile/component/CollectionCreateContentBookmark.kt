@@ -141,7 +141,7 @@ private fun CollectionCreateContentBookmarkInfo(
             text = createdYear.toString(),
             modifier = Modifier.fillMaxWidth(),
             color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.body1R16,
+            style = FlintTheme.typography.caption1M12,
         )
 
         Spacer(modifier = Modifier.weight(1f))
