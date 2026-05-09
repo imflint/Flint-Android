@@ -1,6 +1,7 @@
 package com.flint.presentation.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -14,21 +15,27 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.R
+import com.flint.core.common.util.UiState
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
+import com.flint.core.designsystem.component.modal.OneButtonModal
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.content.BookmarkedContentItemModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.type.OttType
 import com.flint.presentation.profile.component.CollectionCreateContentBookmark
+import com.flint.presentation.profile.uistate.SavedContentUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -36,25 +43,32 @@ import kotlinx.collections.immutable.persistentListOf
 fun SavedContentRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    viewModel: SavedContentViewModel = hiltViewModel(),
 ) {
-    // TODO: ViewModel 연결 후 실제 데이터로 교체
-    val contents = remember { SavedContentPreviewData.FakeList }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     SavedContentScreen(
-        contents = contents,
+        uiState = uiState,
         navigateUp = navigateUp,
+        onSearchKeywordChanged = viewModel::updateSearchKeyword,
+        onClearSearch = viewModel::clearSearchKeyword,
+        onBookmarkClick = viewModel::toggleBookmark,
+        onDismissRestrictionModal = viewModel::dismissBookmarkRestrictionModal,
         modifier = Modifier.padding(paddingValues),
     )
 }
 
 @Composable
 fun SavedContentScreen(
-    contents: ImmutableList<BookmarkedContentItemModel>,
+    uiState: SavedContentUiState,
     navigateUp: () -> Unit,
+    onSearchKeywordChanged: (String) -> Unit,
+    onClearSearch: () -> Unit,
+    onBookmarkClick: (contentId: String) -> Unit,
+    onDismissRestrictionModal: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var searchKeyword by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -69,8 +83,8 @@ fun SavedContentScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         FlintSearchTextField(
-            value = searchKeyword,
-            onValueChanged = { searchKeyword = it },
+            value = uiState.searchKeyword,
+            onValueChanged = onSearchKeywordChanged,
             placeholder = "작품을 검색해보세요",
             modifier = Modifier.padding(horizontal = 16.dp),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -79,38 +93,113 @@ fun SavedContentScreen(
                     keyboardController?.hide()
                 },
             ),
+            onClearAction = onClearSearch,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // "총 n개"는 실제 데이터가 있는 Success 상태에서만 노출
+        if (uiState.contents is UiState.Success) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "총 ${contents.size}개",
-            modifier = Modifier.padding(horizontal = 16.dp),
-            color = FlintTheme.colors.white,
-            style = FlintTheme.typography.body1M16,
-        )
+            Text(
+                text = "총 ${uiState.totalCount}개",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = FlintTheme.colors.gray100,
+                style = FlintTheme.typography.body2R14,
+            )
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+        }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            items(
-                items = contents,
-                key = { it.id },
-            ) { content ->
-                CollectionCreateContentBookmark(
-                    onBookmarkClick = {},
-                    onMoreClick = {},
-                    isBookmarked = true,
-                    bookmarkCount = 123,
-                    imageUrl = content.imageUrl,
-                    title = content.title,
-                    director = "감독이름",
-                    createdYear = content.year,
-                    ottList = content.getOttSimpleList,
-                )
+        when (uiState.contents) {
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    FlintLoadingIndicator()
+                }
             }
+            is UiState.Success -> {
+                if (uiState.filteredContents.isEmpty()) {
+                    // 검색 결과가 없을 때
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        FlintSearchEmptyView(
+                            title = "작품을 찾을 수 없어요",
+                        )
+                    }
+                } else {
+                    SavedContentList(
+                        contents = uiState.filteredContents,
+                        onBookmarkClick = onBookmarkClick,
+                    )
+                }
+            }
+            is UiState.Empty,
+            is UiState.Failure -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    FlintSearchEmptyView(
+                        title = "작품을 찾을 수 없어요",
+                    )
+                }
+            }
+        }
+    }
+
+    // 저장 취소 제한 안내 모달 (저장 작품이 5개일 때 북마크 토글 시 노출)
+    if (uiState.showBookmarkRestrictionModal) {
+        OneButtonModal(
+            title = "작품 저장을 취소할 수 없어요",
+            message = "취향 키워드 분석을 위해\n최소 5개의 작품을 저장해주세요",
+            buttonText = "확인",
+            onConfirm = onDismissRestrictionModal,
+            onDismiss = onDismissRestrictionModal,
+            icon = R.drawable.ic_gradient_bookmark,
+        )
+    }
+}
+
+@Composable
+private fun SavedContentList(
+    contents: ImmutableList<BookmarkedContentItemModel>,
+    onBookmarkClick: (contentId: String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (contents.isEmpty()) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            FlintSearchEmptyView(
+                title = "작품을 찾을 수 없어요",
+            )
+        }
+        return
+    }
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        items(
+            items = contents,
+            key = { it.id },
+        ) { content ->
+            CollectionCreateContentBookmark(
+                onBookmarkClick = { onBookmarkClick(content.id) },
+                onMoreClick = {},
+                isBookmarked = true,
+                bookmarkCount = 123,
+                imageUrl = content.imageUrl,
+                title = content.title,
+                director = "감독이름",
+                createdYear = content.year,
+                ottList = content.getOttSimpleList,
+            )
         }
     }
 }
@@ -188,8 +277,66 @@ private object SavedContentPreviewData {
 private fun SavedContentScreenPreview() {
     FlintTheme {
         SavedContentScreen(
-            contents = SavedContentPreviewData.FakeList,
+            uiState = SavedContentUiState(
+                contents = UiState.Success(
+                    BookmarkedContentListModel(contents = SavedContentPreviewData.FakeList),
+                ),
+            ),
             navigateUp = {},
+            onSearchKeywordChanged = {},
+            onClearSearch = {},
+            onBookmarkClick = {},
+            onDismissRestrictionModal = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Empty")
+@Composable
+private fun SavedContentScreenEmptyPreview() {
+    FlintTheme {
+        SavedContentScreen(
+            uiState = SavedContentUiState(contents = UiState.Empty),
+            navigateUp = {},
+            onSearchKeywordChanged = {},
+            onClearSearch = {},
+            onBookmarkClick = {},
+            onDismissRestrictionModal = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Loading")
+@Composable
+private fun SavedContentScreenLoadingPreview() {
+    FlintTheme {
+        SavedContentScreen(
+            uiState = SavedContentUiState(contents = UiState.Loading),
+            navigateUp = {},
+            onSearchKeywordChanged = {},
+            onClearSearch = {},
+            onBookmarkClick = {},
+            onDismissRestrictionModal = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Restriction Modal")
+@Composable
+private fun SavedContentScreenRestrictionModalPreview() {
+    FlintTheme {
+        SavedContentScreen(
+            uiState = SavedContentUiState(
+                contents = UiState.Success(
+                    BookmarkedContentListModel(contents = SavedContentPreviewData.FakeList),
+                ),
+                showBookmarkRestrictionModal = true,
+            ),
+            navigateUp = {},
+            onSearchKeywordChanged = {},
+            onClearSearch = {},
+            onBookmarkClick = {},
+            onDismissRestrictionModal = {},
         )
     }
 }
