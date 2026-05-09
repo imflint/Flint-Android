@@ -1,6 +1,9 @@
 package com.flint.presentation.profile.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,13 +11,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -33,9 +42,13 @@ import kotlinx.collections.immutable.toPersistentList
 fun ProfileKeywordSection(
     nickname: String,
     keywordList: KeywordListModel,
+    isMyProfile: Boolean,
+    showInfoModal: Boolean,
+    onInfoClick: () -> Unit,
     onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
     Column(
         modifier =
             modifier
@@ -49,11 +62,24 @@ fun ProfileKeywordSection(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column {
-                Text(
-                    text = "${nickname}님의 취향키워드",
-                    style = FlintTheme.typography.head3Sb18,
-                    color = FlintTheme.colors.white,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "${nickname}님의 취향키워드",
+                        style = FlintTheme.typography.head3Sb18,
+                        color = FlintTheme.colors.white,
+                    )
+                    if (isMyProfile) {
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            painter = painterResource(R.drawable.ic_info),
+                            contentDescription = "취향키워드 정보",
+                            tint = FlintTheme.colors.gray300,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .noRippleClickable { onInfoClick() },
+                        )
+                    }
+                }
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = "${nickname}님이 관심있어하는 키워드예요",
@@ -61,12 +87,25 @@ fun ProfileKeywordSection(
                     color = FlintTheme.colors.gray100,
                 )
             }
+            if (isMyProfile) {
+                ProfileRefreshButton(onRefreshClick = onRefreshClick)
+            }
         }
         Spacer(Modifier.height(32.dp))
-        KeywordChipsGridLayout(
-            keywordList = keywordList.keywords,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        Box {
+            KeywordChipsGridLayout(
+                keywordList = keywordList.keywords,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (isMyProfile && showInfoModal) {
+                InfoModalTrigger(
+                    text = "저장한 작품들에서 반복되는 키워드를 분석해 취향 키워드를 만들어요. 10개 이상 작품이 쌓이면 업데이트할 수 있어요.",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset(y = (-20).dp),
+                )
+            }
+        }
     }
 }
 
@@ -192,6 +231,9 @@ private fun ProfileKeywordSectionPreview() {
             nickname = "안두콩",
             keywordList = KeywordListModel.FakeList3,
             modifier = Modifier.fillMaxSize(),
+            isMyProfile = true,
+            showInfoModal = false,
+            onInfoClick = {},
             onRefreshClick = {},
         )
     }

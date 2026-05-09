@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,13 +31,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.common.extension.findActivity
+import com.flint.core.common.extension.noRippleClickable
+import com.flint.R
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
-import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
-import com.flint.core.designsystem.theme.Colors
+import com.flint.core.designsystem.component.topappbar.FlintBasicTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.designsystem.theme.FlintTheme.colors
 import com.flint.core.navigation.model.CollectionListRouteType
@@ -138,6 +141,7 @@ private fun ProfileScreen(
     modifier: Modifier = Modifier,
     onRefreshClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onCollectionItemClick: (collectionId: String) -> Unit,
     onContentItemClick: (contentId: String) -> Unit = {},
     onContentMoreClick: () -> Unit = {},
@@ -149,6 +153,7 @@ private fun ProfileScreen(
     var topHeightPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
     val topHeightDp = with(density) { topHeightPx.toDp() }
+    var showInfoModal by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -198,6 +203,9 @@ private fun ProfileScreen(
                         ProfileKeywordSection(
                             nickname = uiState.profile.nickname,
                             keywordList = sectionData.data.keywords,
+                            isMyProfile = uiState.userId == null,
+                            showInfoModal = showInfoModal,
+                            onInfoClick = { showInfoModal = !showInfoModal },
                             onRefreshClick = onRefreshClick,
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -250,11 +258,34 @@ private fun ProfileScreen(
                 else -> {}
             }
         }
-        if (uiState.userId != null) {
-            FlintBackTopAppbar(
-                onClick = onBackClick,
+        if (showInfoModal) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .noRippleClickable { showInfoModal = false },
             )
         }
+        FlintBasicTopAppbar(
+            backgroundColor = Color.Transparent,
+            navigationIcon = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_back),
+                    contentDescription = null,
+                    tint = FlintTheme.colors.white,
+                    modifier = Modifier.noRippleClickable { onBackClick() },
+                )
+            },
+            action = {
+                if (uiState.userId == null) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
+                        contentDescription = "설정",
+                        tint = FlintTheme.colors.white,
+                        modifier = Modifier.noRippleClickable { onSettingsClick() },
+                    )
+                }
+            },
+        )
     }
 }
 
