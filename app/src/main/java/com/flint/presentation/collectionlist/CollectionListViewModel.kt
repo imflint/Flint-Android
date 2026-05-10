@@ -9,6 +9,7 @@ import com.flint.core.navigation.Route
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.CollectionRepository
+import com.flint.domain.repository.HomeRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectionlist.sideeffect.CollectionListSideEffect
@@ -31,6 +32,7 @@ class CollectionListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val userRepository: UserRepository,
     private val collectionRepository: CollectionRepository,
+    private val homeRepository: HomeRepository,
     private val bookmarkRepository: BookmarkRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<CollectionListUiState>(CollectionListUiState())
@@ -60,7 +62,7 @@ class CollectionListViewModel @Inject constructor(
             when (data.routeType) {
                 CollectionListRouteType.CREATED -> userRepository.getUserCreatedCollections(userId = data.userId)
                 CollectionListRouteType.SAVED -> userRepository.getUserBookmarkedCollections(userId = data.userId)
-                CollectionListRouteType.FAMOUS -> collectionRepository.getRecentCollectionList() // TODO 종우 Api 나오면 붙이기
+                CollectionListRouteType.FAMOUS -> homeRepository.getPopularCollectionList()
             }.onSuccess { result ->
                 _uiState.update { it.copy(collectionList = UiState.Success(result)) }
             }.onFailure {

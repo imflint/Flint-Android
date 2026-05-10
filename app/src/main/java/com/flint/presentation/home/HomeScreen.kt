@@ -58,7 +58,7 @@ fun HomeRoute(
     LaunchedEffect(Unit) {
         viewModel.getRecommendedCollectionList()
         viewModel.getBookmarkedContentList()
-        viewModel.getRecentCollectionList()
+        viewModel.getPopularCollectionList()
     }
 
     LaunchedEffect(Unit) {
@@ -79,13 +79,12 @@ fun HomeRoute(
         is UiState.Success -> {
             val recommendedCollectionList = (uiState.recommendedCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
             val bookmarkedContentList = (uiState.bookmarkedContentListLoadState as? UiState.Success)?.data ?: BookmarkedContentListModel()
-            // TODO 종우 recent -> famous
-            val recentCollectionList = (uiState.recentCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
+            val popularCollectionList = (uiState.popularCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
 
             HomeScreen(
                 userName = uiState.userName,
                 recommendCollectionModelList = recommendedCollectionList,
-                famousCollectionModelList = recentCollectionList,
+                famousCollectionModelList = popularCollectionList,
                 savedContentModelList = bookmarkedContentList,
                 navigateToCollectionCreate = {
                     navigateToCollectionCreate()

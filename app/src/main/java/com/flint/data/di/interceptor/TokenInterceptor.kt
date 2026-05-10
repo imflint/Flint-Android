@@ -23,7 +23,8 @@ class TokenInterceptor
 
             val requestBuilder = originalRequest.newBuilder()
 
-            if (accessToken.isNotEmpty()) {
+            val isPublicEndpoint = originalRequest.url.encodedPath == "/api/v1/search/contents"
+            if (accessToken.isNotEmpty() && !isPublicEndpoint) {
                 requestBuilder.header("Authorization", "Bearer $accessToken")
             }
 
