@@ -11,34 +11,40 @@ data class KeywordListModel(
         val FakeList1 = KeywordListModel(
             keywords = persistentListOf(
                 KeywordItemModel(
-                    name = "추리",
+                    name = "애니메이션",
                     color = "BLUE",
-                    rank = 1
+                    rank = 1,
+                    percentage = 75f,
                 ),
                 KeywordItemModel(
                     name = "슬픈",
                     color = "GREEN",
-                    rank = 4
+                    rank = 4,
+                    percentage = 35f,
                 ),
                 KeywordItemModel(
                     name = "SF",
                     color = "PINK",
                     rank = 2,
+                    percentage = 60f,
                 ),
                 KeywordItemModel(
                     name = "액션",
                     color = "ORANGE",
                     rank = 5,
+                    percentage = 25f,
                 ),
                 KeywordItemModel(
-                    name = "슬픈",
+                    name = "몽환적인",
                     color = "YELLOW",
                     rank = 3,
+                    percentage = 48f,
                 ),
                 KeywordItemModel(
                     name = "성장",
                     color = "YELLOW",
                     rank = 6,
+                    percentage = 15f,
                 ),
             )
         )

@@ -2,7 +2,6 @@ package com.flint.presentation.profile.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -106,6 +105,12 @@ fun ProfileKeywordSection(
                 )
             }
         }
+
+        Spacer(Modifier.height(32.dp))
+        KeywordGraphLayout(
+            keywordList = keywordList.keywords,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -181,10 +186,10 @@ private fun KeywordGraphLayout(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        keywordList.forEach {
+        keywordList.take(3).forEach {
             with(it) {
                 ProfileKeywordGraphItem(
                     keyword = name,
