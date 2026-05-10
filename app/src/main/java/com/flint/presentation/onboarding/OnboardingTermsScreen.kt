@@ -96,7 +96,7 @@ fun OnboardingTermsScreen(
 
                 Text(
                     text = "약관에 동의해주세요",
-                    style = FlintTheme.typography.head2M20,
+                    style = FlintTheme.typography.display2M28,
                     color = FlintTheme.colors.white,
                 )
 
@@ -122,7 +122,7 @@ fun OnboardingTermsScreen(
                     Spacer(Modifier.width(12.dp))
                     Text(
                         text = "전체 동의",
-                        style = FlintTheme.typography.body1M16,
+                        style = FlintTheme.typography.body1R16,
                         color = FlintTheme.colors.white,
                     )
                 }
@@ -194,7 +194,7 @@ private fun TermRow(
             Spacer(Modifier.width(12.dp))
             Text(
                 text = term.title,
-                style = FlintTheme.typography.body2M14,
+                style = FlintTheme.typography.body1R16,
                 color = FlintTheme.colors.white,
                 modifier = Modifier.weight(1f),
             )
