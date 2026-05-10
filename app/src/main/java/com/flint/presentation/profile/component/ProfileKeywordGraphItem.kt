@@ -84,6 +84,7 @@ private fun ProfileKeywordProgressBar(
     percent: Float,
     modifier: Modifier = Modifier,
 ) {
+    val safePercent = percent.coerceIn(0f, 1f)
     val shape = RoundedCornerShape(4.dp)
 
     // Track: #4F5669, stop 20%→100% alpha, 레이어 전체 44% opacity
@@ -121,7 +122,7 @@ private fun ProfileKeywordProgressBar(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(percent)
+                .fillMaxWidth(safePercent)
                 .fillMaxHeight()
                 .clip(shape)
                 .background(fillBrush),
