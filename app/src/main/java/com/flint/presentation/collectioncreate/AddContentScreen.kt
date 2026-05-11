@@ -36,7 +36,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentDeleteModal
-import com.flint.presentation.collectioncreate.component.CollectionCreateContentSelect
+import com.flint.presentation.collectioncreate.component.AddContentSelectItem
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -177,7 +177,7 @@ fun AddContentScreen(
                 ) { content ->
                     val isSelected = selectedContents.any { it.id == content.id }
 
-                    CollectionCreateContentSelect(
+                    AddContentSelectItem(
                         onCheckClick = {
                             if (isSelected){
                                 if (uiState.isCancelModalVisible) {
@@ -189,7 +189,7 @@ fun AddContentScreen(
                             } else onToggleContent(content)
                         },
                         isSelected = isSelected,
-                        imageUrl = content.posterUrl,
+                        posterImageUrl = content.posterUrl,
                         title = content.title,
                         director = content.author,
                         createdYear = content.year,
