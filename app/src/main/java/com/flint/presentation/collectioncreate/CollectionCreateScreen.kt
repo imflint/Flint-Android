@@ -1,6 +1,7 @@
 package com.flint.presentation.collectioncreate
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,11 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +28,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -45,9 +48,12 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentDeleteModal
-import com.flint.presentation.collectioncreate.component.CollectionCreateContentItemList
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentImage
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentReason
+import com.flint.presentation.collectioncreate.component.CollectionCreateContentSection
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun CollectionCreateRoute(
@@ -76,16 +82,12 @@ fun CollectionCreateRoute(
         onTitleChanged = viewModel::updateTitle,
         onDescriptionChanged = viewModel::updateDescription,
         onPublicChanged = viewModel::updateIsPublic,
-        selectedContents = uiState.selectedContents,
-        contentDetailsMap = uiState.contentDetailsMap,
         onRemoveContent = viewModel::removeContent,
         onBackClick = navigateUp,
         onSpoilerChanged = viewModel::updateSpoiler,
         onReasonChanged = viewModel::updateReason,
         onAddContentClick = navigateToAddContent,
-        onFinishClick = {
-            viewModel.onClickFinish()
-        },
+        onFinishClick = viewModel::onClickFinish,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -96,8 +98,6 @@ fun CollectionCreateScreen(
     onTitleChanged: (String) -> Unit = {},
     onDescriptionChanged: (String) -> Unit = {},
     onPublicChanged: (Boolean?) -> Unit = {},
-    selectedContents: ImmutableList<SearchContentItemModel>,
-    contentDetailsMap: Map<String, ContentDetail>,
     onRemoveContent: (SearchContentItemModel) -> Unit,
     onBackClick: () -> Unit,
     onSpoilerChanged: (String, Boolean) -> Unit = { _, _ -> },
@@ -119,7 +119,7 @@ fun CollectionCreateScreen(
 
         LazyColumn(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(28.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // 썸네일
             item {
@@ -128,190 +128,66 @@ fun CollectionCreateScreen(
                     onClick = { },
                 )
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(20.dp))
             }
 
             // 컬렉션 제목
             item {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Text(
-                        text = "컬렉션 제목",
-                        color = FlintTheme.colors.white,
-                        style = FlintTheme.typography.head3M18,
-                    )
-
-                    Spacer(Modifier.height(16.dp))
-
-                    CollectionInputTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.title,
-                        placeholder = "컬렉션의 제목을 입력해주세요.",
-                        onValueChanged = onTitleChanged,
-                        maxLength = 20,
-                        singleLine = true,
-                        maxLines = 1,
-                        isShowLengthTitle = true,
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next
-                        )
-                    )
-                }
+                CollectionTitle(
+                    title = uiState.title,
+                    onTitleChanged = onTitleChanged,
+                    modifier = Modifier.padding(horizontal = (16).dp),
+                )
             }
 
             // 컬렉션 소개
             item {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Text(
-                        text =
-                            buildAnnotatedString {
-                                append("컬렉션 소개 ")
-                                withStyle(
-                                    style = SpanStyle(color = FlintTheme.colors.gray300),
-                                ) {
-                                    append("(선택)")
-                                }
-                            },
-                        color = FlintTheme.colors.white,
-                        style = FlintTheme.typography.head3M18,
-                    )
-
-                    Spacer(Modifier.height(16.dp))
-
-                    CollectionInputTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 104.dp),
-                        value = uiState.description,
-                        placeholder = "컬렉션의 소개를 작성해주세요.",
-                        onValueChanged = onDescriptionChanged,
-                        maxLength = 200,
-                        singleLine = false,
-                        maxLines = Int.MAX_VALUE,
-                        isShowLengthTitle = true,
-                        keyboardActions = KeyboardActions(
-                            onDone = {},
-                        ),
-                    )
-                }
+                CollectionDescription(
+                    description = uiState.description,
+                    onDescriptionChanged = onDescriptionChanged,
+                    modifier = Modifier.padding(horizontal = (16).dp),
+                )
             }
 
             // 컬렉션 공개 여부
             item {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Text(
-                        text = "컬렉션 공개 여부",
-                        color = FlintTheme.colors.white,
-                        style = FlintTheme.typography.head3M18,
-                    )
+                CollectionPublicSection(
+                    isPublic = uiState.isPublic,
+                    onPublicChanged = onPublicChanged,
+                    modifier = Modifier.padding(horizontal = (16).dp),
+                )
 
-                    Spacer(Modifier.height(16.dp))
-
-                    Row {
-                        FlintIconButton(
-                            text = "공개",
-                            iconRes = R.drawable.ic_share,
-                            state = when(uiState.isPublic){
-                                true -> FlintButtonState.ColorOutline
-                                false -> FlintButtonState.Disable
-                                else -> FlintButtonState.Outline
-                            },
-
-                            onClick = { onPublicChanged(true) },
-                            modifier = Modifier.weight(1f),
-                        )
-
-                        Spacer(Modifier.width(8.dp))
-
-                        FlintIconButton(
-                            text = "비공개",
-                            iconRes = R.drawable.ic_lock,
-                            state = when(uiState.isPublic){
-                                true -> FlintButtonState.Disable
-                                false -> FlintButtonState.ColorOutline
-                                else -> FlintButtonState.Outline
-                            },
-                            onClick = { onPublicChanged(false) },
-                            modifier = Modifier.weight(1f),
-                            contentPadding = PaddingValues(start = 8.dp, end = 12.dp, top= 10.dp, bottom = 10.dp)
-                        )
-                    }
-                }
+                Spacer(Modifier.height(20.dp))
             }
 
-            // 작품 추가 헤더
+            // 작품 추가 섹션
             item {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Text(
-                        text = "작품 추가",
-                        color = FlintTheme.colors.white,
-                        style = FlintTheme.typography.head3M18,
-                    )
+                CollectionAddContentSection(
+                    selectedContents = uiState.selectedContents,
+                    contentDetailsMap = uiState.contentDetailsMap,
+                    onDeleteRequest = { content ->
+                        contentToDelete = content
+                        isModalVisible = true
+                    },
+                    onSpoilerChanged = onSpoilerChanged,
+                    onReasonChanged = onReasonChanged,
+                    onAddContentClick = onAddContentClick,
+                    modifier = Modifier.padding(horizontal = (16).dp),
+                )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "작품을 2개 이상 추가해주세요.",
-                            color = FlintTheme.colors.gray200,
-                            style = FlintTheme.typography.body2R14,
-                        )
-                        Text(
-                            text = "${selectedContents.size}/10",
-                            color = FlintTheme.colors.white,
-                            style = FlintTheme.typography.body2R14,
-                        )
-                    }
-                }
+                Spacer(Modifier.height(20.dp))
             }
 
-            // 작품 리스트
-            items(
-                items = selectedContents,
-                key = { it.id },
-            ) { content ->
-                val detail = contentDetailsMap[content.id] ?: ContentDetail()
-
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    CollectionCreateContentItemList(
-                        onCancelClick = {
-                            contentToDelete = content
-                            isModalVisible = true
-                        },
-                        imageUrl = content.posterUrl,
-                        title = content.title,
-                        director = content.author,
-                        createdYear = content.year,
-                        isSpoiler = detail.isSpoiler,
-                        onSpoilerChanged = { isSpoiler ->
-                            onSpoilerChanged(content.id, isSpoiler)
-                        },
-                        selectedReason = detail.reason,
-                        onSelectedReasonChanged = { reason ->
-                            onReasonChanged(content.id, reason)
-                        },
-                    )
-                }
-            }
-
-            // 작품 추가 버튼
             item {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    FlintIconButton(
-                        text = "작품 추가하기",
-                        iconRes = R.drawable.ic_plus,
-                        state = FlintButtonState.ColorOutline,
-                        onClick = onAddContentClick,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .defaultMinSize(minHeight = 80.dp),
-                        contentPadding = PaddingValues(vertical = 28.dp)
-                    )
+                Text(
+                    text = "웹사이트의 모든 콘텐츠는 저작권법의 보호를 받습니다. 사전 서면 동의 없이 무단 전제, 복사, 배포 등을 엄격히 금지합니다. \n" +
+                            "Copyright © [2026] [Flint]. All rights reserved.",
+                    color = FlintTheme.colors.gray300,
+                    style = FlintTheme.typography.body2R14,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
 
-                    Spacer(Modifier.height(36.dp))
-                }
+                Spacer(Modifier.height(12.dp))
             }
         }
 
@@ -345,23 +221,223 @@ fun CollectionCreateScreen(
     }
 }
 
-@Preview
 @Composable
-fun CollectionCreateScreenPreview() {
+private fun CollectionTitle(
+    title: String,
+    onTitleChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
+){
+    Column(modifier = modifier) {
+        Text(
+            text = "컬렉션 제목",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.head3M18,
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        CollectionInputTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = title,
+            placeholder = "컬렉션의 제목을 입력해주세요.",
+            onValueChanged = onTitleChanged,
+            maxLength = 20,
+            singleLine = true,
+            maxLines = 1,
+            isShowLengthTitle = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
+        )
+    }
+}
+
+@Composable
+private fun CollectionDescription(
+    description: String,
+    onDescriptionChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text =
+                buildAnnotatedString {
+                    append("컬렉션 소개 ")
+                    withStyle(
+                        style = SpanStyle(color = FlintTheme.colors.gray300),
+                    ) {
+                        append("(선택)")
+                    }
+                },
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.head3M18,
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        CollectionInputTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 104.dp),
+            value = description,
+            placeholder = "컬렉션의 소개를 작성해주세요.",
+            onValueChanged = onDescriptionChanged,
+            maxLength = 45,
+            singleLine = false,
+            maxLines = Int.MAX_VALUE,
+            isShowLengthTitle = true,
+        )
+    }
+}
+
+@Composable
+private fun CollectionPublicSection(
+    isPublic: Boolean?,
+    onPublicChanged: (Boolean?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = "컬렉션 공개 여부",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.head3M18,
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        Row {
+            FlintIconButton(
+                text = "공개",
+                iconRes = R.drawable.ic_share,
+                state = when (isPublic) {
+                    true -> FlintButtonState.ColorOutline
+                    false -> FlintButtonState.Disable
+                    else -> FlintButtonState.Outline
+                },
+                onClick = { onPublicChanged(true) },
+                modifier = Modifier.weight(1f),
+            )
+
+            Spacer(Modifier.width(8.dp))
+
+            FlintIconButton(
+                text = "비공개",
+                iconRes = R.drawable.ic_lock,
+                state = when (isPublic) {
+                    true -> FlintButtonState.Disable
+                    false -> FlintButtonState.ColorOutline
+                    else -> FlintButtonState.Outline
+                },
+                onClick = { onPublicChanged(false) },
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(start = 8.dp, end = 12.dp, top = 10.dp, bottom = 10.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun CollectionAddContentSection(
+    selectedContents: ImmutableList<SearchContentItemModel>,
+    contentDetailsMap: Map<String, ContentDetail>,
+    onDeleteRequest: (SearchContentItemModel) -> Unit,
+    onSpoilerChanged: (String, Boolean) -> Unit,
+    onReasonChanged: (String, String) -> Unit,
+    onAddContentClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = "작품 추가",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.head3M18,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "작품을 2개 이상 추가해주세요.",
+                color = FlintTheme.colors.gray200,
+                style = FlintTheme.typography.body2R14,
+            )
+            Text(
+                text = "${selectedContents.size}/10",
+                color = FlintTheme.colors.white,
+                style = FlintTheme.typography.body2R14,
+            )
+        }
+
+        selectedContents.forEach { content ->
+            val detail = contentDetailsMap[content.id] ?: ContentDetail()
+
+            Spacer(Modifier.height(28.dp))
+
+            Icon(
+                painter = painterResource(R.drawable.ic_deselect_large_pri),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .clickable(onClick = { onDeleteRequest(content) })
+                    .padding(vertical = 10.dp)
+                    .size(28.dp),
+            )
+
+            CollectionCreateContentSection(
+                posterImageUrl = content.posterUrl,
+                title = content.title,
+                director = content.author,
+                createdYear = content.year,
+            )
+
+            CollectionCreateContentImage(
+                imageUrls = emptyList(),
+                onDeleteClick = { onDeleteRequest(content) },
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            CollectionCreateContentReason(
+                selectedReason = detail.reason,
+                onSelectedReasonChanged = { reason -> onReasonChanged(content.id, reason) },
+                onSelectImageClick = {},
+                isSpoiler = detail.isSpoiler,
+                onSpoilerChanged = { isSpoiler -> onSpoilerChanged(content.id, isSpoiler) },
+            )
+        }
+
+        Spacer(Modifier.height(28.dp))
+
+        FlintIconButton(
+            text = "작품 추가하기",
+            iconRes = R.drawable.ic_plus,
+            state = FlintButtonState.ColorOutline,
+            onClick = onAddContentClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 80.dp),
+            contentPadding = PaddingValues(vertical = 28.dp)
+        )
+    }
+}
+
+@Preview()
+@Composable
+private fun CollectionAddContentSectionPreview() {
+    val fakeContents = SearchContentListModel.FakeList.take(2).toImmutableList()
+
     FlintTheme {
-        CollectionCreateScreen(
-            uiState = CollectionCreateUiState(),
-            onTitleChanged = {},
-            onDescriptionChanged = {},
-            onPublicChanged = {},
-            selectedContents = SearchContentListModel.FakeList,
-            contentDetailsMap = emptyMap(),
-            onRemoveContent = {},
-            onBackClick = {},
+        CollectionAddContentSection(
+            selectedContents = fakeContents,
+            contentDetailsMap = fakeContents.associate { it.id to ContentDetail() },
+            onDeleteRequest = {},
             onSpoilerChanged = { _, _ -> },
             onReasonChanged = { _, _ -> },
             onAddContentClick = {},
-            onFinishClick = {},
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
     }
 }
