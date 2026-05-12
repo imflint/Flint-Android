@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.designsystem.theme.FlintColors
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -23,7 +22,7 @@ fun InfoModalTrigger(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .background(
-                color = FlintColors.gray800,
+                color = FlintTheme.colors.gray800,
                 shape = RoundedCornerShape(size = 12.dp),
             )
             .padding(horizontal = 12.dp, vertical = 14.dp),
@@ -31,7 +30,7 @@ fun InfoModalTrigger(
         Text(
             text = text,
             style = FlintTheme.typography.body2R14,
-            color = FlintColors.gray300,
+            color = FlintTheme.colors.gray300,
         )
     }
 }
