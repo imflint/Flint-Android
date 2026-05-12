@@ -21,6 +21,9 @@ interface Route {
     ) : Route
 
     @Serializable
+    data object OnboardingTerms : Route
+
+    @Serializable
     data object OnboardingContent : Route
 
     @Serializable

@@ -1,5 +1,9 @@
 package com.flint.presentation.onboarding
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,9 +40,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chattymin.pebble.graphemeLength
 import com.flint.R
+import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheet
+import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheetData
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
-import com.flint.core.designsystem.component.image.ProfileImage
+import com.flint.core.designsystem.component.image.EditProfileImage
 import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
@@ -68,6 +76,7 @@ fun OnboardingProfileRoute(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingProfileScreen(
     nickname: String,
@@ -88,6 +97,14 @@ fun OnboardingProfileScreen(
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
     var isToastSuccess by remember { mutableStateOf(false) }
+    var showProfileBottomSheet by remember { mutableStateOf(false) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) selectedImageUri = uri
+    }
 
     LaunchedEffect(hasError, errorMessage) {
         if (hasError && errorMessage != null) {
@@ -121,8 +138,10 @@ fun OnboardingProfileScreen(
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                ProfileImage(
-                    imageUrl = "",
+
+                EditProfileImage(
+                    imageUrl = selectedImageUri?.toString() ?: "",
+                    onEditClick = { showProfileBottomSheet = true }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -199,6 +218,27 @@ fun OnboardingProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 20.dp),
+            )
+        }
+
+        if (showProfileBottomSheet) {
+            MenuBottomSheet(
+                menuBottomSheetDataList = listOf(
+                    MenuBottomSheetData(
+                        label = "갤러리에서 선택",
+                        clickAction = {
+                            galleryLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
+                    ),
+                    MenuBottomSheetData(
+                        label = "프로필 사진 삭제",
+                        color = FlintTheme.colors.error500,
+                        clickAction = { selectedImageUri = null }
+                    ),
+                ),
+                onDismiss = { showProfileBottomSheet = false }
             )
         }
 

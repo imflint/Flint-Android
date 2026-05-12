@@ -18,7 +18,7 @@ fun ProfileImage(
 ) {
     if (imageUrl.isNullOrBlank()) {
         Image(
-            painter = painterResource(R.drawable.ic_avatar_blue),
+            painter = painterResource(R.drawable.ic_avatar_gray),
             contentDescription = contentDescription,
             modifier = modifier.clip(CircleShape),
         )
@@ -27,8 +27,8 @@ fun ProfileImage(
             model = imageUrl,
             contentDescription = contentDescription,
             contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.ic_avatar_blue),
-            error = painterResource(R.drawable.ic_avatar_blue),
+            placeholder = painterResource(R.drawable.ic_avatar_gray),
+            error = painterResource(R.drawable.ic_avatar_gray),
             modifier = modifier.clip(shape = CircleShape),
         )
     }
