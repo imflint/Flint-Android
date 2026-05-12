@@ -185,7 +185,8 @@ class OnboardingViewModel
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
                 favoriteContentIds = _contentUiState.value.selectedContents.map { it.id.toLong() },
-                subscribedOttIds = _ottUiState.value.selectedOtts.map { it.id }
+                // TODO: 약관 동의 화면 구현 후 실제 동의한 약관 ID로 변경 (임시 하드코딩)
+                agreedTermsIds = listOf(1L, 2L),
             )
 
             authRepository.signup(signupRequest)

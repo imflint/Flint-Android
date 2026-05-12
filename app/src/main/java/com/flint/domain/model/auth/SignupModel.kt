@@ -4,7 +4,7 @@ data class SignupRequestModel(
     val tempToken: String,
     val nickname: String,
     val favoriteContentIds: List<Long>,
-    val subscribedOttIds: List<Long>,
+    val agreedTermsIds: List<Long>,
 )
 
 data class SignupResponseModel(
