@@ -103,31 +103,36 @@ class OnboardingViewModel
     }
 
     fun loadInitialContents() {
-        getSearchContentList(null)
+        getSearchContentList(keyword = null, genre = null)
     }
 
     fun searchContents() {
-        val keyword = _contentUiState.value.searchKeyword
-        getSearchContentList(keyword.ifEmpty { null })
+        val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
+        val genre = _contentUiState.value.selectedGenre
+        getSearchContentList(keyword = keyword, genre = genre)
     }
 
     fun selectGenre(genre: String) {
         _contentUiState.update { currentState ->
-            val current = currentState.selectedGenres
-            val newSelectedGenres = if (genre in current) {
-                current.filterNot { it == genre }.toImmutableList()
-            } else {
-                (current + genre).toImmutableList()
-            }
-            currentState.copy(selectedGenres = newSelectedGenres)
+            val newSelected = if (currentState.selectedGenre == genre) null else genre
+            currentState.copy(selectedGenre = newSelected)
         }
+        // 장르 선택/해제 시 즉시 재검색
+        val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
+        val selected = _contentUiState.value.selectedGenre
+        getSearchContentList(keyword = keyword, genre = selected)
     }
 
-    private fun getSearchContentList(keyword: String?) {
+    private fun getSearchContentList(keyword: String?, genre: String?) {
         viewModelScope.launch {
             _contentUiState.update { it.copy(searchResults = UiState.Loading) }
 
-            searchRepository.getSearchContentList(keyword)
+            val genreApiValue = genre?.let { OnboardingContentUiState.GENRES[it] }
+
+            searchRepository.getSearchContentList(
+                keyword = keyword,
+                genre = genreApiValue,
+            )
                 .onSuccess { result ->
                     _contentUiState.update { currentState ->
                         currentState.copy(
