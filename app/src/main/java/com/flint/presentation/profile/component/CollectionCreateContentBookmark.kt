@@ -196,7 +196,7 @@ private fun CollectionCreateContentBookmarkMore(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "작품 보러가기",
+            text = "시청 가능한 OTT",
             color = FlintTheme.colors.white,
             style = FlintTheme.typography.body2R14,
         )
