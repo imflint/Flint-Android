@@ -268,12 +268,14 @@ private fun ProfileScreen(
         FlintBasicTopAppbar(
             backgroundColor = Color.Transparent,
             navigationIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = FlintTheme.colors.white,
-                    modifier = Modifier.noRippleClickable { onBackClick() },
-                )
+                if (uiState.userId != null) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_back),
+                        contentDescription = null,
+                        tint = FlintTheme.colors.white,
+                        modifier = Modifier.noRippleClickable { onBackClick() },
+                    )
+                }
             },
             action = {
                 if (uiState.userId == null) {
