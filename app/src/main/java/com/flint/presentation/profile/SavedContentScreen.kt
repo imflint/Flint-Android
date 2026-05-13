@@ -155,7 +155,7 @@ fun SavedContentScreen(
     if (uiState.showBookmarkRestrictionModal) {
         OneButtonModal(
             title = "작품 저장을 취소할 수 없어요",
-            message = "취향 키워드 분석을 위해\n최소 5개의 작품을 저장해주세요",
+            message = "취향 키워드 분석을 위해\n최소 ${SavedContentUiState.MIN_REQUIRED_COUNT}개의 작품을 저장해주세요",
             buttonText = "확인",
             onConfirm = onDismissRestrictionModal,
             onDismiss = onDismissRestrictionModal,
