@@ -2,6 +2,7 @@ package com.flint.presentation.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,10 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,63 +28,61 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-
-private data class TermItem(
-    val title: String,
-    val description: String,
-    val detailUrl: String,
-)
-
-private val terms = listOf(
-    TermItem(
-        title = "(필수) 서비스 이용 약관 동의",
-        description = "본 약관은 서비스 이용과 관련한 기본적인 권리·의무 및 책임사항을 규정합니다.",
-        detailUrl = "",
-    ),
-    TermItem(
-        title = "(필수) 개인정보 처리 방침 동의",
-        description = "서비스 제공을 위해 개인정보를 수집·이용합니다.\n" +
-            "콘텐츠 추천, 컬렉션 생성 및 공유, 맞춤형 탐색 경험 제공을 위한 이용 기록 및 취향 정보 처리 내용이 포함됩니다.\n\n" +
-            "수집 항목: 계정 정보, 취향 정보, 컬렉션 및 콘텐츠 활동, 서비스 이용 기록 등\n\n" +
-            "수집 목적: 개인화 추천 제공, 컬렉션 생성 및 공유, 서비스 운영 및 이용자 보호",
-        detailUrl = "",
-    ),
-)
+import com.flint.domain.model.terms.TermModel
 
 @Composable
 fun OnboardingTermsRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToOnboardingContent: () -> Unit,
+    viewModel: OnboardingViewModel,
 ) {
+    val termsUiState by viewModel.termsUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadTerms()
+    }
+
     OnboardingTermsScreen(
+        termsUiState = termsUiState,
         onBackClick = navigateUp,
-        onAgreeClick = navigateToOnboardingContent,
+        onAgreeClick = { agreedIds ->
+            viewModel.agreeToTerms(agreedIds)
+            navigateToOnboardingContent()
+        },
         modifier = Modifier.padding(paddingValues),
     )
 }
 
 @Composable
 fun OnboardingTermsScreen(
+    termsUiState: OnboardingTermsUiState,
     onBackClick: () -> Unit,
-    onAgreeClick: () -> Unit,
+    onAgreeClick: (List<Long>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var checkedStates by remember { mutableStateOf(List(terms.size) { false }) }
-    var expandedStates by remember { mutableStateOf(List(terms.size) { false }) }
-    val allChecked = checkedStates.all { it }
-    val uriHandler = LocalUriHandler.current
+    val terms = (termsUiState.termsState as? UiState.Success)?.data ?: emptyList()
+    var checkedStates by remember(terms) { mutableStateOf(List(terms.size) { false }) }
+    var expandedStates by remember(terms) { mutableStateOf(List(terms.size) { false }) }
+
+    // 필수 약관이 모두 체크되어야 버튼 활성화
+    val requiredAllChecked = terms.isNotEmpty() && terms.indices
+        .filter { terms[it].required }
+        .all { checkedStates[it] }
+
+    val allChecked = terms.isNotEmpty() && checkedStates.all { it }
 
     Column(
         modifier = modifier
@@ -132,34 +133,71 @@ fun OnboardingTermsScreen(
 
             HorizontalDivider(thickness = 4.dp, color = FlintTheme.colors.gray600)
 
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Spacer(Modifier.height(16.dp))
+            when (termsUiState.termsState) {
+                is UiState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(color = FlintTheme.colors.primary200)
+                    }
+                }
 
-                terms.forEachIndexed { index, term ->
-                    TermRow(
-                        term = term,
-                        isChecked = checkedStates[index],
-                        isExpanded = expandedStates[index],
-                        onCheckClick = {
-                            checkedStates = checkedStates.toMutableList().also { it[index] = !it[index] }
-                        },
-                        onExpandClick = {
-                            expandedStates = expandedStates.toMutableList().also { it[index] = !it[index] }
-                        },
-                        onDetailClick = {
-                            if (term.detailUrl.isNotEmpty()) uriHandler.openUri(term.detailUrl)
-                        },
-                    )
-                    Spacer(Modifier.height(4.dp))
+                is UiState.Failure -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = "약관을 불러오지 못했습니다.",
+                            style = FlintTheme.typography.body1R16,
+                            color = FlintTheme.colors.gray400,
+                        )
+                    }
+                }
+
+                else -> {
+                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        Spacer(Modifier.height(16.dp))
+
+                        terms.forEachIndexed { index, term ->
+                            TermRow(
+                                term = term,
+                                isChecked = checkedStates[index],
+                                isExpanded = expandedStates[index],
+                                onCheckClick = {
+                                    checkedStates = checkedStates.toMutableList()
+                                        .also { it[index] = !it[index] }
+                                },
+                                onExpandClick = {
+                                    expandedStates = expandedStates.toMutableList()
+                                        .also { it[index] = !it[index] }
+                                },
+                                onDetailClick = {
+                                    // TODO: 노션 약관 링크 확정 후 내부 웹뷰로 열기
+                                },
+                            )
+                            Spacer(Modifier.height(4.dp))
+                        }
+                    }
                 }
             }
         }
 
         FlintLargeButton(
             text = "동의하기",
-            state = if (allChecked) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = onAgreeClick,
-            enabled = allChecked,
+            state = if (requiredAllChecked) FlintButtonState.Able else FlintButtonState.Disable,
+            onClick = {
+                val agreedIds = terms.indices
+                    .filter { checkedStates[it] }
+                    .map { terms[it].id }
+                onAgreeClick(agreedIds)
+            },
+            enabled = requiredAllChecked,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 20.dp),
@@ -169,13 +207,15 @@ fun OnboardingTermsScreen(
 
 @Composable
 private fun TermRow(
-    term: TermItem,
+    term: TermModel,
     isChecked: Boolean,
     isExpanded: Boolean,
     onCheckClick: () -> Unit,
     onExpandClick: () -> Unit,
     onDetailClick: () -> Unit,
 ) {
+    val requiredPrefix = if (term.required) "(필수) " else "(선택) "
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -193,7 +233,7 @@ private fun TermRow(
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                text = term.title,
+                text = requiredPrefix + term.title,
                 style = FlintTheme.typography.body1R16,
                 color = FlintTheme.colors.white,
                 modifier = Modifier.weight(1f),
@@ -219,7 +259,7 @@ private fun TermRow(
                     .padding(start = 12.dp, top = 12.dp, end = 12.dp, bottom = 16.dp),
             ) {
                 Text(
-                    text = term.description,
+                    text = term.content,
                     style = FlintTheme.typography.body2R14,
                     color = FlintTheme.colors.gray300,
                 )
@@ -243,6 +283,39 @@ private fun TermRow(
 private fun OnboardingTermsScreenPreview() {
     FlintTheme {
         OnboardingTermsScreen(
+            termsUiState = OnboardingTermsUiState(
+                termsState = UiState.Success(
+                    listOf(
+                        TermModel(
+                            id = 1L,
+                            type = "SERVICE",
+                            version = 1,
+                            title = "서비스 이용약관",
+                            content = "본 약관은 서비스 이용과 관련한 기본적인 권리·의무 및 책임사항을 규정합니다.",
+                            required = true,
+                            activeAt = "2026-05-13T10:48:54.554Z",
+                        ),
+                        TermModel(
+                            id = 2L,
+                            type = "PRIVACY",
+                            version = 1,
+                            title = "개인정보 처리 방침",
+                            content = "서비스 제공을 위해 개인정보를 수집·이용합니다.",
+                            required = true,
+                            activeAt = "2026-05-13T10:48:54.554Z",
+                        ),
+                        TermModel(
+                            id = 3L,
+                            type = "MARKETING",
+                            version = 1,
+                            title = "마케팅 정보 수신 동의",
+                            content = "이벤트 및 마케팅 정보를 수신합니다.",
+                            required = false,
+                            activeAt = "2026-05-13T10:48:54.554Z",
+                        ),
+                    )
+                )
+            ),
             onBackClick = {},
             onAgreeClick = {},
         )

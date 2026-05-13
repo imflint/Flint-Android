@@ -2,9 +2,15 @@ package com.flint.presentation.onboarding
 
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.search.SearchContentItemModel
+import com.flint.domain.model.terms.TermModel
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+
+data class OnboardingTermsUiState(
+    val termsState: UiState<List<TermModel>> = UiState.Empty,
+    val agreedTermsIds: List<Long> = emptyList(),
+)
 
 enum class NicknameErrorType {
     DUPLICATE,      // 이미 사용 중인 닉네임

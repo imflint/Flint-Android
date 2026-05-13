@@ -9,6 +9,7 @@ import com.flint.core.navigation.Route
 import com.flint.domain.model.auth.SignupRequestModel
 import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.SearchRepository
+import com.flint.domain.repository.TermsRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.domain.type.OttType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,7 @@ class OnboardingViewModel
     private val userRepository: UserRepository,
     private val searchRepository: SearchRepository,
     private val authRepository: AuthRepository,
+    private val termsRepository: TermsRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -42,8 +44,34 @@ class OnboardingViewModel
     private val _ottUiState = MutableStateFlow(OnboardingOttUiState())
     val ottUiState: StateFlow<OnboardingOttUiState> = _ottUiState.asStateFlow()
 
+    private val _termsUiState = MutableStateFlow(OnboardingTermsUiState())
+    val termsUiState: StateFlow<OnboardingTermsUiState> = _termsUiState.asStateFlow()
+
     private val _signupUiState = MutableStateFlow(OnboardingSignupUiState())
     val signupUiState: StateFlow<OnboardingSignupUiState> = _signupUiState.asStateFlow()
+
+    // ---------- onboarding terms ----------
+    fun loadTerms() {
+        if (_termsUiState.value.termsState is UiState.Loading ||
+            _termsUiState.value.termsState is UiState.Success
+        ) return
+
+        viewModelScope.launch {
+            _termsUiState.update { it.copy(termsState = UiState.Loading) }
+            termsRepository.getTermsList()
+                .onSuccess { terms ->
+                    _termsUiState.update { it.copy(termsState = UiState.Success(terms)) }
+                }
+                .onFailure { error ->
+                    _termsUiState.update { it.copy(termsState = UiState.Failure) }
+                    Timber.e(error, "Failed to load terms")
+                }
+        }
+    }
+
+    fun agreeToTerms(termIds: List<Long>) {
+        _termsUiState.update { it.copy(agreedTermsIds = termIds) }
+    }
 
     // ---------- onboarding profile ----------
     fun updateNickname(nickname: String) {
@@ -190,8 +218,7 @@ class OnboardingViewModel
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
                 favoriteContentIds = _contentUiState.value.selectedContents.map { it.id.toLong() },
-                // TODO: 약관 동의 화면 구현 후 실제 동의한 약관 ID로 변경 (임시 하드코딩)
-                agreedTermsIds = listOf(1L, 2L),
+                agreedTermsIds = _termsUiState.value.agreedTermsIds,
             )
 
             authRepository.signup(signupRequest)

@@ -7,6 +7,7 @@ import com.flint.data.api.ContentApi
 import com.flint.data.api.HomeApi
 import com.flint.data.api.SearchApi
 import com.flint.data.api.StorageApi
+import com.flint.data.api.TermsApi
 import com.flint.data.api.UserApi
 import dagger.Module
 import dagger.Provides
@@ -49,4 +50,8 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideStorageApi(retrofit: Retrofit): StorageApi = retrofit.create(StorageApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideTermsApi(retrofit: Retrofit): TermsApi = retrofit.create(TermsApi::class.java)
 }
