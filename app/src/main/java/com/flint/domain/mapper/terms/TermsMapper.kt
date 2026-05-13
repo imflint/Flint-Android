@@ -5,7 +5,7 @@ import com.flint.domain.model.terms.TermModel
 
 fun TermResponseDto.toModel(): TermModel =
     TermModel(
-        id = id.toLong(),
+        id = id,
         type = type,
         version = version,
         title = title,

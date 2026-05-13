@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -50,6 +51,8 @@ class OnboardingViewModel
     private val _signupUiState = MutableStateFlow(OnboardingSignupUiState())
     val signupUiState: StateFlow<OnboardingSignupUiState> = _signupUiState.asStateFlow()
 
+    private var searchJob: Job? = null
+
     // ---------- onboarding terms ----------
     fun loadTerms() {
         if (_termsUiState.value.termsState is UiState.Loading ||
@@ -69,7 +72,7 @@ class OnboardingViewModel
         }
     }
 
-    fun agreeToTerms(termIds: List<Long>) {
+    fun agreeToTerms(termIds: List<String>) {
         _termsUiState.update { it.copy(agreedTermsIds = termIds) }
     }
 
@@ -152,7 +155,8 @@ class OnboardingViewModel
     }
 
     private fun getSearchContentList(keyword: String?, genre: String?) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             _contentUiState.update { it.copy(searchResults = UiState.Loading) }
 
             val genreApiValue = genre?.let { OnboardingContentUiState.GENRES[it] }
@@ -217,7 +221,7 @@ class OnboardingViewModel
             val signupRequest = SignupRequestModel(
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
-                favoriteContentIds = _contentUiState.value.selectedContents.map { it.id.toLong() },
+                favoriteContentIds = _contentUiState.value.selectedContents.map { it.id },
                 agreedTermsIds = _termsUiState.value.agreedTermsIds,
             )
 

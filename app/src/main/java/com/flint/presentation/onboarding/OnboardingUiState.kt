@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 data class OnboardingTermsUiState(
     val termsState: UiState<List<TermModel>> = UiState.Empty,
-    val agreedTermsIds: List<Long> = emptyList(),
+    val agreedTermsIds: List<String> = emptyList(),
 )
 
 enum class NicknameErrorType {

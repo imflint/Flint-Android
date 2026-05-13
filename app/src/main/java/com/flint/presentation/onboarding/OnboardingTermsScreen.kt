@@ -70,7 +70,7 @@ fun OnboardingTermsRoute(
 fun OnboardingTermsScreen(
     termsUiState: OnboardingTermsUiState,
     onBackClick: () -> Unit,
-    onAgreeClick: (List<Long>) -> Unit,
+    onAgreeClick: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val terms = (termsUiState.termsState as? UiState.Success)?.data ?: emptyList()
@@ -287,7 +287,7 @@ private fun OnboardingTermsScreenPreview() {
                 termsState = UiState.Success(
                     listOf(
                         TermModel(
-                            id = 1L,
+                            id = "1",
                             type = "SERVICE",
                             version = 1,
                             title = "서비스 이용약관",
@@ -296,7 +296,7 @@ private fun OnboardingTermsScreenPreview() {
                             activeAt = "2026-05-13T10:48:54.554Z",
                         ),
                         TermModel(
-                            id = 2L,
+                            id = "2",
                             type = "PRIVACY",
                             version = 1,
                             title = "개인정보 처리 방침",
@@ -305,7 +305,7 @@ private fun OnboardingTermsScreenPreview() {
                             activeAt = "2026-05-13T10:48:54.554Z",
                         ),
                         TermModel(
-                            id = 3L,
+                            id = "3",
                             type = "MARKETING",
                             version = 1,
                             title = "마케팅 정보 수신 동의",
