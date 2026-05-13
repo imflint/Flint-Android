@@ -1,6 +1,7 @@
 package com.flint.presentation.profile.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -80,20 +84,48 @@ private fun ProfileKeywordProgressBar(
     percent: Float,
     modifier: Modifier = Modifier,
 ) {
+    val safePercent = percent.coerceIn(0f, 1f)
+    val shape = RoundedCornerShape(4.dp)
+
+    // Track: #4F5669, stop 20%→100% alpha, 레이어 전체 44% opacity
+    val trackBrush = Brush.linearGradient(
+        colors = listOf(
+            Color(0xFF4F5669).copy(alpha = 0.20f * 0.44f),
+            Color(0xFF4F5669).copy(alpha = 0.44f),
+        )
+    )
+
+    // Fill: 키워드 색상, stop 20%→100% alpha
+    val fillBrush = Brush.linearGradient(
+        colors = listOf(
+            preferenceType.color.copy(alpha = 0.20f),
+            preferenceType.color,
+        )
+    )
+
+    // Border: white→transparent, 상→하 방향 (유리 효과 - 오른쪽 끝까지 border 보임)
+    val borderBrush = Brush.linearGradient(
+        colors = listOf(
+            Color.White.copy(alpha = 0.30f),
+            Color.Transparent,
+        ),
+        start = Offset(0f, 0f),
+        end = Offset(0f, Float.POSITIVE_INFINITY),
+    )
+
     Box(
-        modifier =
-            modifier
-                .height(12.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(FlintTheme.colors.gray500),
+        modifier = modifier
+            .height(12.dp)
+            .background(trackBrush, shape)
+            .border(1.dp, borderBrush, shape)
+            .clip(shape),
     ) {
         Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth(percent)
-                    .fillMaxHeight()
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(preferenceType.color),
+            modifier = Modifier
+                .fillMaxWidth(safePercent)
+                .fillMaxHeight()
+                .clip(shape)
+                .background(fillBrush),
         )
     }
 }
