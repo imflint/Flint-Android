@@ -141,7 +141,7 @@ private fun CollectionCreateContentBookmarkInfo(
             text = createdYear.toString(),
             modifier = Modifier.fillMaxWidth(),
             color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.body1R16,
+            style = FlintTheme.typography.caption1M12,
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -196,7 +196,7 @@ private fun CollectionCreateContentBookmarkMore(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "작품 보러가기",
+            text = "시청 가능한 OTT",
             color = FlintTheme.colors.white,
             style = FlintTheme.typography.body2R14,
         )
