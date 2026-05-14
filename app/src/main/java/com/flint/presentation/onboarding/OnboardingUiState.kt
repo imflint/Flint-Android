@@ -2,9 +2,15 @@ package com.flint.presentation.onboarding
 
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.search.SearchContentItemModel
+import com.flint.domain.model.terms.TermModel
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+
+data class OnboardingTermsUiState(
+    val termsState: UiState<List<TermModel>> = UiState.Empty,
+    val agreedTermsIds: List<String> = emptyList(),
+)
 
 enum class NicknameErrorType {
     DUPLICATE,      // 이미 사용 중인 닉네임
@@ -48,13 +54,19 @@ data class OnboardingContentUiState(
     val searchResults: UiState<ImmutableList<SearchContentItemModel>> = UiState.Empty,
     val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val isSearching: Boolean = false,
-    val selectedGenres: ImmutableList<String> = persistentListOf(),
+    val selectedGenre: String? = null,
 ) {
     companion object {
         const val REQUIRED_SELECTION_COUNT = 7
 
-        val GENRES = listOf(
-            "액션", "로맨스", "SF", "드라마", "코미디", "호러"
+        // 표시용(Korean) → API enum 매핑
+        val GENRES: Map<String, String> = linkedMapOf(
+            "액션" to "ACTION",
+            "로맨스" to "ROMANCE",
+            "SF" to "SCIENCE_FICTION",
+            "드라마" to "DRAMA",
+            "코미디" to "COMEDY",
+            "호러" to "HORROR",
         )
     }
 

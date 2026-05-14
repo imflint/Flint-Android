@@ -3,8 +3,8 @@ package com.flint.domain.model.auth
 data class SignupRequestModel(
     val tempToken: String,
     val nickname: String,
-    val favoriteContentIds: List<Long>,
-    val subscribedOttIds: List<Long>,
+    val favoriteContentIds: List<String>,
+    val agreedTermsIds: List<String>,
 )
 
 data class SignupResponseModel(

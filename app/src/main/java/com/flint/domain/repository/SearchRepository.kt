@@ -14,6 +14,18 @@ class SearchRepository @Inject constructor(
     suspend fun getBookmarkedContentList(keyword: String, cursor: Int, size: Int): Result<List<ContentModel>> =
         suspendRunCatching { apiService.getBookmarkedContentList(keyword, cursor, size).data.toModel() }
 
-    suspend fun getSearchContentList(keyword: String?): Result<SearchContentListModel> =
-        suspendRunCatching { apiService.getSearchContentList(keyword).data.toModel() }
+    suspend fun getSearchContentList(
+        keyword: String? = null,
+        genre: String? = null,
+        cursor: Int = 1,
+        size: Int = 20,
+    ): Result<SearchContentListModel> =
+        suspendRunCatching {
+            apiService.getSearchContentList(
+                keyword = keyword,
+                genre = genre,
+                cursor = cursor,
+                size = size,
+            ).data.toModel()
+        }
 }

@@ -9,6 +9,7 @@ import com.flint.core.navigation.Route
 import com.flint.domain.model.auth.SignupRequestModel
 import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.SearchRepository
+import com.flint.domain.repository.TermsRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.domain.type.OttType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,6 +30,7 @@ class OnboardingViewModel
     private val userRepository: UserRepository,
     private val searchRepository: SearchRepository,
     private val authRepository: AuthRepository,
+    private val termsRepository: TermsRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -42,8 +45,36 @@ class OnboardingViewModel
     private val _ottUiState = MutableStateFlow(OnboardingOttUiState())
     val ottUiState: StateFlow<OnboardingOttUiState> = _ottUiState.asStateFlow()
 
+    private val _termsUiState = MutableStateFlow(OnboardingTermsUiState())
+    val termsUiState: StateFlow<OnboardingTermsUiState> = _termsUiState.asStateFlow()
+
     private val _signupUiState = MutableStateFlow(OnboardingSignupUiState())
     val signupUiState: StateFlow<OnboardingSignupUiState> = _signupUiState.asStateFlow()
+
+    private var searchJob: Job? = null
+
+    // ---------- onboarding terms ----------
+    fun loadTerms() {
+        if (_termsUiState.value.termsState is UiState.Loading ||
+            _termsUiState.value.termsState is UiState.Success
+        ) return
+
+        viewModelScope.launch {
+            _termsUiState.update { it.copy(termsState = UiState.Loading) }
+            termsRepository.getTermsList()
+                .onSuccess { terms ->
+                    _termsUiState.update { it.copy(termsState = UiState.Success(terms)) }
+                }
+                .onFailure { error ->
+                    _termsUiState.update { it.copy(termsState = UiState.Failure) }
+                    Timber.e(error, "Failed to load terms")
+                }
+        }
+    }
+
+    fun agreeToTerms(termIds: List<String>) {
+        _termsUiState.update { it.copy(agreedTermsIds = termIds) }
+    }
 
     // ---------- onboarding profile ----------
     fun updateNickname(nickname: String) {
@@ -103,31 +134,37 @@ class OnboardingViewModel
     }
 
     fun loadInitialContents() {
-        getSearchContentList(null)
+        getSearchContentList(keyword = null, genre = null)
     }
 
     fun searchContents() {
-        val keyword = _contentUiState.value.searchKeyword
-        getSearchContentList(keyword.ifEmpty { null })
+        val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
+        val genre = _contentUiState.value.selectedGenre
+        getSearchContentList(keyword = keyword, genre = genre)
     }
 
     fun selectGenre(genre: String) {
         _contentUiState.update { currentState ->
-            val current = currentState.selectedGenres
-            val newSelectedGenres = if (genre in current) {
-                current.filterNot { it == genre }.toImmutableList()
-            } else {
-                (current + genre).toImmutableList()
-            }
-            currentState.copy(selectedGenres = newSelectedGenres)
+            val newSelected = if (currentState.selectedGenre == genre) null else genre
+            currentState.copy(selectedGenre = newSelected)
         }
+        // 장르 선택/해제 시 즉시 재검색
+        val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
+        val selected = _contentUiState.value.selectedGenre
+        getSearchContentList(keyword = keyword, genre = selected)
     }
 
-    private fun getSearchContentList(keyword: String?) {
-        viewModelScope.launch {
+    private fun getSearchContentList(keyword: String?, genre: String?) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             _contentUiState.update { it.copy(searchResults = UiState.Loading) }
 
-            searchRepository.getSearchContentList(keyword)
+            val genreApiValue = genre?.let { OnboardingContentUiState.GENRES[it] }
+
+            searchRepository.getSearchContentList(
+                keyword = keyword,
+                genre = genreApiValue,
+            )
                 .onSuccess { result ->
                     _contentUiState.update { currentState ->
                         currentState.copy(
@@ -184,8 +221,8 @@ class OnboardingViewModel
             val signupRequest = SignupRequestModel(
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
-                favoriteContentIds = _contentUiState.value.selectedContents.map { it.id.toLong() },
-                subscribedOttIds = _ottUiState.value.selectedOtts.map { it.id }
+                favoriteContentIds = _contentUiState.value.selectedContents.map { it.id },
+                agreedTermsIds = _termsUiState.value.agreedTermsIds,
             )
 
             authRepository.signup(signupRequest)

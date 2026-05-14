@@ -171,8 +171,8 @@ fun OnboardingContentScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            items(OnboardingContentUiState.GENRES) { genre ->
-                                val isSelected = genre in contentUiState.selectedGenres
+                            items(OnboardingContentUiState.GENRES.keys.toList()) { genre ->
+                                val isSelected = contentUiState.selectedGenre == genre
                                 FlintGenreChip(
                                     text = genre,
                                     isSelected = isSelected,
@@ -375,16 +375,14 @@ private fun OnboardingContentScreenEmptyPreview() {
 @Preview(showBackground = true, name = "장르 칩 인터랙티브")
 @Composable
 private fun OnboardingContentScreenGenreInteractivePreview() {
-    var selectedGenres by remember { mutableStateOf(setOf<String>()) }
+    var selectedGenre by remember { mutableStateOf<String?>(null) }
 
     FlintTheme {
         OnboardingContentScreen(
             nickname = "안비",
             contentUiState = OnboardingContentUiState(
                 searchResults = UiState.Success(SearchContentListModel.FakeList),
-                selectedGenres = selectedGenres.toList().let {
-                    kotlinx.collections.immutable.persistentListOf(*it.toTypedArray())
-                },
+                selectedGenre = selectedGenre,
             ),
             onBackClick = {},
             onNextClick = {},
@@ -394,11 +392,7 @@ private fun OnboardingContentScreenGenreInteractivePreview() {
             onContentClick = {},
             onRemoveContent = {},
             onGenreClick = { genre ->
-                selectedGenres = if (genre in selectedGenres) {
-                    selectedGenres - genre
-                } else {
-                    selectedGenres + genre
-                }
+                selectedGenre = if (selectedGenre == genre) null else genre
             },
         )
     }
