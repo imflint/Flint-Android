@@ -1,5 +1,6 @@
 package com.flint.presentation.onboarding
 
+import android.net.Uri
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.terms.TermModel
@@ -23,6 +24,7 @@ data class OnboardingProfileUiState(
     val isFormatValid: Boolean = true,
     val isNicknameAvailable: Boolean? = null,
     val nicknameErrorType: NicknameErrorType? = null,
+    val profileImageUri: Uri? = null,
 ) {
     companion object {
         const val MAX_LENGTH = 8

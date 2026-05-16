@@ -1,5 +1,7 @@
 package com.flint.presentation.onboarding
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,29 +9,35 @@ import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
 import com.flint.domain.model.auth.SignupRequestModel
+import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.SearchRepository
+import com.flint.domain.repository.StorageRepository
 import com.flint.domain.repository.TermsRepository
 import com.flint.domain.repository.UserRepository
+import com.flint.domain.type.FileExtension
 import com.flint.domain.type.OttType
+import com.flint.domain.type.StoragePathType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import com.flint.domain.model.search.SearchContentItemModel
 
 @HiltViewModel
 class OnboardingViewModel
 @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val userRepository: UserRepository,
     private val searchRepository: SearchRepository,
     private val authRepository: AuthRepository,
+    private val storageRepository: StorageRepository,
     private val termsRepository: TermsRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -126,6 +134,10 @@ class OnboardingViewModel
         }
     }
 
+    fun updateProfileImage(uri: Uri?) {
+        _uiState.update { it.copy(profileImageUri = uri) }
+    }
+
     // ---------- onboarding content ----------
     fun updateSearchKeyword(keyword: String) {
         _contentUiState.update { currentState ->
@@ -218,11 +230,14 @@ class OnboardingViewModel
         viewModelScope.launch {
             _signupUiState.update { it.copy(signupState = UiState.Loading) }
 
+            val profileImageUrl = uploadProfileImageIfNeeded()
+
             val signupRequest = SignupRequestModel(
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
                 favoriteContentIds = _contentUiState.value.selectedContents.map { it.id },
                 agreedTermsIds = _termsUiState.value.agreedTermsIds,
+                profileImageUrl = profileImageUrl,
             )
 
             authRepository.signup(signupRequest)
@@ -235,5 +250,41 @@ class OnboardingViewModel
                     Timber.e(error, "Signup failed")
                 }
         }
+    }
+
+    private suspend fun uploadProfileImageIfNeeded(): String? {
+        val uri = _uiState.value.profileImageUri ?: return null
+
+        val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
+        val extension = mimeTypeToFileExtension(mimeType)
+
+        val presignedUrl = storageRepository.getPresignedUrl(
+            pathType = StoragePathType.USER_PROFILE,
+            extension = extension,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to get presigned URL")
+            return null
+        }
+
+        val imageBytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            ?: return null
+
+        storageRepository.uploadToS3(
+            uploadUrl = presignedUrl.uploadUrl,
+            imageBytes = imageBytes,
+            mimeType = mimeType,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to upload profile image to S3")
+            return null
+        }
+
+        return presignedUrl.key
+    }
+
+    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
+        "image/png" -> FileExtension.PNG
+        "image/gif" -> FileExtension.GIF
+        "image/webp" -> FileExtension.WEBP
+        else -> FileExtension.JPEG
     }
 }

@@ -67,9 +67,11 @@ fun OnboardingProfileRoute(
         canProceed = uiState.canProceed,
         hasError = uiState.hasError,
         errorMessage = uiState.errorMessage,
+        profileImageUri = uiState.profileImageUri,
         onNicknameChange = viewModel::updateNickname,
         onCheckNickname = viewModel::checkNicknameDuplication,
         onClearError = viewModel::clearNicknameError,
+        onProfileImageSelected = viewModel::updateProfileImage,
         onBackClick = navigateUp,
         onNextClick = navigateToOnboardingContent,
         modifier = Modifier.padding(paddingValues),
@@ -86,9 +88,11 @@ fun OnboardingProfileScreen(
     canProceed: Boolean,
     hasError: Boolean,
     errorMessage: String?,
+    profileImageUri: Uri?,
     onNicknameChange: (String) -> Unit,
     onCheckNickname: () -> Unit,
     onClearError: () -> Unit,
+    onProfileImageSelected: (Uri?) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -98,12 +102,11 @@ fun OnboardingProfileScreen(
     var toastMessage by remember { mutableStateOf("") }
     var isToastSuccess by remember { mutableStateOf(false) }
     var showProfileBottomSheet by remember { mutableStateOf(false) }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        if (uri != null) selectedImageUri = uri
+        if (uri != null) onProfileImageSelected(uri)
     }
 
     LaunchedEffect(hasError, errorMessage) {
@@ -140,7 +143,7 @@ fun OnboardingProfileScreen(
             ) {
 
                 EditProfileImage(
-                    imageUrl = selectedImageUri?.toString() ?: "",
+                    imageUrl = profileImageUri?.toString() ?: "",
                     onEditClick = { showProfileBottomSheet = true }
                 )
 
@@ -235,7 +238,7 @@ fun OnboardingProfileScreen(
                     MenuBottomSheetData(
                         label = "프로필 사진 삭제",
                         color = FlintTheme.colors.error500,
-                        clickAction = { selectedImageUri = null }
+                        clickAction = { onProfileImageSelected(null) }
                     ),
                 ),
                 onDismiss = { showProfileBottomSheet = false }
@@ -273,9 +276,11 @@ private fun OnboardingProfileScreenPreview() {
             canProceed = true,
             hasError = false,
             errorMessage = null,
+            profileImageUri = null,
             onNicknameChange = {},
             onCheckNickname = {},
             onClearError = {},
+            onProfileImageSelected = {},
             onBackClick = {},
             onNextClick = {},
         )
@@ -294,9 +299,11 @@ private fun OnboardingProfileScreenDuplicateErrorPreview() {
             canProceed = false,
             hasError = true,
             errorMessage = "이미 사용 중인 닉네임입니다",
+            profileImageUri = null,
             onNicknameChange = {},
             onCheckNickname = {},
             onClearError = {},
+            onProfileImageSelected = {},
             onBackClick = {},
             onNextClick = {},
         )
@@ -317,9 +324,11 @@ private fun OnboardingProfileScreenFormatErrorPreview() {
             canProceed = false,
             hasError = true,
             errorMessage = "사용할 수 없는 닉네임입니다",
+            profileImageUri = null,
             onNicknameChange = { text = it },
             onCheckNickname = {},
             onClearError = {},
+            onProfileImageSelected = {},
             onBackClick = {},
             onNextClick = {},
         )
