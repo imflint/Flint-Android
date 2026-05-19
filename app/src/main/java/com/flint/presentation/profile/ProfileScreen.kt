@@ -108,6 +108,7 @@ fun ProfileRoute(
         onContentItemClick = { contentId ->
             viewModel.getOttListPerContent(contentId)
         },
+        onContentMoreClick = navigateToSavedContentList,
         onCreatedCollectionMoreClick = {
             navigateToCollectionList(
                 CollectionListRouteType.CREATED,
@@ -249,8 +250,8 @@ private fun ProfileScreen(
                             description = "${userName}님이 저장한 작품이에요",
                             contentModelList = sectionData.data.savedContents,
                             onItemClick = onContentItemClick,
-                            isAllVisible = false,
-                            onAllClick = {},
+                            isAllVisible = true,
+                            onAllClick = onContentMoreClick,
                         )
                     }
                 }
