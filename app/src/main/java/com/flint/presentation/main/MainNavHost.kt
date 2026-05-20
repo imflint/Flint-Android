@@ -18,6 +18,9 @@ import com.flint.presentation.onboarding.navigation.onBoardingNavGraph
 import com.flint.presentation.profile.navigation.myProfileNavGraph
 import com.flint.presentation.profile.navigation.profileNavGraph
 import com.flint.presentation.savedcontent.navigation.savedContentListNavGraph
+import com.flint.presentation.setting.editprofile.navigation.editProfileNavGraph
+import com.flint.presentation.setting.navigation.settingNavGraph
+import com.flint.presentation.setting.withdraw.navigation.withdrawNavGraph
 import com.flint.presentation.splash.navigation.splashNavGraph
 
 @Composable
@@ -96,6 +99,7 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToSavedContentList = navigator::navigateToSavedContent,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
+                navigateToSetting = navigator::navigateToSetting,
             )
 
             profileNavGraph(
@@ -104,6 +108,22 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateToSavedContentList = navigator::navigateToSavedContent,
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
+            )
+
+            settingNavGraph(
+                navigateUp = navigator::navigateUp,
+                navigateToLogin = navigator::navigateToLogin,
+                navigateToEditProfile = navigator::navigateToEditProfile,
+                navigateToWithdraw = navigator::navigateToWithdraw,
+            )
+
+            editProfileNavGraph(
+                navigateUp = navigator::navigateUp,
+            )
+
+            withdrawNavGraph(
+                navigateUp = navigator::navigateUp,
+                navigateToLogin = navigator::navigateToLogin,
             )
         }
     }
