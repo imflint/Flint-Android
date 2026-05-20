@@ -5,4 +5,5 @@ object DataStoreKey {
     const val REFRESH_TOKEN = "refreshToken"
     const val USER_ID = "userId"
     const val USER_NAME = "userName"
+    const val USER_EMAIL = "userEmail"
 }

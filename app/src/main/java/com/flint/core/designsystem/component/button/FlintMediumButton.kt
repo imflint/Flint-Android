@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.theme.FlintTheme
@@ -21,12 +22,14 @@ fun FlintMediumButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = if (state == FlintButtonState.Able) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
     enabled: Boolean = true,
 ) {
     FlintBasicButton(
         text = text,
         state = state,
         onClick = onClick,
+        textStyle = textStyle,
         enabled = enabled,
         contentPadding = PaddingValues(10.dp),
         modifier =
