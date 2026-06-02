@@ -12,10 +12,14 @@ fun NavController.navigateToSavedContentList(navOptions: NavOptions? = null) {
     navigate(Route.SavedContentList, navOptions)
 }
 
-fun NavGraphBuilder.savedContentListNavGraph(paddingValues: PaddingValues) {
+fun NavGraphBuilder.savedContentListNavGraph(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+) {
     composable<Route.SavedContentList> {
         SavedContentListRoute(
             paddingValues = paddingValues,
+            navigateUp = navigateUp,
         )
     }
 }

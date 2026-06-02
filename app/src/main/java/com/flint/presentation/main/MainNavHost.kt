@@ -83,6 +83,7 @@ fun MainNavHost(
 
             savedContentListNavGraph(
                 paddingValues = paddingValues,
+                navigateUp = navigator::navigateUp,
             )
 
             exploreNavGraph(
