@@ -27,7 +27,7 @@ class StorageRepository @Inject constructor(
             api.getPresignedUrl(
                 pathType = pathType.name,
                 extension = extension.name,
-            ).data.toModel()
+            ).toModel()
         }
 
     suspend fun uploadToS3(

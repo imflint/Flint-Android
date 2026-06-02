@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,16 +68,18 @@ fun OnboardingProfileRoute(
         isFormatValid = uiState.isFormatValid,
         isNicknameAvailable = uiState.isNicknameAvailable,
         canProceed = uiState.canProceed,
+        canCheckNickname = uiState.canCheckNickname,
         hasError = uiState.hasError,
         errorMessage = uiState.errorMessage,
         profileImageUri = uiState.profileImageUri,
         onNicknameChange = viewModel::updateNickname,
         onCheckNickname = viewModel::checkNicknameDuplication,
-        onClearError = viewModel::clearNicknameError,
         onProfileImageSelected = viewModel::updateProfileImage,
         onBackClick = navigateUp,
         onNextClick = navigateToOnboardingContent,
-        modifier = Modifier.padding(paddingValues),
+        modifier = Modifier
+            .padding(paddingValues)
+            .consumeWindowInsets(paddingValues),
     )
 }
 
@@ -86,12 +91,12 @@ fun OnboardingProfileScreen(
     isFormatValid: Boolean,
     isNicknameAvailable: Boolean?,
     canProceed: Boolean,
+    canCheckNickname: Boolean,
     hasError: Boolean,
     errorMessage: String?,
     profileImageUri: Uri?,
     onNicknameChange: (String) -> Unit,
     onCheckNickname: () -> Unit,
-    onClearError: () -> Unit,
     onProfileImageSelected: (Uri?) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -130,6 +135,7 @@ fun OnboardingProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
+                .imePadding()
         ) {
             FlintBackTopAppbar(
                 onClick = onBackClick,
@@ -194,10 +200,10 @@ fun OnboardingProfileScreen(
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(8.dp))
                             .background(
-                                if (isValid && isFormatValid) FlintTheme.colors.primary400
+                                if (canCheckNickname) FlintTheme.colors.primary400
                                 else FlintTheme.colors.gray700
                             )
-                            .clickable(enabled = isValid && isFormatValid) {
+                            .clickable(enabled = canCheckNickname) {
                                 keyboardController?.hide()
                                 onCheckNickname()
                             }
@@ -206,8 +212,8 @@ fun OnboardingProfileScreen(
                     ) {
                         Text(
                             text = "확인",
-                            color = if (isValid && isFormatValid) FlintTheme.colors.white else FlintTheme.colors.gray400,
-                            style = if (isValid && isFormatValid) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
+                            color = if (canCheckNickname) FlintTheme.colors.white else FlintTheme.colors.gray400,
+                            style = if (canCheckNickname) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
                         )
                     }
                 }
@@ -253,12 +259,7 @@ fun OnboardingProfileScreen(
                 ),
                 paddingValues = PaddingValues.Zero,
                 yOffset = 100.dp,
-                hide = {
-                    showToast = false
-                    if (!isToastSuccess) {
-                        onClearError()
-                    }
-                },
+                hide = { showToast = false },
             )
         }
     }
@@ -274,12 +275,12 @@ private fun OnboardingProfileScreenPreview() {
             isFormatValid = true,
             isNicknameAvailable = true,
             canProceed = true,
+            canCheckNickname = true,
             hasError = false,
             errorMessage = null,
             profileImageUri = null,
             onNicknameChange = {},
             onCheckNickname = {},
-            onClearError = {},
             onProfileImageSelected = {},
             onBackClick = {},
             onNextClick = {},
@@ -297,12 +298,12 @@ private fun OnboardingProfileScreenDuplicateErrorPreview() {
             isFormatValid = true,
             isNicknameAvailable = false,
             canProceed = false,
+            canCheckNickname = true,
             hasError = true,
             errorMessage = "이미 사용 중인 닉네임입니다",
             profileImageUri = null,
             onNicknameChange = {},
             onCheckNickname = {},
-            onClearError = {},
             onProfileImageSelected = {},
             onBackClick = {},
             onNextClick = {},
@@ -322,12 +323,12 @@ private fun OnboardingProfileScreenFormatErrorPreview() {
             isFormatValid = false,
             isNicknameAvailable = null,
             canProceed = false,
+            canCheckNickname = false,
             hasError = true,
             errorMessage = "사용할 수 없는 닉네임입니다",
             profileImageUri = null,
             onNicknameChange = { text = it },
             onCheckNickname = {},
-            onClearError = {},
             onProfileImageSelected = {},
             onBackClick = {},
             onNextClick = {},

@@ -2,6 +2,8 @@ package com.flint.presentation.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -161,7 +163,11 @@ fun OnboardingTermsScreen(
                 }
 
                 else -> {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp),
+                    ) {
                         Spacer(Modifier.height(16.dp))
 
                         terms.forEachIndexed { index, term ->

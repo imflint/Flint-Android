@@ -21,6 +21,6 @@ interface AuthApi {
         @Body requestDto: SocialVerifyRequestDto,
     ): BaseResponse<SocialVerifyResponseDto>
 
-    @DELETE("/api/v1/auth/withdraw")
+    @POST("/api/v1/auth/withdraw")
     suspend fun withdraw(): WithdrawResponseDto
 }

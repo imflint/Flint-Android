@@ -11,9 +11,7 @@ interface Route {
     data object Login : Route
 
     @Serializable
-    data class OnboardingProfile(
-        val tempToken: String
-    ) : Route
+    data object OnboardingProfile : Route
 
     @Serializable
     data class OnboardingGraph(

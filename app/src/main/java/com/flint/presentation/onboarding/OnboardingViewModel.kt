@@ -94,11 +94,7 @@ class OnboardingViewModel
                     isValid = nickname.length >= OnboardingProfileUiState.MIN_LENGTH,
                     isFormatValid = isFormatValid,
                     isNicknameAvailable = null,
-                    nicknameErrorType = when {
-                        !isFormatValid && nickname.isNotEmpty() -> NicknameErrorType.INVALID_FORMAT
-                        currentState.nicknameErrorType == NicknameErrorType.DUPLICATE -> NicknameErrorType.DUPLICATE
-                        else -> null
-                    },
+                    nicknameErrorType = if (!isFormatValid && nickname.isNotEmpty()) NicknameErrorType.INVALID_FORMAT else null,
                 )
             }
         }
@@ -171,7 +167,7 @@ class OnboardingViewModel
         searchJob = viewModelScope.launch {
             _contentUiState.update { it.copy(searchResults = UiState.Loading) }
 
-            val genreApiValue = genre?.let { OnboardingContentUiState.GENRES[it] }
+            val genreApiValue = genre?.let { key -> OnboardingContentUiState.GENRES[key]?.let { listOf(it) } }
 
             searchRepository.getSearchContentList(
                 keyword = keyword,

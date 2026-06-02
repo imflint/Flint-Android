@@ -17,8 +17,9 @@ interface SearchApi {
     @GET("/api/v1/contents/search")
     suspend fun getSearchContentList(
         @Query("keyword") keyword: String? = null,
-        @Query("genre") genre: String? = null,
-        @Query("cursor") cursor: Int = 1,
+        @Query("genre") genre: List<String>? = null,
+        @Query("mediaType") mediaType: String? = null,
+        @Query("cursor") cursor: String? = null,
         @Query("size") size: Int = 20,
     ): BaseResponse<SearchContentsResponseDto>
 }

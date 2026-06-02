@@ -63,13 +63,14 @@ object NetworkModule {
     @Provides
     @Singleton
     @S3OkHttpClient
-    fun provideS3OkHttpClient(): OkHttpClient =
+    fun provideS3OkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
         OkHttpClient
             .Builder()
             .apply {
                 connectTimeout(20, TimeUnit.SECONDS)
                 writeTimeout(60, TimeUnit.SECONDS)
                 readTimeout(20, TimeUnit.SECONDS)
+                addInterceptor(loggingInterceptor)
             }.build()
 
     @Provides
