@@ -32,5 +32,13 @@ data class SearchContentsResponseDto(
         val returned: Int? = null,
         @SerialName("nextCursor")
         val nextCursor: String? = null,
+        @SerialName("page")
+        val page: Int? = null,
+        @SerialName("size")
+        val size: Int? = null,
+        @SerialName("totalElements")
+        val totalElements: String? = null,
+        @SerialName("totalPages")
+        val totalPages: Int? = null,
     )
 }

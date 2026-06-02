@@ -5,6 +5,7 @@ data class SignupRequestModel(
     val nickname: String,
     val favoriteContentIds: List<String>,
     val agreedTermsIds: List<String>,
+    val profileImageUrl: String? = null,
 )
 
 data class SignupResponseModel(

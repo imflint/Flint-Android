@@ -11,6 +11,7 @@ fun SignupRequestModel.toDto(): SignupRequestDto =
         nickname = nickname,
         favoriteContentIds = favoriteContentIds,
         agreedTermsIds = agreedTermsIds,
+        profileImageUrl = profileImageUrl,
     )
 
 fun SignupResponseDto.toModel(): SignupResponseModel =

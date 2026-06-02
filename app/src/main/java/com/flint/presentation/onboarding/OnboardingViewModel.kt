@@ -1,5 +1,7 @@
 package com.flint.presentation.onboarding
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,29 +9,37 @@ import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
 import com.flint.domain.model.auth.SignupRequestModel
+import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.SearchRepository
+import com.flint.domain.repository.StorageRepository
 import com.flint.domain.repository.TermsRepository
 import com.flint.domain.repository.UserRepository
+import com.flint.domain.type.FileExtension
 import com.flint.domain.type.OttType
+import com.flint.domain.type.StoragePathType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
-import com.flint.domain.model.search.SearchContentItemModel
 
 @HiltViewModel
 class OnboardingViewModel
 @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val userRepository: UserRepository,
     private val searchRepository: SearchRepository,
     private val authRepository: AuthRepository,
+    private val storageRepository: StorageRepository,
     private val termsRepository: TermsRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -86,11 +96,7 @@ class OnboardingViewModel
                     isValid = nickname.length >= OnboardingProfileUiState.MIN_LENGTH,
                     isFormatValid = isFormatValid,
                     isNicknameAvailable = null,
-                    nicknameErrorType = when {
-                        !isFormatValid && nickname.isNotEmpty() -> NicknameErrorType.INVALID_FORMAT
-                        currentState.nicknameErrorType == NicknameErrorType.DUPLICATE -> NicknameErrorType.DUPLICATE
-                        else -> null
-                    },
+                    nicknameErrorType = if (!isFormatValid && nickname.isNotEmpty()) NicknameErrorType.INVALID_FORMAT else null,
                 )
             }
         }
@@ -126,6 +132,10 @@ class OnboardingViewModel
         }
     }
 
+    fun updateProfileImage(uri: Uri?) {
+        _uiState.update { it.copy(profileImageUri = uri) }
+    }
+
     // ---------- onboarding content ----------
     fun updateSearchKeyword(keyword: String) {
         _contentUiState.update { currentState ->
@@ -134,47 +144,94 @@ class OnboardingViewModel
     }
 
     fun loadInitialContents() {
-        getSearchContentList(keyword = null, genre = null)
+        getSearchContentList(keyword = null, genres = emptySet())
+    }
+
+    fun clearSearchKeyword() {
+        _contentUiState.update { it.copy(searchKeyword = "") }
+        val genres = _contentUiState.value.selectedGenres
+        getSearchContentList(keyword = null, genres = genres)
     }
 
     fun searchContents() {
         val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
-        val genre = _contentUiState.value.selectedGenre
-        getSearchContentList(keyword = keyword, genre = genre)
+        val genres = _contentUiState.value.selectedGenres
+        getSearchContentList(keyword = keyword, genres = genres)
     }
 
     fun selectGenre(genre: String) {
         _contentUiState.update { currentState ->
-            val newSelected = if (currentState.selectedGenre == genre) null else genre
-            currentState.copy(selectedGenre = newSelected)
+            val newSelected = if (currentState.selectedGenres.contains(genre)) {
+                currentState.selectedGenres - genre
+            } else {
+                currentState.selectedGenres + genre
+            }
+            currentState.copy(selectedGenres = newSelected)
         }
         // 장르 선택/해제 시 즉시 재검색
         val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
-        val selected = _contentUiState.value.selectedGenre
-        getSearchContentList(keyword = keyword, genre = selected)
+        val selected = _contentUiState.value.selectedGenres
+        getSearchContentList(keyword = keyword, genres = selected)
     }
 
-    private fun getSearchContentList(keyword: String?, genre: String?) {
+    private fun getSearchContentList(keyword: String?, genres: Set<String>) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            _contentUiState.update { it.copy(searchResults = UiState.Loading) }
+            _contentUiState.update { it.copy(searchResults = UiState.Loading, nextCursor = null) }
 
-            val genreApiValue = genre?.let { OnboardingContentUiState.GENRES[it] }
+            val genreApiValues = genres.mapNotNull { OnboardingContentUiState.GENRES[it] }
+                .ifEmpty { null }
 
             searchRepository.getSearchContentList(
                 keyword = keyword,
-                genre = genreApiValue,
+                genres = genreApiValues,
+                cursor = null,
             )
                 .onSuccess { result ->
                     _contentUiState.update { currentState ->
                         currentState.copy(
-                            searchResults = UiState.Success(result.contents)
+                            searchResults = UiState.Success(result.contents),
+                            nextCursor = result.nextCursor,
                         )
                     }
                     Timber.d("Search result: $result")
                 }
                 .onFailure { error ->
                     _contentUiState.update { it.copy(searchResults = UiState.Failure) }
+                    Timber.e(error)
+                }
+        }
+    }
+
+    fun loadMoreContents() {
+        val state = _contentUiState.value
+        val cursor = state.nextCursor ?: return
+        if (state.isLoadingMore) return
+        val currentItems = (state.searchResults as? UiState.Success)?.data ?: return
+
+        viewModelScope.launch {
+            _contentUiState.update { it.copy(isLoadingMore = true) }
+
+            val keyword = state.searchKeyword.ifEmpty { null }
+            val genreApiValues = state.selectedGenres
+                .mapNotNull { OnboardingContentUiState.GENRES[it] }
+                .ifEmpty { null }
+
+            searchRepository.getSearchContentList(
+                keyword = keyword,
+                genres = genreApiValues,
+                cursor = cursor,
+            )
+                .onSuccess { result ->
+                    val merged = (currentItems + result.contents).toImmutableList()
+                    _contentUiState.update { it.copy(
+                        searchResults = UiState.Success(merged),
+                        nextCursor = result.nextCursor,
+                        isLoadingMore = false,
+                    )}
+                }
+                .onFailure { error ->
+                    _contentUiState.update { it.copy(isLoadingMore = false) }
                     Timber.e(error)
                 }
         }
@@ -218,11 +275,14 @@ class OnboardingViewModel
         viewModelScope.launch {
             _signupUiState.update { it.copy(signupState = UiState.Loading) }
 
+            val profileImageUrl = uploadProfileImageIfNeeded()
+
             val signupRequest = SignupRequestModel(
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
                 favoriteContentIds = _contentUiState.value.selectedContents.map { it.id },
                 agreedTermsIds = _termsUiState.value.agreedTermsIds,
+                profileImageUrl = profileImageUrl,
             )
 
             authRepository.signup(signupRequest)
@@ -235,5 +295,44 @@ class OnboardingViewModel
                     Timber.e(error, "Signup failed")
                 }
         }
+    }
+
+    private suspend fun uploadProfileImageIfNeeded(): String? {
+        val uri = _uiState.value.profileImageUri ?: return null
+
+        val mimeType = withContext(Dispatchers.IO) {
+            context.contentResolver.getType(uri)
+        } ?: "image/jpeg"
+        val extension = mimeTypeToFileExtension(mimeType)
+
+        val presignedUrl = storageRepository.getPresignedUrl(
+            pathType = StoragePathType.USER_PROFILE,
+            extension = extension,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to get presigned URL")
+            return null
+        }
+
+        val imageBytes = withContext(Dispatchers.IO) {
+            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        } ?: return null
+
+        storageRepository.uploadToS3(
+            uploadUrl = presignedUrl.uploadUrl,
+            imageBytes = imageBytes,
+            mimeType = mimeType,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to upload profile image to S3")
+            return null
+        }
+
+        return presignedUrl.key
+    }
+
+    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
+        "image/png" -> FileExtension.PNG
+        "image/gif" -> FileExtension.GIF
+        "image/webp" -> FileExtension.WEBP
+        else -> FileExtension.JPEG
     }
 }
