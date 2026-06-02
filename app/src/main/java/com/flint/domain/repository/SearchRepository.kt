@@ -16,7 +16,7 @@ class SearchRepository @Inject constructor(
 
     suspend fun getSearchContentList(
         keyword: String? = null,
-        genre: List<String>? = null,
+        genres: List<String>? = null,
         mediaType: String? = null,
         cursor: String? = null,
         size: Int = 20,
@@ -24,7 +24,7 @@ class SearchRepository @Inject constructor(
         suspendRunCatching {
             apiService.getSearchContentList(
                 keyword = keyword,
-                genre = genre,
+                genre = genres?.ifEmpty { null },
                 mediaType = mediaType,
                 cursor = cursor,
                 size = size,
