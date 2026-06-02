@@ -3,6 +3,7 @@ package com.flint.data.di
 import com.flint.BuildConfig
 import com.flint.data.di.interceptor.NetworkErrorInterceptor
 import com.flint.data.di.interceptor.TokenInterceptor
+import com.flint.data.di.qualifier.S3OkHttpClient
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -56,6 +57,19 @@ object NetworkModule {
                 readTimeout(20, TimeUnit.SECONDS)
                 addInterceptor(networkErrorInterceptor)
                 addInterceptor(tokenInterceptor)
+                addInterceptor(loggingInterceptor)
+            }.build()
+
+    @Provides
+    @Singleton
+    @S3OkHttpClient
+    fun provideS3OkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .apply {
+                connectTimeout(20, TimeUnit.SECONDS)
+                writeTimeout(60, TimeUnit.SECONDS)
+                readTimeout(20, TimeUnit.SECONDS)
                 addInterceptor(loggingInterceptor)
             }.build()
 

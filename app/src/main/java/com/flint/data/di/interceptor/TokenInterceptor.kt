@@ -23,7 +23,8 @@ class TokenInterceptor
 
             val requestBuilder = originalRequest.newBuilder()
 
-            if (accessToken.isNotEmpty()) {
+            val isSearchRequest = originalRequest.url.encodedPath.endsWith("/contents/search")
+            if (accessToken.isNotEmpty() && !isSearchRequest) {
                 requestBuilder.header("Authorization", "Bearer $accessToken")
             }
 

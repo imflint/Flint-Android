@@ -18,7 +18,11 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun SplashRoute(
@@ -27,12 +31,27 @@ fun SplashRoute(
     navigateToHome: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
+    val autoLoginState by viewModel.autoLoginState.collectAsStateWithLifecycle()
+    var isAnimationFinished by remember { mutableStateOf(false) }
+
     SplashScreen(
-        onAnimationFinished = navigateToLogin,
+        onAnimationFinished = { isAnimationFinished = true },
     )
+
+    // 애니메이션이 완료되지 않을 경우를 대비한 fallback
     LaunchedEffect(Unit) {
         delay(2000)
-        navigateToLogin()
+        isAnimationFinished = true
+    }
+
+    LaunchedEffect(isAnimationFinished, autoLoginState) {
+        if (isAnimationFinished && autoLoginState != AutoLoginState.Loading) {
+            when (autoLoginState) {
+                AutoLoginState.NavigateToHome -> navigateToHome()
+                AutoLoginState.NavigateToLogin -> navigateToLogin()
+                AutoLoginState.Loading -> Unit
+            }
+        }
     }
 }
 

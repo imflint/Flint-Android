@@ -7,6 +7,7 @@ import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.data.local.PreferencesManager
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.AuthApi
+import com.flint.data.dto.auth.request.WithdrawRequestDto
 import com.flint.domain.mapper.auth.toDto
 import com.flint.domain.mapper.auth.toModel
 import com.flint.domain.model.auth.SignupRequestModel
@@ -38,14 +39,10 @@ class AuthRepository @Inject constructor(
             result
         }
 
-    suspend fun logout(): Result<Unit> =
+    // :TODO 일단 10으로 고정해둠 수정예정
+    suspend fun withdraw(agreedTermsIds: List<String> = listOf("10")): Result<Unit> =
         suspendRunCatching {
-            preferencesManager.clearAll()
-        }
-
-    suspend fun withdraw(): Result<Unit> =
-        suspendRunCatching {
-            api.withdraw()
+            api.withdraw(WithdrawRequestDto(agreedTermsIds = agreedTermsIds))
             preferencesManager.clearAll()
         }
 }

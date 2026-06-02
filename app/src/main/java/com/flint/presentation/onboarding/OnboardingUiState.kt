@@ -1,5 +1,6 @@
 package com.flint.presentation.onboarding
 
+import android.net.Uri
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.terms.TermModel
@@ -23,16 +24,21 @@ data class OnboardingProfileUiState(
     val isFormatValid: Boolean = true,
     val isNicknameAvailable: Boolean? = null,
     val nicknameErrorType: NicknameErrorType? = null,
+    val profileImageUri: Uri? = null,
 ) {
     companion object {
         const val MAX_LENGTH = 8
         const val MIN_LENGTH = 2
-        private val NICKNAME_REGEX = Regex("^[가-힣a-zA-Z]+$")
+        private val NICKNAME_REGEX = Regex("^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z]+$")
+        private val STANDALONE_KOREAN_REGEX = Regex("[ㄱ-ㅎㅏ-ㅣ]")
 
         fun isValidFormat(nickname: String): Boolean {
             return nickname.isEmpty() || NICKNAME_REGEX.matches(nickname)
         }
     }
+
+    val hasStandaloneKorean: Boolean
+        get() = STANDALONE_KOREAN_REGEX.containsMatchIn(nickname)
 
     val hasError: Boolean
         get() = nicknameErrorType != null
@@ -44,9 +50,12 @@ data class OnboardingProfileUiState(
             null -> null
         }
 
+    val canCheckNickname: Boolean
+        get() = isValid && isFormatValid && !hasStandaloneKorean
+
     //다음단계 활성화
     val canProceed: Boolean
-        get() = isValid && isFormatValid && isNicknameAvailable == true
+        get() = isValid && isFormatValid && isNicknameAvailable == true && !hasStandaloneKorean
 }
 
 data class OnboardingContentUiState(
@@ -54,7 +63,9 @@ data class OnboardingContentUiState(
     val searchResults: UiState<ImmutableList<SearchContentItemModel>> = UiState.Empty,
     val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val isSearching: Boolean = false,
-    val selectedGenre: String? = null,
+    val selectedGenres: Set<String> = emptySet(),
+    val nextCursor: String? = null,
+    val isLoadingMore: Boolean = false,
 ) {
     companion object {
         const val REQUIRED_SELECTION_COUNT = 7

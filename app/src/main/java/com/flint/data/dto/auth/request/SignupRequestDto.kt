@@ -13,4 +13,6 @@ data class SignupRequestDto(
     val favoriteContentIds: List<String>,
     @SerialName("agreedTermsIds")
     val agreedTermsIds: List<String>,
+    @SerialName("profileImageUrl")
+    val profileImageUrl: String? = null,
 )
