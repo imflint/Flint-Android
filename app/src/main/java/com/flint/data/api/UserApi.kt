@@ -1,13 +1,18 @@
 package com.flint.data.api
 
+import com.flint.data.dto.base.BaseEmptyResponse
 import com.flint.data.dto.base.BaseResponse
 import com.flint.data.dto.content.response.BookmarkedContentListResponseDto
+import com.flint.data.dto.user.request.UpdateNicknameRequestDto
+import com.flint.data.dto.user.request.UpdateProfileImageRequestDto
 import com.flint.data.dto.user.response.NicknameCheckResponseDto
 import com.flint.data.dto.user.response.BookmarkedCollectionListResponseDto
 import com.flint.data.dto.user.response.CreatedCollectionListResponseDto
 import com.flint.data.dto.user.response.UserKeywordsResponseDto
 import com.flint.data.dto.user.response.UserProfileResponseDto
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -57,4 +62,16 @@ interface UserApi {
     ): BaseResponse<UserKeywordsResponseDto>
 
     // 취향 키워드 재계산
+
+    // 닉네임 수정
+    @PUT("/api/v1/users/me/nickname")
+    suspend fun updateNickname(
+        @Body requestDto: UpdateNicknameRequestDto,
+    ): BaseEmptyResponse
+
+    // 프로필 이미지 수정
+    @PUT("/api/v1/users/me/profile-image")
+    suspend fun updateProfileImage(
+        @Body requestDto: UpdateProfileImageRequestDto,
+    ): BaseEmptyResponse
 }

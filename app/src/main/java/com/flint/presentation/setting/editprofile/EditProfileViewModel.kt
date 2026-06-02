@@ -1,11 +1,18 @@
 package com.flint.presentation.setting.editprofile
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.data.local.PreferencesManager
+import com.flint.domain.repository.StorageRepository
 import com.flint.domain.repository.UserRepository
+import com.flint.domain.type.FileExtension
+import com.flint.domain.type.StoragePathType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,13 +21,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val preferencesManager: PreferencesManager,
     private val userRepository: UserRepository,
+    private val storageRepository: StorageRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EditProfileUiState())
@@ -61,6 +71,10 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
+    fun updateProfileImage(uri: Uri?) {
+        _uiState.update { it.copy(profileImageUri = uri) }
+    }
+
     fun checkNicknameDuplication() {
         val state = _uiState.value
         if (!state.isFormatValid || !state.isNicknameChanged) return
@@ -92,10 +106,54 @@ class EditProfileViewModel @Inject constructor(
         if (!state.canComplete) return
 
         viewModelScope.launch {
+            if (state.profileImageUri != null) {
+                uploadProfileImage(state.profileImageUri)
+            }
             if (state.isNicknameChanged) {
-                preferencesManager.saveString(USER_NAME, state.nickname)
+                userRepository.updateNickname(state.nickname)
+                    .onSuccess { preferencesManager.saveString(USER_NAME, state.nickname) }
+                    .onFailure { Timber.e(it, "Failed to update nickname") }
             }
             _navigateUp.emit(Unit)
         }
+    }
+
+    private suspend fun uploadProfileImage(uri: Uri) {
+        val mimeType = withContext(Dispatchers.IO) {
+            context.contentResolver.getType(uri)
+        } ?: "image/jpeg"
+
+        val extension = mimeTypeToFileExtension(mimeType)
+
+        val presignedUrl = storageRepository.getPresignedUrl(
+            pathType = StoragePathType.USER_PROFILE,
+            extension = extension,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to get presigned URL")
+            return
+        }
+
+        val imageBytes = withContext(Dispatchers.IO) {
+            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        } ?: return
+
+        storageRepository.uploadToS3(
+            uploadUrl = presignedUrl.uploadUrl,
+            imageBytes = imageBytes,
+            mimeType = mimeType,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to upload profile image to S3")
+            return
+        }
+
+        userRepository.updateProfileImage(presignedUrl.key)
+            .onFailure { Timber.e(it, "Failed to update profile image") }
+    }
+
+    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
+        "image/png" -> FileExtension.PNG
+        "image/gif" -> FileExtension.GIF
+        "image/webp" -> FileExtension.WEBP
+        else -> FileExtension.JPEG
     }
 }

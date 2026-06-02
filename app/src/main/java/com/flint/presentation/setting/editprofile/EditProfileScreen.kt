@@ -15,7 +15,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -68,7 +71,7 @@ fun EditProfileRoute(
         onBackClick = navigateUp,
         onNicknameChange = viewModel::updateNickname,
         onCheckNickname = viewModel::checkNicknameDuplication,
-        onClearError = viewModel::clearNicknameError,
+        onProfileImageSelected = viewModel::updateProfileImage,
         onCompleteClick = viewModel::saveProfile,
     )
 }
@@ -80,7 +83,7 @@ private fun EditProfileScreen(
     onBackClick: () -> Unit,
     onNicknameChange: (String) -> Unit,
     onCheckNickname: () -> Unit,
-    onClearError: () -> Unit,
+    onProfileImageSelected: (Uri?) -> Unit,
     onCompleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -89,17 +92,16 @@ private fun EditProfileScreen(
     var toastMessage by remember { mutableStateOf("") }
     var isToastSuccess by remember { mutableStateOf(false) }
     var showProfileBottomSheet by remember { mutableStateOf(false) }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        if (uri != null) selectedImageUri = uri
+        if (uri != null) onProfileImageSelected(uri)
     }
 
     LaunchedEffect(uiState.hasError, uiState.errorMessage) {
         if (uiState.hasError && uiState.errorMessage != null) {
-            toastMessage = uiState.errorMessage!!
+            toastMessage = uiState.errorMessage ?: ""
             isToastSuccess = false
             showToast = true
         }
@@ -116,6 +118,8 @@ private fun EditProfileScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .systemBarsPadding()
+            .imePadding()
             .background(FlintTheme.colors.background),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -133,7 +137,7 @@ private fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 EditProfileImage(
-                    imageUrl = selectedImageUri?.toString() ?: uiState.profileImageUrl ?: "",
+                    imageUrl = uiState.profileImageUri?.toString() ?: uiState.profileImageUrl ?: "",
                     onEditClick = { showProfileBottomSheet = true },
                 )
 
@@ -220,7 +224,7 @@ private fun EditProfileScreen(
                     MenuBottomSheetData(
                         label = "프로필 사진 삭제",
                         color = FlintTheme.colors.error500,
-                        clickAction = { selectedImageUri = null }
+                        clickAction = { onProfileImageSelected(null) }
                     ),
                 ),
                 onDismiss = { showProfileBottomSheet = false }
@@ -235,10 +239,7 @@ private fun EditProfileScreen(
                 ),
                 paddingValues = PaddingValues.Zero,
                 yOffset = 100.dp,
-                hide = {
-                    showToast = false
-                    if (!isToastSuccess) onClearError()
-                },
+                hide = { showToast = false },
             )
         }
     }
@@ -257,7 +258,7 @@ private fun EditProfileScreenPreview() {
             onBackClick = {},
             onNicknameChange = {},
             onCheckNickname = {},
-            onClearError = {},
+            onProfileImageSelected = {},
             onCompleteClick = {},
         )
     }

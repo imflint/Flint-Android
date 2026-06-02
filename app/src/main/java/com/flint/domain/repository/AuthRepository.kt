@@ -39,6 +39,11 @@ class AuthRepository @Inject constructor(
             result
         }
 
+    suspend fun logout(): Result<Unit> =
+        suspendRunCatching {
+            preferencesManager.clearAll()
+        }
+
     // :TODO 일단 10으로 고정해둠 수정예정
     suspend fun withdraw(agreedTermsIds: List<String> = listOf("10")): Result<Unit> =
         suspendRunCatching {
