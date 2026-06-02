@@ -31,10 +31,14 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun checkAutoLogin() = viewModelScope.launch {
-        val accessToken = preferencesManager.getString(ACCESS_TOKEN).first()
-        _autoLoginState.value = if (accessToken.isNotEmpty()) {
-            AutoLoginState.NavigateToHome
-        } else {
+        _autoLoginState.value = try {
+            val accessToken = preferencesManager.getString(ACCESS_TOKEN).first()
+            if (accessToken.isNotEmpty()) {
+                AutoLoginState.NavigateToHome
+            } else {
+                AutoLoginState.NavigateToLogin
+            }
+        } catch (e: Exception) {
             AutoLoginState.NavigateToLogin
         }
     }

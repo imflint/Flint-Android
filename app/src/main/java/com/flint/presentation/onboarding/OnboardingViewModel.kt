@@ -21,12 +21,14 @@ import com.flint.domain.type.StoragePathType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -251,7 +253,9 @@ class OnboardingViewModel
     private suspend fun uploadProfileImageIfNeeded(): String? {
         val uri = _uiState.value.profileImageUri ?: return null
 
-        val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
+        val mimeType = withContext(Dispatchers.IO) {
+            context.contentResolver.getType(uri)
+        } ?: "image/jpeg"
         val extension = mimeTypeToFileExtension(mimeType)
 
         val presignedUrl = storageRepository.getPresignedUrl(
@@ -262,8 +266,9 @@ class OnboardingViewModel
             return null
         }
 
-        val imageBytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            ?: return null
+        val imageBytes = withContext(Dispatchers.IO) {
+            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        } ?: return null
 
         storageRepository.uploadToS3(
             uploadUrl = presignedUrl.uploadUrl,
