@@ -144,47 +144,94 @@ class OnboardingViewModel
     }
 
     fun loadInitialContents() {
-        getSearchContentList(keyword = null, genre = null)
+        getSearchContentList(keyword = null, genres = emptySet())
+    }
+
+    fun clearSearchKeyword() {
+        _contentUiState.update { it.copy(searchKeyword = "") }
+        val genres = _contentUiState.value.selectedGenres
+        getSearchContentList(keyword = null, genres = genres)
     }
 
     fun searchContents() {
         val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
-        val genre = _contentUiState.value.selectedGenre
-        getSearchContentList(keyword = keyword, genre = genre)
+        val genres = _contentUiState.value.selectedGenres
+        getSearchContentList(keyword = keyword, genres = genres)
     }
 
     fun selectGenre(genre: String) {
         _contentUiState.update { currentState ->
-            val newSelected = if (currentState.selectedGenre == genre) null else genre
-            currentState.copy(selectedGenre = newSelected)
+            val newSelected = if (currentState.selectedGenres.contains(genre)) {
+                currentState.selectedGenres - genre
+            } else {
+                currentState.selectedGenres + genre
+            }
+            currentState.copy(selectedGenres = newSelected)
         }
         // 장르 선택/해제 시 즉시 재검색
         val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
-        val selected = _contentUiState.value.selectedGenre
-        getSearchContentList(keyword = keyword, genre = selected)
+        val selected = _contentUiState.value.selectedGenres
+        getSearchContentList(keyword = keyword, genres = selected)
     }
 
-    private fun getSearchContentList(keyword: String?, genre: String?) {
+    private fun getSearchContentList(keyword: String?, genres: Set<String>) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            _contentUiState.update { it.copy(searchResults = UiState.Loading) }
+            _contentUiState.update { it.copy(searchResults = UiState.Loading, nextCursor = null) }
 
-            val genreApiValue = genre?.let { key -> OnboardingContentUiState.GENRES[key]?.let { listOf(it) } }
+            val genreApiValues = genres.mapNotNull { OnboardingContentUiState.GENRES[it] }
+                .ifEmpty { null }
 
             searchRepository.getSearchContentList(
                 keyword = keyword,
-                genre = genreApiValue,
+                genres = genreApiValues,
+                cursor = null,
             )
                 .onSuccess { result ->
                     _contentUiState.update { currentState ->
                         currentState.copy(
-                            searchResults = UiState.Success(result.contents)
+                            searchResults = UiState.Success(result.contents),
+                            nextCursor = result.nextCursor,
                         )
                     }
                     Timber.d("Search result: $result")
                 }
                 .onFailure { error ->
                     _contentUiState.update { it.copy(searchResults = UiState.Failure) }
+                    Timber.e(error)
+                }
+        }
+    }
+
+    fun loadMoreContents() {
+        val state = _contentUiState.value
+        val cursor = state.nextCursor ?: return
+        if (state.isLoadingMore) return
+        val currentItems = (state.searchResults as? UiState.Success)?.data ?: return
+
+        viewModelScope.launch {
+            _contentUiState.update { it.copy(isLoadingMore = true) }
+
+            val keyword = state.searchKeyword.ifEmpty { null }
+            val genreApiValues = state.selectedGenres
+                .mapNotNull { OnboardingContentUiState.GENRES[it] }
+                .ifEmpty { null }
+
+            searchRepository.getSearchContentList(
+                keyword = keyword,
+                genres = genreApiValues,
+                cursor = cursor,
+            )
+                .onSuccess { result ->
+                    val merged = (currentItems + result.contents).toImmutableList()
+                    _contentUiState.update { it.copy(
+                        searchResults = UiState.Success(merged),
+                        nextCursor = result.nextCursor,
+                        isLoadingMore = false,
+                    )}
+                }
+                .onFailure { error ->
+                    _contentUiState.update { it.copy(isLoadingMore = false) }
                     Timber.e(error)
                 }
         }

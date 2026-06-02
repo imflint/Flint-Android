@@ -63,7 +63,9 @@ data class OnboardingContentUiState(
     val searchResults: UiState<ImmutableList<SearchContentItemModel>> = UiState.Empty,
     val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val isSearching: Boolean = false,
-    val selectedGenre: String? = null,
+    val selectedGenres: Set<String> = emptySet(),
+    val nextCursor: String? = null,
+    val isLoadingMore: Boolean = false,
 ) {
     companion object {
         const val REQUIRED_SELECTION_COUNT = 7

@@ -7,7 +7,8 @@ import kotlinx.collections.immutable.toImmutableList
 
 fun SearchContentsResponseDto.toModel(): SearchContentListModel {
     return SearchContentListModel(
-        contents = this.data.map { it.toModel() }.toImmutableList()
+        contents = this.data.map { it.toModel() }.toImmutableList(),
+        nextCursor = this.meta?.nextCursor,
     )
 }
 

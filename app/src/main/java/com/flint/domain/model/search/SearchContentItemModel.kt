@@ -12,7 +12,8 @@ data class SearchContentItemModel(
 )
 
 data class SearchContentListModel(
-    val contents: ImmutableList<SearchContentItemModel>
+    val contents: ImmutableList<SearchContentItemModel>,
+    val nextCursor: String? = null,
 ) {
     companion object {
         val FakeList =
