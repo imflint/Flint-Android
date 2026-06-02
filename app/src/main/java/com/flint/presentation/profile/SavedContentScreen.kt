@@ -193,7 +193,7 @@ private fun SavedContentList(
                 onBookmarkClick = { onBookmarkClick(content.id) },
                 onMoreClick = {},
                 isBookmarked = true,
-                bookmarkCount = 123,
+                bookmarkCount = content.bookmarkCount,
                 imageUrl = content.imageUrl,
                 title = content.title,
                 director = "감독이름",

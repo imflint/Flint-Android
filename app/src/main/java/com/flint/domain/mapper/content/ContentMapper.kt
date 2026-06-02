@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 fun BookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
     return BookmarkedContentListModel(
+        totalCount = totalCount,
         contents = contents.map { it.toModel() }.toImmutableList()
     )
 }
@@ -22,6 +23,7 @@ fun BookmarkedContentResponseDto.toModel() : BookmarkedContentItemModel {
         title = title,
         year = year,
         imageUrl = imageUrl,
+        bookmarkCount = bookmarkCount,
         getOttSimpleList = getOttSimpleList.mapNotNull { ottSimple ->
             runCatching { OttType.valueOf(ottSimple.ottName) }.getOrNull()
         }
