@@ -31,9 +31,11 @@ class SavedContentViewModel @Inject constructor(
 
 
     // 사용자 저장한 작품 목록 호출
-    fun loadBookmarkedContents() {
+    fun loadBookmarkedContents(showLoading: Boolean = true) {
         viewModelScope.launch {
-            _uiState.update { it.copy(contents = UiState.Loading) }
+            if (showLoading) {
+                _uiState.update { it.copy(contents = UiState.Loading) }
+            }
 
             contentRepository.getBookmarkedContentList()
                 .onSuccess { list ->
@@ -81,7 +83,7 @@ class SavedContentViewModel @Inject constructor(
             bookmarkRepository.toggleContentBookmark(contentId)
                 .onSuccess { isBookmarked ->
                     Timber.d("toggleBookmark success: isBookmarked=$isBookmarked")
-                    loadBookmarkedContents()
+                    loadBookmarkedContents(showLoading = false)
                 }
                 .onFailure { throwable ->
                     Timber.e(throwable, "toggleBookmark failed: contentId=$contentId")

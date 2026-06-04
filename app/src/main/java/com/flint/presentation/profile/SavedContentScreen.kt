@@ -190,6 +190,7 @@ private fun SavedContentList(
             key = { it.id },
         ) { content ->
             CollectionCreateContentBookmark(
+                modifier = Modifier.animateItem(),
                 onBookmarkClick = { onBookmarkClick(content.id) },
                 onMoreClick = {},
                 isBookmarked = true,
