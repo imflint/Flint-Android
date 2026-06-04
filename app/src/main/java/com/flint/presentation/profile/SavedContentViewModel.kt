@@ -3,6 +3,7 @@ package com.flint.presentation.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
+import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.presentation.profile.uistate.SavedContentUiState
 import com.flint.presentation.profile.uistate.SavedContentUiState.Companion.MIN_REQUIRED_COUNT
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SavedContentViewModel @Inject constructor(
     private val contentRepository: ContentRepository,
+    private val bookmarkRepository: BookmarkRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SavedContentUiState())
@@ -67,12 +69,24 @@ class SavedContentViewModel @Inject constructor(
     // 저장된 작품이 MIN_REQUIRED_COUNT(5)개일 때는 취소를 막고 안내 모달을 노출한다.
     fun toggleBookmark(contentId: String) {
         val currentCount = uiState.value.totalCount
+        Timber.d("toggleBookmark called: contentId=$contentId, currentCount=$currentCount")
+
         if (currentCount <= MIN_REQUIRED_COUNT) {
+            Timber.d("toggleBookmark blocked: count($currentCount) <= MIN($MIN_REQUIRED_COUNT)")
             _uiState.update { it.copy(showBookmarkRestrictionModal = true) }
             return
         }
-        // TODO: 북마크 토글 API 연동
-        Timber.d("toggleBookmark: $contentId")
+        viewModelScope.launch {
+            Timber.d("toggleBookmark: calling API for contentId=$contentId")
+            bookmarkRepository.toggleContentBookmark(contentId)
+                .onSuccess { isBookmarked ->
+                    Timber.d("toggleBookmark success: isBookmarked=$isBookmarked")
+                    loadBookmarkedContents()
+                }
+                .onFailure { throwable ->
+                    Timber.e(throwable, "toggleBookmark failed: contentId=$contentId")
+                }
+        }
     }
 
     // 저장 취소 제한 안내 모달 닫기
