@@ -63,7 +63,7 @@ fun ProfileRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
-    navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
+    navigateToSavedContentList: (userId: String?) -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -108,7 +108,7 @@ fun ProfileRoute(
         onContentItemClick = { contentId ->
             viewModel.getOttListPerContent(contentId)
         },
-        onContentMoreClick = navigateToSavedContentList,
+        onContentMoreClick = { navigateToSavedContentList(uiState.userId) },
         onCreatedCollectionMoreClick = {
             navigateToCollectionList(
                 CollectionListRouteType.CREATED,

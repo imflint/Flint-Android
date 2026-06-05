@@ -147,8 +147,8 @@ class MainNavigator(
         navController.navigateToCollectionCreate(navOptions)
     }
 
-    fun navigateToSavedContent(navOptions: NavOptions? = null) {
-        navController.navigateToSavedContentList(navOptions)
+    fun navigateToSavedContent(userId: String? = null, navOptions: NavOptions? = null) {
+        navController.navigateToSavedContentList(userId = userId, navOptions = navOptions)
     }
 
     fun navigateToProfile(userId: String, navOptions: NavOptions? = null) {

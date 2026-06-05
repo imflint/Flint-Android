@@ -8,8 +8,8 @@ import androidx.navigation.compose.composable
 import com.flint.core.navigation.Route
 import com.flint.presentation.savedcontent.SavedContentListRoute
 
-fun NavController.navigateToSavedContentList(navOptions: NavOptions? = null) {
-    navigate(Route.SavedContentList, navOptions)
+fun NavController.navigateToSavedContentList(userId: String? = null, navOptions: NavOptions? = null) {
+    navigate(Route.SavedContentList(userId = userId), navOptions)
 }
 
 fun NavGraphBuilder.savedContentListNavGraph(

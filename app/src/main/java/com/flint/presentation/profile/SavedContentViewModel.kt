@@ -1,10 +1,14 @@
 package com.flint.presentation.profile
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
+import com.flint.core.navigation.Route
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.ContentRepository
+import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.SavedContentUiState
 import com.flint.presentation.profile.uistate.SavedContentUiState.Companion.MIN_REQUIRED_COUNT
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +23,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SavedContentViewModel @Inject constructor(
     private val contentRepository: ContentRepository,
+    private val userRepository: UserRepository,
     private val bookmarkRepository: BookmarkRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val userId: String? = savedStateHandle.toRoute<Route.SavedContentList>().userId
 
     private val _uiState = MutableStateFlow(SavedContentUiState())
     val uiState: StateFlow<SavedContentUiState> = _uiState.asStateFlow()
@@ -37,7 +45,7 @@ class SavedContentViewModel @Inject constructor(
                 _uiState.update { it.copy(contents = UiState.Loading) }
             }
 
-            contentRepository.getBookmarkedContentList()
+            userRepository.getUserBookmarkedContents(userId)
                 .onSuccess { list ->
                     _uiState.update {
                         it.copy(
@@ -67,9 +75,10 @@ class SavedContentViewModel @Inject constructor(
     }
 
 
-    //  북마크 토글 (저장 취소)
+    //  북마크 토글 (저장 취소) — 내 프로필에서만 동작
     // 저장된 작품이 MIN_REQUIRED_COUNT(5)개일 때는 취소를 막고 안내 모달을 노출한다.
     fun toggleBookmark(contentId: String) {
+        if (userId != null) return  // 타유저 프로필에서는 북마크 토글 불가
         val currentCount = uiState.value.totalCount
         Timber.d("toggleBookmark called: contentId=$contentId, currentCount=$currentCount")
 

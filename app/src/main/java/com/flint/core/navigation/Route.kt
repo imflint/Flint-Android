@@ -49,7 +49,9 @@ interface Route {
     data object CollectionCreateGraph : Route
 
     @Serializable
-    data object SavedContentList : Route
+    data class SavedContentList(
+        val userId: String? = null,
+    ) : Route
 
     @Serializable
     data object AddContent : Route
