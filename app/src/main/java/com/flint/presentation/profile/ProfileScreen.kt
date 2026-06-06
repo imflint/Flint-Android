@@ -205,6 +205,7 @@ private fun ProfileScreen(
                             nickname = uiState.profile.nickname,
                             keywordList = sectionData.data.keywords,
                             isMyProfile = uiState.userId == null,
+                            isRecalculatable = uiState.profile.keywordRecalculatable,
                             showInfoModal = showInfoModal,
                             onInfoClick = { showInfoModal = !showInfoModal },
                             onRefreshClick = onRefreshClick,

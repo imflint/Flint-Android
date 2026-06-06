@@ -12,5 +12,7 @@ data class UserProfileResponseDto(
     @SerializedName("isFliner")
     val isFliner: Boolean,
     @SerializedName("nickname")
-    val nickname: String
+    val nickname: String,
+    @SerializedName("keywordRecalculatable")
+    val keywordRecalculatable: Boolean = false,
 )

@@ -23,10 +23,14 @@ class UserRepository @Inject constructor(
         return preferencesManager.getString(USER_ID).first()
     }
 
-    // 사용자 프로필 조회
+    // 사용자 프로필 조회 (내 프로필, 타 유저)
     suspend fun getUserProfile(userId: String?): Result<UserProfileResponseModel> =
         suspendRunCatching {
-            apiService.getUserProfile(userId ?: myUserId()).data.toModel()
+            if (userId == null) {
+                apiService.getMyProfile().data.toModel()
+            } else {
+                apiService.getUserProfile(userId).data.toModel()
+            }
         }
 
     // 사용자 취향 키워드 조회

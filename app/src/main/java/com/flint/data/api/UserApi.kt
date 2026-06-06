@@ -12,6 +12,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UserApi {
+    // 내 프로필 조회 (keywordRecalculatable 포함)
+    @GET("/api/v1/users/me")
+    suspend fun getMyProfile(): BaseResponse<UserProfileResponseDto>
+
     // 사용자 프로필 조회
     @GET("/api/v1/users/{userId}")
     suspend fun getUserProfile(

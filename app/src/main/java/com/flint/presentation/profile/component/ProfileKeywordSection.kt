@@ -42,6 +42,7 @@ fun ProfileKeywordSection(
     nickname: String,
     keywordList: KeywordListModel,
     isMyProfile: Boolean,
+    isRecalculatable: Boolean,
     showInfoModal: Boolean,
     onInfoClick: () -> Unit,
     onRefreshClick: () -> Unit,
@@ -87,7 +88,10 @@ fun ProfileKeywordSection(
                 )
             }
             if (isMyProfile) {
-                ProfileRefreshButton(onRefreshClick = onRefreshClick)
+                ProfileRefreshButton(
+                    onRefreshClick = onRefreshClick,
+                    isEnabled = isRecalculatable,
+                )
             }
         }
         Spacer(Modifier.height(32.dp))
@@ -117,21 +121,22 @@ fun ProfileKeywordSection(
 @Composable
 private fun ProfileRefreshButton(
     onRefreshClick: () -> Unit,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val iconTint = if (isEnabled) FlintTheme.colors.secondary400 else FlintTheme.colors.gray400
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-            modifier
-                .noRippleClickable(
-                    onClick = onRefreshClick,
-                ),
+            modifier.noRippleClickable(
+                onClick = { if (isEnabled) onRefreshClick() },
+            ),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_refresh),
             contentDescription = null,
-            tint = FlintTheme.colors.secondary400,
+            tint = iconTint,
         )
         Text(
             text = "업데이트",
@@ -237,6 +242,7 @@ private fun ProfileKeywordSectionPreview() {
             keywordList = KeywordListModel.FakeList3,
             modifier = Modifier.fillMaxSize(),
             isMyProfile = true,
+            isRecalculatable = true,
             showInfoModal = false,
             onInfoClick = {},
             onRefreshClick = {},
