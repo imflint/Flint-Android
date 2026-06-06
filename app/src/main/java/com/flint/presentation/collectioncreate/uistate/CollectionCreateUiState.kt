@@ -28,5 +28,6 @@ data class CollectionCreateUiState(
 @Immutable
 data class ContentDetail(
     val isSpoiler: Boolean = false,
-    val reason: String = ""
+    val reason: String = "",
+    val imageUrls: List<String> = emptyList(),
 )

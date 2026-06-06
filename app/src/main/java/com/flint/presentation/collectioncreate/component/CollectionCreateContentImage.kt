@@ -34,16 +34,20 @@ fun CollectionCreateContentImage(
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pagerState = rememberPagerState { imageUrls.size }
+    val pageCount = if (imageUrls.size > 1) Int.MAX_VALUE else imageUrls.size
+    val initialPage = if (imageUrls.size > 1) Int.MAX_VALUE / 2 else 0
+    val pagerState = rememberPagerState(initialPage = initialPage) { pageCount }
+    val currentIndex = if (imageUrls.isEmpty()) 0 else pagerState.currentPage % imageUrls.size
 
     Column(modifier = modifier) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth(),
         ) { page ->
+            val index = page % imageUrls.size
             Box {
                 NetworkImage(
-                    imageUrl = imageUrls[page],
+                    imageUrl = imageUrls[index],
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(4f / 3f),
@@ -55,7 +59,7 @@ fun CollectionCreateContentImage(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clickable(onClick = onDeleteClick)
-                        .padding(all = 28.dp)
+                        .padding(all = 16.dp)
                         .size(24.dp),
                 )
             }
@@ -74,7 +78,7 @@ fun CollectionCreateContentImage(
                             .size(8.dp)
                             .clip(CircleShape)
                             .background(
-                                if (index == pagerState.currentPage) FlintTheme.colors.secondary400
+                                if (index == currentIndex) FlintTheme.colors.secondary400
                                 else FlintTheme.colors.gray500
                             ),
                     )

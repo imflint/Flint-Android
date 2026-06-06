@@ -180,10 +180,9 @@ fun CollectionCreateScreen(
 
             item {
                 Text(
-                    text = "웹사이트의 모든 콘텐츠는 저작권법의 보호를 받습니다. 사전 서면 동의 없이 무단 전제, 복사, 배포 등을 엄격히 금지합니다. \n" +
-                            "Copyright © [2026] [Flint]. All rights reserved.",
+                    text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. 컬렉션 이용 시 저작권을 준수해 주세요.",
                     color = FlintTheme.colors.gray300,
-                    style = FlintTheme.typography.body2R14,
+                    style = FlintTheme.typography.caption1R12,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
@@ -393,8 +392,10 @@ private fun CollectionAddContentSection(
                 createdYear = content.year,
             )
 
+            Spacer(Modifier.height(16.dp))
+
             CollectionCreateContentImage(
-                imageUrls = emptyList(),
+                imageUrls = detail.imageUrls,
                 onDeleteClick = { onDeleteRequest(content) },
             )
 
@@ -426,18 +427,29 @@ private fun CollectionAddContentSection(
 
 @Preview()
 @Composable
-private fun CollectionAddContentSectionPreview() {
+private fun CollectionCreateScreenPreview() {
     val fakeContents = SearchContentListModel.FakeList.take(2).toImmutableList()
 
     FlintTheme {
-        CollectionAddContentSection(
-            selectedContents = fakeContents,
-            contentDetailsMap = fakeContents.associate { it.id to ContentDetail() },
-            onDeleteRequest = {},
-            onSpoilerChanged = { _, _ -> },
-            onReasonChanged = { _, _ -> },
+        CollectionCreateScreen(
+            uiState = CollectionCreateUiState(
+                title = "내 컬렉션",
+                description = "컬렉션 소개입니다.",
+                isPublic = true,
+                selectedContents = fakeContents,
+                contentDetailsMap = fakeContents.associate {
+                it.id to ContentDetail(
+                    imageUrls = listOf(
+                        "https://buly.kr/DEaVFRZ",
+                        "https://buly.kr/DEaVFRZ",
+                    )
+                )
+            },
+            ),
+            onRemoveContent = {},
+            onBackClick = {},
             onAddContentClick = {},
-            modifier = Modifier.padding(horizontal = 16.dp),
+            onFinishClick = {},
         )
     }
 }
