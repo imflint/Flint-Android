@@ -10,13 +10,16 @@ import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.SavedContentUiState
-import com.flint.presentation.profile.uistate.SavedContentUiState.Companion.MIN_REQUIRED_COUNT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -79,14 +82,6 @@ class SavedContentViewModel @Inject constructor(
     // 저장된 작품이 MIN_REQUIRED_COUNT(5)개일 때는 취소를 막고 안내 모달을 노출한다.
     fun toggleBookmark(contentId: String) {
         if (userId != null) return  // 타유저 프로필에서는 북마크 토글 불가
-        val currentCount = uiState.value.totalCount
-        Timber.d("toggleBookmark called: contentId=$contentId, currentCount=$currentCount")
-
-        if (currentCount <= MIN_REQUIRED_COUNT) {
-            Timber.d("toggleBookmark blocked: count($currentCount) <= MIN($MIN_REQUIRED_COUNT)")
-            _uiState.update { it.copy(showBookmarkRestrictionModal = true) }
-            return
-        }
         viewModelScope.launch {
             Timber.d("toggleBookmark: calling API for contentId=$contentId")
             bookmarkRepository.toggleContentBookmark(contentId)
@@ -95,7 +90,21 @@ class SavedContentViewModel @Inject constructor(
                     loadBookmarkedContents(showLoading = false)
                 }
                 .onFailure { throwable ->
-                    Timber.e(throwable, "toggleBookmark failed: contentId=$contentId")
+                    val isMinLimitError = (throwable as? HttpException)
+                        ?.response()?.errorBody()?.string()
+                        ?.let { body ->
+                            runCatching {
+                                Json.parseToJsonElement(body)
+                                    .jsonObject["errorCode"]
+                                    ?.jsonPrimitive?.content == "BOOKMARK.CONTENT_MIN_LIMIT"
+                            }.getOrDefault(false)
+                        } ?: false
+
+                    if (isMinLimitError) {
+                        _uiState.update { it.copy(showBookmarkRestrictionModal = true) }
+                    } else {
+                        Timber.e(throwable, "toggleBookmark failed: contentId=$contentId")
+                    }
                 }
         }
     }

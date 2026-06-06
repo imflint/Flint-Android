@@ -25,13 +25,19 @@ class NetworkErrorInterceptor @Inject constructor(
             if (!response.isSuccessful) {
                 when (response.code) {
                     in 300..599 -> {
-                        scope.launch {
-                            networkErrorManager.emitError(
-                                NetworkError.ConnectionError(
-                                    code = response.code,
-                                    message = response.message
+                        // errorCode 필드가 있으면 앱 레이어에서 직접 처리하는 비즈니스 에러 — 글로벌 에러 emit 생략
+                        val isBusinessError = response.peekBody(Long.MAX_VALUE)
+                            .string()
+                            .contains("\"errorCode\"")
+                        if (!isBusinessError) {
+                            scope.launch {
+                                networkErrorManager.emitError(
+                                    NetworkError.ConnectionError(
+                                        code = response.code,
+                                        message = response.message
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
