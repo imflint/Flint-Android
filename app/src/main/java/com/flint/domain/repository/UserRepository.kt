@@ -63,6 +63,10 @@ class UserRepository @Inject constructor(
     suspend fun getUserBookmarkedContents(userId: String?) : Result<BookmarkedContentListModel> =
         suspendRunCatching { apiService.getBookmarkedContentListByUserId(userId ?: myUserId()).data.toModel() }
 
+    // 취향 키워드 재계산
+    suspend fun recalculateKeywords(): Result<Unit> =
+        suspendRunCatching { apiService.recalculateKeywords().also { check(it.isSuccessful) } }
+
     // 닉네임 중복 체크
     suspend fun checkNickname(nickname: String): Result<NicknameCheckModel> =
         suspendRunCatching {

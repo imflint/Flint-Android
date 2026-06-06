@@ -98,6 +98,23 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
+    fun recalculateKeywords() = viewModelScope.launch {
+        userRepository.recalculateKeywords()
+            .onSuccess {
+                // 버튼 즉시 비활성화 후 키워드 재조회
+                _uiState.update { it.copy(profile = it.profile.copy(keywordRecalculatable = false)) }
+                userRepository.getUserKeywords(userId = null)
+                    .onSuccess { keywords ->
+                        _uiState.update { state ->
+                            val current = (state.sectionData as? UiState.Success)?.data ?: return@update state
+                            state.copy(sectionData = UiState.Success(current.copy(keywords = keywords)))
+                        }
+                    }
+                    .onFailure { Timber.e(it) }
+            }
+            .onFailure { Timber.e(it) }
+    }
+
     fun easterEggWithdraw() = viewModelScope.launch {
         authRepository.withdraw()
             .onSuccess {

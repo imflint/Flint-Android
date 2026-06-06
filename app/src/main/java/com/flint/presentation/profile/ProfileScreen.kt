@@ -121,6 +121,7 @@ fun ProfileRoute(
                 uiState.userId
             )
         },
+        onRefreshClick = viewModel::recalculateKeywords,
         onEasterEggWithdraw = viewModel::easterEggWithdraw,
     )
 

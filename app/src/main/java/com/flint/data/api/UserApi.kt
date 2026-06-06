@@ -7,7 +7,9 @@ import com.flint.data.dto.user.response.BookmarkedCollectionListResponseDto
 import com.flint.data.dto.user.response.CreatedCollectionListResponseDto
 import com.flint.data.dto.user.response.UserKeywordsResponseDto
 import com.flint.data.dto.user.response.UserProfileResponseDto
+import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -60,5 +62,7 @@ interface UserApi {
         @Path("userId") userId: String,
     ): BaseResponse<UserKeywordsResponseDto>
 
-    // 취향 키워드 재계산
+    // 취향 키워드 재계산 (응답 body에 data 필드xx)
+    @PATCH("/api/v1/users/me/keywords/recalculate")
+    suspend fun recalculateKeywords(): Response<Unit>
 }
