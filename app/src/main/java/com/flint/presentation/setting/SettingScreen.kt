@@ -13,18 +13,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +34,7 @@ import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintMediumButton
 import com.flint.core.designsystem.component.image.ProfileImage
+import com.flint.core.designsystem.component.modal.TwoButtonModal
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -83,6 +83,8 @@ private fun SettingScreen(
     onLogoutDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -107,31 +109,37 @@ private fun SettingScreen(
             SettingMenuItem(
                 label = "계정",
                 trailingContent = {
-                    if (uiState.email.isNotEmpty()) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = uiState.email,
-                                style = FlintTheme.typography.body1M16,
-                                color = FlintTheme.colors.white,
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Image(
-                                painter = painterResource(R.drawable.ic_kakao_full),
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                            )
-                        }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_kakao_full),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                        )
                     }
                 },
             )
 
             HorizontalDivider(color = FlintTheme.colors.gray700, thickness = 1.dp)
 
-            SettingMenuItem(label = "개인정보 정책")
+            SettingMenuItem(
+                label = "개인정보 정책",
+                onClick = {
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://artistic-bacon-a40.notion.site/35650cdb714e804cb642eb2cc576a62c"))
+                    )
+                },
+            )
 
             HorizontalDivider(color = FlintTheme.colors.gray700, thickness = 1.dp)
 
-            SettingMenuItem(label = "이용약관")
+            SettingMenuItem(
+                label = "이용약관",
+                onClick = {
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://artistic-bacon-a40.notion.site/35650cdb714e8054a69bcbd110ed19dd?source=copy_link"))
+                    )
+                },
+            )
 
             HorizontalDivider(color = FlintTheme.colors.gray700, thickness = 1.dp)
 
@@ -158,12 +166,13 @@ private fun SettingScreen(
     }
 
     if (uiState.isLogoutDialogVisible) {
-        SettingConfirmDialog(
-            title = "로그아웃",
-            message = "로그아웃 하시겠어요?",
+        TwoButtonModal(
+            message = "로그아웃 하시겠습니까?",
+            cancelText = "취소",
             confirmText = "로그아웃",
             onConfirm = onLogoutConfirm,
             onDismiss = onLogoutDismiss,
+            icon = R.drawable.ic_gradient_people,
         )
     }
 
@@ -231,53 +240,6 @@ private fun SettingMenuItem(
         )
         trailingContent()
     }
-}
-
-@Composable
-private fun SettingConfirmDialog(
-    title: String,
-    message: String,
-    confirmText: String,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    confirmColor: Color = FlintTheme.colors.error500,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = FlintTheme.colors.gray800,
-        title = {
-            Text(
-                text = title,
-                style = FlintTheme.typography.head3Sb18,
-                color = FlintTheme.colors.white,
-            )
-        },
-        text = {
-            Text(
-                text = message,
-                style = FlintTheme.typography.body2R14,
-                color = FlintTheme.colors.gray300,
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(
-                    text = confirmText,
-                    style = FlintTheme.typography.body1M16,
-                    color = confirmColor,
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = "취소",
-                    style = FlintTheme.typography.body1M16,
-                    color = FlintTheme.colors.gray300,
-                )
-            }
-        },
-    )
 }
 
 @Preview(showBackground = true)
