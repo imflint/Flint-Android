@@ -20,6 +20,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -36,21 +41,45 @@ fun CollectionCreateContentImage(
     onDeleteClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pageCount = if (imageUris.size > 1) Int.MAX_VALUE else imageUris.size
-    val initialPage = if (imageUris.size > 1) Int.MAX_VALUE / 2 else 0
-    val pagerState = rememberPagerState(initialPage = initialPage) { pageCount }
+    val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2) { Int.MAX_VALUE }
     val currentIndex = if (imageUris.isEmpty()) 0 else pagerState.currentPage % imageUris.size
+
+    var prevSize by remember { mutableIntStateOf(imageUris.size) }
+    var deletedIndex by remember { mutableIntStateOf(-1) }
+
+    LaunchedEffect(imageUris.size) {
+        if (imageUris.isEmpty()) {
+            prevSize = 0
+            return@LaunchedEffect
+        }
+        val isAdded = imageUris.size > prevSize
+        val targetIndex = if (isAdded) {
+            imageUris.size - 1
+        } else {
+            minOf(deletedIndex, imageUris.size - 1)
+        }
+        prevSize = imageUris.size
+        // 새로운 size 기준으로 targetIndex에 해당하는 가장 가까운 절대 페이지 계산
+        val base = (pagerState.currentPage / imageUris.size) * imageUris.size
+        val targetPage = base + targetIndex
+        if (isAdded) {
+            pagerState.animateScrollToPage(targetPage)
+        } else {
+            pagerState.scrollToPage(targetPage)
+        }
+    }
 
     Column(modifier = modifier) {
         HorizontalPager(
             state = pagerState,
+            userScrollEnabled = imageUris.size > 1,
             modifier = Modifier.fillMaxWidth(),
         ) { page ->
             val index = page % imageUris.size
             Box {
                 NetworkImage(
                     imageUrl = imageUris[index],
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(4f / 3f),
@@ -61,7 +90,10 @@ fun CollectionCreateContentImage(
                     tint = Color.Unspecified,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .clickable { onDeleteClick(index) }
+                        .clickable {
+                        deletedIndex = index
+                        onDeleteClick(index)
+                    }
                         .padding(all = 16.dp)
                         .size(24.dp),
                 )
