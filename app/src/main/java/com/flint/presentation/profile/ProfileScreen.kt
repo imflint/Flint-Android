@@ -76,10 +76,6 @@ fun ProfileRoute(
     val sheetState = rememberModalBottomSheetState()
 
     LaunchedEffect(Unit) {
-        viewModel.getProfile()
-    }
-
-    LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is ProfileSideEffect.ShowOttListBottomSheet -> {

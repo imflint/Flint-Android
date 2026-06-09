@@ -11,6 +11,7 @@ import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.SavedContentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -87,7 +88,23 @@ class SavedContentViewModel @Inject constructor(
             bookmarkRepository.toggleContentBookmark(contentId)
                 .onSuccess { isBookmarked ->
                     Timber.d("toggleBookmark success: isBookmarked=$isBookmarked")
-                    loadBookmarkedContents(showLoading = false)
+                    // API 재호출 없이 로컬 상태만 업데이트
+                    _uiState.update { state ->
+                        val currentList = (state.contents as? UiState.Success)?.data
+                            ?: return@update state
+                        val updated = if (isBookmarked) {
+                            currentList
+                        } else {
+                            val filtered = currentList.contents
+                                .filter { it.id != contentId }
+                                .toPersistentList()
+                            currentList.copy(contents = filtered, totalCount = filtered.size)
+                        }
+                        state.copy(
+                            contents = if (updated.contents.isEmpty()) UiState.Empty
+                            else UiState.Success(updated)
+                        )
+                    }
                 }
                 .onFailure { throwable ->
                     val isMinLimitError = (throwable as? HttpException)

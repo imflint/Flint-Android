@@ -7,14 +7,17 @@ import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.core.navigation.Route
+import com.flint.domain.model.bookmark.BookmarkChange
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.repository.AuthRepository
+import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
 import com.flint.presentation.profile.uistate.ProfileSectionData
 import com.flint.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +34,8 @@ class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val contentRepository: ContentRepository
+    private val contentRepository: ContentRepository,
+    private val bookmarkRepository: BookmarkRepository,
 ) : ViewModel() {
 
     val userId = savedStateHandle.toRoute<Route.Profile>().userId
@@ -41,6 +45,49 @@ class ProfileViewModel @Inject constructor(
 
     private val _sideEffect = MutableSharedFlow<ProfileSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
+
+    init {
+        getProfile()
+        observeBookmarkChanges()
+    }
+
+    private fun observeBookmarkChanges() {
+        viewModelScope.launch {
+            bookmarkRepository.bookmarkChanges.collect { change ->
+                _uiState.update { state ->
+                    val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
+                    val updated = when (change) {
+                        is BookmarkChange.Content -> {
+                            val updatedContents = if (change.isBookmarked) {
+                                data.savedContents
+                            } else {
+                                val filtered = data.savedContents.contents
+                                    .filter { it.id != change.id }
+                                    .toPersistentList()
+                                data.savedContents.copy(
+                                    contents = filtered,
+                                    totalCount = filtered.size,
+                                )
+                            }
+                            data.copy(savedContents = updatedContents)
+                        }
+                        is BookmarkChange.Collection -> {
+                            val updatedCollections = if (change.isBookmarked) {
+                                data.savedCollections
+                            } else {
+                                val filtered = data.savedCollections.collections
+                                    .filter { it.id != change.id }
+                                    .toPersistentList()
+                                data.savedCollections.copy(collections = filtered)
+                            }
+                            data.copy(savedCollections = updatedCollections)
+                        }
+                    }
+                    state.copy(sectionData = UiState.Success(updated))
+                }
+            }
+        }
+    }
 
     fun getProfile() {
         viewModelScope.launch {
