@@ -1,5 +1,6 @@
 package com.flint.presentation.collectioncreate.component
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,24 +32,25 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun CollectionCreateContentImage(
-    imageUrls: List<String>,
-    onDeleteClick: () -> Unit,
+    imageUris: List<Uri>,
+    onDeleteClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pageCount = if (imageUrls.size > 1) Int.MAX_VALUE else imageUrls.size
-    val initialPage = if (imageUrls.size > 1) Int.MAX_VALUE / 2 else 0
+    val pageCount = if (imageUris.size > 1) Int.MAX_VALUE else imageUris.size
+    val initialPage = if (imageUris.size > 1) Int.MAX_VALUE / 2 else 0
     val pagerState = rememberPagerState(initialPage = initialPage) { pageCount }
-    val currentIndex = if (imageUrls.isEmpty()) 0 else pagerState.currentPage % imageUrls.size
+    val currentIndex = if (imageUris.isEmpty()) 0 else pagerState.currentPage % imageUris.size
 
     Column(modifier = modifier) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth(),
         ) { page ->
-            val index = page % imageUrls.size
+            val index = page % imageUris.size
             Box {
                 NetworkImage(
-                    imageUrl = imageUrls[index],
+                    imageUrl = imageUris[index],
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(4f / 3f),
@@ -58,21 +61,21 @@ fun CollectionCreateContentImage(
                     tint = Color.Unspecified,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .clickable(onClick = onDeleteClick)
+                        .clickable { onDeleteClick(index) }
                         .padding(all = 16.dp)
                         .size(24.dp),
                 )
             }
         }
 
-        if (imageUrls.size > 1) {
+        if (imageUris.size > 1) {
             Spacer(Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
             ) {
-                repeat(imageUrls.size) { index ->
+                repeat(imageUris.size) { index ->
                     Box(
                         modifier = Modifier
                             .size(8.dp)
@@ -93,10 +96,10 @@ fun CollectionCreateContentImage(
 private fun CollectionCreateContentImagePreview() {
     FlintTheme {
         CollectionCreateContentImage(
-            imageUrls = listOf(
-                "https://buly.kr/DEaVFRZ",
-                "https://buly.kr/DEaVFRZ",
-                "https://buly.kr/DEaVFRZ",
+            imageUris = listOf(
+                Uri.parse("https://example.com/1"),
+                Uri.parse("https://example.com/2"),
+                Uri.parse("https://example.com/3"),
             ),
             onDeleteClick = {},
         )

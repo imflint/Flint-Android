@@ -1,18 +1,21 @@
 package com.flint.presentation.collectioncreate
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
-import com.flint.data.dto.collection.request.CollectionCreateRequestDto
 import com.flint.domain.mapper.collection.toDto
 import com.flint.domain.model.collection.CollectionCreateContentModel
 import com.flint.domain.model.collection.CollectionCreateRequestModel
 import com.flint.domain.model.search.SearchContentItemModel
-import com.flint.domain.model.search.SearchContentListModel
 import com.flint.domain.repository.CollectionRepository
 import com.flint.domain.repository.SearchRepository
-import com.kakao.sdk.common.model.Description
+import com.flint.domain.repository.StorageRepository
+import com.flint.domain.type.FileExtension
+import com.flint.domain.type.StoragePathType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,19 +23,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 import javax.inject.Inject
 
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val collectionRepository: CollectionRepository,
-    private val searchRepository: SearchRepository
-)
- : ViewModel() {
+    private val searchRepository: SearchRepository,
+    private val storageRepository: StorageRepository,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(CollectionCreateUiState())
     val uiState: StateFlow<CollectionCreateUiState> = _uiState.asStateFlow()
 
@@ -53,8 +60,10 @@ class CollectionCreateViewModel @Inject constructor(
 
     private fun postCollectionCreate() {
         viewModelScope.launch {
+            val imageKey = uploadImageIfNeeded(_uiState.value.thumbnailImageUri, StoragePathType.COLLECTION_THUMBNAIL) ?: ""
+            val contentImageKeysMap = uploadContentImagesIfNeeded()
             val requestModel = CollectionCreateRequestModel(
-                imageUrl = "",
+                imageUrl = imageKey,
                 title = uiState.value.title,
                 description = uiState.value.description.ifBlank { "" },
                 isPublic = uiState.value.isPublic ?: true,
@@ -64,6 +73,7 @@ class CollectionCreateViewModel @Inject constructor(
                         contentId = content.id,
                         isSpoiler = detail.isSpoiler,
                         reason = detail.reason.ifBlank { "" },
+                        imageUrls = contentImageKeysMap[content.id] ?: emptyList(),
                     )
                 },
             )
@@ -197,5 +207,78 @@ class CollectionCreateViewModel @Inject constructor(
                     _uiState.update { it.copy(contents = persistentListOf()) }
                 }
         }
+    }
+
+    fun updateThumbnailImageUri(uri: Uri?) {
+        _uiState.update { it.copy(thumbnailImageUri = uri) }
+    }
+
+    fun addContentImageUri(contentId: String, uri: Uri) {
+        _uiState.update { state ->
+            val current = state.contentDetailsMap[contentId] ?: ContentDetail()
+            if (current.contentImageUris.size >= 5) return@update state
+            val updated = current.copy(contentImageUris = current.contentImageUris + uri)
+            state.copy(contentDetailsMap = state.contentDetailsMap + (contentId to updated))
+        }
+    }
+
+    fun removeContentImageUri(contentId: String, index: Int) {
+        _uiState.update { state ->
+            val current = state.contentDetailsMap[contentId] ?: return@update state
+            val updated = current.copy(
+                contentImageUris = current.contentImageUris.toMutableList().also { it.removeAt(index) }
+            )
+            state.copy(contentDetailsMap = state.contentDetailsMap + (contentId to updated))
+        }
+    }
+
+    private suspend fun uploadContentImagesIfNeeded(): Map<String, List<String>> {
+        val result = mutableMapOf<String, List<String>>()
+        for ((contentId, detail) in _uiState.value.contentDetailsMap) {
+            val keys = detail.contentImageUris.mapNotNull { uri ->
+                uploadImageIfNeeded(uri, StoragePathType.COLLECTION_CONTENT)
+            }
+            if (keys.isNotEmpty()) result[contentId] = keys
+        }
+        return result
+    }
+
+    private suspend fun uploadImageIfNeeded(uri: Uri?, pathType: StoragePathType): String? {
+        uri ?: return null
+
+        val mimeType = withContext(Dispatchers.IO) {
+            context.contentResolver.getType(uri)
+        } ?: "image/jpeg"
+        val extension = mimeTypeToFileExtension(mimeType)
+
+        val presignedUrl = storageRepository.getPresignedUrl(
+            pathType = pathType,
+            extension = extension,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to get presigned URL")
+            return null
+        }
+
+        val imageBytes = withContext(Dispatchers.IO) {
+            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        } ?: return null
+
+        storageRepository.uploadToS3(
+            uploadUrl = presignedUrl.uploadUrl,
+            imageBytes = imageBytes,
+            mimeType = mimeType,
+        ).getOrElse { error ->
+            Timber.e(error, "Failed to upload image to S3")
+            return null
+        }
+
+        return presignedUrl.key
+    }
+
+    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
+        "image/png" -> FileExtension.PNG
+        "image/gif" -> FileExtension.GIF
+        "image/webp" -> FileExtension.WEBP
+        else -> FileExtension.JPEG
     }
 }

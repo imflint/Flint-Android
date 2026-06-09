@@ -1,5 +1,8 @@
 package com.flint.presentation.collectioncreate
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.R
 import com.flint.core.common.util.UiState
+import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheet
+import com.flint.core.designsystem.component.bottomsheet.MenuBottomSheetData
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintIconButton
 import com.flint.core.designsystem.component.button.FlintLargeButton
@@ -77,6 +83,21 @@ fun CollectionCreateRoute(
         }
     }
 
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri: Uri? ->
+        viewModel.updateThumbnailImageUri(uri)
+    }
+
+    var pendingContentId by remember { mutableStateOf<String?>(null) }
+    val contentImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri: Uri? ->
+        uri ?: return@rememberLauncherForActivityResult
+        pendingContentId?.let { contentId -> viewModel.addContentImageUri(contentId, uri) }
+        pendingContentId = null
+    }
+
     CollectionCreateScreen(
         uiState = uiState,
         onTitleChanged = viewModel::updateTitle,
@@ -88,10 +109,21 @@ fun CollectionCreateRoute(
         onReasonChanged = viewModel::updateReason,
         onAddContentClick = navigateToAddContent,
         onFinishClick = viewModel::onClickFinish,
+        onGalleryClick = { galleryLauncher.launch("image/*") },
+        onThumbnailDelete = { viewModel.updateThumbnailImageUri(null) },
+        onSelectContentImage = { contentId ->
+            val currentCount = uiState.contentDetailsMap[contentId]?.contentImageUris?.size ?: 0
+            if (currentCount < 5) {
+                pendingContentId = contentId
+                contentImageLauncher.launch("image/*")
+            }
+        },
+        onRemoveContentImage = viewModel::removeContentImageUri,
         modifier = Modifier.padding(paddingValues),
     )
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionCreateScreen(
     uiState: CollectionCreateUiState,
@@ -104,10 +136,15 @@ fun CollectionCreateScreen(
     onReasonChanged: (String, String) -> Unit = { _, _ -> },
     onAddContentClick: () -> Unit,
     onFinishClick: () -> Unit,
+    onGalleryClick: () -> Unit = {},
+    onThumbnailDelete: () -> Unit = {},
+    onSelectContentImage: (contentId: String) -> Unit = {},
+    onRemoveContentImage: (contentId: String, index: Int) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
+    var isThumbnailBottomSheetVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier =
@@ -124,8 +161,8 @@ fun CollectionCreateScreen(
             // 썸네일
             item {
                 CollectionCreateThumbnail(
-                    imageUrl = "",
-                    onClick = { },
+                    imageUrl = uiState.thumbnailImageUri,
+                    onClick = { isThumbnailBottomSheetVisible = true },
                 )
 
                 Spacer(Modifier.height(20.dp))
@@ -172,6 +209,8 @@ fun CollectionCreateScreen(
                     onSpoilerChanged = onSpoilerChanged,
                     onReasonChanged = onReasonChanged,
                     onAddContentClick = onAddContentClick,
+                    onSelectContentImage = onSelectContentImage,
+                    onRemoveContentImage = onRemoveContentImage,
                     modifier = Modifier.padding(horizontal = (16).dp),
                 )
 
@@ -180,7 +219,7 @@ fun CollectionCreateScreen(
 
             item {
                 Text(
-                    text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. 컬렉션 이용 시 저작권을 준수해 주세요.",
+                    text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. \n컬렉션 이용 시 저작권을 준수해 주세요.",
                     color = FlintTheme.colors.gray300,
                     style = FlintTheme.typography.caption1R12,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -216,6 +255,29 @@ fun CollectionCreateScreen(
                 contentToDelete = null
                 isModalVisible = false
             },
+        )
+    }
+
+    if (isThumbnailBottomSheetVisible) {
+        val menuBottomSheetDataList =
+            listOf(
+                MenuBottomSheetData(
+                    label = "갤러리에서 선택",
+                    clickAction = onGalleryClick,
+                ),
+                MenuBottomSheetData(
+                    label = "커버 사진 삭제",
+                    color = FlintTheme.colors.error500,
+                    clickAction = onThumbnailDelete,
+                ),
+            )
+
+        val sheetState = rememberModalBottomSheetState()
+
+        MenuBottomSheet(
+            menuBottomSheetDataList = menuBottomSheetDataList,
+            onDismiss = { isThumbnailBottomSheetVisible = false },
+            sheetState = sheetState,
         )
     }
 }
@@ -343,6 +405,8 @@ private fun CollectionAddContentSection(
     onSpoilerChanged: (String, Boolean) -> Unit,
     onReasonChanged: (String, String) -> Unit,
     onAddContentClick: () -> Unit,
+    onSelectContentImage: (contentId: String) -> Unit,
+    onRemoveContentImage: (contentId: String, index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -394,17 +458,19 @@ private fun CollectionAddContentSection(
 
             Spacer(Modifier.height(16.dp))
 
-            CollectionCreateContentImage(
-                imageUrls = detail.imageUrls,
-                onDeleteClick = { onDeleteRequest(content) },
-            )
+            if (detail.contentImageUris.isNotEmpty()) {
+                CollectionCreateContentImage(
+                    imageUris = detail.contentImageUris,
+                    onDeleteClick = { index -> onRemoveContentImage(content.id, index) },
+                )
 
-            Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(16.dp))
+            }
 
             CollectionCreateContentReason(
                 selectedReason = detail.reason,
                 onSelectedReasonChanged = { reason -> onReasonChanged(content.id, reason) },
-                onSelectImageClick = {},
+                onSelectImageClick = { onSelectContentImage(content.id) },
                 isSpoiler = detail.isSpoiler,
                 onSpoilerChanged = { isSpoiler -> onSpoilerChanged(content.id, isSpoiler) },
             )
@@ -438,13 +504,13 @@ private fun CollectionCreateScreenPreview() {
                 isPublic = true,
                 selectedContents = fakeContents,
                 contentDetailsMap = fakeContents.associate {
-                it.id to ContentDetail(
-                    imageUrls = listOf(
-                        "https://buly.kr/DEaVFRZ",
-                        "https://buly.kr/DEaVFRZ",
+                    it.id to ContentDetail(
+                        contentImageUris = listOf(
+                            Uri.parse("https://example.com/1"),
+                            Uri.parse("https://example.com/2"),
+                        )
                     )
-                )
-            },
+                },
             ),
             onRemoveContent = {},
             onBackClick = {},

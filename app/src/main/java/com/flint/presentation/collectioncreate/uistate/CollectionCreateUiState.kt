@@ -1,5 +1,6 @@
 package com.flint.presentation.collectioncreate
 
+import android.net.Uri
 import androidx.compose.runtime.Immutable
 import com.flint.domain.model.search.SearchContentItemModel
 import kotlinx.collections.immutable.ImmutableList
@@ -7,6 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class CollectionCreateUiState(
+    val thumbnailImageUri: Uri? = null,
     val title: String = "",
     val description: String = "",
     val isPublic: Boolean? = null,
@@ -14,7 +16,6 @@ data class CollectionCreateUiState(
     val contentDetailsMap: Map<String, ContentDetail> = emptyMap(),
     val contents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val searchText: String = "",
-
 ) {
     val isFinishButtonEnabled: Boolean =
         title.isNotBlank() &&
@@ -29,5 +30,5 @@ data class CollectionCreateUiState(
 data class ContentDetail(
     val isSpoiler: Boolean = false,
     val reason: String = "",
-    val imageUrls: List<String> = emptyList(),
+    val contentImageUris: List<Uri> = emptyList(),
 )

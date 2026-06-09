@@ -24,11 +24,11 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun CollectionCreateThumbnail(
-    imageUrl: String?,
+    imageUrl: Any?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (imageUrl.isNullOrBlank()) {
+    if (imageUrl == null || (imageUrl is String && imageUrl.isBlank())) {
         CollectionCreateEmptyThumbnail(
             onClick = onClick,
             modifier = modifier,
@@ -73,7 +73,7 @@ private fun CollectionCreateEmptyThumbnail(
 
 @Composable
 private fun CollectionCreateFillThumbnail(
-    imageUrl: String,
+    imageUrl: Any,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
