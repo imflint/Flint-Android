@@ -36,5 +36,6 @@ data class BookmarkedContentItemModel(
     val year: Int = 0,
     val imageUrl: String = "",
     val bookmarkCount: Int = 0,
+    val isBookmarked: Boolean = false,
     val getOttSimpleList: List<OttType> = emptyList()
 )

@@ -24,6 +24,7 @@ fun BookmarkedContentResponseDto.toModel() : BookmarkedContentItemModel {
         year = year,
         imageUrl = imageUrl,
         bookmarkCount = bookmarkCount,
+        isBookmarked = isBookmarked,
         getOttSimpleList = getOttSimpleList.mapNotNull { ottSimple ->
             runCatching { OttType.valueOf(ottSimple.ottName) }.getOrNull()
         }

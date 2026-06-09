@@ -37,7 +37,7 @@ interface UserApi {
     ): BaseResponse<BookmarkedCollectionListResponseDto>
 
     // 사용자별 북마크한 콘텐츠 목록 조회
-    @GET("/api/v1/contents/{userId}/bookmarked-contents")
+    @GET("/api/v1/users/{userId}/bookmarked-contents")
     suspend fun getBookmarkedContentListByUserId(
         @Path("userId") userId: String
     ): BaseResponse<BookmarkedContentListResponseDto>

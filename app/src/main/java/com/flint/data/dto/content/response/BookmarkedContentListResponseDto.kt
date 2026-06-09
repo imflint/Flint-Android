@@ -23,6 +23,8 @@ data class BookmarkedContentResponseDto(
     val imageUrl: String,
     @SerialName("bookmarkCount")
     val bookmarkCount: Int,
+    @SerialName("isBookmarked")
+    val isBookmarked: Boolean,
     @SerialName("getOttSimpleList")
     val getOttSimpleList: List<OttSimpleResponseDto>
 )
