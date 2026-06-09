@@ -12,6 +12,7 @@ data class ProfileUiState(
     val userId: String? = null,
     val profile: UserProfileResponseModel = UserProfileResponseModel.Empty,
     val sectionData: UiState<ProfileSectionData> = UiState.Loading,
+    val isRecalculating: Boolean = false,
 ) {
     companion object {
         val Empty =

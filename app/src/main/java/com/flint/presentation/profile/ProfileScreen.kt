@@ -203,6 +203,7 @@ private fun ProfileScreen(
                             keywordList = sectionData.data.keywords,
                             isMyProfile = uiState.userId == null,
                             isRecalculatable = uiState.profile.keywordRecalculatable,
+                            isRecalculating = uiState.isRecalculating,
                             showInfoModal = showInfoModal,
                             onInfoClick = { showInfoModal = !showInfoModal },
                             onRefreshClick = onRefreshClick,

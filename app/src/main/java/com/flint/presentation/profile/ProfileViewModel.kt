@@ -146,6 +146,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun recalculateKeywords() = viewModelScope.launch {
+        _uiState.update { it.copy(isRecalculating = true) }
         userRepository.recalculateKeywords()
             .onSuccess {
                 // 버튼 즉시 비활성화 후 키워드 재조회
@@ -160,6 +161,7 @@ class ProfileViewModel @Inject constructor(
                     .onFailure { Timber.e(it) }
             }
             .onFailure { Timber.e(it) }
+        _uiState.update { it.copy(isRecalculating = false) }
     }
 
     fun easterEggWithdraw() = viewModelScope.launch {
