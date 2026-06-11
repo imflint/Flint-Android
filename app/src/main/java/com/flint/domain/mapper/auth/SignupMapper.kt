@@ -10,7 +10,8 @@ fun SignupRequestModel.toDto(): SignupRequestDto =
         tempToken = tempToken,
         nickname = nickname,
         favoriteContentIds = favoriteContentIds,
-        subscribedOttIds = subscribedOttIds,
+        agreedTermsIds = agreedTermsIds,
+        profileImageUrl = profileImageUrl,
     )
 
 fun SignupResponseDto.toModel(): SignupResponseModel =

@@ -10,7 +10,9 @@ data class SignupRequestDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("favoriteContentIds")
-    val favoriteContentIds: List<Long>,
-    @SerialName("subscribedOttIds")
-    val subscribedOttIds: List<Long>,
+    val favoriteContentIds: List<String>,
+    @SerialName("agreedTermsIds")
+    val agreedTermsIds: List<String>,
+    @SerialName("profileImageUrl")
+    val profileImageUrl: String? = null,
 )

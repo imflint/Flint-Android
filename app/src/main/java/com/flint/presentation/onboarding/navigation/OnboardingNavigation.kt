@@ -13,6 +13,7 @@ import com.flint.presentation.onboarding.OnboardingContentRoute
 import com.flint.presentation.onboarding.OnboardingDoneRoute
 import com.flint.presentation.onboarding.OnboardingOttRoute
 import com.flint.presentation.onboarding.OnboardingProfileRoute
+import com.flint.presentation.onboarding.OnboardingTermsRoute
 import com.flint.presentation.onboarding.OnboardingViewModel
 
 fun NavController.navigateToOnboarding(
@@ -21,6 +22,15 @@ fun NavController.navigateToOnboarding(
 ) {
     navigate(Route.OnboardingGraph(tempToken), navOptions) // OnboardingGraph로 네비게이트
 }
+
+fun NavController.navigateToOnboardingTerms() {
+    navigate(Route.OnboardingTerms)
+}
+
+fun NavController.navigateToOnboardingProfile() {
+    navigate(Route.OnboardingProfile)
+}
+
 
 fun NavController.navigateToOnboardingContent() {
     navigate(Route.OnboardingContent)
@@ -40,8 +50,19 @@ fun NavGraphBuilder.onBoardingNavGraph(
     navController: NavHostController,
 ) {
     navigation<Route.OnboardingGraph>(
-        startDestination = Route.OnboardingProfile::class,
+        startDestination = Route.OnboardingTerms::class,
     ) {
+        composable<Route.OnboardingTerms> { backStackEntry ->
+            val sharedViewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+
+            OnboardingTermsRoute(
+                paddingValues = paddingValues,
+                navigateUp = navController::navigateUp,
+                navigateToOnboardingProfile = navController::navigateToOnboardingProfile,
+                viewModel = sharedViewModel,
+            )
+        }
+
         composable<Route.OnboardingProfile> { backStackEntry ->
             val sharedViewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
 
@@ -50,7 +71,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
                 navigateUp = navController::navigateUp,
                 navigateToOnboardingContent = navController::navigateToOnboardingContent,
                 viewModel = sharedViewModel,
-                )
+            )
         }
 
         composable<Route.OnboardingContent> { backStackEntry ->

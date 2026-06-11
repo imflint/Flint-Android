@@ -11,14 +11,15 @@ interface Route {
     data object Login : Route
 
     @Serializable
-    data class OnboardingProfile(
-        val tempToken: String
-    ) : Route
+    data object OnboardingProfile : Route
 
     @Serializable
     data class OnboardingGraph(
         val tempToken: String
     ) : Route
+
+    @Serializable
+    data object OnboardingTerms : Route
 
     @Serializable
     data object OnboardingContent : Route
@@ -57,4 +58,16 @@ interface Route {
     data class Profile(
         val userId: String? = null,
     ) : Route
+
+    @Serializable
+    data object Setting : Route
+
+    @Serializable
+    data object EditProfile : Route
+
+    @Serializable
+    data object Withdraw : Route
+
+    @Serializable
+    data object WithdrawComplete : Route
 }

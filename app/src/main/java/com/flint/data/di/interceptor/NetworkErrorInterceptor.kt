@@ -39,18 +39,24 @@ class NetworkErrorInterceptor @Inject constructor(
 
             response
         } catch (e: UnknownHostException) {
-            scope.launch {
-                networkErrorManager.emitError(NetworkError.NoInternet)
+            if (!chain.call().isCanceled()) {
+                scope.launch {
+                    networkErrorManager.emitError(NetworkError.NoInternet)
+                }
             }
             throw e
         } catch (e: SocketTimeoutException) {
-            scope.launch {
-                networkErrorManager.emitError(NetworkError.Timeout)
+            if (!chain.call().isCanceled()) {
+                scope.launch {
+                    networkErrorManager.emitError(NetworkError.Timeout)
+                }
             }
             throw e
         } catch (e: IOException) {
-            scope.launch {
-                networkErrorManager.emitError(NetworkError.UnknownError(e.message))
+            if (!chain.call().isCanceled()) {
+                scope.launch {
+                    networkErrorManager.emitError(NetworkError.UnknownError(e.message))
+                }
             }
             throw e
         }

@@ -14,8 +14,12 @@ interface SearchApi {
         @Query("size") size: Int
     ) : BaseResponse<SearchBookmarkedContentsResponseDto>
 
-    @GET("/api/v1/search/contents")
+    @GET("/api/v1/contents/search")
     suspend fun getSearchContentList(
-        @Query("keyword") keyword: String?
+        @Query("keyword") keyword: String? = null,
+        @Query("genre") genre: List<String>? = null,
+        @Query("mediaType") mediaType: String? = null,
+        @Query("cursor") cursor: String? = null,
+        @Query("size") size: Int = 20,
     ): BaseResponse<SearchContentsResponseDto>
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
@@ -77,10 +78,11 @@ fun OnboardingContentRoute(
         onNextClick = navigateToOnboardingDone,
         onSearchKeywordChanged = viewModel::updateSearchKeyword,
         onSearchAction = viewModel::searchContents,
-        onClearAction = viewModel::loadInitialContents,
+        onClearAction = viewModel::clearSearchKeyword,
         onContentClick = viewModel::toggleContentSelection,
         onRemoveContent = viewModel::toggleContentSelection,
         onGenreClick = viewModel::selectGenre,
+        onLoadMore = viewModel::loadMoreContents,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -97,9 +99,18 @@ fun OnboardingContentScreen(
     onContentClick: (SearchContentItemModel) -> Unit,
     onRemoveContent: (SearchContentItemModel) -> Unit,
     onGenreClick: (String) -> Unit,
+    onLoadMore: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val gridState = rememberLazyGridState()
+
+    // 스크롤 끝 감지 → 다음 페이지 로드
+    LaunchedEffect(gridState.canScrollForward) {
+        if (!gridState.canScrollForward && contentUiState.nextCursor != null && !contentUiState.isLoadingMore) {
+            onLoadMore()
+        }
+    }
 
     Column(
         modifier =
@@ -122,6 +133,7 @@ fun OnboardingContentScreen(
         // 전체 콘텐츠를 LazyVerticalGrid로 구성
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
+            state = gridState,
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
@@ -171,8 +183,8 @@ fun OnboardingContentScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            items(OnboardingContentUiState.GENRES) { genre ->
-                                val isSelected = genre in contentUiState.selectedGenres
+                            items(OnboardingContentUiState.GENRES.keys.toList()) { genre ->
+                                val isSelected = contentUiState.selectedGenres.contains(genre)
                                 FlintGenreChip(
                                     text = genre,
                                     isSelected = isSelected,
@@ -375,16 +387,14 @@ private fun OnboardingContentScreenEmptyPreview() {
 @Preview(showBackground = true, name = "장르 칩 인터랙티브")
 @Composable
 private fun OnboardingContentScreenGenreInteractivePreview() {
-    var selectedGenres by remember { mutableStateOf(setOf<String>()) }
+    var selectedGenres by remember { mutableStateOf(emptySet<String>()) }
 
     FlintTheme {
         OnboardingContentScreen(
             nickname = "안비",
             contentUiState = OnboardingContentUiState(
                 searchResults = UiState.Success(SearchContentListModel.FakeList),
-                selectedGenres = selectedGenres.toList().let {
-                    kotlinx.collections.immutable.persistentListOf(*it.toTypedArray())
-                },
+                selectedGenres = selectedGenres,
             ),
             onBackClick = {},
             onNextClick = {},
@@ -394,7 +404,7 @@ private fun OnboardingContentScreenGenreInteractivePreview() {
             onContentClick = {},
             onRemoveContent = {},
             onGenreClick = { genre ->
-                selectedGenres = if (genre in selectedGenres) {
+                selectedGenres = if (selectedGenres.contains(genre)) {
                     selectedGenres - genre
                 } else {
                     selectedGenres + genre

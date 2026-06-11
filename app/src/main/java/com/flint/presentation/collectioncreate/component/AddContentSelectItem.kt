@@ -22,31 +22,30 @@ import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
-fun CollectionCreateContentSelect(
+fun AddContentSelectItem(
     onCheckClick: () -> Unit,
     isSelected: Boolean,
-    imageUrl: String,
+    posterImageUrl: String,
     title: String,
     director: String,
     createdYear: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier =
-            modifier
+        modifier = modifier
                 .fillMaxWidth()
                 .background(color = FlintTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CollectionCreateContentSection(
-            imageUrl = imageUrl,
+            posterImageUrl = posterImageUrl,
             title = title,
             director = director,
             createdYear = createdYear,
             modifier = Modifier.weight(1f),
         )
 
-        CollectionCreateContentSelectTag(
+        AddContentSelectItemTag(
             isSelected = isSelected,
             onClick = onCheckClick,
         )
@@ -54,7 +53,7 @@ fun CollectionCreateContentSelect(
 }
 
 @Composable
-fun CollectionCreateContentSelectTag(
+fun AddContentSelectItemTag(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -71,13 +70,13 @@ fun CollectionCreateContentSelectTag(
 
 @Preview
 @Composable
-private fun CollectionCreateContentSectionPreview() {
+private fun AddContentSelectItemPreview() {
     FlintTheme {
         var isSelected by remember { mutableStateOf(false) }
-        CollectionCreateContentSelect(
+        AddContentSelectItem(
             onCheckClick = { isSelected = !isSelected },
             isSelected = isSelected,
-            imageUrl = "https://buly.kr/DEaVFRZ",
+            posterImageUrl = "https://buly.kr/DEaVFRZ",
             title = "해리포터 불의 잔",
             director = "메롱",
             createdYear = 2005,

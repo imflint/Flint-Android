@@ -22,6 +22,10 @@ import com.flint.presentation.onboarding.navigation.navigateToOnboarding
 import com.flint.presentation.profile.navigation.navigateToMyProfile
 import com.flint.presentation.profile.navigation.navigateToProfile
 import com.flint.presentation.savedcontent.navigation.navigateToSavedContentList
+import com.flint.presentation.setting.editprofile.navigation.navigateToEditProfile
+import com.flint.presentation.setting.navigation.navigateToSetting
+import com.flint.presentation.setting.withdraw.navigation.navigateToWithdraw
+import com.flint.presentation.setting.withdraw.navigation.navigateToWithdrawComplete
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -153,6 +157,22 @@ class MainNavigator(
 
     fun navigateToProfile(userId: String, navOptions: NavOptions? = null) {
         navController.navigateToProfile(userId, navOptions)
+    }
+
+    fun navigateToSetting(navOptions: NavOptions? = null) {
+        navController.navigateToSetting(navOptions)
+    }
+
+    fun navigateToEditProfile(navOptions: NavOptions? = null) {
+        navController.navigateToEditProfile(navOptions)
+    }
+
+    fun navigateToWithdraw(navOptions: NavOptions? = null) {
+        navController.navigateToWithdraw(navOptions)
+    }
+
+    fun navigateToWithdrawComplete(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToWithdrawComplete(navOptions)
     }
 
     fun navigateUp() {

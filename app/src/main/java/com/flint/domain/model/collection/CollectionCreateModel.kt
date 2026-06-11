@@ -12,6 +12,7 @@ data class CollectionCreateContentModel(
     val contentId: String,
     val isSpoiler: Boolean,
     val reason: String,
+    val imageUrls: List<String> = emptyList(),
 )
 
 data class CollectionCreateModel(
