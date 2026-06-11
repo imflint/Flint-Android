@@ -79,31 +79,45 @@ class SavedContentViewModel @Inject constructor(
     }
 
 
-    //  북마크 토글 (저장 취소) — 내 프로필에서만 동작
-    // 저장된 작품이 MIN_REQUIRED_COUNT(5)개일 때는 취소를 막고 안내 모달을 노출한다.
+    // 북마크 토글
+    // - 내 프로필: 북마크 취소 시 목록에서 제거 (MIN_REQUIRED_COUNT 제한 있음)
+    // - 타 유저 프로필: isBookmarked 필드만 토글 (목록은 상대방 저장 목록이므로 제거 X)
     fun toggleBookmark(contentId: String) {
-        if (userId != null) return  // 타유저 프로필에서는 북마크 토글 불가
         viewModelScope.launch {
-            Timber.d("toggleBookmark: calling API for contentId=$contentId")
+            Timber.d("toggleBookmark: contentId=$contentId, userId=$userId")
             bookmarkRepository.toggleContentBookmark(contentId)
                 .onSuccess { isBookmarked ->
                     Timber.d("toggleBookmark success: isBookmarked=$isBookmarked")
-                    // API 재호출 없이 로컬 상태만 업데이트
-                    _uiState.update { state ->
-                        val currentList = (state.contents as? UiState.Success)?.data
-                            ?: return@update state
-                        val updated = if (isBookmarked) {
-                            currentList
-                        } else {
-                            val filtered = currentList.contents
-                                .filter { it.id != contentId }
-                                .toPersistentList()
-                            currentList.copy(contents = filtered, totalCount = filtered.size)
+                    if (userId == null) {
+                        // 내 프로필: 북마크 취소 시 목록에서 제거
+                        _uiState.update { state ->
+                            val currentList = (state.contents as? UiState.Success)?.data
+                                ?: return@update state
+                            val updated = if (isBookmarked) {
+                                currentList
+                            } else {
+                                val filtered = currentList.contents
+                                    .filter { it.id != contentId }
+                                    .toPersistentList()
+                                currentList.copy(contents = filtered, totalCount = filtered.size)
+                            }
+                            state.copy(
+                                contents = if (updated.contents.isEmpty()) UiState.Empty
+                                else UiState.Success(updated)
+                            )
                         }
-                        state.copy(
-                            contents = if (updated.contents.isEmpty()) UiState.Empty
-                            else UiState.Success(updated)
-                        )
+                    } else {
+                        // 타 유저 프로필: isBookmarked 필드만 업데이트 (목록에서 제거 X)
+                        _uiState.update { state ->
+                            val currentList = (state.contents as? UiState.Success)?.data
+                                ?: return@update state
+                            val updated = currentList.copy(
+                                contents = currentList.contents
+                                    .map { if (it.id == contentId) it.copy(isBookmarked = isBookmarked) else it }
+                                    .toPersistentList()
+                            )
+                            state.copy(contents = UiState.Success(updated))
+                        }
                     }
                 }
                 .onFailure { throwable ->

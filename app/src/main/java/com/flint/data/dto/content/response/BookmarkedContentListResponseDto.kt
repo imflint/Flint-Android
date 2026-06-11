@@ -3,12 +3,32 @@ package com.flint.data.dto.content.response
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// /api/v1/users/{userId}/bookmarked-contents 응답 (타 유저)
 @Serializable
 data class BookmarkedContentListResponseDto(
     @SerialName("totalCount")
     val totalCount: Int,
     @SerialName("contents")
     val contents: List<BookmarkedContentResponseDto>
+)
+
+// /api/v1/contents/bookmarks 응답 (내 프로필, 커서 페이지네이션)
+@Serializable
+data class MyBookmarkedContentListResponseDto(
+    @SerialName("data")
+    val data: List<BookmarkedContentResponseDto>,
+    @SerialName("meta")
+    val meta: BookmarkCursorMetaDto
+)
+
+@Serializable
+data class BookmarkCursorMetaDto(
+    @SerialName("type")
+    val type: String,
+    @SerialName("returned")
+    val returned: Int,
+    @SerialName("nextCursor")
+    val nextCursor: String? = null,
 )
 
 @Serializable
@@ -23,8 +43,9 @@ data class BookmarkedContentResponseDto(
     val imageUrl: String,
     @SerialName("bookmarkCount")
     val bookmarkCount: Int,
+    // 내 북마크 목록 응답에는 isBookmarked 없음 → 기본값 true
     @SerialName("isBookmarked")
-    val isBookmarked: Boolean,
+    val isBookmarked: Boolean = true,
     @SerialName("getOttSimpleList")
     val getOttSimpleList: List<OttSimpleResponseDto>
 )

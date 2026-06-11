@@ -2,21 +2,25 @@ package com.flint.domain.repository
 
 import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.suspendRunCatching
+import com.flint.data.api.ContentApi
 import com.flint.data.api.UserApi
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.collection.toModel
 import com.flint.domain.mapper.content.toModel
 import com.flint.domain.mapper.user.toModel
 import com.flint.domain.model.collection.CollectionListModel
+import com.flint.domain.model.content.BookmarkedContentItemModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.model.user.NicknameCheckModel
 import com.flint.domain.model.user.UserProfileResponseModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val apiService: UserApi,
+    private val contentApi: ContentApi,
     private val preferencesManager: PreferencesManager,
 ) {
     private suspend fun myUserId(): String {
@@ -60,8 +64,26 @@ class UserRepository @Inject constructor(
         }
 
     // 사용자별 북마크한 콘텐츠 목록 조회
-    suspend fun getUserBookmarkedContents(userId: String?) : Result<BookmarkedContentListModel> =
-        suspendRunCatching { apiService.getBookmarkedContentListByUserId(userId ?: myUserId()).data.toModel() }
+    // - 내 프로필 (userId == null): GET /api/v1/contents/bookmarks (커서 페이지네이션 전체 로드)
+    // - 타 유저 (userId != null): GET /api/v1/users/{userId}/bookmarked-contents
+    suspend fun getUserBookmarkedContents(userId: String?): Result<BookmarkedContentListModel> =
+        suspendRunCatching {
+            if (userId == null) {
+                val allContents = mutableListOf<BookmarkedContentItemModel>()
+                var cursor: String? = null
+                do {
+                    val page = contentApi.getBookmarkedContentList(cursor = cursor).data
+                    allContents.addAll(page.data.map { it.toModel() })
+                    cursor = page.meta.nextCursor
+                } while (cursor != null)
+                BookmarkedContentListModel(
+                    totalCount = allContents.size,
+                    contents = allContents.toImmutableList()
+                )
+            } else {
+                apiService.getBookmarkedContentListByUserId(userId).data.toModel()
+            }
+        }
 
     // 취향 키워드 재계산
     suspend fun recalculateKeywords(): Result<Unit> =

@@ -2,6 +2,7 @@ package com.flint.domain.mapper.content
 
 import com.flint.data.dto.content.response.BookmarkedContentListResponseDto
 import com.flint.data.dto.content.response.BookmarkedContentResponseDto
+import com.flint.data.dto.content.response.MyBookmarkedContentListResponseDto
 import com.flint.data.dto.content.response.OttSimpleResponseDto
 import com.flint.data.dto.search.SearchBookmarkedContentsResponseDto
 import com.flint.domain.model.content.BookmarkedContentItemModel
@@ -10,10 +11,19 @@ import com.flint.domain.model.content.ContentModel
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.toImmutableList
 
+// /api/v1/users/{userId}/bookmarked-contents (타 유저)
 fun BookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
     return BookmarkedContentListModel(
         totalCount = totalCount,
         contents = contents.map { it.toModel() }.toImmutableList()
+    )
+}
+
+// /api/v1/contents/bookmarks (내 프로필)
+fun MyBookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
+    return BookmarkedContentListModel(
+        totalCount = data.size,
+        contents = data.map { it.toModel() }.toImmutableList()
     )
 }
 

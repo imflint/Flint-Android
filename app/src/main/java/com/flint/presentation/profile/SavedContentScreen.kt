@@ -193,7 +193,7 @@ private fun SavedContentList(
                 modifier = Modifier.animateItem(),
                 onBookmarkClick = { onBookmarkClick(content.id) },
                 onMoreClick = {},
-                isBookmarked = true,
+                isBookmarked = content.isBookmarked,
                 bookmarkCount = content.bookmarkCount,
                 imageUrl = content.imageUrl,
                 title = content.title,
