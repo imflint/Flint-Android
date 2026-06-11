@@ -20,7 +20,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.Alignment
+import com.flint.core.common.util.ExternalLinks
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -125,7 +127,7 @@ private fun SettingScreen(
                 label = "개인정보 정책",
                 onClick = {
                     context.startActivity(
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://artistic-bacon-a40.notion.site/35650cdb714e804cb642eb2cc576a62c"))
+                        Intent(Intent.ACTION_VIEW, Uri.parse(ExternalLinks.PRIVACY_POLICY_URL))
                     )
                 },
             )
@@ -136,7 +138,7 @@ private fun SettingScreen(
                 label = "이용약관",
                 onClick = {
                     context.startActivity(
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://artistic-bacon-a40.notion.site/35650cdb714e8054a69bcbd110ed19dd?source=copy_link"))
+                        Intent(Intent.ACTION_VIEW, Uri.parse(ExternalLinks.TERMS_OF_SERVICE_URL))
                     )
                 },
             )
@@ -222,6 +224,7 @@ private fun SettingProfileSection(
 private fun SettingMenuItem(
     label: String,
     modifier: Modifier = Modifier,
+    verticalPadding: Dp = 18.dp,
     onClick: () -> Unit = {},
     trailingContent: @Composable () -> Unit = {},
 ) {
@@ -229,7 +232,7 @@ private fun SettingMenuItem(
         modifier = modifier
             .fillMaxWidth()
             .noRippleClickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = if(label == "이용약관") 25.dp else 18.dp),
+            .padding(horizontal = 20.dp, vertical = verticalPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -250,7 +253,6 @@ private fun SettingScreenPreview() {
             uiState = SettingUiState(
                 nickname = "한비두비세비",
                 profileImageUrl = null,
-                email = "flint@flint.com",
             ),
             onBackClick = {},
             onEditProfileClick = {},

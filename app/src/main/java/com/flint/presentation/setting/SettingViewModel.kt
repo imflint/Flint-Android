@@ -2,7 +2,6 @@ package com.flint.presentation.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.flint.core.common.util.DataStoreKey.USER_EMAIL
 import com.flint.core.common.util.DataStoreKey.USER_NAME
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.repository.AuthRepository
@@ -35,8 +34,7 @@ class SettingViewModel @Inject constructor(
     fun loadUserInfo() {
         viewModelScope.launch {
             val nickname = preferencesManager.getString(USER_NAME).first()
-            val email = preferencesManager.getString(USER_EMAIL).first()
-            _uiState.update { it.copy(nickname = nickname, email = email) }
+            _uiState.update { it.copy(nickname = nickname) }
         }
 
         viewModelScope.launch {
@@ -56,14 +54,6 @@ class SettingViewModel @Inject constructor(
         _uiState.update { it.copy(isLogoutDialogVisible = false) }
     }
 
-    fun showWithdrawDialog() {
-        _uiState.update { it.copy(isWithdrawDialogVisible = true) }
-    }
-
-    fun dismissWithdrawDialog() {
-        _uiState.update { it.copy(isWithdrawDialogVisible = false) }
-    }
-
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
@@ -72,11 +62,4 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun withdraw() {
-        viewModelScope.launch {
-            authRepository.withdraw()
-                .onSuccess { _navigateToLogin.emit(Unit) }
-                .onFailure { Timber.e(it) }
-        }
-    }
 }

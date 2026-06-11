@@ -108,17 +108,24 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             if (state.profileImageUri != null) {
                 uploadProfileImage(state.profileImageUri)
+                    .onFailure {
+                        Timber.e(it, "Failed to save profile image")
+                        return@launch
+                    }
             }
             if (state.isNicknameChanged) {
                 userRepository.updateNickname(state.nickname)
                     .onSuccess { preferencesManager.saveString(USER_NAME, state.nickname) }
-                    .onFailure { Timber.e(it, "Failed to update nickname") }
+                    .onFailure {
+                        Timber.e(it, "Failed to update nickname")
+                        return@launch
+                    }
             }
             _navigateUp.emit(Unit)
         }
     }
 
-    private suspend fun uploadProfileImage(uri: Uri) {
+    private suspend fun uploadProfileImage(uri: Uri): Result<Unit> {
         val mimeType = withContext(Dispatchers.IO) {
             context.contentResolver.getType(uri)
         } ?: "image/jpeg"
@@ -130,12 +137,12 @@ class EditProfileViewModel @Inject constructor(
             extension = extension,
         ).getOrElse { error ->
             Timber.e(error, "Failed to get presigned URL")
-            return
+            return Result.failure(error)
         }
 
         val imageBytes = withContext(Dispatchers.IO) {
             context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        } ?: return
+        } ?: return Result.failure(IllegalStateException("Failed to open image stream"))
 
         storageRepository.uploadToS3(
             uploadUrl = presignedUrl.uploadUrl,
@@ -143,11 +150,11 @@ class EditProfileViewModel @Inject constructor(
             mimeType = mimeType,
         ).getOrElse { error ->
             Timber.e(error, "Failed to upload profile image to S3")
-            return
+            return Result.failure(error)
         }
 
-        userRepository.updateProfileImage(presignedUrl.key)
-            .onFailure { Timber.e(it, "Failed to update profile image") }
+        return userRepository.updateProfileImage(presignedUrl.key)
+            .map { }
     }
 
     private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
