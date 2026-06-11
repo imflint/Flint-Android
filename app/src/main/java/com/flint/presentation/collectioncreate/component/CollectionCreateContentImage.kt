@@ -43,13 +43,20 @@ fun CollectionCreateContentImage(
 ) {
     if (imageUris.isEmpty()) return
 
-    val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2) { Int.MAX_VALUE }
+    val pageCount = Int.MAX_VALUE
+    val pagerState = rememberPagerState(
+        initialPage = pageCount / 2 - (pageCount / 2) % imageUris.size,
+    ) { pageCount }
     val currentIndex = pagerState.currentPage % imageUris.size
 
-    var prevSize by remember { mutableIntStateOf(imageUris.size) }
+    var prevSize by remember { mutableIntStateOf(-1) }
     var deletedIndex by remember { mutableIntStateOf(-1) }
 
     LaunchedEffect(imageUris.size) {
+        if (prevSize == -1) {
+            prevSize = imageUris.size
+            return@LaunchedEffect
+        }
         if (imageUris.isEmpty()) {
             prevSize = 0
             return@LaunchedEffect

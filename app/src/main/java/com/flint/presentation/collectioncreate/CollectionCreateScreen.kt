@@ -29,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,7 +91,7 @@ fun CollectionCreateRoute(
         viewModel.updateThumbnailImageUri(uri)
     }
 
-    var pendingContentId by remember { mutableStateOf<String?>(null) }
+    var pendingContentId by rememberSaveable { mutableStateOf<String?>(null) }
     val contentImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ) { uri: Uri? ->
