@@ -189,7 +189,7 @@ private fun CollectionListScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(148.dp)
                 .align(Alignment.BottomCenter)
                 .background(
                     Brush.verticalGradient(
