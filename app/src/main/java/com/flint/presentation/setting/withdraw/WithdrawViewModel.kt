@@ -27,8 +27,8 @@ class WithdrawViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(WithdrawUiState())
     val uiState: StateFlow<WithdrawUiState> = _uiState.asStateFlow()
 
-    private val _navigateToLogin = MutableSharedFlow<Unit>()
-    val navigateToLogin = _navigateToLogin.asSharedFlow()
+    private val _navigateToWithdrawComplete = MutableSharedFlow<Unit>()
+    val navigateToWithdrawComplete = _navigateToWithdrawComplete.asSharedFlow()
 
     fun toggleConfirm() {
         _uiState.update { it.copy(isConfirmed = !it.isConfirmed) }
@@ -40,7 +40,7 @@ class WithdrawViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             authRepository.withdraw()
-                .onSuccess { _navigateToLogin.emit(Unit) }
+                .onSuccess { _navigateToWithdrawComplete.emit(Unit) }
                 .onFailure {
                     Timber.e(it)
                     _uiState.update { state -> state.copy(isLoading = false) }

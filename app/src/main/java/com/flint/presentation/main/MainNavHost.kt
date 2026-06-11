@@ -20,6 +20,7 @@ import com.flint.presentation.profile.navigation.profileNavGraph
 import com.flint.presentation.savedcontent.navigation.savedContentListNavGraph
 import com.flint.presentation.setting.editprofile.navigation.editProfileNavGraph
 import com.flint.presentation.setting.navigation.settingNavGraph
+import com.flint.presentation.setting.withdraw.navigation.withdrawCompleteNavGraph
 import com.flint.presentation.setting.withdraw.navigation.withdrawNavGraph
 import com.flint.presentation.splash.navigation.splashNavGraph
 
@@ -123,6 +124,10 @@ fun MainNavHost(
 
             withdrawNavGraph(
                 navigateUp = navigator::navigateUp,
+                navigateToWithdrawComplete = navigator::navigateToWithdrawComplete,
+            )
+
+            withdrawCompleteNavGraph(
                 navigateToLogin = navigator::navigateToLogin,
             )
         }

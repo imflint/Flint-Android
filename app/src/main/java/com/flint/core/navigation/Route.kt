@@ -67,4 +67,7 @@ interface Route {
 
     @Serializable
     data object Withdraw : Route
+
+    @Serializable
+    data object WithdrawComplete : Route
 }

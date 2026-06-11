@@ -13,12 +13,12 @@ fun NavController.navigateToWithdraw(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.withdrawNavGraph(
     navigateUp: () -> Unit,
-    navigateToLogin: () -> Unit,
+    navigateToWithdrawComplete: () -> Unit,
 ) {
     composable<Route.Withdraw> {
         WithdrawRoute(
             navigateUp = navigateUp,
-            navigateToLogin = navigateToLogin,
+            navigateToWithdrawComplete = navigateToWithdrawComplete,
         )
     }
 }

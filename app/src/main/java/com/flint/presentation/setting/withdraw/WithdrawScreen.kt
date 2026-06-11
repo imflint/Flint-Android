@@ -36,13 +36,13 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun WithdrawRoute(
     navigateUp: () -> Unit,
-    navigateToLogin: () -> Unit,
+    navigateToWithdrawComplete: () -> Unit,
     viewModel: WithdrawViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.navigateToLogin.collect { navigateToLogin() }
+        viewModel.navigateToWithdrawComplete.collect { navigateToWithdrawComplete() }
     }
 
     WithdrawScreen(
