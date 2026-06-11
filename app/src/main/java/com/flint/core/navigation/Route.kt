@@ -58,4 +58,16 @@ interface Route {
     data class Profile(
         val userId: String? = null,
     ) : Route
+
+    @Serializable
+    data object Setting : Route
+
+    @Serializable
+    data object EditProfile : Route
+
+    @Serializable
+    data object Withdraw : Route
+
+    @Serializable
+    data object WithdrawComplete : Route
 }

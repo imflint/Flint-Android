@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
@@ -36,6 +37,7 @@ fun FlintBasicButton(
     state: FlintButtonState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = if (state == FlintButtonState.Able) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
     enabled: Boolean = true,
     contentPadding: PaddingValues,
     @DrawableRes leadingIconRes: Int? = null,
@@ -76,7 +78,7 @@ fun FlintBasicButton(
         Text(
             text = text,
             color = contentColor,
-            style = if (state == FlintButtonState.Able) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
+            style = textStyle,
         )
     }
 }

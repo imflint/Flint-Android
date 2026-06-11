@@ -65,6 +65,7 @@ fun ProfileRoute(
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
     navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToSetting: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -105,6 +106,7 @@ fun ProfileRoute(
         uiState = uiState,
         onBackClick = navigateUp,
         onCollectionItemClick = navigateToCollectionDetail,
+        onSettingsClick = navigateToSetting,
         onContentItemClick = { contentId ->
             viewModel.getOttListPerContent(contentId)
         },

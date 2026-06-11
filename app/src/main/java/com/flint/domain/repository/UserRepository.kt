@@ -3,6 +3,8 @@ package com.flint.domain.repository
 import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.UserApi
+import com.flint.data.dto.user.request.UpdateNicknameRequestDto
+import com.flint.data.dto.user.request.UpdateProfileImageRequestDto
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.mapper.collection.toModel
 import com.flint.domain.mapper.content.toModel
@@ -63,5 +65,19 @@ class UserRepository @Inject constructor(
     suspend fun checkNickname(nickname: String): Result<NicknameCheckModel> =
         suspendRunCatching {
             apiService.checkNickname(nickname).data.toModel()
+        }
+
+    // 닉네임 수정
+    suspend fun updateNickname(nickname: String): Result<Unit> =
+        suspendRunCatching {
+            apiService.updateNickname(UpdateNicknameRequestDto(nickname = nickname))
+            Unit
+        }
+
+    // 프로필 이미지 수정
+    suspend fun updateProfileImage(imageKey: String): Result<Unit> =
+        suspendRunCatching {
+            apiService.updateProfileImage(UpdateProfileImageRequestDto(profileImage = imageKey))
+            Unit
         }
 }
