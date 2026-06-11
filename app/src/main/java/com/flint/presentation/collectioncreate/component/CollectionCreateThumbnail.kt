@@ -24,11 +24,11 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun CollectionCreateThumbnail(
-    imageUrl: String?,
+    imageUrl: Any?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (imageUrl.isNullOrBlank()) {
+    if (imageUrl == null || (imageUrl is String && imageUrl.isBlank())) {
         CollectionCreateEmptyThumbnail(
             onClick = onClick,
             modifier = modifier,
@@ -63,17 +63,17 @@ private fun CollectionCreateEmptyThumbnail(
             contentDescription = null,
         )
 
-//        Icon(
-//            painter = painterResource(R.drawable.ic_background_photo),
-//            contentDescription = null,
-//            tint = Color.Unspecified,
-//        )
+        Icon(
+            painter = painterResource(R.drawable.ic_background_photo),
+            contentDescription = null,
+            tint = Color.Unspecified,
+        )
     }
 }
 
 @Composable
 private fun CollectionCreateFillThumbnail(
-    imageUrl: String,
+    imageUrl: Any,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -97,11 +97,11 @@ private fun CollectionCreateFillThumbnail(
                     .background(FlintTheme.colors.imgBlur),
         )
 
-//        Icon(
-//            painter = painterResource(R.drawable.ic_background_photo),
-//            contentDescription = null,
-//            tint = Color.Unspecified,
-//        )
+        Icon(
+            painter = painterResource(R.drawable.ic_background_photo),
+            contentDescription = null,
+            tint = Color.Unspecified,
+        )
     }
 }
 

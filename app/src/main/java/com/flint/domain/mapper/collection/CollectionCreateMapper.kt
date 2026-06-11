@@ -20,6 +20,7 @@ private fun CollectionCreateContentModel.toDto(): CollectionCreateRequestDto.Con
         contentId = contentId,
         isSpoiler = isSpoiler,
         reason = reason,
+        imageUrls = imageUrls,
     )
 
 fun CollectionCreateResponseDto.toModel(): CollectionCreateModel =

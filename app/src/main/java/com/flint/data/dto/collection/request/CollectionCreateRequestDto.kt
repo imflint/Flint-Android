@@ -24,5 +24,7 @@ data class CollectionCreateRequestDto(
         val isSpoiler: Boolean,
         @SerialName("reason")
         val reason: String,
+        @SerialName("imageUrls")
+        val imageUrls: List<String> = emptyList(),
     )
 }
