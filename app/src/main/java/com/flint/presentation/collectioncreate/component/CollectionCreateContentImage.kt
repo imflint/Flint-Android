@@ -41,8 +41,10 @@ fun CollectionCreateContentImage(
     onDeleteClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (imageUris.isEmpty()) return
+
     val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2) { Int.MAX_VALUE }
-    val currentIndex = if (imageUris.isEmpty()) 0 else pagerState.currentPage % imageUris.size
+    val currentIndex = pagerState.currentPage % imageUris.size
 
     var prevSize by remember { mutableIntStateOf(imageUris.size) }
     var deletedIndex by remember { mutableIntStateOf(-1) }

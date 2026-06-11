@@ -60,10 +60,18 @@ class CollectionCreateViewModel @Inject constructor(
 
     private fun postCollectionCreate() {
         viewModelScope.launch {
-            val imageKey = uploadImageIfNeeded(_uiState.value.thumbnailImageUri, StoragePathType.COLLECTION_THUMBNAIL) ?: ""
+            val thumbnailKey = uploadImageIfNeeded(_uiState.value.thumbnailImageUri, StoragePathType.COLLECTION_THUMBNAIL)
+                .getOrElse {
+                    _createSuccess.emit(UiState.Failure)
+                    return@launch
+                }
             val contentImageKeysMap = uploadContentImagesIfNeeded()
+                .getOrElse {
+                    _createSuccess.emit(UiState.Failure)
+                    return@launch
+                }
             val requestModel = CollectionCreateRequestModel(
-                imageUrl = imageKey,
+                imageUrl = thumbnailKey ?: "",
                 title = uiState.value.title,
                 description = uiState.value.description.ifBlank { "" },
                 isPublic = uiState.value.isPublic ?: true,
@@ -232,22 +240,28 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun uploadContentImagesIfNeeded(): Map<String, List<String>> {
+    private suspend fun uploadContentImagesIfNeeded(): Result<Map<String, List<String>>> {
         val result = mutableMapOf<String, List<String>>()
         for ((contentId, detail) in _uiState.value.contentDetailsMap) {
-            val keys = detail.contentImageUris.mapNotNull { uri ->
-                uploadImageIfNeeded(uri, StoragePathType.COLLECTION_CONTENT)
+            val keys = mutableListOf<String>()
+            for (uri in detail.contentImageUris) {
+                val key = uploadImageIfNeeded(uri, StoragePathType.COLLECTION_CONTENT)
+                    .getOrElse { return Result.failure(it) }
+                if (key != null) keys.add(key)
             }
             if (keys.isNotEmpty()) result[contentId] = keys
         }
-        return result
+        return Result.success(result)
     }
 
-    private suspend fun uploadImageIfNeeded(uri: Uri?, pathType: StoragePathType): String? {
-        uri ?: return null
+    private suspend fun uploadImageIfNeeded(uri: Uri?, pathType: StoragePathType): Result<String?> {
+        uri ?: return Result.success(null)
 
-        val mimeType = withContext(Dispatchers.IO) {
-            context.contentResolver.getType(uri)
+        val mimeType = runCatching {
+            withContext(Dispatchers.IO) { context.contentResolver.getType(uri) }
+        }.getOrElse { error ->
+            Timber.e(error, "Failed to resolve mimeType")
+            return Result.failure(error)
         } ?: "image/jpeg"
         val extension = mimeTypeToFileExtension(mimeType)
 
@@ -256,12 +270,17 @@ class CollectionCreateViewModel @Inject constructor(
             extension = extension,
         ).getOrElse { error ->
             Timber.e(error, "Failed to get presigned URL")
-            return null
+            return Result.failure(error)
         }
 
-        val imageBytes = withContext(Dispatchers.IO) {
-            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        } ?: return null
+        val imageBytes = runCatching {
+            withContext(Dispatchers.IO) {
+                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            }
+        }.getOrElse { error ->
+            Timber.e(error, "Failed to read image bytes")
+            return Result.failure(error)
+        } ?: return Result.failure(IllegalStateException("Failed to open image stream: $uri"))
 
         storageRepository.uploadToS3(
             uploadUrl = presignedUrl.uploadUrl,
@@ -269,10 +288,10 @@ class CollectionCreateViewModel @Inject constructor(
             mimeType = mimeType,
         ).getOrElse { error ->
             Timber.e(error, "Failed to upload image to S3")
-            return null
+            return Result.failure(error)
         }
 
-        return presignedUrl.key
+        return Result.success(presignedUrl.key)
     }
 
     private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {

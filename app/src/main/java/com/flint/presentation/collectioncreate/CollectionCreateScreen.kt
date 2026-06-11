@@ -86,6 +86,7 @@ fun CollectionCreateRoute(
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ) { uri: Uri? ->
+        uri ?: return@rememberLauncherForActivityResult
         viewModel.updateThumbnailImageUri(uri)
     }
 
