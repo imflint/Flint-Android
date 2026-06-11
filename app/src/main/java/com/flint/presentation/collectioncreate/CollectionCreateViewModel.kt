@@ -55,44 +55,50 @@ class CollectionCreateViewModel @Inject constructor(
     }
 
     fun onClickFinish() {
+        if (_uiState.value.isLoading) return
         postCollectionCreate()
     }
 
     private fun postCollectionCreate() {
         viewModelScope.launch {
-            val thumbnailKey = uploadImageIfNeeded(_uiState.value.thumbnailImageUri, StoragePathType.COLLECTION_THUMBNAIL)
-                .getOrElse {
-                    _createSuccess.emit(UiState.Failure)
-                    return@launch
-                }
-            val contentImageKeysMap = uploadContentImagesIfNeeded()
-                .getOrElse {
-                    _createSuccess.emit(UiState.Failure)
-                    return@launch
-                }
-            val requestModel = CollectionCreateRequestModel(
-                imageUrl = thumbnailKey ?: "",
-                title = uiState.value.title,
-                description = uiState.value.description.ifBlank { "" },
-                isPublic = uiState.value.isPublic ?: true,
-                contentList = uiState.value.selectedContents.map { content ->
-                    val detail = uiState.value.contentDetailsMap[content.id] ?: ContentDetail()
-                    CollectionCreateContentModel(
-                        contentId = content.id,
-                        isSpoiler = detail.isSpoiler,
-                        reason = detail.reason.ifBlank { "" },
-                        imageUrls = contentImageKeysMap[content.id] ?: emptyList(),
-                    )
-                },
-            )
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                val thumbnailKey = uploadImageIfNeeded(_uiState.value.thumbnailImageUri, StoragePathType.COLLECTION_THUMBNAIL)
+                    .getOrElse {
+                        _createSuccess.emit(UiState.Failure)
+                        return@launch
+                    }
+                val contentImageKeysMap = uploadContentImagesIfNeeded()
+                    .getOrElse {
+                        _createSuccess.emit(UiState.Failure)
+                        return@launch
+                    }
+                val requestModel = CollectionCreateRequestModel(
+                    imageUrl = thumbnailKey ?: "",
+                    title = uiState.value.title,
+                    description = uiState.value.description.ifBlank { "" },
+                    isPublic = uiState.value.isPublic ?: true,
+                    contentList = uiState.value.selectedContents.map { content ->
+                        val detail = uiState.value.contentDetailsMap[content.id] ?: ContentDetail()
+                        CollectionCreateContentModel(
+                            contentId = content.id,
+                            isSpoiler = detail.isSpoiler,
+                            reason = detail.reason.ifBlank { "" },
+                            imageUrls = contentImageKeysMap[content.id] ?: emptyList(),
+                        )
+                    },
+                )
 
-            collectionRepository
-                .postCollectionCreate(requestModel.toDto())
-                .onSuccess {
-                    println("컬렉션 생성 성공")
-                    _createSuccess.emit(UiState.Success(it.collectionId))
-                }
-                .onFailure { e -> println("컬렉션 생성 실패: ${e.message}") }
+                collectionRepository
+                    .postCollectionCreate(requestModel.toDto())
+                    .onSuccess {
+                        println("컬렉션 생성 성공")
+                        _createSuccess.emit(UiState.Success(it.collectionId))
+                    }
+                    .onFailure { e -> println("컬렉션 생성 실패: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 

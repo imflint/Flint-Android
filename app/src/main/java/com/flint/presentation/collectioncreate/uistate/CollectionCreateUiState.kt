@@ -16,8 +16,10 @@ data class CollectionCreateUiState(
     val contentDetailsMap: Map<String, ContentDetail> = emptyMap(),
     val contents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val searchText: String = "",
+    val isLoading: Boolean = false,
 ) {
     val isFinishButtonEnabled: Boolean =
+        !isLoading &&
         title.isNotBlank() &&
         isPublic != null &&
         selectedContents.size >= 2
