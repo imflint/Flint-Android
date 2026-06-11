@@ -72,7 +72,11 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun updateProfileImage(uri: Uri?) {
-        _uiState.update { it.copy(profileImageUri = uri) }
+        if (uri != null) {
+            _uiState.update { it.copy(profileImageUri = uri, isProfileImageDeleted = false) }
+        } else {
+            _uiState.update { it.copy(profileImageUri = null, isProfileImageDeleted = true) }
+        }
     }
 
     fun checkNicknameDuplication() {
@@ -106,12 +110,21 @@ class EditProfileViewModel @Inject constructor(
         if (!state.canComplete) return
 
         viewModelScope.launch {
-            if (state.profileImageUri != null) {
-                uploadProfileImage(state.profileImageUri)
-                    .onFailure {
-                        Timber.e(it, "Failed to save profile image")
-                        return@launch
-                    }
+            when {
+                state.isProfileImageDeleted -> {
+                    userRepository.updateProfileImage("")
+                        .onFailure {
+                            Timber.e(it, "Failed to delete profile image")
+                            return@launch
+                        }
+                }
+                state.profileImageUri != null -> {
+                    uploadProfileImage(state.profileImageUri)
+                        .onFailure {
+                            Timber.e(it, "Failed to save profile image")
+                            return@launch
+                        }
+                }
             }
             if (state.isNicknameChanged) {
                 userRepository.updateNickname(state.nickname)

@@ -7,6 +7,7 @@ data class EditProfileUiState(
     val nickname: String = "",
     val profileImageUrl: String? = null,
     val profileImageUri: Uri? = null,
+    val isProfileImageDeleted: Boolean = false,
     val isFormatValid: Boolean = true,
     val isNicknameAvailable: Boolean? = null,
     val nicknameErrorType: EditProfileNicknameErrorType? = null,

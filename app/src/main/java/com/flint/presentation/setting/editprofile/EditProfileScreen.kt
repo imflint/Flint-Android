@@ -137,7 +137,11 @@ private fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 EditProfileImage(
-                    imageUrl = uiState.profileImageUri?.toString() ?: uiState.profileImageUrl ?: "",
+                    imageUrl = when {
+                        uiState.isProfileImageDeleted -> ""
+                        uiState.profileImageUri != null -> uiState.profileImageUri.toString()
+                        else -> uiState.profileImageUrl ?: ""
+                    },
                     onEditClick = { showProfileBottomSheet = true },
                 )
 
