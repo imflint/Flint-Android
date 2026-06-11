@@ -233,6 +233,7 @@ class CollectionCreateViewModel @Inject constructor(
     fun removeContentImageUri(contentId: String, index: Int) {
         _uiState.update { state ->
             val current = state.contentDetailsMap[contentId] ?: return@update state
+            if (index !in current.contentImageUris.indices) return@update state
             val updated = current.copy(
                 contentImageUris = current.contentImageUris.toMutableList().also { it.removeAt(index) }
             )
