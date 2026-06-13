@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
+import com.flint.data.dto.base.ErrorResponseDto
 import com.flint.domain.repository.BookmarkRepository
-import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.SavedContentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,18 +17,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SavedContentViewModel @Inject constructor(
-    private val contentRepository: ContentRepository,
     private val userRepository: UserRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val json: Json,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -99,7 +98,10 @@ class SavedContentViewModel @Inject constructor(
                                 val filtered = currentList.contents
                                     .filter { it.id != contentId }
                                     .toPersistentList()
-                                currentList.copy(contents = filtered, totalCount = filtered.size)
+                                currentList.copy(
+                                    contents = filtered,
+                                    totalCount = maxOf(currentList.totalCount - 1, 0),
+                                )
                             }
                             state.copy(
                                 contents = if (updated.contents.isEmpty()) UiState.Empty
@@ -121,17 +123,7 @@ class SavedContentViewModel @Inject constructor(
                     }
                 }
                 .onFailure { throwable ->
-                    val isMinLimitError = (throwable as? HttpException)
-                        ?.response()?.errorBody()?.string()
-                        ?.let { body ->
-                            runCatching {
-                                Json.parseToJsonElement(body)
-                                    .jsonObject["errorCode"]
-                                    ?.jsonPrimitive?.content == "BOOKMARK.CONTENT_MIN_LIMIT"
-                            }.getOrDefault(false)
-                        } ?: false
-
-                    if (isMinLimitError) {
+                    if (throwable.isContentMinLimitError()) {
                         _uiState.update { it.copy(showBookmarkRestrictionModal = true) }
                     } else {
                         Timber.e(throwable, "toggleBookmark failed: contentId=$contentId")
@@ -143,5 +135,20 @@ class SavedContentViewModel @Inject constructor(
     // 저장 취소 제한 안내 모달 닫기
     fun dismissBookmarkRestrictionModal() {
         _uiState.update { it.copy(showBookmarkRestrictionModal = false) }
+    }
+
+    private fun Throwable.isContentMinLimitError(): Boolean {
+        val body = (this as? HttpException)?.response()?.errorBody()?.string()
+            ?: return false
+
+        return runCatching {
+            json.decodeFromString<ErrorResponseDto>(body).errorCode == CONTENT_MIN_LIMIT_ERROR_CODE
+        }.onFailure {
+            Timber.w(it, "Failed to parse bookmark error response")
+        }.getOrDefault(false)
+    }
+
+    private companion object {
+        const val CONTENT_MIN_LIMIT_ERROR_CODE = "BOOKMARK.CONTENT_MIN_LIMIT"
     }
 }

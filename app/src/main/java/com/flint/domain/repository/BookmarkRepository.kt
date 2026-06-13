@@ -23,20 +23,20 @@ class BookmarkRepository @Inject constructor(
     }
 
     // 컬렉션 북마크 토글
-    suspend fun toggleCollectionBookmark(collectionId: String): Result<Boolean> =
-        suspendRunCatching { api.toggleCollectionBookmark(collectionId).data }
-            .also { result ->
-                result.onSuccess { isBookmarked ->
-                    _bookmarkChanges.emit(BookmarkChange.Collection(collectionId, isBookmarked))
-                }
-            }
+    suspend fun toggleCollectionBookmark(collectionId: String): Result<Boolean> {
+        val result = suspendRunCatching { api.toggleCollectionBookmark(collectionId).data }
+        result.getOrNull()?.let { isBookmarked ->
+            _bookmarkChanges.emit(BookmarkChange.Collection(collectionId, isBookmarked))
+        }
+        return result
+    }
 
     // 콘텐츠 북마크 토글
-    suspend fun toggleContentBookmark(contentId: String): Result<Boolean> =
-        suspendRunCatching { api.toggleContentBookmark(contentId).data }
-            .also { result ->
-                result.onSuccess { isBookmarked ->
-                    _bookmarkChanges.emit(BookmarkChange.Content(contentId, isBookmarked))
-                }
-            }
+    suspend fun toggleContentBookmark(contentId: String): Result<Boolean> {
+        val result = suspendRunCatching { api.toggleContentBookmark(contentId).data }
+        result.getOrNull()?.let { isBookmarked ->
+            _bookmarkChanges.emit(BookmarkChange.Content(contentId, isBookmarked))
+        }
+        return result
+    }
 }

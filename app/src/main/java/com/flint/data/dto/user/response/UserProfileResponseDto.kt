@@ -1,18 +1,18 @@
 package com.flint.data.dto.user.response
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserProfileResponseDto(
-    @SerializedName("id")
+    @SerialName("id")
     val id: String,
-    @SerializedName("profileImageUrl")
+    @SerialName("profileImageUrl")
     val profileImageUrl: String?,
-    @SerializedName("isFliner")
+    @SerialName("isFliner")
     val isFliner: Boolean,
-    @SerializedName("nickname")
+    @SerialName("nickname")
     val nickname: String,
-    @SerializedName("keywordRecalculatable")
+    @SerialName("keywordRecalculatable")
     val keywordRecalculatable: Boolean = false,
 )

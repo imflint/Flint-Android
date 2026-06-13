@@ -22,7 +22,7 @@ fun BookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
 // /api/v1/contents/bookmarks (내 프로필)
 fun MyBookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
     return BookmarkedContentListModel(
-        totalCount = data.size,
+        totalCount = meta.returned,
         contents = data.map { it.toModel() }.toImmutableList()
     )
 }

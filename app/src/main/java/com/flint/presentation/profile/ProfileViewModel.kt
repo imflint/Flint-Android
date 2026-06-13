@@ -58,15 +58,29 @@ class ProfileViewModel @Inject constructor(
                     val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
                     val updated = when (change) {
                         is BookmarkChange.Content -> {
-                            val updatedContents = if (change.isBookmarked) {
-                                data.savedContents
+                            val updatedContents = if (userId == null) {
+                                if (change.isBookmarked) {
+                                    data.savedContents
+                                } else {
+                                    val filtered = data.savedContents.contents
+                                        .filter { it.id != change.id }
+                                        .toPersistentList()
+                                    data.savedContents.copy(
+                                        contents = filtered,
+                                        totalCount = maxOf(data.savedContents.totalCount - 1, 0),
+                                    )
+                                }
                             } else {
-                                val filtered = data.savedContents.contents
-                                    .filter { it.id != change.id }
-                                    .toPersistentList()
                                 data.savedContents.copy(
-                                    contents = filtered,
-                                    totalCount = filtered.size,
+                                    contents = data.savedContents.contents
+                                        .map {
+                                            if (it.id == change.id) {
+                                                it.copy(isBookmarked = change.isBookmarked)
+                                            } else {
+                                                it
+                                            }
+                                        }
+                                        .toPersistentList(),
                                 )
                             }
                             data.copy(savedContents = updatedContents)
