@@ -31,7 +31,6 @@ import com.flint.domain.type.OttType
 @Composable
 fun OttShortCutListItem(
     ottModel: OttModel,
-    onMoveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -57,23 +56,6 @@ fun OttShortCutListItem(
         )
 
         Spacer(Modifier.weight(1f))
-
-        Box(
-            modifier =
-                Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(FlintTheme.colors.primary400)
-                    .clickable {
-                        onMoveClick()
-                    }.padding(vertical = 7.dp, horizontal = 12.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "바로 보러가기",
-                style = FlintTypography.body2M14,
-                color = FlintTheme.colors.white,
-            )
-        }
     }
 }
 
@@ -88,8 +70,7 @@ private fun PreviewOttShortCutListItem() {
                     name = "Netflix",
                     logoUrl = "",
                     contentUrl = "",
-                ),
-                onMoveClick = {},
+                )
             )
         }
     }

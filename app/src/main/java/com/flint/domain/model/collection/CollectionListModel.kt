@@ -21,6 +21,30 @@ data class CollectionListModel(
                     userId = "0",
                     nickname = "nickname",
                     profileUrl = null
+                ),
+                CollectionItemModel(
+                    id = "1",
+                    thumbnailUrl = "",
+                    title = "드라마 제목",
+                    description = "드라마 제목 드라마 제목 드라마 제목 드라마 제목 드라마 제목",
+                    imageList = emptyList(),
+                    bookmarkCount = 0,
+                    isBookmarked = false,
+                    userId = "0",
+                    nickname = "nickname",
+                    profileUrl = null
+                ),
+                CollectionItemModel(
+                    id = "2",
+                    thumbnailUrl = "",
+                    title = "드라마 제목",
+                    description = "드라마 제목 드라마 제목 드라마 제목 드라마 제목 드라마 제목",
+                    imageList = emptyList(),
+                    bookmarkCount = 0,
+                    isBookmarked = false,
+                    userId = "0",
+                    nickname = "nickname",
+                    profileUrl = null
                 )
             )
         )

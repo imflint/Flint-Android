@@ -72,8 +72,15 @@ data class Colors(
     val yellow: Color,
     val blue: Color,
     val kakao: Color,
+    val transparent: Color,
     val buttonStroke: Brush,
     val myGradient: Brush,
+    val blueGradient: Brush,
+    val primary400Gradient: Brush,
+    val grayGradient: Brush,
+    val gray800Gradient: Brush,
+    val userBadgeGradient: Brush,
+    val userBadgeStroke: Brush,
 )
 
 val FlintColors =
@@ -160,6 +167,7 @@ val FlintColors =
         yellow = Color(0xFFF9B902),
         blue = Color(0xFF38A5FF),
         kakao = Color(0xFFFEE500),
+        transparent = Color.Transparent,
         buttonStroke =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFFAEAEAE), Color(0xFF666666)),
@@ -168,6 +176,45 @@ val FlintColors =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF424BBD).copy(1f), Color(0xFF121212).copy(alpha = 0.04f)),
             ),
+        blueGradient =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF062845).copy(alpha = 0f), Color(0xFF062845).copy(1f)),
+            ),
+        primary400Gradient =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF1ABFF2).copy(0f), Color(0xFF1ABFF2).copy(0.35f)),
+            ),
+        grayGradient =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF21242C).copy(alpha = 0f), Color(0xFF21242C).copy(alpha = 1f)),
+            ),
+        gray800Gradient =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF21242C).copy(alpha = 0f), Color(0xFF21242C).copy(alpha = 0.35f)),
+            ),
+        userBadgeGradient = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset(size.width * 0.095f, size.height * 0.109f),
+                    to = Offset(size.width * 0.921f, size.height * 0.844f),
+                    colors = listOf(Color.White.copy(alpha = 0f), Color.White.copy(alpha = 0.1f)),
+                )
+            }
+        },
+        userBadgeStroke = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset(size.width * 0.429f, 0f),
+                    to = Offset(size.width * 0.738f, size.height),
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.7f),
+                        Color.White.copy(alpha = 0f),
+                        Color.White.copy(alpha = 0.7f),
+                    ),
+                    colorStops = listOf(0f, 0.52f, 1f),
+                )
+            }
+        },
     )
 
 @Preview(device = Devices.DESKTOP)
