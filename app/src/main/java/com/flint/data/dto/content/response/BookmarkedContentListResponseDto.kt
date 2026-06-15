@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookmarkedContentListResponseDto(
+    @SerialName("totalCount")
+    val totalCount: Int = 0,
     @SerialName("contents")
     val contents: List<BookmarkedContentResponseDto>
 )
@@ -19,6 +21,10 @@ data class BookmarkedContentResponseDto(
     val year: Int,
     @SerialName("imageUrl")
     val imageUrl: String,
+    @SerialName("bookmarkCount")
+    val bookmarkCount: Int = 0,
+    @SerialName("isBookmarked")
+    val isBookmarked: Boolean = false,
     @SerialName("getOttSimpleList")
     val getOttSimpleList: List<OttSimpleResponseDto>
 )

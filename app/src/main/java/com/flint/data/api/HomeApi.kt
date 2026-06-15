@@ -1,11 +1,15 @@
 package com.flint.data.api
 
 import com.flint.data.dto.base.BaseResponse
+import com.flint.data.dto.home.response.PopularCollectionResponseDto
 import com.flint.data.dto.home.response.RecommendCollectionResponseDto
 import retrofit2.http.GET
 
 interface HomeApi {
 
     @GET("/api/v1/home/recommended-collections")
-    suspend fun getRecommendedCollections() : BaseResponse<RecommendCollectionResponseDto>
+    suspend fun getRecommendedCollections(): BaseResponse<RecommendCollectionResponseDto>
+
+    @GET("/api/v1/home/popular-collections")
+    suspend fun getPopularCollections(): BaseResponse<PopularCollectionResponseDto>
 }

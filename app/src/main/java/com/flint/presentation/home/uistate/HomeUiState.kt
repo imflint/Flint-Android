@@ -8,21 +8,21 @@ data class HomeUiState(
     val userName: String = "",
     val recommendedCollectionListLoadState: UiState<CollectionListModel> = UiState.Loading,
     val bookmarkedContentListLoadState: UiState<BookmarkedContentListModel> = UiState.Loading,
-    val recentCollectionListLoadState: UiState<CollectionListModel> = UiState.Loading
+    val popularCollectionListLoadState: UiState<CollectionListModel> = UiState.Loading
 ) {
     val loadState: UiState<Unit>
         get() = when {
             recommendedCollectionListLoadState is UiState.Loading &&
             bookmarkedContentListLoadState is UiState.Loading &&
-            recentCollectionListLoadState is UiState.Loading -> UiState.Loading
+            popularCollectionListLoadState is UiState.Loading -> UiState.Loading
 
             recommendedCollectionListLoadState is UiState.Failure ||
             bookmarkedContentListLoadState is UiState.Failure ||
-            recentCollectionListLoadState is UiState.Failure -> UiState.Failure
+            popularCollectionListLoadState is UiState.Failure -> UiState.Failure
 
             recommendedCollectionListLoadState is UiState.Success &&
             bookmarkedContentListLoadState is UiState.Success &&
-            recentCollectionListLoadState is UiState.Success -> UiState.Success(Unit)
+            popularCollectionListLoadState is UiState.Success -> UiState.Success(Unit)
 
             else -> UiState.Loading
         }
