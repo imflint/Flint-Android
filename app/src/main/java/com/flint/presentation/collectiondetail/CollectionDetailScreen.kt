@@ -1,7 +1,6 @@
 package com.flint.presentation.collectiondetail
 
 import androidx.compose.foundation.LocalOverscrollFactory
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -22,8 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -33,7 +32,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.collection.PeopleBottomSheet
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
-import com.flint.core.designsystem.component.progressbar.UnderImageProgressBar
 import com.flint.core.designsystem.component.toast.ShowSaveToast
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.theme.FlintTheme
@@ -45,7 +43,7 @@ import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.component.CollectionCopyrightFooter
 import com.flint.presentation.collectiondetail.component.CollectionDetailDescription
 import com.flint.presentation.collectiondetail.component.CollectionDetailThumbnail
-import com.flint.presentation.collectiondetail.component.Content
+import com.flint.presentation.collectiondetail.component.CollectionDetailContent
 import com.flint.presentation.collectiondetail.component.PeopleWhoSavedThisCollection
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
@@ -54,6 +52,7 @@ import kotlinx.collections.immutable.persistentListOf
 import java.time.format.DateTimeFormatter
 
 private const val DATE_FORMAT_TO_SHOW = "yyyy. MM. dd."
+private const val CONTENT_LIST_HEADER_ITEM_COUNT = 1
 
 @Composable
 fun CollectionDetailRoute(
@@ -226,21 +225,14 @@ fun CollectionDetailScreen(
         LocalOverscrollFactory provides null,
     ) {
         var showPeopleBottomSheet: Boolean by remember { mutableStateOf(false) }
-        val scrollState: ScrollState = rememberScrollState()
-        val contentPositions: MutableMap<String, Int> = remember { mutableMapOf() }
-
-        val scrollProgress: Float =
-            if (scrollState.maxValue > 0) {
-                scrollState.value.toFloat() / scrollState.maxValue
-            } else {
-                0f
-            }
+        val lazyListState: LazyListState = rememberLazyListState()
 
         LaunchedEffect(Unit) {
             if (targetImageUrl == null) return@LaunchedEffect
-            val targetPosition: Int = contentPositions[targetImageUrl] ?: return@LaunchedEffect
+            val targetIndex: Int = contents.indexOfFirst { it.imageUrl == targetImageUrl }
+            if (targetIndex == -1) return@LaunchedEffect
 
-            scrollState.animateScrollTo(targetPosition)
+            lazyListState.animateScrollToItem(CONTENT_LIST_HEADER_ITEM_COUNT + targetIndex)
         }
 
         if (showPeopleBottomSheet) {
@@ -274,50 +266,57 @@ fun CollectionDetailScreen(
                 onReportClick = onReportClick,
             )
 
-            Column(
+            LazyColumn(
+                state = lazyListState,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState),
+                    .fillMaxWidth(),
             ) {
-                UnderImageProgressBar(progress = scrollProgress)
+                item {
+                    Column {
+                        Spacer(Modifier.height(24.dp))
 
-                Spacer(Modifier.height(24.dp))
+                        CollectionDetailDescription(
+                            authorNickname = authorNickname,
+                            authorUserRoleType = authorUserRoleType,
+                            createdAt = createdAt,
+                            collectionContent = description,
+                            onAuthorNicknameClick = onAuthorNicknameClick,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                        )
+                    }
+                }
 
-                CollectionDetailDescription(
-                    authorNickname = authorNickname,
-                    authorUserRoleType = authorUserRoleType,
-                    createdAt = createdAt,
-                    collectionContent = description,
-                    onAuthorNicknameClick = onAuthorNicknameClick,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                )
-
-                Spacer(Modifier.height(48.dp))
-
-                contents.forEach { content: ContentModelNew ->
-                    Content(
+                items(
+                    items = contents,
+                    key = { content: ContentModelNew -> content.id },
+                ) { content: ContentModelNew ->
+                    CollectionDetailContent(
                         content = content,
                         onBookmarkIconClick = onBookmarkIconClick,
                         onSpoilClick = onSpoilClick,
-                        modifier = Modifier.onGloballyPositioned { coordinates ->
-                            contentPositions[content.imageUrl] =
-                                coordinates.positionInParent().y.toInt()
-                        },
                     )
+                }
+
+                item {
+                    Spacer(Modifier.height(24.dp))
                 }
 
                 if (people.isNotEmpty()) {
-                    PeopleWhoSavedThisCollection(
-                        people = people,
-                        onMoreClick = { showPeopleBottomSheet = true },
-                    )
+                    item {
+                        PeopleWhoSavedThisCollection(
+                            people = people,
+                            onMoreClick = { showPeopleBottomSheet = true },
+                        )
+                    }
                 }
 
-                CollectionCopyrightFooter()
+                item {
+                    CollectionCopyrightFooter()
+                }
             }
         }
     }
@@ -331,6 +330,7 @@ private data class ScreenPreviewData(
     val authorUserRoleType: UserRoleType,
     val contents: ImmutableList<ContentModelNew>,
     val people: ImmutableList<CollectionBookmarkUsersModel.User>,
+    val isMine: Boolean,
 )
 
 private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData> {
@@ -379,6 +379,7 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
                 authorUserRoleType = UserRoleType.FLINER,
                 contents = persistentListOf(sampleContent, sampleContent.copy(isSpoiler = true)),
                 people = samplePeople,
+                isMine = true,
             ),
             ScreenPreviewData(
                 thumbnailUrl = "https://buly.kr/DEaVFRZ",
@@ -388,37 +389,42 @@ private class ScreenPreviewProvider : PreviewParameterProvider<ScreenPreviewData
                 authorUserRoleType = UserRoleType.FLING,
                 contents = persistentListOf(sampleContent, sampleContent.copy(isSpoiler = true)),
                 people = persistentListOf(),
+                isMine = false,
             ),
         )
 }
 
-//@Preview
-//@Composable
-//private fun CollectionDetailScreenPreview(
-//    @PreviewParameter(ScreenPreviewProvider::class) data: ScreenPreviewData,
-//) {
-//    FlintTheme {
-//        Scaffold { paddingValues: PaddingValues ->
-//            CollectionDetailScreen(
-//                paddingValues = paddingValues,
-//                title = data.title,
-//                isBookmarked = data.isBookmarked,
-//                authorNickname = data.authorNickname,
-//                authorUserRoleType = data.authorUserRoleType,
-//                createdAt = "2026. 01. 07.",
-//                description = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
-//                contents = data.contents,
-//                people = data.people,
-//                onSaveDoneButtonClick = {},
-//                onSaveNoneButtonClick = {},
-//                navigateUp = {},
-//                onBookmarkIconClick = {},
-//                onSpoilClick = {},
-//                onAuthorClick = {},
-//                onAuthorNicknameClick = {},
-//                onAuthorClick = {},
-//                targetImageUrl = {}
-//            )
-//        }
-//    }
-//}
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+private fun CollectionDetailScreenPreview(
+    @PreviewParameter(ScreenPreviewProvider::class) data: ScreenPreviewData,
+) {
+    FlintTheme {
+        Scaffold { paddingValues: PaddingValues ->
+            CollectionDetailScreen(
+                paddingValues = paddingValues,
+                thumbnailUrl = data.thumbnailUrl,
+                title = data.title,
+                isBookmarked = data.isBookmarked,
+                authorNickname = data.authorNickname,
+                authorUserRoleType = data.authorUserRoleType,
+                createdAt = "2026. 01. 07.",
+                description = "시간이 흘러도 빛이 바래지 않는,\n사랑의 미묘한 온도를 담은 제 최애 영화 모음집입니다",
+                contents = data.contents,
+                people = data.people,
+                onSaveDoneButtonClick = {},
+                onSaveNoneButtonClick = {},
+                navigateUp = {},
+                onBookmarkIconClick = {},
+                onSpoilClick = {},
+                onAuthorNicknameClick = {},
+                onAuthorClick = {},
+                isMine = data.isMine,
+                onEditClick = {},
+                onDeleteClick = {},
+                onReportClick = {},
+            )
+        }
+    }
+}
