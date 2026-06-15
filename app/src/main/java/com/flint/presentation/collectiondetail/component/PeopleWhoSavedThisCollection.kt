@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,45 +37,47 @@ fun PeopleWhoSavedThisCollection(
     onMoreClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(vertical = 10.dp),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(top = 24.dp, bottom = 32.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = "이 컬렉션을 저장한 사람들",
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.head2Sb20,
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .padding(horizontal = 16.dp),
+                modifier = Modifier,
             )
 
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_more),
                 contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(48.dp)
+                modifier = Modifier
+                        .size(24.dp)
                         .clickable(onClick = onMoreClick)
-                        .padding(12.dp),
+                        .padding(vertical = 1.dp)
+                        .padding(end = 3.dp),
                 tint = FlintTheme.colors.white,
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(32.dp))
 
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy((-12).dp),
             ) {
-                people.take(5).forEach { author: CollectionBookmarkUsersModel.User ->
+                people.take(6).forEach { author: CollectionBookmarkUsersModel.User ->
                     ProfileImage(
                         imageUrl = author.profileImageUrl,
-                        modifier =
-                            Modifier
+                        modifier = Modifier
                                 .size(56.dp)
                                 .border(3.dp, FlintTheme.colors.background, CircleShape),
                         contentDescription = author.nickName,
@@ -84,7 +87,7 @@ fun PeopleWhoSavedThisCollection(
 
             Spacer(Modifier.width(8.dp))
 
-            if (people.size >= 6) {
+            if (people.size >= 7) {
                 Row {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
@@ -93,7 +96,7 @@ fun PeopleWhoSavedThisCollection(
                     )
 
                     Text(
-                        text = (people.size - 5).toString(),
+                        text = (people.size - 6).toString(),
                         color = FlintTheme.colors.gray50,
                         style = FlintTheme.typography.head2M20,
                     )
