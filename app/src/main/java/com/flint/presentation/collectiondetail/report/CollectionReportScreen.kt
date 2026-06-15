@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,13 +32,24 @@ fun CollectionReportRoute(
 ) {
     val uiState: CollectionReportUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { event: CollectionReportSideEffect ->
+            when (event) {
+                CollectionReportSideEffect.ReportSuccess -> navigateUp()
+                CollectionReportSideEffect.ReportFailure -> {
+                    // TODO: 신고 접수 실패 토스트/다이얼로그 띄우기
+                }
+            }
+        }
+    }
+
     CollectionReportScreen(
         selectedReportReason = uiState.selectedReportReason,
         reportText = uiState.reportText,
         onReportReasonSelected = viewModel::selectReportReason,
         onReportTextChanged = viewModel::updateReportText,
         onCancelClick = navigateUp,
-        onSubmitClick = {},
+        onSubmitClick = viewModel::submitReport,
     )
 }
 
@@ -98,8 +110,14 @@ private fun CollectionReportScreen(
             }
         }
 
+        val isEnabled = when (selectedReportReason) {
+            null -> false
+            "기타" -> reportText.trim().length >= 2
+            else -> true
+        }
+
         ReportBottomSection(
-            isEnabled = selectedReportReason != null,
+            isEnabled = isEnabled,
             onSubmitClick = onSubmitClick,
             modifier = Modifier.padding(horizontal = 16.dp)
         )

@@ -1,7 +1,9 @@
 package com.flint.data.api
 
+import com.flint.data.dto.base.BaseEmptyResponse
 import com.flint.data.dto.base.BaseResponse
 import com.flint.data.dto.collection.request.CollectionCreateRequestDto
+import com.flint.data.dto.collection.request.CollectionReportRequestDto
 import com.flint.data.dto.collection.response.CollectionCreateResponseDto
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
 import com.flint.data.dto.collection.response.CollectionsResponseDto
@@ -35,4 +37,11 @@ interface CollectionApi {
     // 최근 본 컬렉션 목록 조회
     @GET("/api/v1/collections/recent")
     suspend fun getRecentCollectionList(): BaseResponse<RecentCollectionListResponseDto>
+
+    // 컬렉션 신고
+    @POST("/api/v1/collections/{collectionId}/reports")
+    suspend fun postCollectionReport(
+        @Path("collectionId") collectionId: String,
+        @Body requestDto: CollectionReportRequestDto,
+    ): BaseEmptyResponse
 }

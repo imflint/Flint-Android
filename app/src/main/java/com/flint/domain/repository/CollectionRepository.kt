@@ -3,6 +3,7 @@ package com.flint.domain.repository
 import com.flint.core.common.util.suspendRunCatching
 import com.flint.data.api.CollectionApi
 import com.flint.data.dto.collection.request.CollectionCreateRequestDto
+import com.flint.data.dto.collection.request.CollectionReportRequestDto
 import com.flint.data.dto.collection.response.CollectionDetailResponseDto
 import com.flint.domain.mapper.collection.toModel
 import com.flint.domain.model.collection.CollectionCreateModel
@@ -44,4 +45,13 @@ class CollectionRepository @Inject constructor(
     // 최근 본 컬렉션 목록 조회
     suspend fun getRecentCollectionList(): Result<CollectionListModel> =
         suspendRunCatching { apiService.getRecentCollectionList().data.toModel() }
+
+    // 컬렉션 신고
+    suspend fun postCollectionReport(
+        collectionId: String,
+        requestDto: CollectionReportRequestDto,
+    ): Result<Unit> =
+        suspendRunCatching {
+            apiService.postCollectionReport(collectionId, requestDto)
+        }.map {}
 }
