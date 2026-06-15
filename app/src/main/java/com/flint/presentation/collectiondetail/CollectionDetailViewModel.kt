@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
+import com.flint.data.local.PreferencesManager
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModelNew
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,6 +37,7 @@ class CollectionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val bookmarkRepository: BookmarkRepository,
     private val collectionRepository: CollectionRepository,
+    private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
     init {
         val collectionId: String = savedStateHandle.toRoute<Route.CollectionDetail>().collectionId
@@ -203,11 +207,16 @@ class CollectionDetailViewModel @Inject constructor(
                     async { collectionRepository.getCollectionDetail(collectionId) }
                 val collectionBookmarkUsers: Deferred<Result<CollectionBookmarkUsersModel>> =
                     async { bookmarkRepository.getCollectionBookmarkUsers(collectionId) }
+                val myUserId: Deferred<String> =
+                    async { preferencesManager.getString(USER_ID).first() }
+
+                val collectionDetailResult: CollectionDetailModelNew = collectionDetail.await().getOrThrow()
 
                 UiState.Success(
                     CollectionDetailUiState(
-                        collectionDetail = collectionDetail.await().getOrThrow(),
-                        collectionBookmarkUsers = collectionBookmarkUsers.await().getOrThrow()
+                        collectionDetail = collectionDetailResult,
+                        collectionBookmarkUsers = collectionBookmarkUsers.await().getOrThrow(),
+                        isMine = collectionDetailResult.author.id == myUserId.await(),
                     )
                 )
             }.onSuccess { newUiState: UiState.Success<CollectionDetailUiState> ->

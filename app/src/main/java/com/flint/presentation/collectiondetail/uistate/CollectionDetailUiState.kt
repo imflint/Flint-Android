@@ -6,4 +6,5 @@ import com.flint.domain.model.collection.CollectionDetailModelNew
 data class CollectionDetailUiState(
     val collectionDetail: CollectionDetailModelNew,
     val collectionBookmarkUsers: CollectionBookmarkUsersModel,
+    val isMine: Boolean,
 )

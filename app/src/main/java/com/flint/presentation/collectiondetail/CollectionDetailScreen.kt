@@ -3,7 +3,6 @@ package com.flint.presentation.collectiondetail
 import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -14,17 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,13 +36,13 @@ import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.progressbar.UnderImageProgressBar
 import com.flint.core.designsystem.component.toast.ShowSaveToast
 import com.flint.core.designsystem.component.toast.ShowToast
-import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModelNew
 import com.flint.domain.type.UserRoleType
+import com.flint.presentation.collectiondetail.component.CollectionCopyrightFooter
 import com.flint.presentation.collectiondetail.component.CollectionDetailDescription
 import com.flint.presentation.collectiondetail.component.CollectionDetailThumbnail
 import com.flint.presentation.collectiondetail.component.Content
@@ -104,6 +101,16 @@ fun CollectionDetailRoute(
                 onSpoilClick = viewModel::spoil,
                 onAuthorNicknameClick = { navigateToProfile(collectionDetail.author.id) },
                 onAuthorClick = navigateToProfile,
+                isMine = uiState.data.isMine,
+                onEditClick = {
+                    // TODO: 컬렉션 수정 화면 연결
+                },
+                onDeleteClick = {
+                    // TODO: 컬렉션 삭제 로직 연결
+                },
+                onReportClick = {
+                    // TODO: 신고(Route.CollectionReport) 화면 복구 후 navigateToCollectionReport(collectionDetail.id) 연결
+                },
             )
         }
 
@@ -209,6 +216,10 @@ fun CollectionDetailScreen(
     onSpoilClick: (String) -> Unit,
     onAuthorNicknameClick: () -> Unit,
     onAuthorClick: (authorId: String) -> Unit,
+    isMine: Boolean,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onReportClick: () -> Unit,
     targetImageUrl: String? = null,
 ) {
     CompositionLocalProvider(
@@ -216,7 +227,6 @@ fun CollectionDetailScreen(
     ) {
         var showPeopleBottomSheet: Boolean by remember { mutableStateOf(false) }
         val scrollState: ScrollState = rememberScrollState()
-        var thumbnailHeight: Int by remember { mutableIntStateOf(0) }
         val contentPositions: MutableMap<String, Int> = remember { mutableMapOf() }
 
         val scrollProgress: Float =
@@ -225,8 +235,6 @@ fun CollectionDetailScreen(
             } else {
                 0f
             }
-
-        val isProgressBarSticky: Boolean = scrollState.value >= thumbnailHeight
 
         LaunchedEffect(Unit) {
             if (targetImageUrl == null) return@LaunchedEffect
@@ -252,83 +260,64 @@ fun CollectionDetailScreen(
                 .padding(paddingValues)
                 .background(color = FlintTheme.colors.background),
         ) {
-//            FlintBackTopAppbar(
-//                onClick = navigateUp,
-//                backgroundColor = Color.Transparent,
-//            )
+            // 썸네일 영역은 스크롤해도 화면 상단에 고정
+            CollectionDetailThumbnail(
+                thumbnailImage = thumbnailUrl,
+                title = title,
+                isBookmarked = isBookmarked,
+                isMine = isMine,
+                onBackClick = navigateUp,
+                onSaveDoneButtonClick = onSaveDoneButtonClick,
+                onSaveNoneButtonClick = onSaveNoneButtonClick,
+                onEditClick = onEditClick,
+                onDeleteClick = onDeleteClick,
+                onReportClick = onReportClick,
+            )
 
-            Box {
-                FlintBackTopAppbar(
-                    onClick = navigateUp,
-                    backgroundColor = Color.Transparent,
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState),
+            ) {
+                UnderImageProgressBar(progress = scrollProgress)
+
+                Spacer(Modifier.height(24.dp))
+
+                CollectionDetailDescription(
+                    authorNickname = authorNickname,
+                    authorUserRoleType = authorUserRoleType,
+                    createdAt = createdAt,
+                    collectionContent = description,
+                    onAuthorNicknameClick = onAuthorNicknameClick,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                 )
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                        .padding(bottom = 24.dp),
-                ) {
-                    CollectionDetailThumbnail(
-                        thumbnailImage = thumbnailUrl,
-                        title = title,
-                        isBookmarked = isBookmarked,
-                        onSaveDoneButtonClick = onSaveDoneButtonClick,
-                        onSaveNoneButtonClick = onSaveNoneButtonClick,
-                        modifier = Modifier.onGloballyPositioned { coordinates: LayoutCoordinates ->
-                            thumbnailHeight = coordinates.size.height
+
+                Spacer(Modifier.height(48.dp))
+
+                contents.forEach { content: ContentModelNew ->
+                    Content(
+                        content = content,
+                        onBookmarkIconClick = onBookmarkIconClick,
+                        onSpoilClick = onSpoilClick,
+                        modifier = Modifier.onGloballyPositioned { coordinates ->
+                            contentPositions[content.imageUrl] =
+                                coordinates.positionInParent().y.toInt()
                         },
                     )
-
-                    if (!isProgressBarSticky) {
-                        UnderImageProgressBar(progress = scrollProgress)
-                    } else {
-                        // sticky 상태일 때 공간 유지
-                        Spacer(Modifier.height(5.dp))
-                    }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    CollectionDetailDescription(
-                        authorNickname = authorNickname,
-                        authorUserRoleType = authorUserRoleType,
-                        createdAt = createdAt,
-                        collectionContent = description,
-                        onAuthorNicknameClick = onAuthorNicknameClick,
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                    )
-
-                    Spacer(Modifier.height(48.dp))
-
-                    contents.forEach { content: ContentModelNew ->
-                        Content(
-                            content = content,
-                            onBookmarkIconClick = onBookmarkIconClick,
-                            onSpoilClick = onSpoilClick,
-                            modifier = Modifier.onGloballyPositioned { coordinates ->
-                                contentPositions[content.imageUrl] =
-                                    coordinates.positionInParent().y.toInt()
-                            },
-                        )
-                    }
-
-                    if (people.isNotEmpty()) {
-                        PeopleWhoSavedThisCollection(
-                            people = people,
-                            onMoreClick = { showPeopleBottomSheet = true },
-                        )
-                    }
                 }
 
-                // Sticky ProgressBar
-                if (isProgressBarSticky) {
-                    UnderImageProgressBar(
-                        progress = scrollProgress,
-                        modifier = Modifier.fillMaxWidth(),
+                if (people.isNotEmpty()) {
+                    PeopleWhoSavedThisCollection(
+                        people = people,
+                        onMoreClick = { showPeopleBottomSheet = true },
                     )
                 }
+
+                CollectionCopyrightFooter()
             }
         }
     }

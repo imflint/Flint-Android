@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,8 +28,13 @@ fun CollectionDetailThumbnail(
     thumbnailImage: String,
     title: String,
     isBookmarked: Boolean,
+    isMine: Boolean,
+    onBackClick: () -> Unit,
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -43,11 +49,20 @@ fun CollectionDetailThumbnail(
             contentScale = ContentScale.FillBounds,
         )
 
+        CollectionDetailTopAppBar(
+            isMine = isMine,
+            onBackClick = onBackClick,
+            onEditClick = onEditClick,
+            onDeleteClick = onDeleteClick,
+            onReportClick = onReportClick,
+            backgroundColor = Color.Transparent,
+        )
+
         Column(
             modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .padding(top = 57.dp, bottom = 19.dp),
+                    .padding(top = 57.dp, bottom = 22.dp),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -85,8 +100,13 @@ private fun ThumbnailPreview() {
                 thumbnailImage = "",
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기".repeat(2),
                 isBookmarked = true,
+                isMine = true,
+                onBackClick = {},
                 onSaveDoneButtonClick = {},
                 onSaveNoneButtonClick = {},
+                onEditClick = {},
+                onDeleteClick = {},
+                onReportClick = {},
             )
 
             Spacer(Modifier.height(20.dp))
@@ -95,8 +115,13 @@ private fun ThumbnailPreview() {
                 thumbnailImage = "https://buly.kr/DEaVFRZ",
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
                 isBookmarked = false,
+                isMine = false,
+                onBackClick = {},
                 onSaveDoneButtonClick = {},
                 onSaveNoneButtonClick = {},
+                onEditClick = {},
+                onDeleteClick = {},
+                onReportClick = {},
             )
         }
     }
