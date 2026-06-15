@@ -43,6 +43,11 @@ interface Route {
     ) : Route
 
     @Serializable
+    data class CollectionReport(
+        val collectionId: String,
+    ) : Route
+
+    @Serializable
     data object CollectionCreate : Route
 
     @Serializable
