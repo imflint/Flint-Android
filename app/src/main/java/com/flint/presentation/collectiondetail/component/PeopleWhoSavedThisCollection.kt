@@ -85,20 +85,22 @@ fun PeopleWhoSavedThisCollection(
                 }
             }
 
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(6.dp))
 
             if (people.size >= 7) {
-                Row {
+                Row (
+                    verticalAlignment = Alignment.CenterVertically
+                ){
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
                         contentDescription = "그 외",
-                        tint = FlintTheme.colors.white,
+                        tint = FlintTheme.colors.gray200,
                     )
 
                     Text(
                         text = (people.size - 6).toString(),
-                        color = FlintTheme.colors.gray50,
-                        style = FlintTheme.typography.head2M20,
+                        color = FlintTheme.colors.gray200,
+                        style = FlintTheme.typography.head3M18,
                     )
                 }
             }
