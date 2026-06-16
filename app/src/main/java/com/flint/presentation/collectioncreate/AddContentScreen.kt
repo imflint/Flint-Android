@@ -2,6 +2,7 @@ package com.flint.presentation.collectioncreate
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -95,109 +99,121 @@ fun AddContentScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(color = FlintTheme.colors.background),
     ) {
-        FlintBackTopAppbar(
-            onClick = onBackClick,
-            title = "작품 추가하기",
-            actionText = "추가",
-            onActionClick = {
-                if (selectedContents.isNotEmpty()) {
-                    onActionClick()
-                }
-            },
-            textStyle = if (selectedContents.isNotEmpty()) FlintTheme.typography.body1M16 else FlintTheme.typography.body1Sb16,
-            textColor = if (selectedContents.isNotEmpty()) FlintTheme.colors.secondary400 else FlintTheme.colors.gray300,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        FlintSearchTextField(
-            placeholder = "추천하고 싶은 작품을 검색해보세요",
-            value = uiState.searchText,
-            onValueChanged = onSearchTextChanged,
-            onSearchAction = {},
-            onClearAction = {},
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(
-                onSearch = { keyboardController?.hide() }
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (selectedContents.isNotEmpty()) {
-            LazyRow(
-                state = lazyRowState,
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                reverseLayout = true,
-            ) {
-                items(
-                    items = selectedContents,
-                    key = { it.id },
-                ) { content ->
-                    SelectedContentItem(
-                        imageUrl = content.posterUrl,
-                        onRemoveClick = {
-                            if (uiState.isCancelModalVisible) {
-                                contentToDelete = content
-                                isModalVisible = true
-                            } else {
-                                onRemoveContent(content)
-                            }
-                        },
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        if (contentList.isEmpty() && uiState.searchText.isNotBlank()){
-            FlintSearchEmptyView(
-                title = "아직 준비 중인 작품이에요",
-                modifier = Modifier.fillMaxSize()
+        Column(modifier = Modifier.fillMaxSize()) {
+            FlintBackTopAppbar(
+                onClick = onBackClick,
+                title = "작품 추가하기",
+                actionText = "추가",
+                onActionClick = {
+                    if (selectedContents.isNotEmpty()) {
+                        onActionClick()
+                    }
+                },
+                textStyle = if (selectedContents.isNotEmpty()) FlintTheme.typography.body1M16 else FlintTheme.typography.body1Sb16,
+                textColor = if (selectedContents.isNotEmpty()) FlintTheme.colors.secondary400 else FlintTheme.colors.gray300,
             )
-        }
-        else{
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                items(
-                    items = contentList,
-                    key = { it.id },
-                ) { content ->
-                    val isSelected = selectedContents.any { it.id == content.id }
 
-                    AddContentSelectItem(
-                        onCheckClick = {
-                            if (isSelected){
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FlintSearchTextField(
+                placeholder = "추천하고 싶은 작품을 검색해보세요",
+                value = uiState.searchText,
+                onValueChanged = onSearchTextChanged,
+                onSearchAction = {},
+                onClearAction = {},
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = { keyboardController?.hide() }
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (selectedContents.isNotEmpty()) {
+                LazyRow(
+                    state = lazyRowState,
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    reverseLayout = true,
+                ) {
+                    items(
+                        items = selectedContents,
+                        key = { it.id },
+                    ) { content ->
+                        SelectedContentItem(
+                            imageUrl = content.posterUrl,
+                            onRemoveClick = {
                                 if (uiState.isCancelModalVisible) {
                                     contentToDelete = content
                                     isModalVisible = true
                                 } else {
-                                    onToggleContent(content)
+                                    onRemoveContent(content)
                                 }
-                            } else onToggleContent(content)
-                        },
-                        isSelected = isSelected,
-                        posterImageUrl = content.posterUrl,
-                        title = content.title,
-                        director = content.author,
-                        createdYear = content.year,
-                    )
+                            },
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            if (contentList.isEmpty() && uiState.searchText.isNotBlank()) {
+                FlintSearchEmptyView(
+                    title = "아직 준비 중인 작품이에요",
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(
+                        items = contentList,
+                        key = { it.id },
+                    ) { content ->
+                        val isSelected = selectedContents.any { it.id == content.id }
+
+                        AddContentSelectItem(
+                            onCheckClick = {
+                                if (isSelected) {
+                                    if (uiState.isCancelModalVisible) {
+                                        contentToDelete = content
+                                        isModalVisible = true
+                                    } else {
+                                        onToggleContent(content)
+                                    }
+                                } else onToggleContent(content)
+                            },
+                            isSelected = isSelected,
+                            posterImageUrl = content.posterUrl,
+                            title = content.title,
+                            director = content.author,
+                            createdYear = content.year,
+                        )
+                    }
                 }
             }
         }
-        
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(148.dp)
+                .align(Alignment.BottomCenter)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, FlintTheme.colors.background)
+                    )
+                )
+        )
     }
     if (isModalVisible) {
         CollectionCreateContentDeleteModal(
