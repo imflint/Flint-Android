@@ -16,6 +16,7 @@ import com.flint.domain.repository.CollectionRepository
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import timber.log.Timber
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -156,6 +157,21 @@ class CollectionDetailViewModel @Inject constructor(
 
             initialContentBookmarkStates.remove(contentId)
             contentBookmarkDebounceJobs.remove(contentId)
+        }
+    }
+
+    fun deleteCollection() {
+        val collectionId = (_uiState.value as? UiState.Success)?.data?.collectionDetail?.id ?: return
+        viewModelScope.launch {
+            collectionRepository.deleteCollection(collectionId)
+                .onSuccess {
+                    Timber.d("DELETE SUCCESS collectionId=$collectionId")
+                    _sideEffect.emit(CollectionDetailSideEffect.DeleteCollectionSuccess)
+                }
+                .onFailure {
+                    Timber.e(it, "DELETE FAILURE collectionId=$collectionId")
+                    _sideEffect.emit(CollectionDetailSideEffect.DeleteCollectionFailure)
+                }
         }
     }
 
