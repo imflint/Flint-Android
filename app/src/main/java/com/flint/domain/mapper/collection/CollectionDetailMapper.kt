@@ -17,6 +17,7 @@ fun CollectionDetailResponseDto.toModel(): CollectionDetailModelNew {
         id = id,
         thumbnailUrl = thumbnailUrl,
         isBookmarked = isBookmarked,
+        isPublic = isPublic,
         title = title,
     )
 }
@@ -39,6 +40,7 @@ private fun CollectionDetailResponseDto.Content.toModel(): ContentModelNew {
         isSpoiler = isSpoiler,
         reason = reason,
         imageUrl = imageUrl,
+        customImageUrls = customImageUrls,
         title = title,
         year = year,
     )
