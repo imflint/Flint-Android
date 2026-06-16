@@ -50,6 +50,12 @@ class CollectionRepository @Inject constructor(
             apiService.updateCollection(collectionId, requestDto)
         }
 
+    // 컬렉션 삭제
+    suspend fun deleteCollection(collectionId: String): Result<Unit> =
+        suspendRunCatching {
+            apiService.deleteCollection(collectionId)
+        }
+
     // 최근 본 컬렉션 목록 조회
     suspend fun getRecentCollectionList(): Result<CollectionListModel> =
         suspendRunCatching { apiService.getRecentCollectionList().data.toModel() }

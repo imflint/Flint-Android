@@ -27,6 +27,8 @@ fun NavController.navigateToCollectionDetail(
     )
 }
 
+const val KEY_SHOW_DELETE_SUCCESS_TOAST = "showDeleteSuccessToast"
+
 fun NavGraphBuilder.collectionDetailNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
@@ -42,6 +44,12 @@ fun NavGraphBuilder.collectionDetailNavGraph(
             showEditSuccessToast = route.showEditSuccessToast,
             navigateToCollectionList = navigateToCollectionList,
             navigateUp = navigateUp,
+            navigateUpWithDeleteSuccess = {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set(KEY_SHOW_DELETE_SUCCESS_TOAST, true)
+                navController.navigateUp()
+            },
             navigateToProfile = navigateToProfile,
             navigateToCollectionEdit = { collectionId ->
                 navController.navigateToCollectionEdit(collectionId)

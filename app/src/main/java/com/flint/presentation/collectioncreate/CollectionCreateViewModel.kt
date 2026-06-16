@@ -196,7 +196,7 @@ class CollectionCreateViewModel @Inject constructor(
                             contentId = content.id,
                             isSpoiler = detail.isSpoiler,
                             reason = detail.reason.ifBlank { "" },
-                            imageUrls = contentImageKeysMap[content.id] ?: emptyList(),
+                            imageUrls = detail.existingImageUrls + (contentImageKeysMap[content.id] ?: emptyList()),
                         )
                     },
                 )

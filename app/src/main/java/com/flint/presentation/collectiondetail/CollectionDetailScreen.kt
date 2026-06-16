@@ -61,6 +61,7 @@ fun CollectionDetailRoute(
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
     navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
+    navigateUpWithDeleteSuccess: () -> Unit,
     navigateToCollectionEdit: (collectionId: String) -> Unit,
     targetImageUrl: String? = null,
     showEditSuccessToast: Boolean = false,
@@ -125,7 +126,7 @@ fun CollectionDetailRoute(
         CollectionDetailDeleteModal(
             onConfirm = {
                 showDeleteModal = false
-                // TODO: 컬렉션 삭제 API 연결
+                viewModel.deleteCollection()
             },
             onDismiss = { showDeleteModal = false },
         )
@@ -214,6 +215,12 @@ fun CollectionDetailRoute(
                         showContentCancelToast = true
                         showContentSaveToast = false
                     }
+                }
+
+                CollectionDetailSideEffect.DeleteCollectionSuccess -> navigateUpWithDeleteSuccess()
+
+                CollectionDetailSideEffect.DeleteCollectionFailure -> {
+                    // TODO: 삭제 실패 다이얼로그
                 }
             }
         }
