@@ -41,6 +41,7 @@ import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModelNew
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.component.CollectionCopyrightFooter
+import com.flint.presentation.collectiondetail.component.CollectionDetailDeleteModal
 import com.flint.presentation.collectiondetail.component.CollectionDetailDescription
 import com.flint.presentation.collectiondetail.component.CollectionDetailThumbnail
 import com.flint.presentation.collectiondetail.component.CollectionDetailContent
@@ -68,6 +69,7 @@ fun CollectionDetailRoute(
     var showCollectionSaveToast: Boolean by remember { mutableStateOf(false) }
     var showContentSaveToast: Boolean by remember { mutableStateOf(false) }
     var showContentCancelToast: Boolean by remember { mutableStateOf(false) }
+    var showDeleteModal: Boolean by remember { mutableStateOf(false) }
 
     when (val uiState = uiState) {
         UiState.Loading -> {
@@ -105,7 +107,7 @@ fun CollectionDetailRoute(
                     // TODO: 컬렉션 수정 화면 연결
                 },
                 onDeleteClick = {
-                    // TODO: 컬렉션 삭제 로직 연결
+                    showDeleteModal = true
                 },
                 onReportClick = {
                     // TODO: 신고(Route.CollectionReport) 화면 복구 후 navigateToCollectionReport(collectionDetail.id) 연결
@@ -114,6 +116,16 @@ fun CollectionDetailRoute(
         }
 
         else -> {}
+    }
+
+    if (showDeleteModal) {
+        CollectionDetailDeleteModal(
+            onConfirm = {
+                showDeleteModal = false
+                // TODO: 컬렉션 삭제 API 연결
+            },
+            onDismiss = { showDeleteModal = false },
+        )
     }
 
     if (showCollectionCancelToast) {
