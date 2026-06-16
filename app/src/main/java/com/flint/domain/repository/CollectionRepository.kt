@@ -48,12 +48,14 @@ class CollectionRepository @Inject constructor(
     ): Result<Unit> =
         suspendRunCatching {
             apiService.updateCollection(collectionId, requestDto)
+            Unit
         }
 
     // 컬렉션 삭제
     suspend fun deleteCollection(collectionId: String): Result<Unit> =
         suspendRunCatching {
             apiService.deleteCollection(collectionId)
+            Unit
         }
 
     // 최근 본 컬렉션 목록 조회

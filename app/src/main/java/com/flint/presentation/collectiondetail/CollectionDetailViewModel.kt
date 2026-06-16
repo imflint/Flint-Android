@@ -223,8 +223,12 @@ class CollectionDetailViewModel @Inject constructor(
                     async { collectionRepository.getCollectionDetail(collectionId) }
                 val collectionBookmarkUsers: Deferred<Result<CollectionBookmarkUsersModel>> =
                     async { bookmarkRepository.getCollectionBookmarkUsers(collectionId) }
-                val myUserId: Deferred<String> =
-                    async { preferencesManager.getString(USER_ID).first() }
+                val myUserId: String =
+                    runCatching { preferencesManager.getString(USER_ID).first() }
+                        .getOrElse {
+                            Timber.w(it, "USER_ID 조회 실패. isMine=false로 처리")
+                            ""
+                        }
 
                 val collectionDetailResult: CollectionDetailModelNew = collectionDetail.await().getOrThrow()
 
@@ -232,7 +236,7 @@ class CollectionDetailViewModel @Inject constructor(
                     CollectionDetailUiState(
                         collectionDetail = collectionDetailResult,
                         collectionBookmarkUsers = collectionBookmarkUsers.await().getOrThrow(),
-                        isMine = collectionDetailResult.author.id == myUserId.await(),
+                        isMine = myUserId.isNotBlank() && collectionDetailResult.author.id == myUserId,
                     )
                 )
             }.onSuccess { newUiState: UiState.Success<CollectionDetailUiState> ->

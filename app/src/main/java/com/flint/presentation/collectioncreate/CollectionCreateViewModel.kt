@@ -162,6 +162,7 @@ class CollectionCreateViewModel @Inject constructor(
                         )
                     }
                 }
+                .onFailure { e -> Timber.e(e, "컬렉션 편집 로드 실패") }
         }
     }
 

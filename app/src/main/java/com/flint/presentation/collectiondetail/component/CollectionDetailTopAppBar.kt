@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,7 @@ fun CollectionDetailTopAppBar(
                 .noRippleClickable(onClick = onBackClick)
                 .padding(12.dp),
             imageVector = ImageVector.vectorResource(R.drawable.ic_back),
-            contentDescription = null,
+            contentDescription = stringResource(R.string.cd_back),
             tint = FlintTheme.colors.white,
         )
 
@@ -65,7 +66,7 @@ fun CollectionDetailTopAppBar(
                     .size(48.dp)
                     .noRippleClickable(onClick = { showSettingsMenu = true }),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_kebab),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.cd_more_options),
                 tint = FlintTheme.colors.white,
             )
 

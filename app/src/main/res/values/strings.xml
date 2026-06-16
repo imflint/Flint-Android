@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Flint</string>
+    <string name="cd_back">뒤로 가기</string>
+    <string name="cd_more_options">더 보기</string>
 </resources>
