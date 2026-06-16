@@ -22,7 +22,8 @@ data class CollectionCreateUiState(
         !isLoading &&
         title.isNotBlank() &&
         isPublic != null &&
-        selectedContents.size >= 2
+        selectedContents.size >= 2 &&
+        selectedContents.all { contentDetailsMap[it.id]?.reason?.isNotBlank() == true }
 
     val isCancelModalVisible: Boolean =
         contentDetailsMap.values.any { it.reason.isNotBlank() }
