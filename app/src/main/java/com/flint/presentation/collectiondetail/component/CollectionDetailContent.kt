@@ -37,9 +37,6 @@ import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.content.ContentModelNew
 
-// 백엔드에서 스틸컷 이미지 목록을 제공하기 전까지, 동일 이미지를 반복해 캐러셀 UI만 우선 구성
-private const val MOCK_SCENE_IMAGE_COUNT = 5
-
 @Composable
 fun CollectionDetailContent(
     content: ContentModelNew,
@@ -50,9 +47,11 @@ fun CollectionDetailContent(
     Column(modifier = modifier) {
         Spacer(Modifier.height(48.dp))
 
-        CollectionDetailContentCarousel(content = content)
+        if (content.customImageUrls.isNotEmpty()) {
+            CollectionDetailContentCarousel(content = content)
 
-        Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(32.dp))
+        }
 
         CollectionDetailContentInfo(
             content = content,
@@ -64,18 +63,20 @@ fun CollectionDetailContent(
 
 @Composable
 private fun CollectionDetailContentCarousel(content: ContentModelNew) {
+    val images = content.customImageUrls
     val pageCount = Int.MAX_VALUE
     val pagerState = rememberPagerState(
-        initialPage = pageCount / 2 - (pageCount / 2) % MOCK_SCENE_IMAGE_COUNT,
+        initialPage = pageCount / 2 - (pageCount / 2) % images.size,
     ) { pageCount }
-    val currentIndex = pagerState.currentPage % MOCK_SCENE_IMAGE_COUNT
+    val currentIndex = pagerState.currentPage % images.size
 
     HorizontalPager(
         state = pagerState,
+        userScrollEnabled = images.size > 1,
         modifier = Modifier.fillMaxWidth(),
-    ) {
+    ) { page ->
         NetworkImage(
-            imageUrl = content.imageUrl,
+            imageUrl = images[page % images.size],
             modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(360f / 270f),
@@ -83,25 +84,27 @@ private fun CollectionDetailContentCarousel(content: ContentModelNew) {
         )
     }
 
-    Spacer(Modifier.height(8.dp))
+    if (images.size > 1) {
+        Spacer(Modifier.height(8.dp))
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
-    ) {
-        repeat(MOCK_SCENE_IMAGE_COUNT) { index ->
-            Box(
-                modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(
-                            if (index == currentIndex) {
-                                FlintTheme.colors.secondary400
-                            } else {
-                                FlintTheme.colors.gray500
-                            },
-                        ),
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        ) {
+            repeat(images.size) { index ->
+                Box(
+                    modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (index == currentIndex) {
+                                    FlintTheme.colors.secondary400
+                                } else {
+                                    FlintTheme.colors.gray500
+                                },
+                            ),
+                )
+            }
         }
     }
 }

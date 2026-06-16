@@ -61,7 +61,9 @@ fun CollectionDetailRoute(
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
     navigateToProfile: (authorId: String) -> Unit,
     navigateUp: () -> Unit,
+    navigateToCollectionEdit: (collectionId: String) -> Unit,
     targetImageUrl: String? = null,
+    showEditSuccessToast: Boolean = false,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
 ) {
     val uiState: UiState<CollectionDetailUiState> by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,6 +72,7 @@ fun CollectionDetailRoute(
     var showContentSaveToast: Boolean by remember { mutableStateOf(false) }
     var showContentCancelToast: Boolean by remember { mutableStateOf(false) }
     var showDeleteModal: Boolean by remember { mutableStateOf(false) }
+    var showEditSuccessToastState: Boolean by remember { mutableStateOf(showEditSuccessToast) }
 
     when (val uiState = uiState) {
         UiState.Loading -> {
@@ -104,7 +107,7 @@ fun CollectionDetailRoute(
                 onAuthorClick = navigateToProfile,
                 isMine = uiState.data.isMine,
                 onEditClick = {
-                    // TODO: 컬렉션 수정 화면 연결
+                    navigateToCollectionEdit(collectionDetail.id)
                 },
                 onDeleteClick = {
                     showDeleteModal = true
@@ -125,6 +128,16 @@ fun CollectionDetailRoute(
                 // TODO: 컬렉션 삭제 API 연결
             },
             onDismiss = { showDeleteModal = false },
+        )
+    }
+
+    if (showEditSuccessToastState) {
+        ShowToast(
+            text = "컬렉션이 수정되었어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = { showEditSuccessToastState = false },
         )
     }
 
