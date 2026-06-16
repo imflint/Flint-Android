@@ -294,8 +294,7 @@ fun CollectionDetailScreen(
                             createdAt = createdAt,
                             collectionContent = description,
                             onAuthorNicknameClick = onAuthorNicknameClick,
-                            modifier =
-                                Modifier
+                            modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp),
                         )

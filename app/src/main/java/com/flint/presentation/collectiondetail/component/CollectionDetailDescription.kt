@@ -1,19 +1,15 @@
 package com.flint.presentation.collectiondetail.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -73,20 +69,18 @@ fun CollectionDetailDescription(
             )
         }
 
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .clip(CircleShape)
-                    .background(color = FlintTheme.colors.gray300),
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            color = FlintTheme.colors.gray300,
         )
 
-        Text(
-            text = collectionContent,
-            color = FlintTheme.colors.gray100,
-            style = FlintTheme.typography.body1R16,
-        )
+        if (collectionContent.isNotBlank()) {
+            Text(
+                text = collectionContent,
+                color = FlintTheme.colors.gray100,
+                style = FlintTheme.typography.body1R16,
+            )
+        }
     }
 }
 
@@ -117,6 +111,12 @@ private class DescriptionPreviewProvider : PreviewParameterProvider<DescriptionP
                 authorUserRoleType = UserRoleType.ADMIN,
                 createdAt = "2026. 01. 01.",
                 collectionContent = "공식 추천 컬렉션입니다",
+            ),
+            DescriptionPreviewData(
+                authorNickname = "내용없는유저",
+                authorUserRoleType = UserRoleType.FLING,
+                createdAt = "2026. 06. 16.",
+                collectionContent = "",
             ),
         )
 }
