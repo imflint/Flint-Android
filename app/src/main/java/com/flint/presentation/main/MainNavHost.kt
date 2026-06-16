@@ -77,7 +77,8 @@ fun MainNavHost(
                 paddingValues = paddingValues,
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateUp = navigator::navigateUp,
-                navigateToProfile = navigator::navigateToProfile
+                navigateToProfile = navigator::navigateToProfile,
+                navController = navigator.navController,
             )
 
             collectionCreateNavGraph(

@@ -13,6 +13,7 @@ import androidx.navigation.navOptions
 import com.flint.core.navigation.Route
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionCreate
+import com.flint.presentation.collectioncreate.navigation.navigateToCollectionEdit
 import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
 import com.flint.presentation.collectionlist.navigation.navigateToCollectionList
 import com.flint.presentation.explore.navigation.navigateToExplore
@@ -149,6 +150,10 @@ class MainNavigator(
 
     fun navigateToCollectionCreate(navOptions: NavOptions? = null) {
         navController.navigateToCollectionCreate(navOptions)
+    }
+
+    fun navigateToCollectionEdit(collectionId: String, navOptions: NavOptions? = null) {
+        navController.navigateToCollectionEdit(collectionId, navOptions)
     }
 
     fun navigateToSavedContent(navOptions: NavOptions? = null) {
