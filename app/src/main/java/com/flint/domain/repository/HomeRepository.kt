@@ -12,4 +12,7 @@ class HomeRepository @Inject constructor(
 ) {
     suspend fun getRecommendedCollectionList(): Result<CollectionListModel> =
         suspendRunCatching { apiService.getRecommendedCollections().data.toModel() }
+
+    suspend fun getPopularCollectionList(): Result<CollectionListModel> =
+        suspendRunCatching { apiService.getPopularCollections().data.toModel() }
 }

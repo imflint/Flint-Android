@@ -6,4 +6,8 @@ sealed interface CollectionDetailSideEffect {
     object ToggleCollectionBookmarkFailure : CollectionDetailSideEffect
 
     class ToggleContentBookmarkSuccess(val isBookmarked: Boolean) : CollectionDetailSideEffect
+
+    object DeleteCollectionSuccess : CollectionDetailSideEffect
+
+    object DeleteCollectionFailure : CollectionDetailSideEffect
 }

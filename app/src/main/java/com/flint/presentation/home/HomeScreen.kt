@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +27,6 @@ import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.core.designsystem.component.listView.CollectionSection
 import com.flint.core.designsystem.component.listView.SavedContentsSection
-import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
@@ -36,7 +34,7 @@ import com.flint.domain.model.ott.OttListModel
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.home.component.HomeBanner
 import com.flint.presentation.home.component.HomeFab
-import com.flint.presentation.home.component.HomeRecentCollectionEmpty
+import com.flint.presentation.home.component.HomeRecommendCollectionList
 import com.flint.presentation.home.sideeffect.HomeSideEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +48,6 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
-    val uriHandler = LocalUriHandler.current
 
     var showOttListBottomSheet by remember { mutableStateOf(false) }
     var ottListModel by remember { mutableStateOf(OttListModel()) }
@@ -59,7 +56,7 @@ fun HomeRoute(
     LaunchedEffect(Unit) {
         viewModel.getRecommendedCollectionList()
         viewModel.getBookmarkedContentList()
-        viewModel.getRecentCollectionList()
+        viewModel.getPopularCollectionList()
     }
 
     LaunchedEffect(Unit) {
@@ -67,10 +64,7 @@ fun HomeRoute(
             when (sideEffect) {
                 is HomeSideEffect.ShowOttListBottomSheet -> {
                     ottListModel = sideEffect.ottListModel
-
-                    if(ottListModel.otts.isNotEmpty()) {
-                        showOttListBottomSheet = true
-                    }
+                    if (ottListModel.otts.isNotEmpty()) showOttListBottomSheet = true
                 }
             }
         }
@@ -80,30 +74,18 @@ fun HomeRoute(
         is UiState.Success -> {
             val recommendedCollectionList = (uiState.recommendedCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
             val bookmarkedContentList = (uiState.bookmarkedContentListLoadState as? UiState.Success)?.data ?: BookmarkedContentListModel()
-            val recentCollectionList = (uiState.recentCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
+            val popularCollectionList = (uiState.popularCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
 
             HomeScreen(
                 userName = uiState.userName,
                 recommendCollectionModelList = recommendedCollectionList,
-                recentCollectionModelList = recentCollectionList,
+                famousCollectionModelList = popularCollectionList,
                 savedContentModelList = bookmarkedContentList,
-                navigateToCollectionCreate = {
-                    navigateToCollectionCreate()
-                },
-                navigateToExplore = {
-                    // TODO navigate to explore
-                    navigateToExplore()
-                },
-                onRecentCollectionItemClick = { collectionId ->
-                    navigateToCollectionDetail(collectionId)
-                },
-                onRecentCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.RECENT) },
-                onRecommendCollectionItemClick = { collectionId ->
-                    navigateToCollectionDetail(collectionId)
-                },
-                onSavedContentItemClick = { contentId ->
-                    viewModel.getOttListPerContent(contentId)
-                },
+                navigateToCollectionCreate = { navigateToCollectionCreate() },
+                onFamousCollectionItemClick = { navigateToCollectionDetail(it) },
+                onFamousCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.FAMOUS) },
+                onRecommendCollectionItemClick = { navigateToCollectionDetail(it) },
+                onSavedContentItemClick = { viewModel.getOttListPerContent(it) },
                 modifier = Modifier.padding(paddingValues),
             )
         }
@@ -114,9 +96,6 @@ fun HomeRoute(
         OttListBottomSheet(
             ottList = ottListModel,
             onDismiss = { showOttListBottomSheet = false },
-            onMoveClick = { url ->
-                uriHandler.openUri(url)
-            },
             sheetState = sheetState,
         )
     }
@@ -128,12 +107,11 @@ private fun HomeScreen(
     userName: String,
     recommendCollectionModelList: CollectionListModel,
     savedContentModelList: BookmarkedContentListModel,
-    recentCollectionModelList: CollectionListModel,
+    famousCollectionModelList: CollectionListModel,
     onRecommendCollectionItemClick: (collectionId: String) -> Unit,
     onSavedContentItemClick: (contentId: String) -> Unit,
-    onRecentCollectionItemClick: (collectionId: String) -> Unit,
-    onRecentCollectionAllClick: () -> Unit,
-    navigateToExplore: () -> Unit,
+    onFamousCollectionItemClick: (collectionId: String) -> Unit,
+    onFamousCollectionAllClick: () -> Unit,
     navigateToCollectionCreate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -149,10 +127,6 @@ private fun HomeScreen(
             contentPadding = PaddingValues(bottom = 20.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
-            stickyHeader {
-                FlintLogoTopAppbar()
-            }
-
             item {
                 Spacer(Modifier.height(5.dp))
 
@@ -162,46 +136,40 @@ private fun HomeScreen(
             }
 
             item {
-                Spacer(Modifier.height(48.dp))
+                Spacer(Modifier.height(24.dp))
 
-                CollectionSection(
-                    title = "Fliner의 추천 컬렉션을 만나보세요",
-                    description = "Fliner는 콘텐츠에 진심인, 플린트의 큐레이터들이에요",
-                    isAllVisible = false,
-                    onAllClick = {},
+                HomeRecommendCollectionList(
                     collectionListModel = recommendCollectionModelList,
                     onItemClick = onRecommendCollectionItemClick,
                 )
             }
 
-            item {
-                Spacer(Modifier.height(48.dp))
+            if (savedContentModelList.contents.isNotEmpty()) {
+                item {
+                    Spacer(Modifier.height(42.dp))
 
-                SavedContentsSection(
-                    title = "최근 저장한 콘텐츠",
-                    description = "현재 구독 중인 OTT에서 볼 수 있는 작품들이에요",
-                    isAllVisible = false,
-                    onAllClick = {},
-                    contentModelList = savedContentModelList,
-                    onItemClick = onSavedContentItemClick,
-                )
+                    SavedContentsSection(
+                        title = "최근 저장한 콘텐츠",
+                        description = "현재 구독 중인 OTT에서 볼 수 있는 작품들이에요",
+                        isAllVisible = false,
+                        onAllClick = {},
+                        contentModelList = savedContentModelList,
+                        onItemClick = onSavedContentItemClick,
+                    )
+                }
             }
 
             item {
-                Spacer(Modifier.height(48.dp))
+                Spacer(Modifier.height(42.dp))
 
-                if (recentCollectionModelList.collections.isEmpty()) {
-                    HomeRecentCollectionEmpty(navigateToExplore = navigateToExplore)
-                } else {
-                    CollectionSection(
-                        title = "눈여겨보고 있는 컬렉션",
-                        description = "${userName}님이 최근 살펴본 컬렉션이에요",
-                        isAllVisible = true,
-                        onAllClick = onRecentCollectionAllClick,
-                        collectionListModel = recentCollectionModelList,
-                        onItemClick = onRecentCollectionItemClick,
-                    )
-                }
+                CollectionSection(
+                    title = "인기 컬렉션",
+                    description = "사람들이 눈여겨보는 컬렉션들이에요",
+                    isAllVisible = true,
+                    onAllClick = onFamousCollectionAllClick,
+                    collectionListModel = famousCollectionModelList,
+                    onItemClick = onFamousCollectionItemClick,
+                )
             }
         }
 
@@ -219,19 +187,15 @@ private fun HomeScreen(
 @Composable
 private fun PreviewHomeScreen() {
     FlintTheme {
-        val collectionModelList = CollectionListModel.FakeList
-        val contentModelList = BookmarkedContentListModel.FakeList
-
         HomeScreen(
             userName = "종우",
-            recommendCollectionModelList = collectionModelList,
-            savedContentModelList = contentModelList,
-            recentCollectionModelList = collectionModelList,
+            recommendCollectionModelList = CollectionListModel.FakeList,
+            savedContentModelList = BookmarkedContentListModel.FakeList,
+            famousCollectionModelList = CollectionListModel.FakeList,
             onRecommendCollectionItemClick = {},
             onSavedContentItemClick = {},
-            onRecentCollectionItemClick = {},
-            onRecentCollectionAllClick = {},
-            navigateToExplore = {},
+            onFamousCollectionItemClick = {},
+            onFamousCollectionAllClick = {},
             navigateToCollectionCreate = {},
         )
     }

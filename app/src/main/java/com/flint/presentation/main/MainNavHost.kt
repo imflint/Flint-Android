@@ -5,10 +5,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectioncreate.navigation.collectionCreateNavGraph
+import com.flint.presentation.collectiondetail.navigation.KEY_SHOW_DELETE_SUCCESS_TOAST
 import com.flint.presentation.collectiondetail.navigation.collectionDetailNavGraph
 import com.flint.presentation.collectionlist.navigation.collectionListNavGraph
 import com.flint.presentation.explore.navigation.exploreNavGraph
@@ -30,6 +35,11 @@ fun MainNavHost(
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    val currentBackStackEntry by navigator.navController.currentBackStackEntryAsState()
+    val showDeleteSuccessToast = currentBackStackEntry
+        ?.savedStateHandle
+        ?.get<Boolean>(KEY_SHOW_DELETE_SUCCESS_TOAST) ?: false
+
     Box(
         modifier =
             modifier
@@ -77,7 +87,8 @@ fun MainNavHost(
                 paddingValues = paddingValues,
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateUp = navigator::navigateUp,
-                navigateToProfile = navigator::navigateToProfile
+                navigateToProfile = navigator::navigateToProfile,
+                navController = navigator.navController,
             )
 
             collectionCreateNavGraph(
@@ -130,6 +141,18 @@ fun MainNavHost(
 
             withdrawCompleteNavGraph(
                 navigateToLogin = navigator::navigateToLogin,
+            )
+        }
+
+        if (showDeleteSuccessToast) {
+            ShowToast(
+                text = "컬렉션을 삭제했어요",
+                imageVector = null,
+                paddingValues = paddingValues,
+                yOffset = 12.dp,
+                hide = {
+                    currentBackStackEntry?.savedStateHandle?.set(KEY_SHOW_DELETE_SUCCESS_TOAST, false)
+                },
             )
         }
     }
