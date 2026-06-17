@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class CollectionCreateUiState(
     val thumbnailImageUri: Uri? = null,
+    val existingThumbnailUrl: String? = null,
     val title: String = "",
     val description: String = "",
     val isPublic: Boolean? = null,
@@ -17,12 +18,39 @@ data class CollectionCreateUiState(
     val contents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val searchText: String = "",
     val isLoading: Boolean = false,
+    // 수정 모드 원본값 (null이면 생성 모드)
+    val originalTitle: String? = null,
+    val originalDescription: String = "",
+    val originalIsPublic: Boolean? = null,
+    val originalThumbnailUrl: String? = null,
+    val originalContentIds: Set<String> = emptySet(),
+    val originalContentDetails: Map<String, Pair<Boolean, String>> = emptyMap(),
+    val originalContentImageUrls: Map<String, List<String>> = emptyMap(),
 ) {
-    val isFinishButtonEnabled: Boolean =
+    private val isEditMode: Boolean get() = originalTitle != null
+
+    private val hasChanges: Boolean get() = isEditMode && (
+        title != originalTitle ||
+        description != originalDescription ||
+        isPublic != originalIsPublic ||
+        thumbnailImageUri != null ||
+        existingThumbnailUrl != originalThumbnailUrl ||
+        selectedContents.map { it.id }.toSet() != originalContentIds ||
+        contentDetailsMap.any { (id, detail) ->
+            val original = originalContentDetails[id]
+            detail.isSpoiler != original?.first ||
+            detail.reason != original?.second ||
+            detail.contentImageUris.isNotEmpty() ||
+            detail.existingImageUrls != (originalContentImageUrls[id] ?: emptyList<String>())
+        }
+    )
+
+    val isFinishButtonEnabled: Boolean get() =
         !isLoading &&
         title.isNotBlank() &&
         isPublic != null &&
         selectedContents.size >= 2 &&
+        (!isEditMode || hasChanges) &&
         selectedContents.all { contentDetailsMap[it.id]?.reason?.isNotBlank() == true }
 
     val isCancelModalVisible: Boolean =
@@ -33,5 +61,6 @@ data class CollectionCreateUiState(
 data class ContentDetail(
     val isSpoiler: Boolean = false,
     val reason: String = "",
+    val existingImageUrls: List<String> = emptyList(),
     val contentImageUris: List<Uri> = emptyList(),
 )
