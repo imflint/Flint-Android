@@ -79,47 +79,23 @@ class SavedContentViewModel @Inject constructor(
 
 
     // 북마크 토글
-    // - 내 프로필: 북마크 취소 시 목록에서 제거 (MIN_REQUIRED_COUNT 제한 있음)
-    // - 타 유저 프로필: isBookmarked 필드만 토글 (목록은 상대방 저장 목록이므로 제거 X)
+    // - 내 프로필 / 타 유저 프로필 공통: isBookmarked 필드만 토글, 목록에서 제거하지 않음
+    //   (다시 북마크할 가능성이 있어 아이템을 유지)
     fun toggleBookmark(contentId: String) {
         viewModelScope.launch {
             Timber.d("toggleBookmark: contentId=$contentId, userId=$userId")
             bookmarkRepository.toggleContentBookmark(contentId)
                 .onSuccess { isBookmarked ->
                     Timber.d("toggleBookmark success: isBookmarked=$isBookmarked")
-                    if (userId == null) {
-                        // 내 프로필: 북마크 취소 시 목록에서 제거
-                        _uiState.update { state ->
-                            val currentList = (state.contents as? UiState.Success)?.data
-                                ?: return@update state
-                            val updated = if (isBookmarked) {
-                                currentList
-                            } else {
-                                val filtered = currentList.contents
-                                    .filter { it.id != contentId }
-                                    .toPersistentList()
-                                currentList.copy(
-                                    contents = filtered,
-                                    totalCount = maxOf(currentList.totalCount - 1, 0),
-                                )
-                            }
-                            state.copy(
-                                contents = if (updated.contents.isEmpty()) UiState.Empty
-                                else UiState.Success(updated)
-                            )
-                        }
-                    } else {
-                        // 타 유저 프로필: isBookmarked 필드만 업데이트 (목록에서 제거 X)
-                        _uiState.update { state ->
-                            val currentList = (state.contents as? UiState.Success)?.data
-                                ?: return@update state
-                            val updated = currentList.copy(
-                                contents = currentList.contents
-                                    .map { if (it.id == contentId) it.copy(isBookmarked = isBookmarked) else it }
-                                    .toPersistentList()
-                            )
-                            state.copy(contents = UiState.Success(updated))
-                        }
+                    _uiState.update { state ->
+                        val currentList = (state.contents as? UiState.Success)?.data
+                            ?: return@update state
+                        val updated = currentList.copy(
+                            contents = currentList.contents
+                                .map { if (it.id == contentId) it.copy(isBookmarked = isBookmarked) else it }
+                                .toPersistentList()
+                        )
+                        state.copy(contents = UiState.Success(updated))
                     }
                 }
                 .onFailure { throwable ->
