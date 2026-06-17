@@ -11,6 +11,7 @@ data class ContentModelNew(
     val isSpoiler: Boolean,
     val reason: String,
     val imageUrl: String,
+    val customImageUrls: List<String> = emptyList(),
     val title: String,
     val year: Int,
 )

@@ -120,6 +120,7 @@ fun CollectionCreateRoute(
                 contentImageLauncher.launch("image/*")
             }
         },
+        onRemoveExistingContentImage = viewModel::removeExistingContentImageUrl,
         onRemoveContentImage = viewModel::removeContentImageUri,
         modifier = Modifier.padding(paddingValues),
     )
@@ -141,6 +142,7 @@ fun CollectionCreateScreen(
     onGalleryClick: () -> Unit = {},
     onThumbnailDelete: () -> Unit = {},
     onSelectContentImage: (contentId: String) -> Unit = {},
+    onRemoveExistingContentImage: (contentId: String, index: Int) -> Unit = { _, _ -> },
     onRemoveContentImage: (contentId: String, index: Int) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
 ) {
@@ -163,7 +165,7 @@ fun CollectionCreateScreen(
             // 썸네일
             item {
                 CollectionCreateThumbnail(
-                    imageUrl = uiState.thumbnailImageUri,
+                    imageUrl = uiState.thumbnailImageUri ?: uiState.existingThumbnailUrl,
                     onClick = { isThumbnailBottomSheetVisible = true },
                 )
 
@@ -212,6 +214,7 @@ fun CollectionCreateScreen(
                     onReasonChanged = onReasonChanged,
                     onAddContentClick = onAddContentClick,
                     onSelectContentImage = onSelectContentImage,
+                    onRemoveExistingContentImage = onRemoveExistingContentImage,
                     onRemoveContentImage = onRemoveContentImage,
                     modifier = Modifier.padding(horizontal = (16).dp),
                 )
@@ -408,6 +411,7 @@ private fun CollectionAddContentSection(
     onReasonChanged: (String, String) -> Unit,
     onAddContentClick: () -> Unit,
     onSelectContentImage: (contentId: String) -> Unit,
+    onRemoveExistingContentImage: (contentId: String, index: Int) -> Unit,
     onRemoveContentImage: (contentId: String, index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -460,9 +464,11 @@ private fun CollectionAddContentSection(
 
             Spacer(Modifier.height(16.dp))
 
-            if (detail.contentImageUris.isNotEmpty()) {
+            if (detail.existingImageUrls.isNotEmpty() || detail.contentImageUris.isNotEmpty()) {
                 CollectionCreateContentImage(
+                    existingImageUrls = detail.existingImageUrls,
                     imageUris = detail.contentImageUris,
+                    onDeleteExistingClick = { index -> onRemoveExistingContentImage(content.id, index) },
                     onDeleteClick = { index -> onRemoveContentImage(content.id, index) },
                 )
 
