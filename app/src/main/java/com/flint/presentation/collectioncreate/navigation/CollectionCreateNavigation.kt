@@ -21,6 +21,13 @@ fun NavController.navigateToCollectionCreate(
     navigate(Route.CollectionCreate, navOptions)
 }
 
+fun NavController.navigateToCollectionEdit(
+    collectionId: String,
+    navOptions: NavOptions? = null,
+) {
+    navigate(Route.CollectionCreateGraph(collectionId = collectionId), navOptions)
+}
+
 fun NavController.navigateToAddContent(
     navOptions: NavOptions? = null
 ) {
@@ -41,13 +48,19 @@ fun NavGraphBuilder.collectionCreateNavGraph(
                 paddingValues = paddingValues,
                 navigateToAddContent = navController::navigateToAddContent,
                 navigateUp = navController::navigateUp,
-                navigateToCollectionDetail = {
-                    navController.navigateToCollectionDetail(it,
-                        navOptions = navOptions {
-                            popUpTo<Route.CollectionCreateGraph> {
-                                inclusive = true  // 현재 화면을 백스택에서 제거
+                navigateToCollectionDetail = { collectionId ->
+                    if (viewModel.isEditMode) {
+                        navController.navigateToCollectionDetail(
+                            collectionId = collectionId,
+                            showEditSuccessToast = true,
+                            navOptions = navOptions {
+                                popUpTo<Route.CollectionDetail> { inclusive = true }
                             }
-                        })
+                        )
+                    } else {
+                        navController.popBackStack<Route.CollectionCreateGraph>(inclusive = true)
+                        navController.navigateToCollectionDetail(collectionId = collectionId)
+                    }
                 },
                 viewModel = viewModel
             )

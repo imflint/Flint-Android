@@ -37,17 +37,20 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun CollectionCreateContentImage(
+    existingImageUrls: List<String>,
     imageUris: List<Uri>,
+    onDeleteExistingClick: (index: Int) -> Unit,
     onDeleteClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (imageUris.isEmpty()) return
+    val images: List<Any> = existingImageUrls + imageUris
+    if (images.isEmpty()) return
 
     val pageCount = Int.MAX_VALUE
     val pagerState = rememberPagerState(
-        initialPage = pageCount / 2 - (pageCount / 2) % imageUris.size,
+        initialPage = pageCount / 2 - (pageCount / 2) % images.size,
     ) { pageCount }
-    val currentIndex = pagerState.currentPage % imageUris.size
+    val currentIndex = pagerState.currentPage % images.size
 
     var prevSize by remember { mutableIntStateOf(-1) }
     var deletedIndex by remember { mutableIntStateOf(-1) }
@@ -81,13 +84,13 @@ fun CollectionCreateContentImage(
     Column(modifier = modifier) {
         HorizontalPager(
             state = pagerState,
-            userScrollEnabled = imageUris.size > 1,
+            userScrollEnabled = images.size > 1,
             modifier = Modifier.fillMaxWidth(),
         ) { page ->
-            val index = page % imageUris.size
+            val index = page % images.size
             Box {
                 NetworkImage(
-                    imageUrl = imageUris[index],
+                    imageUrl = images[index],
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,23 +103,27 @@ fun CollectionCreateContentImage(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clickable {
-                        deletedIndex = index
-                        onDeleteClick(index)
-                    }
+                            deletedIndex = index
+                            if (index < existingImageUrls.size) {
+                                onDeleteExistingClick(index)
+                            } else {
+                                onDeleteClick(index - existingImageUrls.size)
+                            }
+                        }
                         .padding(all = 16.dp)
                         .size(24.dp),
                 )
             }
         }
 
-        if (imageUris.size > 1) {
+        if (images.size > 1) {
             Spacer(Modifier.height(12.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
             ) {
-                repeat(imageUris.size) { index ->
+                repeat(images.size) { index ->
                     Box(
                         modifier = Modifier
                             .size(8.dp)
@@ -137,11 +144,12 @@ fun CollectionCreateContentImage(
 private fun CollectionCreateContentImagePreview() {
     FlintTheme {
         CollectionCreateContentImage(
+            existingImageUrls = listOf("https://example.com/1"),
             imageUris = listOf(
-                Uri.parse("https://example.com/1"),
                 Uri.parse("https://example.com/2"),
                 Uri.parse("https://example.com/3"),
             ),
+            onDeleteExistingClick = {},
             onDeleteClick = {},
         )
     }

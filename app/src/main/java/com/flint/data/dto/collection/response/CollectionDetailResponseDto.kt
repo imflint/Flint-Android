@@ -12,6 +12,7 @@ data class CollectionDetailResponseDto(
     @SerialName("id") val id: String,
     @SerialName("thumbnailUrl") val thumbnailUrl: String,
     @SerialName("isBookmarked") val isBookmarked: Boolean,
+    @SerialName("isPublic") val isPublic: Boolean,
     @SerialName("title") val title: String,
 ) {
     @Serializable
@@ -31,6 +32,7 @@ data class CollectionDetailResponseDto(
         @SerialName("isSpoiler") val isSpoiler: Boolean,
         @SerialName("reason") val reason: String,
         @SerialName("imageUrl") val imageUrl: String,
+        @SerialName("customImageUrls") val customImageUrls: List<String> = emptyList(),
         @SerialName("title") val title: String,
         @SerialName("year") val year: Int,
     )

@@ -2,6 +2,7 @@ package com.flint.presentation.collectioncreate
 
 import android.content.Context
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
@@ -35,11 +36,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context,
     private val collectionRepository: CollectionRepository,
     private val searchRepository: SearchRepository,
     private val storageRepository: StorageRepository,
 ) : ViewModel() {
+
+    private val editingCollectionId: String? = savedStateHandle["collectionId"]
+    val isEditMode: Boolean = editingCollectionId != null
     private val _uiState = MutableStateFlow(CollectionCreateUiState())
     val uiState: StateFlow<CollectionCreateUiState> = _uiState.asStateFlow()
 
@@ -52,11 +57,18 @@ class CollectionCreateViewModel @Inject constructor(
     init {
         observeSearchQuery()
         loadInitialContents()
+        if (editingCollectionId != null) {
+            loadCollectionForEdit(editingCollectionId)
+        }
     }
 
     fun onClickFinish() {
         if (_uiState.value.isLoading) return
-        postCollectionCreate()
+        if (editingCollectionId != null) {
+            putCollectionUpdate(editingCollectionId)
+        } else {
+            postCollectionCreate()
+        }
     }
 
     private fun postCollectionCreate() {
@@ -96,6 +108,106 @@ class CollectionCreateViewModel @Inject constructor(
                         _createSuccess.emit(UiState.Success(it.collectionId))
                     }
                     .onFailure { e -> println("컬렉션 생성 실패: ${e.message}") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private fun loadCollectionForEdit(collectionId: String) {
+        viewModelScope.launch {
+            collectionRepository.getCollectionDetail(collectionId)
+                .onSuccess { detail ->
+                    val selectedContents = detail.contents.map { content ->
+                        SearchContentItemModel(
+                            id = content.id,
+                            title = content.title,
+                            author = content.director,
+                            posterUrl = content.imageUrl,
+                            year = content.year,
+                        )
+                    }.toImmutableList()
+
+                    val contentDetailsMap = detail.contents.associate { content ->
+                        content.id to ContentDetail(
+                            isSpoiler = content.isSpoiler,
+                            reason = content.reason,
+                            existingImageUrls = content.customImageUrls,
+                        )
+                    }
+
+                    val thumbnailUrl = detail.thumbnailUrl.ifBlank { null }
+                    val originalDetails = detail.contents.associate { content ->
+                        content.id to Pair(content.isSpoiler, content.reason)
+                    }
+                    val originalImageUrls = detail.contents.associate { content ->
+                        content.id to content.customImageUrls
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            existingThumbnailUrl = thumbnailUrl,
+                            title = detail.title,
+                            description = detail.description,
+                            isPublic = detail.isPublic,
+                            selectedContents = selectedContents,
+                            contentDetailsMap = contentDetailsMap,
+                            originalTitle = detail.title,
+                            originalDescription = detail.description,
+                            originalIsPublic = detail.isPublic,
+                            originalThumbnailUrl = thumbnailUrl,
+                            originalContentIds = detail.contents.map { it.id }.toSet(),
+                            originalContentDetails = originalDetails,
+                            originalContentImageUrls = originalImageUrls,
+                        )
+                    }
+                }
+                .onFailure { e -> Timber.e(e, "컬렉션 편집 로드 실패") }
+        }
+    }
+
+    private fun putCollectionUpdate(collectionId: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                val thumbnailKey = if (_uiState.value.thumbnailImageUri != null) {
+                    uploadImageIfNeeded(_uiState.value.thumbnailImageUri, StoragePathType.COLLECTION_THUMBNAIL)
+                        .getOrElse {
+                            _createSuccess.emit(UiState.Failure)
+                            return@launch
+                        }
+                } else {
+                    null
+                }
+
+                val contentImageKeysMap = uploadContentImagesIfNeeded()
+                    .getOrElse {
+                        _createSuccess.emit(UiState.Failure)
+                        return@launch
+                    }
+
+                val requestModel = CollectionCreateRequestModel(
+                    imageUrl = thumbnailKey ?: _uiState.value.existingThumbnailUrl ?: "",
+                    title = _uiState.value.title,
+                    description = _uiState.value.description.ifBlank { "" },
+                    isPublic = _uiState.value.isPublic ?: true,
+                    contentList = _uiState.value.selectedContents.map { content ->
+                        val detail = _uiState.value.contentDetailsMap[content.id] ?: ContentDetail()
+                        CollectionCreateContentModel(
+                            contentId = content.id,
+                            isSpoiler = detail.isSpoiler,
+                            reason = detail.reason.ifBlank { "" },
+                            imageUrls = detail.existingImageUrls + (contentImageKeysMap[content.id] ?: emptyList()),
+                        )
+                    },
+                )
+
+                collectionRepository
+                    .updateCollection(collectionId, requestModel.toDto())
+                    .onSuccess {
+                        _createSuccess.emit(UiState.Success(collectionId))
+                    }
+                    .onFailure { e -> Timber.e(e, "컬렉션 수정 실패") }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -232,6 +344,17 @@ class CollectionCreateViewModel @Inject constructor(
             val current = state.contentDetailsMap[contentId] ?: ContentDetail()
             if (current.contentImageUris.size >= 5) return@update state
             val updated = current.copy(contentImageUris = current.contentImageUris + uri)
+            state.copy(contentDetailsMap = state.contentDetailsMap + (contentId to updated))
+        }
+    }
+
+    fun removeExistingContentImageUrl(contentId: String, index: Int) {
+        _uiState.update { state ->
+            val current = state.contentDetailsMap[contentId] ?: return@update state
+            if (index !in current.existingImageUrls.indices) return@update state
+            val updated = current.copy(
+                existingImageUrls = current.existingImageUrls.toMutableList().also { it.removeAt(index) }
+            )
             state.copy(contentDetailsMap = state.contentDetailsMap + (contentId to updated))
         }
     }
