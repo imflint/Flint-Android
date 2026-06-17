@@ -2,6 +2,7 @@ package com.flint.presentation.collectiondetail.report
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +28,9 @@ import com.flint.presentation.collectiondetail.report.component.ReportTopAppBar
 
 @Composable
 fun CollectionReportRoute(
+    paddingValues: PaddingValues,
     navigateUp: () -> Unit,
+    navigateUpWithSuccess: () -> Unit,
     viewModel: CollectionReportViewModel = hiltViewModel(),
 ) {
     val uiState: CollectionReportUiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -35,7 +38,7 @@ fun CollectionReportRoute(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { event: CollectionReportSideEffect ->
             when (event) {
-                CollectionReportSideEffect.ReportSuccess -> navigateUp()
+                CollectionReportSideEffect.ReportSuccess -> navigateUpWithSuccess()
                 CollectionReportSideEffect.ReportFailure -> {
                     // TODO: 신고 접수 실패 토스트/다이얼로그 띄우기
                 }
@@ -44,6 +47,7 @@ fun CollectionReportRoute(
     }
 
     CollectionReportScreen(
+        paddingValues = paddingValues,
         selectedReportReason = uiState.selectedReportReason,
         reportText = uiState.reportText,
         onReportReasonSelected = viewModel::selectReportReason,
@@ -55,6 +59,7 @@ fun CollectionReportRoute(
 
 @Composable
 private fun CollectionReportScreen(
+    paddingValues: PaddingValues,
     selectedReportReason: String?,
     reportText: String,
     onReportReasonSelected: (String) -> Unit,
@@ -66,7 +71,8 @@ private fun CollectionReportScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(FlintTheme.colors.background),
+            .background(FlintTheme.colors.background)
+            .padding(paddingValues),
     ) {
         ReportTopAppBar(
             onCancelClick = onCancelClick
@@ -132,6 +138,7 @@ private fun CollectionReportScreenPreview() {
         var reportText: String by remember { mutableStateOf("") }
 
         CollectionReportScreen(
+            paddingValues = PaddingValues(),
             selectedReportReason = selectedReportReason,
             reportText = reportText,
             onReportReasonSelected = { selectedReportReason = it },

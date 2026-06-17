@@ -10,6 +10,7 @@ import com.flint.core.navigation.Route
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionEdit
 import com.flint.presentation.collectiondetail.CollectionDetailRoute
+import com.flint.presentation.collectiondetail.report.navigation.navigateToCollectionReport
 
 fun NavController.navigateToCollectionDetail(
     collectionId: String,
@@ -34,6 +35,7 @@ fun NavGraphBuilder.collectionDetailNavGraph(
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
     navigateUp: () -> Unit,
     navigateToProfile: (userId: String) -> Unit,
+    navigateToCollectionReport: (collectionId: String) -> Unit,
     navController: NavController,
 ) {
     composable<Route.CollectionDetail> { backStackEntry ->
@@ -54,6 +56,7 @@ fun NavGraphBuilder.collectionDetailNavGraph(
             navigateToCollectionEdit = { collectionId ->
                 navController.navigateToCollectionEdit(collectionId)
             },
+            navigateToCollectionReport = navigateToCollectionReport,
         )
     }
 }

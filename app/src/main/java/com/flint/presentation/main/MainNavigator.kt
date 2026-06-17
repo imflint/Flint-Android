@@ -15,6 +15,7 @@ import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionCreate
 import com.flint.presentation.collectioncreate.navigation.navigateToCollectionEdit
 import com.flint.presentation.collectiondetail.navigation.navigateToCollectionDetail
+import com.flint.presentation.collectiondetail.report.navigation.navigateToCollectionReport
 import com.flint.presentation.collectionlist.navigation.navigateToCollectionList
 import com.flint.presentation.explore.navigation.navigateToExplore
 import com.flint.presentation.home.navigation.navigateToHome
@@ -154,6 +155,10 @@ class MainNavigator(
 
     fun navigateToCollectionEdit(collectionId: String, navOptions: NavOptions? = null) {
         navController.navigateToCollectionEdit(collectionId, navOptions)
+    }
+
+    fun navigateToCollectionReport(collectionId: String, navOptions: NavOptions? = null) {
+        navController.navigateToCollectionReport(collectionId, navOptions)
     }
 
     fun navigateToSavedContent(navOptions: NavOptions? = null) {
