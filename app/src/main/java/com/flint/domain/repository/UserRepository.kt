@@ -67,10 +67,12 @@ class UserRepository @Inject constructor(
 
     // 사용자별 북마크한 콘텐츠 목록 조회
     // - 내 프로필 (userId == null): GET /api/v1/contents/bookmarks (커서 페이지네이션 전체 로드)
+    //                              + GET /api/v1/contents/bookmarks/count (totalCount 별도 조회)
     // - 타 유저 (userId != null): GET /api/v1/users/{userId}/bookmarked-contents
     suspend fun getUserBookmarkedContents(userId: String?): Result<BookmarkedContentListModel> =
         suspendRunCatching {
             if (userId == null) {
+                val totalCount = contentApi.getBookmarkedContentCount().data.totalCount
                 val allContents = mutableListOf<BookmarkedContentItemModel>()
                 var cursor: String? = null
                 do {
@@ -79,7 +81,7 @@ class UserRepository @Inject constructor(
                     cursor = page.meta.nextCursor
                 } while (cursor != null)
                 BookmarkedContentListModel(
-                    totalCount = allContents.size,
+                    totalCount = totalCount,
                     contents = allContents.toImmutableList()
                 )
             } else {

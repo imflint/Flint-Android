@@ -31,6 +31,13 @@ data class BookmarkCursorMetaDto(
     val nextCursor: String? = null,
 )
 
+// /api/v1/contents/bookmarks/count 응답
+@Serializable
+data class BookmarkCountResponseDto(
+    @SerialName("totalCount")
+    val totalCount: Int
+)
+
 @Serializable
 data class BookmarkedContentResponseDto(
     @SerialName("id")
