@@ -13,5 +13,6 @@ data class CollectionDetailModelNew(
     val id: String,
     val thumbnailUrl: String,
     val isBookmarked: Boolean,
+    val isPublic: Boolean,
     val title: String,
 )

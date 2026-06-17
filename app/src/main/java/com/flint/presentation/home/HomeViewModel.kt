@@ -7,9 +7,9 @@ import com.flint.core.common.util.UiState
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
-import com.flint.domain.repository.CollectionRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.HomeRepository
+import com.flint.domain.repository.UserRepository
 import com.flint.presentation.home.sideeffect.HomeSideEffect
 import com.flint.presentation.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,10 +19,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,14 +28,14 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val homeRepository: HomeRepository,
+    private val userRepository: UserRepository,
     private val contentRepository: ContentRepository,
-    private val collectionRepository: CollectionRepository
 ) : ViewModel() {
 
     private val _userName = preferencesManager.getString(USER_NAME)
     private val _recommendCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
     private val _bookmarkedContentListLoadState = MutableStateFlow<UiState<BookmarkedContentListModel>>(UiState.Loading)
-    private val _recentCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
+    private val _popularCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
 
     private val _homeSideEffect = MutableSharedFlow<HomeSideEffect>()
     val homeSideEffect = _homeSideEffect.asSharedFlow()
@@ -46,13 +44,13 @@ class HomeViewModel @Inject constructor(
         _userName,
         _recommendCollectionListLoadState,
         _bookmarkedContentListLoadState,
-        _recentCollectionListLoadState
-    ) { userName, recommendedCollectionList, bookmarkedContentList, recentCollectionList ->
+        _popularCollectionListLoadState
+    ) { userName, recommendedCollectionList, bookmarkedContentList, popularCollectionList ->
         HomeUiState(
             userName = userName,
             recommendedCollectionListLoadState = recommendedCollectionList,
             bookmarkedContentListLoadState = bookmarkedContentList,
-            recentCollectionListLoadState = recentCollectionList
+            popularCollectionListLoadState = popularCollectionList
         )
     }.stateIn(
         scope = viewModelScope,
@@ -61,47 +59,31 @@ class HomeViewModel @Inject constructor(
             userName = "",
             recommendedCollectionListLoadState = UiState.Loading,
             bookmarkedContentListLoadState = UiState.Loading,
-            recentCollectionListLoadState = UiState.Loading
+            popularCollectionListLoadState = UiState.Loading
         )
     )
 
     fun getRecommendedCollectionList() = viewModelScope.launch {
         homeRepository.getRecommendedCollectionList()
-            .onSuccess {
-                _recommendCollectionListLoadState.emit(UiState.Success(it))
-            }
-            .onFailure {
-                Timber.e(it.message)
-            }
+            .onSuccess { _recommendCollectionListLoadState.emit(UiState.Success(it)) }
+            .onFailure { Timber.e(it.message) }
     }
 
     fun getBookmarkedContentList() = viewModelScope.launch {
-        contentRepository.getBookmarkedContentList()
-            .onSuccess {
-                _bookmarkedContentListLoadState.emit(UiState.Success(it))
-            }
-            .onFailure {
-                Timber.e(it.message)
-            }
+        userRepository.getUserBookmarkedContents(userId = null)
+            .onSuccess { _bookmarkedContentListLoadState.emit(UiState.Success(it)) }
+            .onFailure { Timber.e(it.message) }
     }
 
-    fun getRecentCollectionList() = viewModelScope.launch {
-        collectionRepository.getRecentCollectionList()
-            .onSuccess {
-                _recentCollectionListLoadState.emit(UiState.Success(it))
-            }
-            .onFailure {
-                Timber.e(it.message)
-            }
+    fun getPopularCollectionList() = viewModelScope.launch {
+        homeRepository.getPopularCollectionList()
+            .onSuccess { _popularCollectionListLoadState.emit(UiState.Success(it)) }
+            .onFailure { Timber.e(it.message) }
     }
 
     fun getOttListPerContent(contentId: String) = viewModelScope.launch {
         contentRepository.getOttListPerContent(contentId)
-            .onSuccess {
-                _homeSideEffect.emit(HomeSideEffect.ShowOttListBottomSheet(it))
-            }
-            .onFailure {
-                Timber.e(it.message)
-            }
+            .onSuccess { _homeSideEffect.emit(HomeSideEffect.ShowOttListBottomSheet(it)) }
+            .onFailure { Timber.e(it.message) }
     }
 }

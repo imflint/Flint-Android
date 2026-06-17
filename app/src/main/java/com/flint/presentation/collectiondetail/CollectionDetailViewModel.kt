@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.flint.core.common.util.DataStoreKey.USER_ID
 import com.flint.core.common.util.UiState
 import com.flint.core.navigation.Route
+import com.flint.data.local.PreferencesManager
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModelNew
@@ -14,6 +16,7 @@ import com.flint.domain.repository.CollectionRepository
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
 import com.flint.presentation.collectiondetail.uistate.CollectionDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import timber.log.Timber
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -25,6 +28,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,6 +38,7 @@ class CollectionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val bookmarkRepository: BookmarkRepository,
     private val collectionRepository: CollectionRepository,
+    private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
     init {
         val collectionId: String = savedStateHandle.toRoute<Route.CollectionDetail>().collectionId
@@ -155,6 +160,21 @@ class CollectionDetailViewModel @Inject constructor(
         }
     }
 
+    fun deleteCollection() {
+        val collectionId = (_uiState.value as? UiState.Success)?.data?.collectionDetail?.id ?: return
+        viewModelScope.launch {
+            collectionRepository.deleteCollection(collectionId)
+                .onSuccess {
+                    Timber.d("DELETE SUCCESS collectionId=$collectionId")
+                    _sideEffect.emit(CollectionDetailSideEffect.DeleteCollectionSuccess)
+                }
+                .onFailure {
+                    Timber.e(it, "DELETE FAILURE collectionId=$collectionId")
+                    _sideEffect.emit(CollectionDetailSideEffect.DeleteCollectionFailure)
+                }
+        }
+    }
+
     fun spoil(contentId: String) {
         _uiState.update { uiState: UiState<CollectionDetailUiState> ->
             if (uiState !is UiState.Success) return@update uiState
@@ -203,11 +223,20 @@ class CollectionDetailViewModel @Inject constructor(
                     async { collectionRepository.getCollectionDetail(collectionId) }
                 val collectionBookmarkUsers: Deferred<Result<CollectionBookmarkUsersModel>> =
                     async { bookmarkRepository.getCollectionBookmarkUsers(collectionId) }
+                val myUserId: String =
+                    runCatching { preferencesManager.getString(USER_ID).first() }
+                        .getOrElse {
+                            Timber.w(it, "USER_ID 조회 실패. isMine=false로 처리")
+                            ""
+                        }
+
+                val collectionDetailResult: CollectionDetailModelNew = collectionDetail.await().getOrThrow()
 
                 UiState.Success(
                     CollectionDetailUiState(
-                        collectionDetail = collectionDetail.await().getOrThrow(),
-                        collectionBookmarkUsers = collectionBookmarkUsers.await().getOrThrow()
+                        collectionDetail = collectionDetailResult,
+                        collectionBookmarkUsers = collectionBookmarkUsers.await().getOrThrow(),
+                        isMine = myUserId.isNotBlank() && collectionDetailResult.author.id == myUserId,
                     )
                 )
             }.onSuccess { newUiState: UiState.Success<CollectionDetailUiState> ->

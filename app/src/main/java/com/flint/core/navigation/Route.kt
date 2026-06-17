@@ -40,13 +40,21 @@ interface Route {
     data class CollectionDetail(
         val collectionId: String,
         val targetImageUrl: String? = null,
+        val showEditSuccessToast: Boolean = false,
+    ) : Route
+
+    @Serializable
+    data class CollectionReport(
+        val collectionId: String,
     ) : Route
 
     @Serializable
     data object CollectionCreate : Route
 
     @Serializable
-    data object CollectionCreateGraph : Route
+    data class CollectionCreateGraph(
+        val collectionId: String? = null,
+    ) : Route
 
     @Serializable
     data object SavedContentList : Route
