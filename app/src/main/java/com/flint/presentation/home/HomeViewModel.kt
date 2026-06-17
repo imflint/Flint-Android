@@ -10,6 +10,7 @@ import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.repository.CollectionRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.HomeRepository
+import com.flint.domain.repository.UserRepository
 import com.flint.presentation.home.sideeffect.HomeSideEffect
 import com.flint.presentation.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +32,8 @@ class HomeViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val homeRepository: HomeRepository,
     private val contentRepository: ContentRepository,
-    private val collectionRepository: CollectionRepository
+    private val collectionRepository: CollectionRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _userName = preferencesManager.getString(USER_NAME)
@@ -76,7 +78,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getBookmarkedContentList() = viewModelScope.launch {
-        contentRepository.getBookmarkedContentList()
+        userRepository.getUserBookmarkedContents(userId = null)
             .onSuccess {
                 _bookmarkedContentListLoadState.emit(UiState.Success(it))
             }

@@ -2,7 +2,6 @@ package com.flint.domain.mapper.content
 
 import com.flint.data.dto.content.response.BookmarkedContentListResponseDto
 import com.flint.data.dto.content.response.BookmarkedContentResponseDto
-import com.flint.data.dto.content.response.MyBookmarkedContentListResponseDto
 import com.flint.data.dto.content.response.OttSimpleResponseDto
 import com.flint.data.dto.search.SearchBookmarkedContentsResponseDto
 import com.flint.domain.model.content.BookmarkedContentItemModel
@@ -16,14 +15,6 @@ fun BookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
     return BookmarkedContentListModel(
         totalCount = totalCount,
         contents = contents.map { it.toModel() }.toImmutableList()
-    )
-}
-
-// /api/v1/contents/bookmarks (내 프로필)
-fun MyBookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
-    return BookmarkedContentListModel(
-        totalCount = meta.returned,
-        contents = data.map { it.toModel() }.toImmutableList()
     )
 }
 

@@ -58,41 +58,31 @@ class ProfileViewModel @Inject constructor(
                     val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
                     val updated = when (change) {
                         is BookmarkChange.Content -> {
-                            val updatedContents = if (userId == null) {
-                                if (change.isBookmarked) {
-                                    data.savedContents
-                                } else {
-                                    val filtered = data.savedContents.contents
-                                        .filter { it.id != change.id }
-                                        .toPersistentList()
-                                    data.savedContents.copy(
-                                        contents = filtered,
-                                        totalCount = maxOf(data.savedContents.totalCount - 1, 0),
-                                    )
-                                }
-                            } else {
-                                data.savedContents.copy(
-                                    contents = data.savedContents.contents
-                                        .map {
-                                            if (it.id == change.id) {
-                                                it.copy(isBookmarked = change.isBookmarked)
-                                            } else {
-                                                it
-                                            }
-                                        }
-                                        .toPersistentList(),
-                                )
-                            }
+                            // 내 프로필 / 타 유저 공통: isBookmarked 토글만, 목록에서 제거하지 않음
+                            val updatedContents = data.savedContents.copy(
+                                contents = data.savedContents.contents
+                                    .map { if (it.id == change.id) it.copy(isBookmarked = change.isBookmarked) else it }
+                                    .toPersistentList()
+                            )
                             data.copy(savedContents = updatedContents)
                         }
                         is BookmarkChange.Collection -> {
-                            val updatedCollections = if (change.isBookmarked) {
-                                data.savedCollections
+                            val updatedCollections = if (userId == null) {
+                                // 내 프로필: 북마크 취소 시 목록에서 제거
+                                if (change.isBookmarked) data.savedCollections
+                                else {
+                                    val filtered = data.savedCollections.collections
+                                        .filter { it.id != change.id }
+                                        .toPersistentList()
+                                    data.savedCollections.copy(collections = filtered)
+                                }
                             } else {
-                                val filtered = data.savedCollections.collections
-                                    .filter { it.id != change.id }
-                                    .toPersistentList()
-                                data.savedCollections.copy(collections = filtered)
+                                // 타 유저 프로필: isBookmarked 토글만 (상대방 목록에서 제거 X)
+                                data.savedCollections.copy(
+                                    collections = data.savedCollections.collections
+                                        .map { if (it.id == change.id) it.copy(isBookmarked = change.isBookmarked) else it }
+                                        .toPersistentList()
+                                )
                             }
                             data.copy(savedCollections = updatedCollections)
                         }
