@@ -67,10 +67,10 @@ interface UserApi {
         @Path("userId") userId: String,
     ): BaseResponse<UserKeywordsResponseDto>
 
-  // 취향 키워드 재계산 (응답 body에 data 필드xx)
+    // 취향 키워드 재계산 (응답 body에 data 필드xx)
     @PATCH("/api/v1/users/me/keywords/recalculate")
     suspend fun recalculateKeywords(): Response<Unit>
-  
+
     // 닉네임 수정
     @PUT("/api/v1/users/me/nickname")
     suspend fun updateNickname(
