@@ -67,6 +67,8 @@ fun ProfileRoute(
     navigateToSavedContentList: (userId: String?) -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToSetting: () -> Unit = {},
+    shouldRefreshProfile: Boolean = false,
+    onProfileRefreshed: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -76,6 +78,13 @@ fun ProfileRoute(
     var showOttListBottomSheet by remember { mutableStateOf(false) }
     var ottListModel by remember { mutableStateOf(OttListModel()) }
     val sheetState = rememberModalBottomSheetState()
+
+    LaunchedEffect(shouldRefreshProfile) {
+        if (shouldRefreshProfile) {
+            viewModel.reloadUserProfile()
+            onProfileRefreshed()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->

@@ -1,6 +1,8 @@
 package com.flint.presentation.profile.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -9,6 +11,8 @@ import com.flint.core.navigation.MainTabRoute
 import com.flint.core.navigation.Route
 import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.presentation.profile.ProfileRoute
+
+const val KEY_PROFILE_UPDATED = "key_profile_updated"
 
 fun NavController.navigateToMyProfile(
     navOptions: NavOptions? = null
@@ -30,7 +34,11 @@ fun NavGraphBuilder.myProfileNavGraph(
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToSetting: () -> Unit = {},
 ) {
-    composable<MainTabRoute.Profile> {
+    composable<MainTabRoute.Profile> { entry ->
+        val shouldRefreshProfile by entry.savedStateHandle
+            .getStateFlow(KEY_PROFILE_UPDATED, false)
+            .collectAsStateWithLifecycle()
+
         ProfileRoute(
             paddingValues = paddingValues,
             navigateUp = {},
@@ -38,6 +46,10 @@ fun NavGraphBuilder.myProfileNavGraph(
             navigateToSavedContentList = navigateToSavedContentList,
             navigateToCollectionDetail = navigateToCollectionDetail,
             navigateToSetting = navigateToSetting,
+            shouldRefreshProfile = shouldRefreshProfile,
+            onProfileRefreshed = {
+                entry.savedStateHandle[KEY_PROFILE_UPDATED] = false
+            },
         )
     }
 }
