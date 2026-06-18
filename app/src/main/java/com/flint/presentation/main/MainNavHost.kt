@@ -15,6 +15,8 @@ import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectioncreate.navigation.collectionCreateNavGraph
 import com.flint.presentation.collectiondetail.navigation.KEY_SHOW_DELETE_SUCCESS_TOAST
 import com.flint.presentation.collectiondetail.navigation.collectionDetailNavGraph
+import com.flint.presentation.collectiondetail.report.navigation.KEY_SHOW_REPORT_SUCCESS_TOAST
+import com.flint.presentation.collectiondetail.report.navigation.collectionReportNavGraph
 import com.flint.presentation.collectionlist.navigation.collectionListNavGraph
 import com.flint.presentation.explore.navigation.exploreNavGraph
 import com.flint.presentation.home.navigation.homeNavGraph
@@ -39,6 +41,9 @@ fun MainNavHost(
     val showDeleteSuccessToast = currentBackStackEntry
         ?.savedStateHandle
         ?.get<Boolean>(KEY_SHOW_DELETE_SUCCESS_TOAST) ?: false
+    val showReportSuccessToast = currentBackStackEntry
+        ?.savedStateHandle
+        ?.get<Boolean>(KEY_SHOW_REPORT_SUCCESS_TOAST) ?: false
 
     Box(
         modifier =
@@ -88,7 +93,14 @@ fun MainNavHost(
                 navigateToCollectionList = navigator::navigateToCollectionList,
                 navigateUp = navigator::navigateUp,
                 navigateToProfile = navigator::navigateToProfile,
+                navigateToCollectionReport = navigator::navigateToCollectionReport,
                 navController = navigator.navController,
+            )
+
+            collectionReportNavGraph(
+                paddingValues = paddingValues,
+                navController = navigator.navController,
+                navigateUp = navigator::navigateUp,
             )
 
             collectionCreateNavGraph(
@@ -151,6 +163,18 @@ fun MainNavHost(
                 yOffset = 12.dp,
                 hide = {
                     currentBackStackEntry?.savedStateHandle?.set(KEY_SHOW_DELETE_SUCCESS_TOAST, false)
+                },
+            )
+        }
+
+        if (showReportSuccessToast) {
+            ShowToast(
+                text = "신고가 접수되었어요",
+                imageVector = null,
+                paddingValues = paddingValues,
+                yOffset = 12.dp,
+                hide = {
+                    currentBackStackEntry?.savedStateHandle?.set(KEY_SHOW_REPORT_SUCCESS_TOAST, false)
                 },
             )
         }
