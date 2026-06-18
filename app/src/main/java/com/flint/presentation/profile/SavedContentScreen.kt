@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.modal.OneButtonModal
+import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.component.view.FlintSearchEmptyView
@@ -53,6 +55,24 @@ fun SavedContentRoute(
     viewModel: SavedContentViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showSaveToast by remember { mutableStateOf(false) }
+    var showCancelToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is SavedContentSideEffect.ToggleBookmarkSuccess -> {
+                    if (effect.isBookmarked) {
+                        showSaveToast = true
+                        showCancelToast = false
+                    } else {
+                        showCancelToast = true
+                        showSaveToast = false
+                    }
+                }
+            }
+        }
+    }
 
     SavedContentScreen(
         uiState = uiState,
@@ -63,6 +83,26 @@ fun SavedContentRoute(
         onDismissRestrictionModal = viewModel::dismissBookmarkRestrictionModal,
         modifier = Modifier.padding(paddingValues),
     )
+
+    if (showSaveToast) {
+        ShowToast(
+            text = "작품을 저장했어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = { showSaveToast = false },
+        )
+    }
+
+    if (showCancelToast) {
+        ShowToast(
+            text = "작품 저장이 취소되었어요",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = { showCancelToast = false },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

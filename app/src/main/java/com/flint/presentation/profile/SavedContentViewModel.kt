@@ -12,8 +12,11 @@ import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.SavedContentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,6 +34,9 @@ class SavedContentViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(SavedContentUiState())
     val uiState: StateFlow<SavedContentUiState> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<SavedContentSideEffect>()
+    val sideEffect: SharedFlow<SavedContentSideEffect> = _sideEffect.asSharedFlow()
 
     init {
         loadBookmarkedContents()
@@ -94,6 +100,7 @@ class SavedContentViewModel @Inject constructor(
                         )
                         state.copy(contents = UiState.Success(updated))
                     }
+                    _sideEffect.emit(SavedContentSideEffect.ToggleBookmarkSuccess(isBookmarked))
                 }
                 .onFailure { throwable ->
                     if (throwable is BookmarkException.ContentMinLimitExceeded) {
