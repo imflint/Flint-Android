@@ -12,9 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -25,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.common.util.UiState
+import com.flint.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.modal.OneButtonModal
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
@@ -33,6 +38,8 @@ import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.content.BookmarkedContentItemModel
 import com.flint.domain.model.content.BookmarkedContentListModel
+import com.flint.domain.model.ott.OttListModel
+import com.flint.domain.model.ott.OttModel
 import com.flint.domain.type.OttType
 import com.flint.presentation.profile.component.CollectionCreateContentBookmark
 import com.flint.presentation.profile.uistate.SavedContentUiState
@@ -58,6 +65,7 @@ fun SavedContentRoute(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SavedContentScreen(
     uiState: SavedContentUiState,
@@ -69,6 +77,8 @@ fun SavedContentScreen(
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    var showOttBottomSheet by remember { mutableStateOf(false) }
+    var selectedOttList by remember { mutableStateOf<List<OttType>>(emptyList()) }
 
     Column(
         modifier = modifier
@@ -134,6 +144,10 @@ fun SavedContentScreen(
                     SavedContentList(
                         contents = uiState.filteredContents,
                         onBookmarkClick = onBookmarkClick,
+                        onMoreClick = { ottList ->
+                            selectedOttList = ottList
+                            showOttBottomSheet = true
+                        },
                     )
                 }
             }
@@ -149,6 +163,13 @@ fun SavedContentScreen(
                 }
             }
         }
+    }
+
+    if (showOttBottomSheet && selectedOttList.isNotEmpty()) {
+        OttListBottomSheet(
+            ottList = OttListModel(otts = selectedOttList.map { OttModel(name = it.name) }),
+            onDismiss = { showOttBottomSheet = false },
+        )
     }
 
     // 저장 취소 제한 안내 모달 (저장 작품이 5개일 때 북마크 토글 시 노출)
@@ -168,6 +189,7 @@ fun SavedContentScreen(
 private fun SavedContentList(
     contents: ImmutableList<BookmarkedContentItemModel>,
     onBookmarkClick: (contentId: String) -> Unit,
+    onMoreClick: (ottList: List<OttType>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (contents.isEmpty()) {
@@ -192,7 +214,7 @@ private fun SavedContentList(
             CollectionCreateContentBookmark(
                 modifier = Modifier.animateItem(),
                 onBookmarkClick = { onBookmarkClick(content.id) },
-                onMoreClick = {},
+                onMoreClick = { onMoreClick(content.getOttSimpleList) },
                 isBookmarked = content.isBookmarked,
                 bookmarkCount = content.bookmarkCount,
                 imageUrl = content.imageUrl,

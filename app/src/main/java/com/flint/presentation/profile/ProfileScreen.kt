@@ -48,6 +48,7 @@ import com.flint.core.navigation.model.CollectionListRouteType
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.ott.OttListModel
+import com.flint.domain.model.ott.OttModel
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.model.user.UserProfileResponseModel
 import com.flint.presentation.MainActivity
@@ -104,7 +105,11 @@ fun ProfileRoute(
         onCollectionItemClick = navigateToCollectionDetail,
         onSettingsClick = navigateToSetting,
         onContentItemClick = { contentId ->
-            viewModel.getOttListPerContent(contentId)
+            val ottList = (uiState.sectionData as? UiState.Success)
+                ?.data?.savedContents?.contents
+                ?.find { it.id == contentId }?.getOttSimpleList ?: emptyList()
+            ottListModel = OttListModel(otts = ottList.map { OttModel(name = it.name) })
+            if (ottListModel.otts.isNotEmpty()) showOttListBottomSheet = true
         },
         onContentMoreClick = { navigateToSavedContentList(uiState.userId) },
         onCreatedCollectionMoreClick = {
