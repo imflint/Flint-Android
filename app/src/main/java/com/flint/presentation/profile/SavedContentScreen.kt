@@ -190,10 +190,11 @@ private fun SavedContentList(
             key = { it.id },
         ) { content ->
             CollectionCreateContentBookmark(
+                modifier = Modifier.animateItem(),
                 onBookmarkClick = { onBookmarkClick(content.id) },
                 onMoreClick = {},
-                isBookmarked = true,
-                bookmarkCount = 123,
+                isBookmarked = content.isBookmarked,
+                bookmarkCount = content.bookmarkCount,
                 imageUrl = content.imageUrl,
                 title = content.title,
                 director = "감독이름",
@@ -211,6 +212,8 @@ private object SavedContentPreviewData {
             title = "은하수를 여행하는 히치하이커를 위한 안내서",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 42,
+            isBookmarked = true,
             getOttSimpleList = listOf(
                 OttType.Netflix,
                 OttType.Disney,
@@ -222,6 +225,8 @@ private object SavedContentPreviewData {
             title = "해리포터와 불의잔",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 18,
+            isBookmarked = true,
             getOttSimpleList = listOf(
                 OttType.Netflix,
                 OttType.CoupangPlay
@@ -232,6 +237,8 @@ private object SavedContentPreviewData {
             title = "해리포터와 불의잔",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 7,
+            isBookmarked = false,
             getOttSimpleList = listOf(OttType.Netflix),
         ),
         BookmarkedContentItemModel(
@@ -239,6 +246,8 @@ private object SavedContentPreviewData {
             title = "해리포터와 불의잔",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 29,
+            isBookmarked = true,
             getOttSimpleList = listOf(OttType.Netflix),
         ),
         BookmarkedContentItemModel(
@@ -246,6 +255,8 @@ private object SavedContentPreviewData {
             title = "해리포터와 불의잔",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 13,
+            isBookmarked = false,
             getOttSimpleList = listOf(OttType.Netflix),
         ),
         BookmarkedContentItemModel(
@@ -253,6 +264,8 @@ private object SavedContentPreviewData {
             title = "해리포터와 불의잔",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 51,
+            isBookmarked = true,
             getOttSimpleList = listOf(OttType.Netflix),
         ),
         BookmarkedContentItemModel(
@@ -260,6 +273,8 @@ private object SavedContentPreviewData {
             title = "해리포터와 불의잔",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 4,
+            isBookmarked = false,
             getOttSimpleList = listOf(OttType.Netflix),
         ),
         BookmarkedContentItemModel(
@@ -267,6 +282,8 @@ private object SavedContentPreviewData {
             title = "해리포터와 불의잔",
             year = 2005,
             imageUrl = "",
+            bookmarkCount = 36,
+            isBookmarked = true,
             getOttSimpleList = listOf(OttType.Netflix),
         ),
     )
@@ -279,7 +296,10 @@ private fun SavedContentScreenPreview() {
         SavedContentScreen(
             uiState = SavedContentUiState(
                 contents = UiState.Success(
-                    BookmarkedContentListModel(contents = SavedContentPreviewData.FakeList),
+                    BookmarkedContentListModel(
+                        totalCount = SavedContentPreviewData.FakeList.size,
+                        contents = SavedContentPreviewData.FakeList,
+                    ),
                 ),
             ),
             navigateUp = {},
@@ -328,7 +348,10 @@ private fun SavedContentScreenRestrictionModalPreview() {
         SavedContentScreen(
             uiState = SavedContentUiState(
                 contents = UiState.Success(
-                    BookmarkedContentListModel(contents = SavedContentPreviewData.FakeList),
+                    BookmarkedContentListModel(
+                        totalCount = SavedContentPreviewData.FakeList.size,
+                        contents = SavedContentPreviewData.FakeList,
+                    ),
                 ),
                 showBookmarkRestrictionModal = true,
             ),

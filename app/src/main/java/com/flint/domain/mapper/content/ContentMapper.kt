@@ -10,8 +10,10 @@ import com.flint.domain.model.content.ContentModel
 import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.toImmutableList
 
+// /api/v1/users/{userId}/bookmarked-contents (타 유저)
 fun BookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
     return BookmarkedContentListModel(
+        totalCount = totalCount,
         contents = contents.map { it.toModel() }.toImmutableList()
     )
 }
@@ -22,6 +24,8 @@ fun BookmarkedContentResponseDto.toModel() : BookmarkedContentItemModel {
         title = title,
         year = year,
         imageUrl = imageUrl,
+        bookmarkCount = bookmarkCount,
+        isBookmarked = isBookmarked,
         getOttSimpleList = getOttSimpleList.mapNotNull { ottSimple ->
             runCatching { OttType.valueOf(ottSimple.ottName) }.getOrNull()
         }

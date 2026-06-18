@@ -26,7 +26,7 @@ fun NavController.navigateToProfile(
 fun NavGraphBuilder.myProfileNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
-    navigateToSavedContentList: () -> Unit,
+    navigateToSavedContentList: (userId: String?) -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToSetting: () -> Unit = {},
 ) {
@@ -46,7 +46,7 @@ fun NavGraphBuilder.profileNavGraph(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
-    navigateToSavedContentList: () -> Unit,
+    navigateToSavedContentList: (userId: String?) -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
 ) {
     composable<Route.Profile> {

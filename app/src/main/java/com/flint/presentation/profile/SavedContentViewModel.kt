@@ -1,12 +1,17 @@
 package com.flint.presentation.profile
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.flint.core.common.util.UiState
-import com.flint.domain.repository.ContentRepository
+import com.flint.core.navigation.Route
+import com.flint.domain.model.bookmark.BookmarkException
+import com.flint.domain.repository.BookmarkRepository
+import com.flint.domain.repository.UserRepository
 import com.flint.presentation.profile.uistate.SavedContentUiState
-import com.flint.presentation.profile.uistate.SavedContentUiState.Companion.MIN_REQUIRED_COUNT
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,8 +22,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SavedContentViewModel @Inject constructor(
-    private val contentRepository: ContentRepository,
+    private val userRepository: UserRepository,
+    private val bookmarkRepository: BookmarkRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val userId: String? = savedStateHandle.toRoute<Route.SavedContentList>().userId
 
     private val _uiState = MutableStateFlow(SavedContentUiState())
     val uiState: StateFlow<SavedContentUiState> = _uiState.asStateFlow()
@@ -29,11 +38,13 @@ class SavedContentViewModel @Inject constructor(
 
 
     // 사용자 저장한 작품 목록 호출
-    fun loadBookmarkedContents() {
+    fun loadBookmarkedContents(showLoading: Boolean = true) {
         viewModelScope.launch {
-            _uiState.update { it.copy(contents = UiState.Loading) }
+            if (showLoading) {
+                _uiState.update { it.copy(contents = UiState.Loading) }
+            }
 
-            contentRepository.getBookmarkedContentList()
+            userRepository.getUserBookmarkedContents(userId)
                 .onSuccess { list ->
                     _uiState.update {
                         it.copy(
@@ -63,16 +74,34 @@ class SavedContentViewModel @Inject constructor(
     }
 
 
-    //  북마크 토글 (저장 취소)
-    // 저장된 작품이 MIN_REQUIRED_COUNT(5)개일 때는 취소를 막고 안내 모달을 노출한다.
+    // 북마크 토글
+    // - 내 프로필 / 타 유저 프로필 공통: isBookmarked 필드만 토글, 목록에서 제거하지 않음
+    //   (다시 북마크할 가능성이 있어 아이템을 유지)
     fun toggleBookmark(contentId: String) {
-        val currentCount = uiState.value.totalCount
-        if (currentCount <= MIN_REQUIRED_COUNT) {
-            _uiState.update { it.copy(showBookmarkRestrictionModal = true) }
-            return
+        viewModelScope.launch {
+            Timber.d("toggleBookmark: contentId=$contentId, userId=$userId")
+            bookmarkRepository.toggleContentBookmark(contentId)
+                .onSuccess { isBookmarked ->
+                    Timber.d("toggleBookmark success: isBookmarked=$isBookmarked")
+                    _uiState.update { state ->
+                        val currentList = (state.contents as? UiState.Success)?.data
+                            ?: return@update state
+                        val updated = currentList.copy(
+                            contents = currentList.contents
+                                .map { if (it.id == contentId) it.copy(isBookmarked = isBookmarked) else it }
+                                .toPersistentList()
+                        )
+                        state.copy(contents = UiState.Success(updated))
+                    }
+                }
+                .onFailure { throwable ->
+                    if (throwable is BookmarkException.ContentMinLimitExceeded) {
+                        _uiState.update { it.copy(showBookmarkRestrictionModal = true) }
+                    } else {
+                        Timber.e(throwable, "toggleBookmark failed: contentId=$contentId")
+                    }
+                }
         }
-        // TODO: 북마크 토글 API 연동
-        Timber.d("toggleBookmark: $contentId")
     }
 
     // 저장 취소 제한 안내 모달 닫기

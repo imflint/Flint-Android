@@ -4,7 +4,8 @@ data class UserProfileResponseModel(
     val id: String,
     val isFliner: Boolean,
     val nickname: String,
-    val profileImageUrl: String?
+    val profileImageUrl: String?,
+    val keywordRecalculatable: Boolean = false,
 ) {
     companion object {
         val Empty = UserProfileResponseModel(

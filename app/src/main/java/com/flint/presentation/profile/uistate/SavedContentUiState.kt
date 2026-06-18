@@ -33,7 +33,7 @@ data class SavedContentUiState(
      * 화면 상단 "총 n개"에 사용할 카운트 (전체 저장 작품 수).
      */
     val totalCount: Int
-        get() = (contents as? UiState.Success)?.data?.contents?.size ?: 0
+        get() = (contents as? UiState.Success)?.data?.totalCount ?: 0
 
     companion object {
         /**

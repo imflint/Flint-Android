@@ -1,5 +1,10 @@
 package com.flint.presentation.profile.component
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -21,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -42,6 +48,8 @@ fun ProfileKeywordSection(
     nickname: String,
     keywordList: KeywordListModel,
     isMyProfile: Boolean,
+    isRecalculatable: Boolean,
+    isRecalculating: Boolean = false,
     showInfoModal: Boolean,
     onInfoClick: () -> Unit,
     onRefreshClick: () -> Unit,
@@ -87,7 +95,11 @@ fun ProfileKeywordSection(
                 )
             }
             if (isMyProfile) {
-                ProfileRefreshButton(onRefreshClick = onRefreshClick)
+                ProfileRefreshButton(
+                    onRefreshClick = onRefreshClick,
+                    isEnabled = isRecalculatable,
+                    isRecalculating = isRecalculating,
+                )
             }
         }
         Spacer(Modifier.height(32.dp))
@@ -117,21 +129,36 @@ fun ProfileKeywordSection(
 @Composable
 private fun ProfileRefreshButton(
     onRefreshClick: () -> Unit,
+    isEnabled: Boolean,
+    isRecalculating: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
+    val iconTint = if (isEnabled) FlintTheme.colors.secondary400 else FlintTheme.colors.gray400
+
+    val infiniteTransition = rememberInfiniteTransition(label = "refresh_rotation")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 800, easing = LinearEasing),
+        ),
+        label = "refresh_rotation_value",
+    )
+
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-            modifier
-                .noRippleClickable(
-                    onClick = onRefreshClick,
-                ),
+        modifier = modifier.noRippleClickable(
+            onClick = { if (isEnabled && !isRecalculating) onRefreshClick() },
+        ),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_refresh),
             contentDescription = null,
-            tint = FlintTheme.colors.secondary400,
+            tint = iconTint,
+            modifier = Modifier.graphicsLayer {
+                rotationZ = if (isRecalculating) rotation else 0f
+            },
         )
         Text(
             text = "업데이트",
@@ -237,6 +264,7 @@ private fun ProfileKeywordSectionPreview() {
             keywordList = KeywordListModel.FakeList3,
             modifier = Modifier.fillMaxSize(),
             isMyProfile = true,
+            isRecalculatable = true,
             showInfoModal = false,
             onInfoClick = {},
             onRefreshClick = {},

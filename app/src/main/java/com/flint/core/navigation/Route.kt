@@ -57,7 +57,9 @@ interface Route {
     ) : Route
 
     @Serializable
-    data object SavedContentList : Route
+    data class SavedContentList(
+        val userId: String? = null,
+    ) : Route
 
     @Serializable
     data object AddContent : Route

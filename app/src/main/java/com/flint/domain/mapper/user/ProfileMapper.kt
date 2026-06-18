@@ -8,5 +8,6 @@ fun UserProfileResponseDto.toModel(): UserProfileResponseModel =
         id = id,
         isFliner = isFliner,
         nickname = nickname,
-        profileImageUrl = profileImageUrl
+        profileImageUrl = profileImageUrl,
+        keywordRecalculatable = keywordRecalculatable,
     )

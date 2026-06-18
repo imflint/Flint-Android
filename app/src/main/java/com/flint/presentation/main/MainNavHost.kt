@@ -110,6 +110,7 @@ fun MainNavHost(
 
             savedContentListNavGraph(
                 paddingValues = paddingValues,
+                navigateUp = navigator::navigateUp,
             )
 
             exploreNavGraph(
@@ -121,7 +122,7 @@ fun MainNavHost(
             myProfileNavGraph(
                 paddingValues = paddingValues,
                 navigateToCollectionList = navigator::navigateToCollectionList,
-                navigateToSavedContentList = navigator::navigateToSavedContent,
+                navigateToSavedContentList = { userId -> navigator.navigateToSavedContent(userId) },
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
                 navigateToSetting = navigator::navigateToSetting,
             )
@@ -130,7 +131,7 @@ fun MainNavHost(
                 paddingValues = paddingValues,
                 navigateUp = navigator::navigateUp,
                 navigateToCollectionList = navigator::navigateToCollectionList,
-                navigateToSavedContentList = navigator::navigateToSavedContent,
+                navigateToSavedContentList = { userId -> navigator.navigateToSavedContent(userId) },
                 navigateToCollectionDetail = navigator::navigateToCollectionDetail,
             )
 

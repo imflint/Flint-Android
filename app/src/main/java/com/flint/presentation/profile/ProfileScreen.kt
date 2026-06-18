@@ -63,7 +63,7 @@ fun ProfileRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
-    navigateToSavedContentList: () -> Unit, // TODO: 스프린트에서 구현
+    navigateToSavedContentList: (userId: String?) -> Unit,
     navigateToCollectionDetail: (collectionId: String) -> Unit,
     navigateToSetting: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel(),
@@ -75,10 +75,6 @@ fun ProfileRoute(
     var showOttListBottomSheet by remember { mutableStateOf(false) }
     var ottListModel by remember { mutableStateOf(OttListModel()) }
     val sheetState = rememberModalBottomSheetState()
-
-    LaunchedEffect(Unit) {
-        viewModel.getProfile()
-    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
@@ -110,6 +106,7 @@ fun ProfileRoute(
         onContentItemClick = { contentId ->
             viewModel.getOttListPerContent(contentId)
         },
+        onContentMoreClick = { navigateToSavedContentList(uiState.userId) },
         onCreatedCollectionMoreClick = {
             navigateToCollectionList(
                 CollectionListRouteType.CREATED,
@@ -122,6 +119,7 @@ fun ProfileRoute(
                 uiState.userId
             )
         },
+        onRefreshClick = viewModel::recalculateKeywords,
         onEasterEggWithdraw = viewModel::easterEggWithdraw,
     )
 
@@ -203,6 +201,8 @@ private fun ProfileScreen(
                             nickname = uiState.profile.nickname,
                             keywordList = sectionData.data.keywords,
                             isMyProfile = uiState.userId == null,
+                            isRecalculatable = uiState.profile.keywordRecalculatable,
+                            isRecalculating = uiState.isRecalculating,
                             showInfoModal = showInfoModal,
                             onInfoClick = { showInfoModal = !showInfoModal },
                             onRefreshClick = onRefreshClick,
@@ -248,8 +248,8 @@ private fun ProfileScreen(
                             description = "${userName}님이 저장한 작품이에요",
                             contentModelList = sectionData.data.savedContents,
                             onItemClick = onContentItemClick,
-                            isAllVisible = false,
-                            onAllClick = {},
+                            isAllVisible = true,
+                            onAllClick = onContentMoreClick,
                         )
                     }
                 }

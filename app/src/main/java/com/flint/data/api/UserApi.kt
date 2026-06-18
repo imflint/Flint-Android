@@ -10,6 +10,8 @@ import com.flint.data.dto.user.response.BookmarkedCollectionListResponseDto
 import com.flint.data.dto.user.response.CreatedCollectionListResponseDto
 import com.flint.data.dto.user.response.UserKeywordsResponseDto
 import com.flint.data.dto.user.response.UserProfileResponseDto
+import retrofit2.Response
+import retrofit2.http.PATCH
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
@@ -17,6 +19,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UserApi {
+    // 내 프로필 조회 (keywordRecalculatable 포함)
+    @GET("/api/v1/users/me")
+    suspend fun getMyProfile(): BaseResponse<UserProfileResponseDto>
+
     // 사용자 프로필 조회
     @GET("/api/v1/users/{userId}")
     suspend fun getUserProfile(
@@ -61,7 +67,9 @@ interface UserApi {
         @Path("userId") userId: String,
     ): BaseResponse<UserKeywordsResponseDto>
 
-    // 취향 키워드 재계산
+    // 취향 키워드 재계산 (응답 body에 data 필드xx)
+    @PATCH("/api/v1/users/me/keywords/recalculate")
+    suspend fun recalculateKeywords(): Response<Unit>
 
     // 닉네임 수정
     @PUT("/api/v1/users/me/nickname")
