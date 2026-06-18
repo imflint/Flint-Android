@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectiondetail.report.component.ReportBottomSection
 import com.flint.presentation.collectiondetail.report.component.ReportCheck
@@ -34,14 +35,13 @@ fun CollectionReportRoute(
     viewModel: CollectionReportViewModel = hiltViewModel(),
 ) {
     val uiState: CollectionReportUiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showFailureToast by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { event: CollectionReportSideEffect ->
             when (event) {
                 CollectionReportSideEffect.ReportSuccess -> navigateUpWithSuccess()
-                CollectionReportSideEffect.ReportFailure -> {
-                    // TODO: 신고 접수 실패 토스트/다이얼로그 띄우기
-                }
+                CollectionReportSideEffect.ReportFailure -> showFailureToast = true
             }
         }
     }
@@ -56,6 +56,16 @@ fun CollectionReportRoute(
         onCancelClick = navigateUp,
         onSubmitClick = viewModel::submitReport,
     )
+
+    if (showFailureToast) {
+        ShowToast(
+            text = "신고 접수에 실패했어요. 다시 시도해주세요.",
+            imageVector = null,
+            paddingValues = paddingValues,
+            yOffset = 12.dp,
+            hide = { showFailureToast = false },
+        )
+    }
 }
 
 @Composable

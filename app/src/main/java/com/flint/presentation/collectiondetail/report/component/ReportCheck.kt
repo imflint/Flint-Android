@@ -71,13 +71,12 @@ private fun ReportCheckItem(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .noRippleClickable(onClick = onCheckClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier
-                .noRippleClickable(onClick = onCheckClick)
-                .size(48.dp),
+            modifier = Modifier.size(48.dp),
             imageVector = ImageVector.vectorResource(if (isChecked) R.drawable.ic_check_fill else R.drawable.ic_check_empty),
             contentDescription = null,
             tint = Color.Unspecified,

@@ -44,7 +44,7 @@ fun ReportTopAppBar(
             Icon(
                 modifier = Modifier.size(24.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
-                contentDescription = null,
+                contentDescription = "신고 닫기",
                 tint = FlintTheme.colors.white,
             )
         }
