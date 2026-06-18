@@ -41,6 +41,8 @@ import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModelNew
 import com.flint.domain.type.UserRoleType
 import com.flint.presentation.collectiondetail.component.CollectionCopyrightFooter
+import com.flint.R
+import com.flint.core.designsystem.component.modal.OneButtonModal
 import com.flint.presentation.collectiondetail.component.CollectionDetailDeleteModal
 import com.flint.presentation.collectiondetail.component.CollectionDetailDescription
 import com.flint.presentation.collectiondetail.component.CollectionDetailThumbnail
@@ -74,6 +76,7 @@ fun CollectionDetailRoute(
     var showContentSaveToast: Boolean by remember { mutableStateOf(false) }
     var showContentCancelToast: Boolean by remember { mutableStateOf(false) }
     var showDeleteModal: Boolean by remember { mutableStateOf(false) }
+    var showBookmarkRestrictionModal: Boolean by remember { mutableStateOf(false) }
     var showEditSuccessToastState: Boolean by remember { mutableStateOf(showEditSuccessToast) }
 
     when (val uiState = uiState) {
@@ -121,6 +124,17 @@ fun CollectionDetailRoute(
         }
 
         else -> {}
+    }
+
+    if (showBookmarkRestrictionModal) {
+        OneButtonModal(
+            title = "작품 저장을 취소할 수 없어요",
+            message = "취향 키워드 분석을 위해\n최소 5개의 작품을 저장해주세요",
+            buttonText = "확인",
+            onConfirm = { showBookmarkRestrictionModal = false },
+            onDismiss = { showBookmarkRestrictionModal = false },
+            icon = R.drawable.ic_gradient_bookmark,
+        )
     }
 
     if (showDeleteModal) {
@@ -216,6 +230,10 @@ fun CollectionDetailRoute(
                         showContentCancelToast = true
                         showContentSaveToast = false
                     }
+                }
+
+                CollectionDetailSideEffect.ToggleContentBookmarkMinLimitExceeded -> {
+                    showBookmarkRestrictionModal = true
                 }
 
                 CollectionDetailSideEffect.DeleteCollectionSuccess -> navigateUpWithDeleteSuccess()

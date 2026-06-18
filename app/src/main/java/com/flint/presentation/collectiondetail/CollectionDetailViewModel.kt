@@ -11,6 +11,7 @@ import com.flint.data.local.PreferencesManager
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.model.collection.CollectionDetailModelNew
 import com.flint.domain.model.content.ContentModelNew
+import com.flint.domain.model.bookmark.BookmarkException
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.CollectionRepository
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
@@ -107,14 +108,47 @@ class CollectionDetailViewModel @Inject constructor(
 
         val newBookmarkState: Boolean = !targetContent.isBookmarked
         val initialBookmarkCount: Int = targetContent.bookmarkCount
-        val adjustedBookmarkCount: Int =
-            if (newBookmarkState) initialBookmarkCount + 1
-            else (initialBookmarkCount - 1).coerceAtLeast(0)
 
+        // 북마크 취소
+        if (!newBookmarkState) {
+            contentBookmarkDebounceJobs[contentId]?.cancel()
+            contentBookmarkDebounceJobs.remove(contentId)
+            val initialState = initialContentBookmarkStates.remove(contentId)
+
+            if (initialState == false) {
+                updateContentBookmarkState(
+                    contentId = contentId,
+                    isBookmarked = false,
+                    bookmarkCount = (initialBookmarkCount - 1).coerceAtLeast(0),
+                )
+                return
+            }
+
+            viewModelScope.launch {
+                bookmarkRepository.toggleContentBookmark(contentId)
+                    .onSuccess { isBookmarked: Boolean ->
+                        updateContentBookmarkState(
+                            contentId = contentId,
+                            isBookmarked = isBookmarked,
+                            bookmarkCount = (initialBookmarkCount - 1).coerceAtLeast(0),
+                        )
+                        _sideEffect.emit(CollectionDetailSideEffect.ToggleContentBookmarkSuccess(isBookmarked))
+                    }
+                    .onFailure { throwable ->
+                        if (throwable is BookmarkException.ContentMinLimitExceeded) {
+                            _sideEffect.emit(CollectionDetailSideEffect.ToggleContentBookmarkMinLimitExceeded)
+                        }
+                    }
+            }
+            return
+        }
+
+        // 북마크 추가
+        val adjustedBookmarkCount: Int = initialBookmarkCount + 1
         updateContentBookmarkState(
             contentId = contentId,
             isBookmarked = newBookmarkState,
-            bookmarkCount = adjustedBookmarkCount
+            bookmarkCount = adjustedBookmarkCount,
         )
 
         contentBookmarkDebounceJobs[contentId]?.cancel()
@@ -132,7 +166,7 @@ class CollectionDetailViewModel @Inject constructor(
                     .onSuccess { isBookmarked: Boolean ->
                         updateContentIsBookmarkedOnly(
                             contentId = contentId,
-                            isBookmarked = isBookmarked
+                            isBookmarked = isBookmarked,
                         )
                         _sideEffect.emit(
                             CollectionDetailSideEffect.ToggleContentBookmarkSuccess(isBookmarked)
@@ -143,14 +177,10 @@ class CollectionDetailViewModel @Inject constructor(
                             (_uiState.value as? UiState.Success)?.data?.collectionDetail?.contents
                                 ?.find { it.id == contentId } ?: return@onFailure
 
-                        val rollbackCount: Int =
-                            if (initialState) fallbackContent.bookmarkCount + 1
-                            else (fallbackContent.bookmarkCount - 1).coerceAtLeast(0)
-
                         updateContentBookmarkState(
                             contentId = contentId,
                             isBookmarked = initialState,
-                            bookmarkCount = rollbackCount
+                            bookmarkCount = (fallbackContent.bookmarkCount - 1).coerceAtLeast(0),
                         )
                     }
             }
