@@ -25,11 +25,12 @@ import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.presentation.collectiondetail.report.ReportReason
 
 @Composable
 fun ReportCheck(
-    selectedReportReason: String?,
-    onReportReasonSelected: (String) -> Unit,
+    selectedReportReason: ReportReason?,
+    onReportReasonSelected: (ReportReason) -> Unit,
     reportText: String,
     onReportTextChanged: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -37,35 +38,13 @@ fun ReportCheck(
     Column(
         modifier = modifier
     ) {
-        ReportCheckItem(
-            isChecked = selectedReportReason == "욕설·혐오 표현이 포함된 콘텐츠",
-            onCheckClick = { onReportReasonSelected("욕설·혐오 표현이 포함된 콘텐츠") },
-            reportContent = "욕설·혐오 표현이 포함된 콘텐츠",
-        )
-
-        ReportCheckItem(
-            isChecked = selectedReportReason == "음란하거나 선정적인 콘텐츠",
-            onCheckClick = { onReportReasonSelected("음란하거나 선정적인 콘텐츠") },
-            reportContent = "음란하거나 선정적인 콘텐츠",
-        )
-
-        ReportCheckItem(
-            isChecked = selectedReportReason == "광고·홍보 또는 스팸성 콘텐츠",
-            onCheckClick = { onReportReasonSelected("광고·홍보 또는 스팸성 콘텐츠") },
-            reportContent = "광고·홍보 또는 스팸성 콘텐츠",
-        )
-
-        ReportCheckItem(
-            isChecked = selectedReportReason == "저작권을 침해한 콘텐츠",
-            onCheckClick = { onReportReasonSelected("저작권을 침해한 콘텐츠") },
-            reportContent = "저작권을 침해한 콘텐츠",
-        )
-
-        ReportCheckItem(
-            isChecked = selectedReportReason == "기타",
-            onCheckClick = { onReportReasonSelected("기타") },
-            reportContent = "기타",
-        )
+        ReportReason.entries.forEach { reason ->
+            ReportCheckItem(
+                isChecked = selectedReportReason == reason,
+                onCheckClick = { onReportReasonSelected(reason) },
+                reportContent = reason.displayText,
+            )
+        }
         CollectionInputTextField(
             value = reportText,
             onValueChanged = onReportTextChanged,
@@ -78,7 +57,7 @@ fun ReportCheck(
                 .padding(horizontal = 12.dp)
                 .heightIn(min = 104.dp)
                 .onFocusChanged {
-                    if (it.hasFocus) onReportReasonSelected("기타")
+                    if (it.hasFocus) onReportReasonSelected(ReportReason.OTHER)
                 }
         )
     }
@@ -115,7 +94,7 @@ private fun ReportCheckItem(
 @Composable
 private fun ReportCheckPreview() {
     FlintTheme {
-        var selectedReportReason by remember { mutableStateOf<String?>(null) }
+        var selectedReportReason by remember { mutableStateOf<ReportReason?>(null) }
         var reportText by remember { mutableStateOf("") }
 
         ReportCheck(

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.flint.core.navigation.Route
-import com.flint.domain.mapper.collection.toDto
 import com.flint.domain.model.collection.CollectionReportRequestModel
 import com.flint.domain.repository.CollectionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,11 +39,11 @@ class CollectionReportViewModel @Inject constructor(
     private val _sideEffect: MutableSharedFlow<CollectionReportSideEffect> = MutableSharedFlow()
     val sideEffect: SharedFlow<CollectionReportSideEffect> = _sideEffect.asSharedFlow()
 
-    fun selectReportReason(reason: String) {
+    fun selectReportReason(reason: ReportReason) {
         _uiState.update {
             it.copy(
                 selectedReportReason = reason,
-                reportText = if (reason == ETC_REASON) it.reportText else "",
+                reportText = if (reason == ReportReason.OTHER) it.reportText else "",
             )
         }
     }
@@ -57,7 +56,7 @@ class CollectionReportViewModel @Inject constructor(
         val state = _uiState.value
         if (state.isLoading) return
 
-        val reasonCode = REASON_CODE_MAP[state.selectedReportReason] ?: return
+        val reasonCode = state.selectedReportReason?.code ?: return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -67,7 +66,7 @@ class CollectionReportViewModel @Inject constructor(
                 otherDetail = state.reportText.ifBlank { null },
             )
 
-            collectionRepository.postCollectionReport(collectionId, requestModel.toDto())
+            collectionRepository.postCollectionReport(collectionId, requestModel)
                 .onSuccess {
                     _sideEffect.emit(CollectionReportSideEffect.ReportSuccess)
                 }
@@ -77,17 +76,5 @@ class CollectionReportViewModel @Inject constructor(
 
             _uiState.update { it.copy(isLoading = false) }
         }
-    }
-
-    companion object {
-        private const val ETC_REASON = "기타"
-
-        private val REASON_CODE_MAP: Map<String, String> = mapOf(
-            "욕설·혐오 표현이 포함된 콘텐츠" to "ABUSE",
-            "음란하거나 선정적인 콘텐츠" to "OBSCENE",
-            "광고·홍보 또는 스팸성 콘텐츠" to "SPAM",
-            "저작권을 침해한 콘텐츠" to "COPYRIGHT",
-            ETC_REASON to "OTHER",
-        )
     }
 }

@@ -48,6 +48,7 @@ fun CollectionReportRoute(
 
     CollectionReportScreen(
         paddingValues = paddingValues,
+        isLoading = uiState.isLoading,
         selectedReportReason = uiState.selectedReportReason,
         reportText = uiState.reportText,
         onReportReasonSelected = viewModel::selectReportReason,
@@ -60,9 +61,10 @@ fun CollectionReportRoute(
 @Composable
 private fun CollectionReportScreen(
     paddingValues: PaddingValues,
-    selectedReportReason: String?,
+    isLoading: Boolean,
+    selectedReportReason: ReportReason?,
     reportText: String,
-    onReportReasonSelected: (String) -> Unit,
+    onReportReasonSelected: (ReportReason) -> Unit,
     onReportTextChanged: (String) -> Unit,
     onCancelClick: () -> Unit,
     onSubmitClick: () -> Unit,
@@ -116,9 +118,9 @@ private fun CollectionReportScreen(
             }
         }
 
-        val isEnabled = when (selectedReportReason) {
+        val isEnabled = !isLoading && when (selectedReportReason) {
             null -> false
-            "기타" -> reportText.trim().length >= 2
+            ReportReason.OTHER -> reportText.trim().length >= 2
             else -> true
         }
 
@@ -134,11 +136,12 @@ private fun CollectionReportScreen(
 @Composable
 private fun CollectionReportScreenPreview() {
     FlintTheme {
-        var selectedReportReason: String? by remember { mutableStateOf(null) }
+        var selectedReportReason: ReportReason? by remember { mutableStateOf(null) }
         var reportText: String by remember { mutableStateOf("") }
 
         CollectionReportScreen(
             paddingValues = PaddingValues(),
+            isLoading = false,
             selectedReportReason = selectedReportReason,
             reportText = reportText,
             onReportReasonSelected = { selectedReportReason = it },
