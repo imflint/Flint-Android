@@ -23,6 +23,7 @@ data class EditProfileUiState(
     }
 
     val isNicknameChanged: Boolean get() = nickname != initialNickname
+    val isImageChanged: Boolean get() = profileImageUri != null || isProfileImageDeleted
     val isLengthValid: Boolean get() = nickname.length >= MIN_LENGTH
 
     val hasStandaloneKorean: Boolean
@@ -38,9 +39,10 @@ data class EditProfileUiState(
     val canCheckNickname: Boolean get() = isLengthValid && isFormatValid && isNicknameChanged && !hasStandaloneKorean
 
     val canComplete: Boolean get() = when {
-        !isNicknameChanged -> true
-        !isLengthValid || !isFormatValid || hasStandaloneKorean -> false
-        else -> isNicknameAvailable == true
+        !isNicknameChanged && !isImageChanged -> false
+        isNicknameChanged && (!isLengthValid || !isFormatValid || hasStandaloneKorean) -> false
+        isNicknameChanged -> isNicknameAvailable == true
+        else -> true
     }
 }
 

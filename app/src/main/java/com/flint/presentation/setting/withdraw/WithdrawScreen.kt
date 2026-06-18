@@ -74,7 +74,6 @@ private fun WithdrawScreen(
 
         Column(
             modifier = Modifier
-                .weight(1f)
                 .padding(horizontal = 28.dp),
         ) {
             Spacer(modifier = Modifier.height(12.dp))
@@ -131,7 +130,7 @@ private fun WithdrawScreen(
 }
 
 @Composable
-private fun WithdrawNoticeList() {
+private fun WithdrawNoticeList(modifier: Modifier = Modifier) {
     val notices = listOf(
         "회원 탈퇴 시 즉시 탈퇴 처리되며, 서비스 이용이 제한됩니다.",
         "저장한 작품 및 등록한 컬렉션, 취향 키워드 등 모든 이용 기록이 삭제되며, 다시 복구할 수 없습니다.",
@@ -139,7 +138,7 @@ private fun WithdrawNoticeList() {
         "관련 법령에 따라 일부 정보는 일정 기간 보관될 수 있으며, 해당 정보는 법적 의무 이외의 목적으로 사용되지 않습니다.",
     )
 
-    Column {
+    Column(modifier = modifier) {
         notices.forEachIndexed { index, text ->
             Row {
                 Text(
