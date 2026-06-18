@@ -63,6 +63,7 @@ fun CollectionDetailRoute(
     navigateUp: () -> Unit,
     navigateUpWithDeleteSuccess: () -> Unit,
     navigateToCollectionEdit: (collectionId: String) -> Unit,
+    navigateToCollectionReport: (collectionId: String) -> Unit,
     targetImageUrl: String? = null,
     showEditSuccessToast: Boolean = false,
     viewModel: CollectionDetailViewModel = hiltViewModel(),
@@ -114,7 +115,7 @@ fun CollectionDetailRoute(
                     showDeleteModal = true
                 },
                 onReportClick = {
-                    // TODO: 신고(Route.CollectionReport) 화면 복구 후 navigateToCollectionReport(collectionDetail.id) 연결
+                    navigateToCollectionReport(collectionDetail.id)
                 },
             )
         }
