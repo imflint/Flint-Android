@@ -1,7 +1,7 @@
 package com.flint.core.designsystem.component.image
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import com.flint.core.common.extension.noRippleClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -43,7 +43,7 @@ fun SelectedContentItem(
                 Modifier
                     .align(Alignment.TopEnd)
                     .size(48.dp)
-                    .clickable { onRemoveClick() },
+                    .noRippleClickable { onRemoveClick() },
         )
     }
 }
