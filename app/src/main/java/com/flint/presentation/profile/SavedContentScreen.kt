@@ -146,12 +146,12 @@ fun SavedContentScreen(
             onClearAction = onClearSearch,
         )
 
-        // "총 n개"는 실제 데이터가 있는 Success 상태에서만 노출
-        if (uiState.contents is UiState.Success) {
+        // "총 n개"는 검색 결과가 있을 때만 노출
+        if (uiState.contents is UiState.Success && uiState.filteredContents.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "총 ${uiState.totalCount}개",
+                text = "총 ${uiState.filteredContents.size}개",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 color = FlintTheme.colors.gray100,
                 style = FlintTheme.typography.body2R14,
