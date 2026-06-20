@@ -93,7 +93,7 @@ class SavedContentViewModel @Inject constructor(
                         val currentList = (state.contents as? UiState.Success)?.data
                             ?: return@update state
                         val updated = currentList.copy(
-                            totalCount = currentList.totalCount + if (isBookmarked) 1 else -1,
+                            totalCount = maxOf(0, currentList.totalCount + if (isBookmarked) 1 else -1),
                             contents = currentList.contents
                                 .map { if (it.id == contentId) it.copy(isBookmarked = isBookmarked) else it }
                                 .toPersistentList()
