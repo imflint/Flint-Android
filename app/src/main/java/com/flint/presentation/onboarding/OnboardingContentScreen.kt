@@ -290,7 +290,7 @@ fun OnboardingContentScreen(
                             contentAlignment = Alignment.Center,
                         ) {
                             FlintSearchEmptyView(
-                                title = "아직 준비 중인 작품이이요"
+                                title = "아직 준비 중인 작품이에요"
                             )
                         }
                     }
