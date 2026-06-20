@@ -141,10 +141,21 @@ fun OnboardingContentScreen(
             // 타이틀 영역 - 스크롤됨
             item(span = { GridItemSpan(3) }) {
                 Column {
+                    var useMultiLine by remember(nickname) { mutableStateOf(false) }
                     Text(
-                        text = "${nickname}님이 좋아하는 작품\n7개를 골라주세요",
+                        text = if (useMultiLine) {
+                            "${nickname}님이\n좋아하는 작품\n7개를 골라주세요"
+                        } else {
+                            "${nickname}님이 좋아하는 작품\n7개를 골라주세요"
+                        },
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.display2M28,
+                        onTextLayout = { result ->
+                            // 2줄 포맷인데 실제 렌더링이 3줄 이상이면 자연 줄바꿈 발생한 것
+                            if (!useMultiLine && result.lineCount > 2) {
+                                useMultiLine = true
+                            }
+                        },
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
