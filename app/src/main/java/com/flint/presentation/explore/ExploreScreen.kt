@@ -179,7 +179,7 @@ private fun ExplorePageItem(
                 text = contentDescription,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.body1R16,
-                maxLines = 8,
+                maxLines = 4,
                 overflow = TextOverflow.Ellipsis
             )
 
