@@ -13,10 +13,12 @@ fun NavController.navigateToEditProfile(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.editProfileNavGraph(
     navigateUp: () -> Unit,
+    onProfileSaved: () -> Unit = {},
 ) {
     composable<Route.EditProfile> {
         EditProfileRoute(
             navigateUp = navigateUp,
+            onProfileSaved = onProfileSaved,
         )
     }
 }

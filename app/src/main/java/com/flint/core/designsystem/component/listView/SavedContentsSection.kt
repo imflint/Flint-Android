@@ -27,6 +27,7 @@ import com.flint.core.designsystem.component.listItem.SavedContentItem
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.content.BookmarkedContentListModel
 import com.flint.domain.model.content.ContentModel
+import com.flint.domain.type.OttType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -96,7 +97,6 @@ fun SavedContentsSection(
                 SavedContentItem(
                     contentModel = item,
                     onItemClick = { contentId ->
-
                         onItemClick(contentId)
                     },
                 )

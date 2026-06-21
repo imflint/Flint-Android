@@ -22,6 +22,8 @@ import com.flint.presentation.explore.navigation.exploreNavGraph
 import com.flint.presentation.home.navigation.homeNavGraph
 import com.flint.presentation.login.navigation.loginNavGraph
 import com.flint.presentation.onboarding.navigation.onBoardingNavGraph
+import com.flint.core.navigation.MainTabRoute
+import com.flint.presentation.profile.navigation.KEY_PROFILE_UPDATED
 import com.flint.presentation.profile.navigation.myProfileNavGraph
 import com.flint.presentation.profile.navigation.profileNavGraph
 import com.flint.presentation.savedcontent.navigation.savedContentListNavGraph
@@ -144,6 +146,15 @@ fun MainNavHost(
 
             editProfileNavGraph(
                 navigateUp = navigator::navigateUp,
+                onProfileSaved = {
+                    try {
+                        navigator.navController
+                            .getBackStackEntry(MainTabRoute.Profile)
+                            .savedStateHandle[KEY_PROFILE_UPDATED] = true
+                    } catch (_: IllegalArgumentException) {
+                        // MainTabRoute.Profile이 백스택에 없는 경우 무시
+                    }
+                },
             )
 
             withdrawNavGraph(

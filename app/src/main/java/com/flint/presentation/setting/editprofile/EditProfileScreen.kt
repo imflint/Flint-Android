@@ -54,6 +54,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun EditProfileRoute(
     navigateUp: () -> Unit,
+    onProfileSaved: () -> Unit = {},
     viewModel: EditProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,7 +64,10 @@ fun EditProfileRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.navigateUp.collect { navigateUp() }
+        viewModel.navigateUp.collect {
+            onProfileSaved()
+            navigateUp()
+        }
     }
 
     EditProfileScreen(

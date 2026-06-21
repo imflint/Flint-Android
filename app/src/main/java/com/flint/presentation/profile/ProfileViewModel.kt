@@ -149,6 +149,17 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
+    // 프로필 헤더만 재조회 (섹션 데이터는 유지)
+    fun reloadUserProfile() {
+        viewModelScope.launch {
+            userRepository.getUserProfile(userId = userId)
+                .onSuccess { profile ->
+                    _uiState.update { it.copy(profile = profile) }
+                }
+                .onFailure { Timber.e(it) }
+        }
+    }
+
     fun recalculateKeywords() = viewModelScope.launch {
         _uiState.update { it.copy(isRecalculating = true) }
         userRepository.recalculateKeywords()
