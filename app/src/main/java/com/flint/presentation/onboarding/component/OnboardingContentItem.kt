@@ -85,7 +85,7 @@ fun OnboardingContentItem(
 
         // 영화 제목
         Text(
-            text = title,
+            text = title.addKoreanLineBreaks(),
             style = FlintTheme.typography.body1R16,
             color = FlintTheme.colors.white,
             maxLines = 2,
@@ -112,6 +112,15 @@ fun OnboardingContentItem(
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )
+    }
+}
+
+// 한글 음절 사이에 zero-width space(U+200B)를 삽입해 줄바꿈 기회를 추가
+// → 공간이 남아있으면 단어 경계가 아닌 글자 경계에서 줄바꿈 가능
+private fun String.addKoreanLineBreaks(): String = buildString {
+    for (char in this@addKoreanLineBreaks) {
+        append(char)
+        if (char.code in 0xAC00..0xD7A3) append('​')
     }
 }
 

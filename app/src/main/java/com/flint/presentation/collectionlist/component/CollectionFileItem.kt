@@ -66,7 +66,7 @@ fun CollectionFileItem(
                 .padding(horizontal = 8.dp),
         ) {
             Text(
-                text = collection.title,
+                text = collection.title.addKoreanLineBreaks(),
                 style = FlintTheme.typography.body1M16,
                 color = FlintTheme.colors.white,
                 maxLines = 2,
@@ -74,7 +74,7 @@ fun CollectionFileItem(
             )
 
             Text(
-                text = collection.description,
+                text = collection.description.addKoreanLineBreaks(),
                 style = FlintTheme.typography.caption1R12,
                 color = FlintTheme.colors.gray300,
                 maxLines = 2,
@@ -206,6 +206,13 @@ private fun CollectionPocketPoster(
             .size(width = 80.dp, height = 120.dp)
             .clip(RoundedCornerShape(12.dp)),
     )
+}
+
+private fun String.addKoreanLineBreaks(): String = buildString {
+    for (char in this@addKoreanLineBreaks) {
+        append(char)
+        if (char.code in 0xAC00..0xD7A3) append('​')
+    }
 }
 
 @Preview(showBackground = false)
