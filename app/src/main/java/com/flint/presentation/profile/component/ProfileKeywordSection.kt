@@ -110,7 +110,7 @@ fun ProfileKeywordSection(
             )
             if (isMyProfile && showInfoModal) {
                 InfoModalTrigger(
-                    text = "저장한 작품들에서 반복되는 키워드를 분석해 취향 키워드를 만들어요. 10개 이상 작품이 쌓이면 업데이트할 수 있어요.",
+                    text = "저장한 작품들에서 반복되는 키워드를 분석해 취향 키워드를 만들어요. 20개 이상 작품이 쌓이면 업데이트할 수 있어요.",
                     modifier = Modifier
                         .fillMaxWidth()
                         .offset(y = (-20).dp),
