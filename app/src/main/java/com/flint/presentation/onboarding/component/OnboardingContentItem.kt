@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
+import com.flint.core.common.extension.addKoreanLineBreaks
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintColors
 import com.flint.core.designsystem.theme.FlintTheme
@@ -40,6 +42,8 @@ fun OnboardingContentItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val displayTitle = remember(title) { title.addKoreanLineBreaks() }
+
     Column(
         modifier = modifier.width(100.dp),
         horizontalAlignment = Alignment.Start,
@@ -85,7 +89,7 @@ fun OnboardingContentItem(
 
         // 영화 제목
         Text(
-            text = title.addKoreanLineBreaks(),
+            text = displayTitle,
             style = FlintTheme.typography.body1R16,
             color = FlintTheme.colors.white,
             maxLines = 2,
@@ -112,15 +116,6 @@ fun OnboardingContentItem(
             maxLines = 1,
             modifier = Modifier.fillMaxWidth(),
         )
-    }
-}
-
-// 한글 음절 사이에 zero-width space(U+200B)를 삽입해 줄바꿈 기회를 추가
-// → 공간이 남아있으면 단어 경계가 아닌 글자 경계에서 줄바꿈 가능
-private fun String.addKoreanLineBreaks(): String = buildString {
-    for (char in this@addKoreanLineBreaks) {
-        append(char)
-        if (char.code in 0xAC00..0xD7A3) append('​')
     }
 }
 
