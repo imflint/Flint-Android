@@ -2,9 +2,11 @@ package com.flint.presentation.setting
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -111,7 +114,20 @@ private fun SettingScreen(
             SettingMenuItem(
                 label = "계정",
                 trailingContent = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        uiState.email?.let { email ->
+                            Text(
+                                text = email,
+                                style = FlintTheme.typography.body2R14,
+                                color = FlintTheme.colors.gray100,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false),
+                            )
+                        }
                         Image(
                             painter = painterResource(R.drawable.ic_kakao_full),
                             contentDescription = null,
@@ -226,7 +242,7 @@ private fun SettingMenuItem(
     modifier: Modifier = Modifier,
     verticalPadding: Dp = 18.dp,
     onClick: () -> Unit = {},
-    trailingContent: @Composable () -> Unit = {},
+    trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -253,6 +269,7 @@ private fun SettingScreenPreview() {
             uiState = SettingUiState(
                 nickname = "한비두비세비",
                 profileImageUrl = null,
+                email = "flint@kakao.com",
             ),
             onBackClick = {},
             onEditProfileClick = {},

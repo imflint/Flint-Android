@@ -13,6 +13,9 @@ data class UserProfileResponseDto(
     val isFliner: Boolean,
     @SerialName("nickname")
     val nickname: String,
+    // 내 프로필(/users/me) 응답에만 존재, 이메일 미보유 시 null
+    @SerialName("email")
+    val email: String? = null,
     @SerialName("keywordRecalculatable")
     val keywordRecalculatable: Boolean = false,
 )
