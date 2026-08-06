@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
+import com.flint.core.common.extension.addKoreanLineBreaks
 import com.flint.core.common.extension.dropShadow
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.core.designsystem.component.image.NetworkImage
@@ -42,6 +44,9 @@ fun CollectionFileItem(
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val displayTitle = remember(collection.title) { collection.title.addKoreanLineBreaks() }
+    val displayDescription = remember(collection.description) { collection.description.addKoreanLineBreaks() }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier,
@@ -66,7 +71,7 @@ fun CollectionFileItem(
                 .padding(horizontal = 8.dp),
         ) {
             Text(
-                text = collection.title,
+                text = displayTitle,
                 style = FlintTheme.typography.body1M16,
                 color = FlintTheme.colors.white,
                 maxLines = 2,
@@ -74,7 +79,7 @@ fun CollectionFileItem(
             )
 
             Text(
-                text = collection.description,
+                text = displayDescription,
                 style = FlintTheme.typography.caption1R12,
                 color = FlintTheme.colors.gray300,
                 maxLines = 2,

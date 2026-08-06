@@ -49,6 +49,7 @@ import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
@@ -296,7 +297,16 @@ fun OnboardingContentScreen(
                     }
                 }
                 is UiState.Loading -> {
-                    // 로딩
+                    item(span = { GridItemSpan(3) }) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            FlintLoadingIndicator()
+                        }
+                    }
                 }
                 is UiState.Success -> {
                     if (searchResultsState.data.isEmpty()) {
