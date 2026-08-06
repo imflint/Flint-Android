@@ -85,7 +85,7 @@ fun HomeRoute(
                 onFamousCollectionItemClick = { navigateToCollectionDetail(it) },
                 onFamousCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.FAMOUS) },
                 onRecommendCollectionItemClick = { navigateToCollectionDetail(it) },
-                onSavedContentItemClick = { viewModel.getOttListPerContent(it) },
+                onSavedContentItemClick = { viewModel.showOttList(it) },
                 modifier = Modifier.padding(paddingValues),
             )
         }

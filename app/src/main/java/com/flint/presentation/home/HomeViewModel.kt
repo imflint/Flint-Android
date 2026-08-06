@@ -7,7 +7,8 @@ import com.flint.core.common.util.UiState
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
-import com.flint.domain.repository.ContentRepository
+import com.flint.domain.model.ott.OttListModel
+import com.flint.domain.model.ott.OttModel
 import com.flint.domain.repository.HomeRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.home.sideeffect.HomeSideEffect
@@ -30,7 +31,6 @@ class HomeViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val homeRepository: HomeRepository,
     private val userRepository: UserRepository,
-    private val contentRepository: ContentRepository,
 ) : ViewModel() {
 
     private val _userName = preferencesManager.getString(USER_NAME)
@@ -93,10 +93,22 @@ class HomeViewModel @Inject constructor(
             .onFailure { Timber.e(it.message) }
     }
 
-    fun getOttListPerContent(contentId: String) = viewModelScope.launch {
-        contentRepository.getOttListPerContent(contentId)
-            .onSuccess { _homeSideEffect.emit(HomeSideEffect.ShowOttListBottomSheet(it)) }
-            .onFailure { Timber.e(it.message) }
+    // 콘텐츠별 OTT 목록 API(/contents/ott/{id})가 빈 배열만 반환하므로
+    // 이미 로드된 북마크 목록의 OTT 정보를 사용한다.
+    // 프로필/저장한 콘텐츠 화면도 동일하게 getOttSimpleList를 쓴다.
+    fun showOttList(contentId: String) = viewModelScope.launch {
+        val otts = (_bookmarkedContentListLoadState.value as? UiState.Success)
+            ?.data
+            ?.contents
+            ?.find { it.id == contentId }
+            ?.getOttSimpleList
+            .orEmpty()
+
+        _homeSideEffect.emit(
+            HomeSideEffect.ShowOttListBottomSheet(
+                OttListModel(otts = otts.map { OttModel(name = it.name) }),
+            ),
+        )
     }
 
     companion object {
