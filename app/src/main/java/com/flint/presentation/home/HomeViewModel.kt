@@ -13,6 +13,7 @@ import com.flint.domain.repository.UserRepository
 import com.flint.presentation.home.sideeffect.HomeSideEffect
 import com.flint.presentation.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -71,7 +72,18 @@ class HomeViewModel @Inject constructor(
 
     fun getBookmarkedContentList() = viewModelScope.launch {
         userRepository.getUserBookmarkedContents(userId = null)
-            .onSuccess { _bookmarkedContentListLoadState.emit(UiState.Success(it)) }
+            .onSuccess { bookmarkedContents ->
+                // 홈에서는 최근 저장한 콘텐츠 10개까지만 노출 (전체 목록은 프로필 > 저장한 콘텐츠에서 확인)
+                _bookmarkedContentListLoadState.emit(
+                    UiState.Success(
+                        bookmarkedContents.copy(
+                            contents = bookmarkedContents.contents
+                                .take(MAX_SAVED_CONTENT_COUNT)
+                                .toImmutableList(),
+                        ),
+                    ),
+                )
+            }
             .onFailure { Timber.e(it.message) }
     }
 
@@ -85,5 +97,9 @@ class HomeViewModel @Inject constructor(
         contentRepository.getOttListPerContent(contentId)
             .onSuccess { _homeSideEffect.emit(HomeSideEffect.ShowOttListBottomSheet(it)) }
             .onFailure { Timber.e(it.message) }
+    }
+
+    companion object {
+        private const val MAX_SAVED_CONTENT_COUNT = 10
     }
 }
