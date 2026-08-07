@@ -18,13 +18,16 @@ import com.flint.domain.repository.UserRepository
 import com.flint.domain.type.FileExtension
 import com.flint.domain.type.OttType
 import com.flint.domain.type.StoragePathType
+import com.flint.presentation.onboarding.event.OnboardingProfileEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -61,6 +64,11 @@ class OnboardingViewModel
     private val _signupUiState = MutableStateFlow(OnboardingSignupUiState())
     val signupUiState: StateFlow<OnboardingSignupUiState> = _signupUiState.asStateFlow()
 
+    // 닉네임 검사 결과 토스트는 상태가 아니라 1회성 이벤트로 내려줘야
+    // 화면 재진입(예: Done에서 뒤로가기) 시 토스트가 재발생하지 않는다.
+    private val _profileEvent = MutableSharedFlow<OnboardingProfileEvent>()
+    val profileEvent = _profileEvent.asSharedFlow()
+
     private var searchJob: Job? = null
 
     // ---------- onboarding terms ----------
@@ -90,14 +98,29 @@ class OnboardingViewModel
     fun updateNickname(nickname: String) {
         if (nickname.length <= OnboardingProfileUiState.MAX_LENGTH) {
             val isFormatValid = OnboardingProfileUiState.isValidFormat(nickname)
+            val previousErrorType = _uiState.value.nicknameErrorType
+            val newErrorType = if (!isFormatValid && nickname.isNotEmpty()) NicknameErrorType.INVALID_FORMAT else null
+
             _uiState.update { currentState ->
                 currentState.copy(
                     nickname = nickname,
                     isValid = nickname.length >= OnboardingProfileUiState.MIN_LENGTH,
                     isFormatValid = isFormatValid,
                     isNicknameAvailable = null,
-                    nicknameErrorType = if (!isFormatValid && nickname.isNotEmpty()) NicknameErrorType.INVALID_FORMAT else null,
+                    nicknameErrorType = newErrorType,
                 )
+            }
+
+            // 형식 오류가 새로 발생했을 때만 토스트 이벤트 발행 (같은 오류 유지 중엔 재발행 안 함)
+            if (newErrorType == NicknameErrorType.INVALID_FORMAT && previousErrorType != NicknameErrorType.INVALID_FORMAT) {
+                viewModelScope.launch {
+                    _profileEvent.emit(
+                        OnboardingProfileEvent.ShowNicknameToast(
+                            message = "사용할 수 없는 닉네임입니다",
+                            isSuccess = false,
+                        )
+                    )
+                }
             }
         }
     }
@@ -122,6 +145,21 @@ class OnboardingViewModel
                         },
                     )
                 }
+
+                // 버튼 클릭 시점에만 발행되는 1회성 이벤트라 화면 재진입 시엔 다시 뜨지 않음
+                _profileEvent.emit(
+                    if (result.isAvailable) {
+                        OnboardingProfileEvent.ShowNicknameToast(
+                            message = "사용 가능한 닉네임입니다",
+                            isSuccess = true,
+                        )
+                    } else {
+                        OnboardingProfileEvent.ShowNicknameToast(
+                            message = "이미 사용 중인 닉네임입니다",
+                            isSuccess = false,
+                        )
+                    }
+                )
             }
         }
     }
