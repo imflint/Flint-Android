@@ -48,7 +48,7 @@ import com.flint.domain.model.terms.TermModel
 fun OnboardingTermsRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToOnboardingProfile: () -> Unit,
+    navigateToOnboardingContent: () -> Unit,
     viewModel: OnboardingViewModel,
 ) {
     val termsUiState by viewModel.termsUiState.collectAsStateWithLifecycle()
@@ -62,7 +62,7 @@ fun OnboardingTermsRoute(
         onBackClick = navigateUp,
         onAgreeClick = { agreedIds ->
             viewModel.agreeToTerms(agreedIds)
-            navigateToOnboardingProfile()
+            navigateToOnboardingContent()
         },
         modifier = Modifier.padding(paddingValues),
     )

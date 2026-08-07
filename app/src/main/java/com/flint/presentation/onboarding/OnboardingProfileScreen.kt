@@ -56,7 +56,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 @Composable
 fun OnboardingProfileRoute(
     paddingValues: PaddingValues,
-    navigateToOnboardingContent: () -> Unit,
+    navigateToOnboardingDone: () -> Unit,
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
@@ -76,7 +76,7 @@ fun OnboardingProfileRoute(
         onCheckNickname = viewModel::checkNicknameDuplication,
         onProfileImageSelected = viewModel::updateProfileImage,
         onBackClick = navigateUp,
-        onNextClick = navigateToOnboardingContent,
+        onNextClick = navigateToOnboardingDone,
         modifier = Modifier
             .padding(paddingValues)
             .consumeWindowInsets(paddingValues),

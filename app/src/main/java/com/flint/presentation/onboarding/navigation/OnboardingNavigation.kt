@@ -58,9 +58,20 @@ fun NavGraphBuilder.onBoardingNavGraph(
             OnboardingTermsRoute(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
-                navigateToOnboardingProfile = navController::navigateToOnboardingProfile,
+                navigateToOnboardingContent = navController::navigateToOnboardingContent,
                 viewModel = sharedViewModel,
             )
+        }
+
+            composable<Route.OnboardingContent> { backStackEntry ->
+            val sharedViewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+
+            OnboardingContentRoute(
+                paddingValues = paddingValues,
+                navigateUp = navController::navigateUp,
+                navigateToOnboardingProfile = navController::navigateToOnboardingProfile,
+                viewModel = sharedViewModel,
+                )
         }
 
         composable<Route.OnboardingProfile> { backStackEntry ->
@@ -69,20 +80,9 @@ fun NavGraphBuilder.onBoardingNavGraph(
             OnboardingProfileRoute(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
-                navigateToOnboardingContent = navController::navigateToOnboardingContent,
-                viewModel = sharedViewModel,
-            )
-        }
-
-        composable<Route.OnboardingContent> { backStackEntry ->
-            val sharedViewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
-
-            OnboardingContentRoute(
-                paddingValues = paddingValues,
-                navigateUp = navController::navigateUp,
                 navigateToOnboardingDone = navController::navigateToOnboardingDone,
                 viewModel = sharedViewModel,
-                )
+            )
         }
 
         composable<Route.OnboardingOtt> { backStackEntry ->
