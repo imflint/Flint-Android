@@ -135,22 +135,11 @@ fun OnboardingContentScreen(
         ) {
             // 타이틀 영역 - 스크롤됨
             item(span = { GridItemSpan(3) }) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    var isSingleLine by remember { mutableStateOf(true) }
+                Column {
                     Text(
-                        text = if (isSingleLine) {
-                            "좋아하는 작품 7개를 골라주세요"
-                        } else {
-                            "좋아하는 작품\n7개를 골라주세요"
-                        },
+                        text = "내 취향에 가까운 작품\n7개를 골라주세요",
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.display2M28,
-                        onTextLayout = { result ->
-                            // 좌우 16dp 패딩 안에서 한 줄로 안 들어가면(자연 줄바꿈 발생) 수동 줄바꿈으로 전환
-                            if (isSingleLine && result.lineCount > 1) {
-                                isSingleLine = false
-                            }
-                        },
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
