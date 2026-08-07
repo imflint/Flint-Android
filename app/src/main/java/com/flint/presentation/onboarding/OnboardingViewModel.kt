@@ -135,6 +135,9 @@ class OnboardingViewModel
 
         viewModelScope.launch {
             userRepository.checkNickname(currentNickname).onSuccess { result ->
+                // 응답이 오는 사이 닉네임이 바뀌었다면 이미 stale한 결과이므로 반영하지 않음
+                if (currentNickname != _uiState.value.nickname) return@onSuccess
+
                 _uiState.update { currentState ->
                     currentState.copy(
                         isNicknameAvailable = result.isAvailable,
