@@ -1,5 +1,6 @@
 package com.flint.presentation.collectiondetail.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,9 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.R
 import com.flint.core.designsystem.component.button.FlintSaveDoneButton
 import com.flint.core.designsystem.component.button.FlintSaveNoneButton
 import com.flint.core.designsystem.component.image.NetworkImage
@@ -25,7 +28,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
 fun CollectionDetailThumbnail(
-    thumbnailImage: String,
+    thumbnailImage: String?,
     title: String,
     isBookmarked: Boolean,
     isMine: Boolean,
@@ -42,12 +45,21 @@ fun CollectionDetailThumbnail(
                 .fillMaxWidth()
                 .aspectRatio(360f / 270f),
     ) {
-        NetworkImage(
-            imageUrl = thumbnailImage,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds,
-        )
+        if (thumbnailImage.isNullOrBlank()) {
+            Image(
+                painter = painterResource(R.drawable.img_collection_bg1),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillBounds,
+            )
+        } else {
+            NetworkImage(
+                imageUrl = thumbnailImage,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillBounds,
+            )
+        }
 
         CollectionDetailTopAppBar(
             isMine = isMine,

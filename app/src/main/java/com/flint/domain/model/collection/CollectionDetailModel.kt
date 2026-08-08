@@ -11,7 +11,7 @@ data class CollectionDetailModelNew(
     val createdAt: LocalDate,
     val description: String,
     val id: String,
-    val thumbnailUrl: String,
+    val thumbnailUrl: String?,
     val isBookmarked: Boolean,
     val isPublic: Boolean,
     val title: String,

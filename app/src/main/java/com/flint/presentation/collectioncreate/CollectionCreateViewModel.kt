@@ -136,7 +136,7 @@ class CollectionCreateViewModel @Inject constructor(
                         )
                     }
 
-                    val thumbnailUrl = detail.thumbnailUrl.ifBlank { null }
+                    val thumbnailUrl = detail.thumbnailUrl?.ifBlank { null }
                     val originalDetails = detail.contents.associate { content ->
                         content.id to Pair(content.isSpoiler, content.reason)
                     }

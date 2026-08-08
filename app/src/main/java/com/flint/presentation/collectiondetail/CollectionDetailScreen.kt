@@ -250,7 +250,7 @@ fun CollectionDetailRoute(
 @Composable
 fun CollectionDetailScreen(
     paddingValues: PaddingValues,
-    thumbnailUrl: String,
+    thumbnailUrl: String?,
     title: String,
     isBookmarked: Boolean,
     authorNickname: String,

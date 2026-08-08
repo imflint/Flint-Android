@@ -10,7 +10,7 @@ data class CollectionDetailResponseDto(
     @SerialName("createdAt") val createdAt: String,
     @SerialName("description") val description: String,
     @SerialName("id") val id: String,
-    @SerialName("thumbnailUrl") val thumbnailUrl: String,
+    @SerialName("thumbnailUrl") val thumbnailUrl: String? = null,
     @SerialName("isBookmarked") val isBookmarked: Boolean,
     @SerialName("isPublic") val isPublic: Boolean,
     @SerialName("title") val title: String,
