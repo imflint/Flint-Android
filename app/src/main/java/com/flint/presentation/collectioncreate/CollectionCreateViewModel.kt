@@ -339,6 +339,10 @@ class CollectionCreateViewModel @Inject constructor(
         _uiState.update { it.copy(thumbnailImageUri = uri) }
     }
 
+    fun deleteThumbnail() {
+        _uiState.update { it.copy(thumbnailImageUri = null, existingThumbnailUrl = null) }
+    }
+
     fun addContentImageUri(contentId: String, uri: Uri) {
         _uiState.update { state ->
             val current = state.contentDetailsMap[contentId] ?: ContentDetail()

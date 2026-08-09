@@ -1,6 +1,7 @@
 package com.flint.presentation.collectiondetail.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,13 +31,8 @@ fun CollectionDetailThumbnail(
     thumbnailImage: String?,
     title: String,
     isBookmarked: Boolean,
-    isMine: Boolean,
-    onBackClick: () -> Unit,
     onSaveDoneButtonClick: () -> Unit,
     onSaveNoneButtonClick: () -> Unit,
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -61,13 +56,10 @@ fun CollectionDetailThumbnail(
             )
         }
 
-        CollectionDetailTopAppBar(
-            isMine = isMine,
-            onBackClick = onBackClick,
-            onEditClick = onEditClick,
-            onDeleteClick = onDeleteClick,
-            onReportClick = onReportClick,
-            backgroundColor = Color.Transparent,
+        Box(
+            modifier = Modifier
+                    .fillMaxSize()
+                    .background(FlintTheme.colors.thumbnailGradient),
         )
 
         Column(
@@ -112,13 +104,8 @@ private fun ThumbnailPreview() {
                 thumbnailImage = "",
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기".repeat(2),
                 isBookmarked = true,
-                isMine = true,
-                onBackClick = {},
                 onSaveDoneButtonClick = {},
                 onSaveNoneButtonClick = {},
-                onEditClick = {},
-                onDeleteClick = {},
-                onReportClick = {},
             )
 
             Spacer(Modifier.height(20.dp))
@@ -127,13 +114,8 @@ private fun ThumbnailPreview() {
                 thumbnailImage = "https://buly.kr/DEaVFRZ",
                 title = "한번 보면 못 빠져나오는 여운남는 사랑이야기",
                 isBookmarked = false,
-                isMine = false,
-                onBackClick = {},
                 onSaveDoneButtonClick = {},
                 onSaveNoneButtonClick = {},
-                onEditClick = {},
-                onDeleteClick = {},
-                onReportClick = {},
             )
         }
     }

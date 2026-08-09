@@ -112,7 +112,7 @@ fun CollectionCreateRoute(
         onAddContentClick = navigateToAddContent,
         onFinishClick = viewModel::onClickFinish,
         onGalleryClick = { galleryLauncher.launch("image/*") },
-        onThumbnailDelete = { viewModel.updateThumbnailImageUri(null) },
+        onThumbnailDelete = viewModel::deleteThumbnail,
         onSelectContentImage = { contentId ->
             val currentCount = uiState.contentDetailsMap[contentId]?.contentImageUris?.size ?: 0
             if (currentCount < 5) {

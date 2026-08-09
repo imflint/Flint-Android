@@ -2,6 +2,7 @@ package com.flint.presentation.collectiondetail
 
 import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +23,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -46,6 +49,7 @@ import com.flint.core.designsystem.component.modal.OneButtonModal
 import com.flint.presentation.collectiondetail.component.CollectionDetailDeleteModal
 import com.flint.presentation.collectiondetail.component.CollectionDetailDescription
 import com.flint.presentation.collectiondetail.component.CollectionDetailThumbnail
+import com.flint.presentation.collectiondetail.component.CollectionDetailTopAppBar
 import com.flint.presentation.collectiondetail.component.CollectionDetailContent
 import com.flint.presentation.collectiondetail.component.PeopleWhoSavedThisCollection
 import com.flint.presentation.collectiondetail.sideeffect.CollectionDetailSideEffect
@@ -55,7 +59,7 @@ import kotlinx.collections.immutable.persistentListOf
 import java.time.format.DateTimeFormatter
 
 private const val DATE_FORMAT_TO_SHOW = "yyyy. MM. dd."
-private const val CONTENT_LIST_HEADER_ITEM_COUNT = 1
+private const val CONTENT_LIST_HEADER_ITEM_COUNT = 2
 
 @Composable
 fun CollectionDetailRoute(
@@ -297,32 +301,27 @@ fun CollectionDetailScreen(
             )
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(color = FlintTheme.colors.background),
         ) {
-            // 썸네일 영역은 스크롤해도 화면 상단에 고정
-            CollectionDetailThumbnail(
-                thumbnailImage = thumbnailUrl,
-                title = title,
-                isBookmarked = isBookmarked,
-                isMine = isMine,
-                onBackClick = navigateUp,
-                onSaveDoneButtonClick = onSaveDoneButtonClick,
-                onSaveNoneButtonClick = onSaveNoneButtonClick,
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick,
-                onReportClick = onReportClick,
-            )
-
             LazyColumn(
                 state = lazyListState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxSize(),
             ) {
+                item {
+                    // 썸네일 영역도 나머지 콘텐츠와 함께 스크롤됨
+                    CollectionDetailThumbnail(
+                        thumbnailImage = thumbnailUrl,
+                        title = title,
+                        isBookmarked = isBookmarked,
+                        onSaveDoneButtonClick = onSaveDoneButtonClick,
+                        onSaveNoneButtonClick = onSaveNoneButtonClick,
+                    )
+                }
+
                 item {
                     Column {
                         Spacer(Modifier.height(24.dp))
@@ -368,6 +367,19 @@ fun CollectionDetailScreen(
                     CollectionCopyrightFooter()
                 }
             }
+
+            // 상단바는 스크롤과 무관하게 화면 상단에 고정
+            CollectionDetailTopAppBar(
+                isMine = isMine,
+                onBackClick = navigateUp,
+                onEditClick = onEditClick,
+                onDeleteClick = onDeleteClick,
+                onReportClick = onReportClick,
+                backgroundColor = Color.Transparent,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .background(FlintTheme.colors.navbarGradient),
+            )
         }
     }
 }
