@@ -74,6 +74,9 @@ class HomeViewModel @Inject constructor(
         userRepository.getUserBookmarkedContents(userId = null)
             .onSuccess { bookmarkedContents ->
                 // 홈에서는 최근 저장한 콘텐츠 10개까지만 노출 (전체 목록은 프로필 > 저장한 콘텐츠에서 확인)
+                // /api/v1/contents/bookmarks 가 최근 저장순으로 내려주는 것에 의존한다.
+                // 응답에 저장 시각 필드가 없어 클라이언트 재정렬은 불가하므로,
+                // 서버 정렬 기준이 바뀌면 이 로직도 함께 검토해야 한다.
                 _bookmarkedContentListLoadState.emit(
                     UiState.Success(
                         bookmarkedContents.copy(

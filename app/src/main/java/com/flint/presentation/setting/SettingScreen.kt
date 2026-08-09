@@ -251,12 +251,16 @@ private fun SettingMenuItem(
             .padding(horizontal = 20.dp, vertical = verticalPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // 라벨을 가중치 없이 먼저 측정해 trailingContent가 길어도 밀려나지 않게 한다.
+        // Spacer가 남는 폭을 흡수해 trailingContent는 우측에 붙는다.
         Text(
             text = label,
             style = FlintTheme.typography.body1M16,
             color = FlintTheme.colors.white,
-            modifier = Modifier.weight(1f),
+            // trailingContent가 폭을 가득 채워도 라벨과 붙지 않도록 최소 간격을 확보한다
+            modifier = Modifier.padding(end = 16.dp),
         )
+        Spacer(Modifier.weight(1f))
         trailingContent()
     }
 }

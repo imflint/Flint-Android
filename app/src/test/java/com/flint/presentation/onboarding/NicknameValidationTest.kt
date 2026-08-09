@@ -47,7 +47,8 @@ class NicknameValidationTest {
 
     @Test
     fun `한글 영문 숫자를 모두 섞은 닉네임을 허용한다`() {
-        assertTrue(bothAccept("플린트flint7"))
+        // MAX_LENGTH(8) 이내로 둬야 실제 입력 흐름에서 도달 가능한 값이 된다
+        assertTrue(bothAccept("플린트fl7"))
     }
 
     // ---- 기존 허용 범위 회귀 ----
