@@ -5,6 +5,7 @@ data class UserProfileResponseModel(
     val isFliner: Boolean,
     val nickname: String,
     val profileImageUrl: String?,
+    val email: String? = null,
     val keywordRecalculatable: Boolean = false,
 ) {
     companion object {

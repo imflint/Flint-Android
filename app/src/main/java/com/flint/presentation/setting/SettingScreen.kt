@@ -2,9 +2,11 @@ package com.flint.presentation.setting
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -111,7 +114,20 @@ private fun SettingScreen(
             SettingMenuItem(
                 label = "계정",
                 trailingContent = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        uiState.email?.let { email ->
+                            Text(
+                                text = email,
+                                style = FlintTheme.typography.body2R14,
+                                color = FlintTheme.colors.gray100,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f, fill = false),
+                            )
+                        }
                         Image(
                             painter = painterResource(R.drawable.ic_kakao_full),
                             contentDescription = null,
@@ -226,7 +242,7 @@ private fun SettingMenuItem(
     modifier: Modifier = Modifier,
     verticalPadding: Dp = 18.dp,
     onClick: () -> Unit = {},
-    trailingContent: @Composable () -> Unit = {},
+    trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -235,12 +251,16 @@ private fun SettingMenuItem(
             .padding(horizontal = 20.dp, vertical = verticalPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // 라벨을 가중치 없이 먼저 측정해 trailingContent가 길어도 밀려나지 않게 한다.
+        // Spacer가 남는 폭을 흡수해 trailingContent는 우측에 붙는다.
         Text(
             text = label,
             style = FlintTheme.typography.body1M16,
             color = FlintTheme.colors.white,
-            modifier = Modifier.weight(1f),
+            // trailingContent가 폭을 가득 채워도 라벨과 붙지 않도록 최소 간격을 확보한다
+            modifier = Modifier.padding(end = 16.dp),
         )
+        Spacer(Modifier.weight(1f))
         trailingContent()
     }
 }
@@ -253,6 +273,7 @@ private fun SettingScreenPreview() {
             uiState = SettingUiState(
                 nickname = "한비두비세비",
                 profileImageUrl = null,
+                email = "flint@kakao.com",
             ),
             onBackClick = {},
             onEditProfileClick = {},
