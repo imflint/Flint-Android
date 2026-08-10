@@ -63,7 +63,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
             )
         }
 
-            composable<Route.OnboardingContent> { backStackEntry ->
+        composable<Route.OnboardingContent> { backStackEntry ->
             val sharedViewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
 
             OnboardingContentRoute(
@@ -71,7 +71,7 @@ fun NavGraphBuilder.onBoardingNavGraph(
                 navigateUp = navController::navigateUp,
                 navigateToOnboardingProfile = navController::navigateToOnboardingProfile,
                 viewModel = sharedViewModel,
-                )
+            )
         }
 
         composable<Route.OnboardingProfile> { backStackEntry ->

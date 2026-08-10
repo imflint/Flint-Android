@@ -70,6 +70,7 @@ class OnboardingViewModel
     val profileEvent = _profileEvent.asSharedFlow()
 
     private var searchJob: Job? = null
+    private var nicknameCheckJob: Job? = null
 
     // ---------- onboarding terms ----------
     fun loadTerms() {
@@ -98,29 +99,17 @@ class OnboardingViewModel
     fun updateNickname(nickname: String) {
         if (nickname.length <= OnboardingProfileUiState.MAX_LENGTH) {
             val isFormatValid = OnboardingProfileUiState.isValidFormat(nickname)
-            val previousErrorType = _uiState.value.nicknameErrorType
-            val newErrorType = if (!isFormatValid && nickname.isNotEmpty()) NicknameErrorType.INVALID_FORMAT else null
 
+            // 형식 오류 토스트는 여기서 발행하지 않음 — "확인" 버튼을 눌렀을 때만 발행한다.
+            // (타이핑 중 매 글자마다 토스트가 뜨는 문제 방지. 테두리 색은 isFormatValid로 계속 즉시 반영됨)
             _uiState.update { currentState ->
                 currentState.copy(
                     nickname = nickname,
                     isValid = nickname.length >= OnboardingProfileUiState.MIN_LENGTH,
                     isFormatValid = isFormatValid,
                     isNicknameAvailable = null,
-                    nicknameErrorType = newErrorType,
+                    nicknameErrorType = if (!isFormatValid && nickname.isNotEmpty()) NicknameErrorType.INVALID_FORMAT else null,
                 )
-            }
-
-            // 형식 오류가 새로 발생했을 때만 토스트 이벤트 발행 (같은 오류 유지 중엔 재발행 안 함)
-            if (newErrorType == NicknameErrorType.INVALID_FORMAT && previousErrorType != NicknameErrorType.INVALID_FORMAT) {
-                viewModelScope.launch {
-                    _profileEvent.emit(
-                        OnboardingProfileEvent.ShowNicknameToast(
-                            message = "사용할 수 없는 닉네임입니다",
-                            isSuccess = false,
-                        )
-                    )
-                }
             }
         }
     }
@@ -128,42 +117,56 @@ class OnboardingViewModel
     fun checkNicknameDuplication() {
         val currentNickname = _uiState.value.nickname
 
-        // 형식이 유효하지 않으면 중복 체크 실행하지 않음
+        // 형식이 유효하지 않으면(자모 단독 입력 포함) 서버 호출 없이 형식 오류 토스트만 노출
         if (!_uiState.value.isFormatValid) {
+            viewModelScope.launch {
+                _profileEvent.emit(
+                    OnboardingProfileEvent.ShowNicknameToast(
+                        message = "사용할 수 없는 닉네임입니다",
+                        isSuccess = false,
+                    )
+                )
+            }
             return
         }
 
-        viewModelScope.launch {
-            userRepository.checkNickname(currentNickname).onSuccess { result ->
-                // 응답이 오는 사이 닉네임이 바뀌었다면 이미 stale한 결과이므로 반영하지 않음
-                if (currentNickname != _uiState.value.nickname) return@onSuccess
+        // 연타 시 이전 요청을 취소해 중복 요청과 토스트 중복 발행을 방지
+        nicknameCheckJob?.cancel()
+        nicknameCheckJob = viewModelScope.launch {
+            userRepository.checkNickname(currentNickname)
+                .onSuccess { result ->
+                    // 응답이 오는 사이 닉네임이 바뀌었다면 이미 stale한 결과이므로 반영하지 않음
+                    if (currentNickname != _uiState.value.nickname) return@onSuccess
 
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        isNicknameAvailable = result.isAvailable,
-                        nicknameErrorType = if (!result.isAvailable) {
-                            NicknameErrorType.DUPLICATE
-                        } else {
-                            null
-                        },
-                    )
-                }
-
-                // 버튼 클릭 시점에만 발행되는 1회성 이벤트라 화면 재진입 시엔 다시 뜨지 않음
-                _profileEvent.emit(
-                    if (result.isAvailable) {
-                        OnboardingProfileEvent.ShowNicknameToast(
-                            message = "사용 가능한 닉네임입니다",
-                            isSuccess = true,
-                        )
-                    } else {
-                        OnboardingProfileEvent.ShowNicknameToast(
-                            message = "이미 사용 중인 닉네임입니다",
-                            isSuccess = false,
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            isNicknameAvailable = result.isAvailable,
+                            nicknameErrorType = if (!result.isAvailable) {
+                                NicknameErrorType.DUPLICATE
+                            } else {
+                                null
+                            },
                         )
                     }
-                )
-            }
+
+                    // 버튼 클릭 시점에만 발행되는 1회성 이벤트라 화면 재진입 시엔 다시 뜨지 않음
+                    _profileEvent.emit(
+                        if (result.isAvailable) {
+                            OnboardingProfileEvent.ShowNicknameToast(
+                                message = "사용 가능한 닉네임입니다",
+                                isSuccess = true,
+                            )
+                        } else {
+                            OnboardingProfileEvent.ShowNicknameToast(
+                                message = "이미 사용 중인 닉네임입니다",
+                                isSuccess = false,
+                            )
+                        }
+                    )
+                }
+                .onFailure { error ->
+                     Timber.e(error, "닉네임 중복검사 실패했습니다.")
+                }
         }
     }
 

@@ -329,7 +329,7 @@ private fun OnboardingProfileScreenFormatErrorPreview() {
             isFormatValid = false,
             isNicknameAvailable = null,
             canProceed = false,
-            canCheckNickname = false,
+            canCheckNickname = true,
             profileImageUri = null,
             showToast = true,
             toastMessage = "사용할 수 없는 닉네임입니다",
