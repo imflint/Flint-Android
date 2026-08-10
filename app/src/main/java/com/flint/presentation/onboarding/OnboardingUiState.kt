@@ -15,7 +15,7 @@ data class OnboardingTermsUiState(
 
 enum class NicknameErrorType {
     DUPLICATE,      // 이미 사용 중인 닉네임
-    INVALID_FORMAT  // 한글, 영문 외 문자 포함
+    INVALID_FORMAT  // 한글, 영문, 숫자 외 문자 포함
 }
 
 data class OnboardingProfileUiState(
@@ -29,10 +29,9 @@ data class OnboardingProfileUiState(
     companion object {
         const val MAX_LENGTH = 8
         const val MIN_LENGTH = 2
-
-        // 완성된 한글 음절(가-힣)과 영문만 허용. 자음/모음만 단독으로 입력된 경우(ㄱ-ㅎ, ㅏ-ㅣ)는
-        // 제외되어 있어 "ㅇㄴㄹ", "ㅏㅏ" 같은 입력도 형식 오류로 처리된다.
-        private val NICKNAME_REGEX = Regex("^[가-힣a-zA-Z]+$")
+      
+        // 완성된 한글 음절(가-힣), 영문, 숫자만 허용. 자음/모음만 단독으로 입력된 경우 "ㅇㄴㄹ", "ㅏㅏ" 같은 입력도 형식 오류로 처리된다.
+        private val NICKNAME_REGEX = Regex("^[가-힣a-zA-Z0-9]+$"
 
         fun isValidFormat(nickname: String): Boolean {
             return nickname.isEmpty() || NICKNAME_REGEX.matches(nickname)

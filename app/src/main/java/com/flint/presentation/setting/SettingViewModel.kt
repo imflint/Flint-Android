@@ -40,7 +40,12 @@ class SettingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.getUserProfile(userId = null)
                 .onSuccess { profile ->
-                    _uiState.update { it.copy(profileImageUrl = profile.profileImageUrl) }
+                    _uiState.update {
+                        it.copy(
+                            profileImageUrl = profile.profileImageUrl,
+                            email = profile.email,
+                        )
+                    }
                 }
                 .onFailure { Timber.e(it) }
         }
