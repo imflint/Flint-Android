@@ -31,7 +31,7 @@ data class OnboardingProfileUiState(
         const val MIN_LENGTH = 2
       
         // 완성된 한글 음절(가-힣), 영문, 숫자만 허용. 자음/모음만 단독으로 입력된 경우 "ㅇㄴㄹ", "ㅏㅏ" 같은 입력도 형식 오류로 처리된다.
-        private val NICKNAME_REGEX = Regex("^[가-힣a-zA-Z0-9]+$"
+        private val NICKNAME_REGEX = Regex("^[가-힣a-zA-Z0-9]+$")
 
         fun isValidFormat(nickname: String): Boolean {
             return nickname.isEmpty() || NICKNAME_REGEX.matches(nickname)
