@@ -15,8 +15,7 @@ fun CollectionCopyrightFooter(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다.\n " +
-                "컬렉션 이용 시 저작권을 준수해 주세요.",
+        text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. 컬렉션 이용 시 저작권을 준수해 주세요.",
         color = FlintTheme.colors.gray300,
         style = FlintTheme.typography.body2R14,
         modifier = modifier

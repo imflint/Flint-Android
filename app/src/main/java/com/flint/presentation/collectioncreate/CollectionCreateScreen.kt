@@ -1,7 +1,9 @@
 package com.flint.presentation.collectioncreate
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -84,6 +88,8 @@ fun CollectionCreateRoute(
         }
     }
 
+    val context = LocalContext.current
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ) { uri: Uri? ->
@@ -92,12 +98,26 @@ fun CollectionCreateRoute(
     }
 
     var pendingContentId by rememberSaveable { mutableStateOf<String?>(null) }
-    val contentImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-    ) { uri: Uri? ->
-        uri ?: return@rememberLauncherForActivityResult
-        pendingContentId?.let { contentId -> viewModel.addContentImageUri(contentId, uri) }
+
+    val onContentImagesPicked: (List<Uri>) -> Unit = { uris ->
+        pendingContentId?.let { contentId -> viewModel.addContentImageUris(contentId, uris) }
         pendingContentId = null
+    }
+
+    // 시스템 포토피커는 maxItems 가 1보다 커야 하므로, 남은 자리 수별 런처를 미리 등록해 두고 골라 쓴다.
+    val multipleImagePickers = (2..MAX_CONTENT_IMAGE_COUNT).associateWith { maxItems ->
+        key(maxItems) {
+            rememberLauncherForActivityResult(
+                contract = remember { GmsCompatPickMultipleVisualMedia(maxItems) },
+                onResult = onContentImagesPicked,
+            )
+        }
+    }
+
+    val singleImagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+    ) { uri: Uri? ->
+        onContentImagesPicked(listOfNotNull(uri))
     }
 
     CollectionCreateScreen(
@@ -112,12 +132,26 @@ fun CollectionCreateRoute(
         onAddContentClick = navigateToAddContent,
         onFinishClick = viewModel::onClickFinish,
         onGalleryClick = { galleryLauncher.launch("image/*") },
-        onThumbnailDelete = { viewModel.updateThumbnailImageUri(null) },
+        onThumbnailDelete = viewModel::deleteThumbnail,
         onSelectContentImage = { contentId ->
-            val currentCount = uiState.contentDetailsMap[contentId]?.contentImageUris?.size ?: 0
-            if (currentCount < 5) {
-                pendingContentId = contentId
-                contentImageLauncher.launch("image/*")
+            val remainingSlots = (uiState.contentDetailsMap[contentId] ?: ContentDetail()).remainingImageSlots
+            val imageOnlyRequest = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            when {
+                remainingSlots == 0 -> Toast.makeText(
+                    context,
+                    "사진은 최대 ${MAX_CONTENT_IMAGE_COUNT}장까지 등록할 수 있어요",
+                    Toast.LENGTH_SHORT,
+                ).show()
+
+                remainingSlots == 1 -> {
+                    pendingContentId = contentId
+                    singleImagePicker.launch(imageOnlyRequest)
+                }
+
+                else -> {
+                    pendingContentId = contentId
+                    multipleImagePickers.getValue(remainingSlots).launch(imageOnlyRequest)
+                }
             }
         },
         onRemoveExistingContentImage = viewModel::removeExistingContentImageUrl,

@@ -72,15 +72,7 @@ fun NavGraphBuilder.collectionCreateNavGraph(
             AddContentRoute(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
-                navigateToCollectionCreate = {
-                    navController.navigateToCollectionCreate(
-                        navOptions = navOptions {
-                            popUpTo(navController.currentBackStackEntry?.destination?.route ?: "") {
-                                inclusive = true  // 현재 화면을 백스택에서 제거
-                            }
-                        }
-                    )
-                },
+                navigateToCollectionCreate = navController::navigateUp,
                 viewModel = viewModel
             )
         }

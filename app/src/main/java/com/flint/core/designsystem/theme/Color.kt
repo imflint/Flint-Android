@@ -79,6 +79,8 @@ data class Colors(
     val primary400Gradient: Brush,
     val grayGradient: Brush,
     val gray800Gradient: Brush,
+    val navbarGradient: Brush,
+    val thumbnailGradient: Brush,
     val userBadgeGradient: Brush,
     val userBadgeStroke: Brush,
 )
@@ -191,6 +193,14 @@ val FlintColors =
         gray800Gradient =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF21242C).copy(alpha = 0f), Color(0xFF21242C).copy(alpha = 0.35f)),
+            ),
+        navbarGradient =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF121212).copy(alpha = 1f), Color(0xFF121212).copy(alpha = 0f)),
+            ),
+        thumbnailGradient =
+            Brush.verticalGradient(
+                colors = listOf(Color(0xFF121212).copy(alpha = 1f), Color(0xFF121212).copy(alpha = 0.3f)),
             ),
         userBadgeGradient = object : ShaderBrush() {
             override fun createShader(size: Size): Shader {

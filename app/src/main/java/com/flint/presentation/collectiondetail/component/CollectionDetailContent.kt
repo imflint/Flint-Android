@@ -79,8 +79,9 @@ private fun CollectionDetailContentCarousel(content: ContentModelNew) {
             imageUrl = images[page % images.size],
             modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(360f / 270f),
-            contentScale = ContentScale.Crop,
+                    .aspectRatio(360f / 270f)
+                    .background(FlintTheme.colors.gray800),
+            contentScale = ContentScale.Fit,
         )
     }
 

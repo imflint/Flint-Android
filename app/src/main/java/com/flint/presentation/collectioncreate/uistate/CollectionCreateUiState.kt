@@ -63,4 +63,7 @@ data class ContentDetail(
     val reason: String = "",
     val existingImageUrls: List<String> = emptyList(),
     val contentImageUris: List<Uri> = emptyList(),
-)
+) {
+    val remainingImageSlots: Int get() =
+        (MAX_CONTENT_IMAGE_COUNT - existingImageUrls.size - contentImageUris.size).coerceAtLeast(0)
+}
