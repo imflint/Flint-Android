@@ -137,8 +137,7 @@ fun OnboardingContentScreen(
             item(span = { GridItemSpan(3) }) {
                 Column {
                     Text(
-                        text = "내 취향에 가까운 작품 7개를 골라주세요",
-                        maxLines = 2,
+                        text = "내 취향에 가까운 작품\n7개를 골라주세요",
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.display2M28,
                     )
