@@ -93,10 +93,11 @@ class NicknameValidationTest {
 
     @Test
     fun `자음이나 모음 단독 입력을 감지한다`() {
-        assertTrue(OnboardingProfileUiState(nickname = "ㅋㅋㅋ").hasStandaloneKorean)
+        // 온보딩은 완성 음절만 허용하는 형식 검사로 자모 단독 입력을 걸러낸다.
+        assertFalse(OnboardingProfileUiState.isValidFormat("ㅋㅋㅋ"))
         assertTrue(EditProfileUiState(nickname = "ㅋㅋㅋ").hasStandaloneKorean)
 
-        assertFalse(OnboardingProfileUiState(nickname = "플린트2").hasStandaloneKorean)
+        assertTrue(OnboardingProfileUiState.isValidFormat("플린트2"))
         assertFalse(EditProfileUiState(nickname = "플린트2").hasStandaloneKorean)
     }
 }
