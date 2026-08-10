@@ -52,15 +52,32 @@ import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
+import com.flint.presentation.onboarding.event.OnboardingProfileEvent
 
 @Composable
 fun OnboardingProfileRoute(
     paddingValues: PaddingValues,
-    navigateToOnboardingContent: () -> Unit,
+    navigateToOnboardingDone: () -> Unit,
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    var showToast by remember { mutableStateOf(false) }
+    var toastMessage by remember { mutableStateOf("") }
+    var isToastSuccess by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.profileEvent.collect { event ->
+            when (event) {
+                is OnboardingProfileEvent.ShowNicknameToast -> {
+                    toastMessage = event.message
+                    isToastSuccess = event.isSuccess
+                    showToast = true
+                }
+            }
+        }
+    }
 
     OnboardingProfileScreen(
         nickname = uiState.nickname,
@@ -69,14 +86,16 @@ fun OnboardingProfileRoute(
         isNicknameAvailable = uiState.isNicknameAvailable,
         canProceed = uiState.canProceed,
         canCheckNickname = uiState.canCheckNickname,
-        hasError = uiState.hasError,
-        errorMessage = uiState.errorMessage,
         profileImageUri = uiState.profileImageUri,
+        showToast = showToast,
+        toastMessage = toastMessage,
+        isToastSuccess = isToastSuccess,
+        onToastHide = { showToast = false },
         onNicknameChange = viewModel::updateNickname,
         onCheckNickname = viewModel::checkNicknameDuplication,
         onProfileImageSelected = viewModel::updateProfileImage,
         onBackClick = navigateUp,
-        onNextClick = navigateToOnboardingContent,
+        onNextClick = navigateToOnboardingDone,
         modifier = Modifier
             .padding(paddingValues)
             .consumeWindowInsets(paddingValues),
@@ -92,9 +111,11 @@ fun OnboardingProfileScreen(
     isNicknameAvailable: Boolean?,
     canProceed: Boolean,
     canCheckNickname: Boolean,
-    hasError: Boolean,
-    errorMessage: String?,
     profileImageUri: Uri?,
+    showToast: Boolean,
+    toastMessage: String,
+    isToastSuccess: Boolean,
+    onToastHide: () -> Unit,
     onNicknameChange: (String) -> Unit,
     onCheckNickname: () -> Unit,
     onProfileImageSelected: (Uri?) -> Unit,
@@ -103,31 +124,12 @@ fun OnboardingProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var showToast by remember { mutableStateOf(false) }
-    var toastMessage by remember { mutableStateOf("") }
-    var isToastSuccess by remember { mutableStateOf(false) }
     var showProfileBottomSheet by remember { mutableStateOf(false) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri != null) onProfileImageSelected(uri)
-    }
-
-    LaunchedEffect(hasError, errorMessage) {
-        if (hasError && errorMessage != null) {
-            toastMessage = errorMessage
-            isToastSuccess = false
-            showToast = true
-        }
-    }
-
-    LaunchedEffect(isNicknameAvailable) {
-        if (isNicknameAvailable == true) {
-            toastMessage = "사용 가능한 닉네임입니다"
-            isToastSuccess = true
-            showToast = true
-        }
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -259,7 +261,7 @@ fun OnboardingProfileScreen(
                 ),
                 paddingValues = PaddingValues.Zero,
                 yOffset = 100.dp,
-                hide = { showToast = false },
+                hide = onToastHide,
             )
         }
     }
@@ -276,9 +278,11 @@ private fun OnboardingProfileScreenPreview() {
             isNicknameAvailable = true,
             canProceed = true,
             canCheckNickname = true,
-            hasError = false,
-            errorMessage = null,
             profileImageUri = null,
+            showToast = false,
+            toastMessage = "",
+            isToastSuccess = false,
+            onToastHide = {},
             onNicknameChange = {},
             onCheckNickname = {},
             onProfileImageSelected = {},
@@ -299,9 +303,11 @@ private fun OnboardingProfileScreenDuplicateErrorPreview() {
             isNicknameAvailable = false,
             canProceed = false,
             canCheckNickname = true,
-            hasError = true,
-            errorMessage = "이미 사용 중인 닉네임입니다",
             profileImageUri = null,
+            showToast = true,
+            toastMessage = "이미 사용 중인 닉네임입니다",
+            isToastSuccess = false,
+            onToastHide = {},
             onNicknameChange = {},
             onCheckNickname = {},
             onProfileImageSelected = {},
@@ -323,10 +329,12 @@ private fun OnboardingProfileScreenFormatErrorPreview() {
             isFormatValid = false,
             isNicknameAvailable = null,
             canProceed = false,
-            canCheckNickname = false,
-            hasError = true,
-            errorMessage = "사용할 수 없는 닉네임입니다",
+            canCheckNickname = true,
             profileImageUri = null,
+            showToast = true,
+            toastMessage = "사용할 수 없는 닉네임입니다",
+            isToastSuccess = false,
+            onToastHide = {},
             onNicknameChange = { text = it },
             onCheckNickname = {},
             onProfileImageSelected = {},

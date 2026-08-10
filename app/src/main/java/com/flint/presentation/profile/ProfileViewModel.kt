@@ -9,7 +9,6 @@ import com.flint.core.common.util.suspendRunCatching
 import com.flint.core.navigation.Route
 import com.flint.domain.model.bookmark.BookmarkChange
 import com.flint.domain.model.user.KeywordListModel
-import com.flint.domain.repository.AuthRepository
 import com.flint.domain.repository.BookmarkRepository
 import com.flint.domain.repository.ContentRepository
 import com.flint.domain.repository.UserRepository
@@ -32,7 +31,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository,
     private val bookmarkRepository: BookmarkRepository,
@@ -177,15 +175,5 @@ class ProfileViewModel @Inject constructor(
             }
             .onFailure { Timber.e(it) }
         _uiState.update { it.copy(isRecalculating = false) }
-    }
-
-    fun easterEggWithdraw() = viewModelScope.launch {
-        authRepository.withdraw()
-            .onSuccess {
-                _sideEffect.emit(ProfileSideEffect.WithdrawSuccess)
-            }
-            .onFailure {
-                Timber.e(it)
-            }
     }
 }

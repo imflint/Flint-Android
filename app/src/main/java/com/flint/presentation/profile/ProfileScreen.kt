@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +29,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.flint.core.common.extension.findActivity
 import com.flint.core.common.extension.noRippleClickable
 import com.flint.R
 import androidx.compose.material3.Icon
@@ -51,7 +49,6 @@ import com.flint.domain.model.ott.OttListModel
 import com.flint.domain.model.ott.OttModel
 import com.flint.domain.model.user.KeywordListModel
 import com.flint.domain.model.user.UserProfileResponseModel
-import com.flint.presentation.MainActivity
 import com.flint.presentation.profile.component.ProfileKeywordSection
 import com.flint.presentation.profile.component.ProfileTopSection
 import com.flint.presentation.profile.sideeffect.ProfileSideEffect
@@ -73,7 +70,6 @@ fun ProfileRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
-    val context = LocalContext.current
 
     var showOttListBottomSheet by remember { mutableStateOf(false) }
     var ottListModel by remember { mutableStateOf(OttListModel()) }
@@ -93,14 +89,6 @@ fun ProfileRoute(
                     ottListModel = sideEffect.ottListModel
                     if (ottListModel.otts.isNotEmpty()) {
                         showOttListBottomSheet = true
-                    }
-                }
-                is ProfileSideEffect.WithdrawSuccess -> {
-                    val activity = context.findActivity() as? MainActivity
-                    if (activity != null) {
-                        activity.restartApplication()
-                    } else {
-                        //TODO: Fallback: 앱 재시작이 불가능할 경우, 다른 처리 로직을 여기에 작성
                     }
                 }
             }
@@ -134,7 +122,6 @@ fun ProfileRoute(
             )
         },
         onRefreshClick = viewModel::recalculateKeywords,
-        onEasterEggWithdraw = viewModel::easterEggWithdraw,
     )
 
     if (showOttListBottomSheet) {
@@ -158,7 +145,6 @@ private fun ProfileScreen(
     onContentMoreClick: () -> Unit = {},
     onCreatedCollectionMoreClick: () -> Unit,
     onSavedCollectionMoreClick: () -> Unit,
-    onEasterEggWithdraw: () -> Unit = {},
 ) {
     val userName = uiState.profile.nickname
     var topHeightPx by remember { mutableIntStateOf(0) }
@@ -186,11 +172,6 @@ private fun ProfileScreen(
                             userName = nickname,
                             profileUrl = profileImageUrl.orEmpty(),
                             isFliner = isFliner,
-                            onEasterEggWithdraw = {
-                                if (uiState.userId == null) {
-                                    onEasterEggWithdraw()
-                                }
-                            },
                         )
                     }
                 }

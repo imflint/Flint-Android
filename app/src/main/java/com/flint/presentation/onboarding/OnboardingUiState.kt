@@ -29,16 +29,14 @@ data class OnboardingProfileUiState(
     companion object {
         const val MAX_LENGTH = 8
         const val MIN_LENGTH = 2
-        private val NICKNAME_REGEX = Regex("^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]+$")
-        private val STANDALONE_KOREAN_REGEX = Regex("[ㄱ-ㅎㅏ-ㅣ]")
+      
+        // 완성된 한글 음절(가-힣), 영문, 숫자만 허용. 자음/모음만 단독으로 입력된 경우 "ㅇㄴㄹ", "ㅏㅏ" 같은 입력도 형식 오류로 처리된다.
+        private val NICKNAME_REGEX = Regex("^[가-힣a-zA-Z0-9]+$")
 
         fun isValidFormat(nickname: String): Boolean {
             return nickname.isEmpty() || NICKNAME_REGEX.matches(nickname)
         }
     }
-
-    val hasStandaloneKorean: Boolean
-        get() = STANDALONE_KOREAN_REGEX.containsMatchIn(nickname)
 
     val hasError: Boolean
         get() = nicknameErrorType != null
@@ -50,12 +48,13 @@ data class OnboardingProfileUiState(
             null -> null
         }
 
+    // 형식 오류(자모 단독 입력 포함) 여부와 무관하게 2자 이상이면 활성화 — 형식 검증은 버튼 클릭 시 수행
     val canCheckNickname: Boolean
-        get() = isValid && isFormatValid && !hasStandaloneKorean
+        get() = isValid
 
     //다음단계 활성화
     val canProceed: Boolean
-        get() = isValid && isFormatValid && isNicknameAvailable == true && !hasStandaloneKorean
+        get() = isValid && isFormatValid && isNicknameAvailable == true
 }
 
 data class OnboardingContentUiState(

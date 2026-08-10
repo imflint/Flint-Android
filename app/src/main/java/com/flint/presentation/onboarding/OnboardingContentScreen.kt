@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -41,15 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.flint.core.common.extension.dropShadow
 import com.flint.core.common.util.UiState
-import com.flint.core.designsystem.component.button.FlintBasicButton
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.image.SelectedContentItem
 import com.flint.core.designsystem.component.textfield.FlintSearchTextField
-import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
+import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
@@ -61,11 +58,10 @@ import com.flint.presentation.onboarding.component.StepProgressBar
 @Composable
 fun OnboardingContentRoute(
     paddingValues: PaddingValues,
-    navigateToOnboardingDone: () -> Unit,
+    navigateToOnboardingProfile: () -> Unit,
     navigateUp: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
-    val profileUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val contentUiState by viewModel.contentUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -73,10 +69,9 @@ fun OnboardingContentRoute(
     }
 
     OnboardingContentScreen(
-        nickname = profileUiState.nickname,
         contentUiState = contentUiState,
         onBackClick = navigateUp,
-        onNextClick = navigateToOnboardingDone,
+        onNextClick = navigateToOnboardingProfile,
         onSearchKeywordChanged = viewModel::updateSearchKeyword,
         onSearchAction = viewModel::searchContents,
         onClearAction = viewModel::clearSearchKeyword,
@@ -90,7 +85,6 @@ fun OnboardingContentRoute(
 
 @Composable
 fun OnboardingContentScreen(
-    nickname: String,
     contentUiState: OnboardingContentUiState,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -142,21 +136,10 @@ fun OnboardingContentScreen(
             // 타이틀 영역 - 스크롤됨
             item(span = { GridItemSpan(3) }) {
                 Column {
-                    var useMultiLine by remember(nickname) { mutableStateOf(false) }
                     Text(
-                        text = if (useMultiLine) {
-                            "${nickname}님이\n좋아하는 작품\n7개를 골라주세요"
-                        } else {
-                            "${nickname}님이 좋아하는 작품\n7개를 골라주세요"
-                        },
+                        text = "내 취향에 가까운 작품\n7개를 골라주세요",
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.display2M28,
-                        onTextLayout = { result ->
-                            // 2줄 포맷인데 실제 렌더링이 3줄 이상이면 자연 줄바꿈 발생한 것
-                            if (!useMultiLine && result.lineCount > 2) {
-                                useMultiLine = true
-                            }
-                        },
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -349,13 +332,12 @@ fun OnboardingContentScreen(
         FlintLargeButton(
             text = "다음",
             state = if (contentUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = { if (contentUiState.canProceed) { onNextClick() } },
+            onClick = { if (contentUiState.canProceed) onNextClick() },
             enabled = contentUiState.canProceed,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 20.dp),
-
-            )
+        )
     }
 }
 
@@ -364,7 +346,6 @@ fun OnboardingContentScreen(
 private fun OnboardingContentScreenListPreview() {
     FlintTheme {
         OnboardingContentScreen(
-            nickname = "안비",
             contentUiState = OnboardingContentUiState(
                 searchResults = UiState.Success(
                     SearchContentListModel.FakeList
@@ -389,7 +370,6 @@ private fun OnboardingContentScreenEmptyPreview() {
 
     FlintTheme {
         OnboardingContentScreen(
-            nickname = "안비",
             contentUiState = OnboardingContentUiState(
                 searchKeyword = text
             ),
@@ -414,7 +394,6 @@ private fun OnboardingContentScreenGenreInteractivePreview() {
 
     FlintTheme {
         OnboardingContentScreen(
-            nickname = "안비",
             contentUiState = OnboardingContentUiState(
                 searchResults = UiState.Success(SearchContentListModel.FakeList),
                 selectedGenres = selectedGenres,
