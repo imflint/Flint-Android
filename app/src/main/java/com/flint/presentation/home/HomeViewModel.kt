@@ -7,12 +7,14 @@ import com.flint.core.common.util.UiState
 import com.flint.data.local.PreferencesManager
 import com.flint.domain.model.collection.CollectionListModel
 import com.flint.domain.model.content.BookmarkedContentListModel
-import com.flint.domain.repository.ContentRepository
+import com.flint.domain.model.ott.OttListModel
+import com.flint.domain.model.ott.OttModel
 import com.flint.domain.repository.HomeRepository
 import com.flint.domain.repository.UserRepository
 import com.flint.presentation.home.sideeffect.HomeSideEffect
 import com.flint.presentation.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,7 +31,6 @@ class HomeViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val homeRepository: HomeRepository,
     private val userRepository: UserRepository,
-    private val contentRepository: ContentRepository,
 ) : ViewModel() {
 
     private val _userName = preferencesManager.getString(USER_NAME)
@@ -71,7 +72,21 @@ class HomeViewModel @Inject constructor(
 
     fun getBookmarkedContentList() = viewModelScope.launch {
         userRepository.getUserBookmarkedContents(userId = null)
-            .onSuccess { _bookmarkedContentListLoadState.emit(UiState.Success(it)) }
+            .onSuccess { bookmarkedContents ->
+                // 홈에서는 최근 저장한 콘텐츠 10개까지만 노출 (전체 목록은 프로필 > 저장한 콘텐츠에서 확인)
+                // /api/v1/contents/bookmarks 가 최근 저장순으로 내려주는 것에 의존한다.
+                // 응답에 저장 시각 필드가 없어 클라이언트 재정렬은 불가하므로,
+                // 서버 정렬 기준이 바뀌면 이 로직도 함께 검토해야 한다.
+                _bookmarkedContentListLoadState.emit(
+                    UiState.Success(
+                        bookmarkedContents.copy(
+                            contents = bookmarkedContents.contents
+                                .take(MAX_SAVED_CONTENT_COUNT)
+                                .toImmutableList(),
+                        ),
+                    ),
+                )
+            }
             .onFailure { Timber.e(it.message) }
     }
 
@@ -81,9 +96,25 @@ class HomeViewModel @Inject constructor(
             .onFailure { Timber.e(it.message) }
     }
 
-    fun getOttListPerContent(contentId: String) = viewModelScope.launch {
-        contentRepository.getOttListPerContent(contentId)
-            .onSuccess { _homeSideEffect.emit(HomeSideEffect.ShowOttListBottomSheet(it)) }
-            .onFailure { Timber.e(it.message) }
+    // 콘텐츠별 OTT 목록 API(/contents/ott/{id})가 빈 배열만 반환하므로
+    // 이미 로드된 북마크 목록의 OTT 정보를 사용한다.
+    // 프로필/저장한 콘텐츠 화면도 동일하게 getOttSimpleList를 쓴다.
+    fun showOttList(contentId: String) = viewModelScope.launch {
+        val otts = (_bookmarkedContentListLoadState.value as? UiState.Success)
+            ?.data
+            ?.contents
+            ?.find { it.id == contentId }
+            ?.getOttSimpleList
+            .orEmpty()
+
+        _homeSideEffect.emit(
+            HomeSideEffect.ShowOttListBottomSheet(
+                OttListModel(otts = otts.map { OttModel(name = it.name) }),
+            ),
+        )
+    }
+
+    companion object {
+        private const val MAX_SAVED_CONTENT_COUNT = 10
     }
 }
