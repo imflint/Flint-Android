@@ -34,6 +34,8 @@ import timber.log.Timber
 
 import javax.inject.Inject
 
+const val MAX_CONTENT_IMAGE_COUNT = 5
+
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -343,11 +345,13 @@ class CollectionCreateViewModel @Inject constructor(
         _uiState.update { it.copy(thumbnailImageUri = null, existingThumbnailUrl = null) }
     }
 
-    fun setContentImageUris(contentId: String, uris: List<Uri>) {
+    fun addContentImageUris(contentId: String, uris: List<Uri>) {
+        if (uris.isEmpty()) return
         _uiState.update { state ->
             val current = state.contentDetailsMap[contentId] ?: ContentDetail()
-            val maxSelectable = (5 - current.existingImageUrls.size).coerceAtLeast(0)
-            val updated = current.copy(contentImageUris = uris.take(maxSelectable))
+            val addable = uris.take(current.remainingImageSlots)
+            if (addable.isEmpty()) return@update state
+            val updated = current.copy(contentImageUris = current.contentImageUris + addable)
             state.copy(contentDetailsMap = state.contentDetailsMap + (contentId to updated))
         }
     }
