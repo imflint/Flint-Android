@@ -102,7 +102,7 @@ fun RecommendCollectionCard(
                 text = item.title,
                 style = FlintTheme.typography.head3Sb18,
                 color = FlintTheme.colors.gray50,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
