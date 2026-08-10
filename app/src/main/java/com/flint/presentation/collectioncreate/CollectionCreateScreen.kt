@@ -108,7 +108,7 @@ fun CollectionCreateRoute(
     val multipleImagePickers = (2..MAX_CONTENT_IMAGE_COUNT).associateWith { maxItems ->
         key(maxItems) {
             rememberLauncherForActivityResult(
-                contract = remember { ActivityResultContracts.PickMultipleVisualMedia(maxItems) },
+                contract = remember { GmsCompatPickMultipleVisualMedia(maxItems) },
                 onResult = onContentImagesPicked,
             )
         }
