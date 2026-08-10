@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,16 +52,15 @@ private fun CollectionCreateEmptyThumbnail(
         modifier =
             modifier
                 .fillMaxWidth()
+                .aspectRatio(360f / 140f)
                 .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
+            modifier = Modifier.fillMaxSize(),
             painter = painterResource(R.drawable.img_collection_bg1),
             contentDescription = null,
+            contentScale = ContentScale.Crop,
         )
 
         Icon(
@@ -81,13 +81,13 @@ private fun CollectionCreateFillThumbnail(
         modifier =
             modifier
                 .fillMaxWidth()
-                .aspectRatio(1.5f / 1f)
+                .aspectRatio(360f / 240f)
                 .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         NetworkImage(
             imageUrl = imageUrl,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
         )
 
         Box(

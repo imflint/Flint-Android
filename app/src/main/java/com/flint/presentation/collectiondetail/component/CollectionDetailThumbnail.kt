@@ -45,14 +45,14 @@ fun CollectionDetailThumbnail(
                 painter = painterResource(R.drawable.img_collection_bg1),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
             )
         } else {
             NetworkImage(
                 imageUrl = thumbnailImage,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
             )
         }
 
