@@ -17,6 +17,8 @@ data class PopularCollectionItemResponseDto(
     val thumbnailUrl: String?,
     @SerialName("title")
     val title: String,
+    @SerialName("imageList")
+    val imageList: List<String> = emptyList(),
     @SerialName("nickname")
     val nickname: String,
     @SerialName("profileImageUrl")
