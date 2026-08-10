@@ -91,10 +91,11 @@ fun CollectionCreateContentImage(
             Box {
                 NetworkImage(
                     imageUrl = images[index],
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(4f / 3f),
+                        .aspectRatio(360f / 270f)
+                        .background(FlintTheme.colors.gray800),
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_deselect_large_gray),
