@@ -22,6 +22,11 @@ interface Route {
     data object OnboardingTerms : Route
 
     @Serializable
+    data class OnboardingTermsDetail(
+        val termId: String,
+    ) : Route
+
+    @Serializable
     data object OnboardingContent : Route
 
     @Serializable

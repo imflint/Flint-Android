@@ -7,12 +7,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.flint.core.common.extension.sharedViewModel
 import com.flint.core.navigation.Route
 import com.flint.presentation.onboarding.OnboardingContentRoute
 import com.flint.presentation.onboarding.OnboardingDoneRoute
 import com.flint.presentation.onboarding.OnboardingOttRoute
 import com.flint.presentation.onboarding.OnboardingProfileRoute
+import com.flint.presentation.onboarding.OnboardingTermsDetailRoute
 import com.flint.presentation.onboarding.OnboardingTermsRoute
 import com.flint.presentation.onboarding.OnboardingViewModel
 
@@ -25,6 +27,10 @@ fun NavController.navigateToOnboarding(
 
 fun NavController.navigateToOnboardingTerms() {
     navigate(Route.OnboardingTerms)
+}
+
+fun NavController.navigateToOnboardingTermsDetail(termId: String) {
+    navigate(Route.OnboardingTermsDetail(termId))
 }
 
 fun NavController.navigateToOnboardingProfile() {
@@ -59,6 +65,19 @@ fun NavGraphBuilder.onBoardingNavGraph(
                 paddingValues = paddingValues,
                 navigateUp = navController::navigateUp,
                 navigateToOnboardingContent = navController::navigateToOnboardingContent,
+                navigateToTermsDetail = navController::navigateToOnboardingTermsDetail,
+                viewModel = sharedViewModel,
+            )
+        }
+
+        composable<Route.OnboardingTermsDetail> { backStackEntry ->
+            val sharedViewModel = backStackEntry.sharedViewModel<OnboardingViewModel>(navController)
+            val route = backStackEntry.toRoute<Route.OnboardingTermsDetail>()
+
+            OnboardingTermsDetailRoute(
+                paddingValues = paddingValues,
+                termId = route.termId,
+                navigateUp = navController::navigateUp,
                 viewModel = sharedViewModel,
             )
         }

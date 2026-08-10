@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.common.util.TermGuides
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
@@ -49,6 +50,7 @@ fun OnboardingTermsRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
     navigateToOnboardingContent: () -> Unit,
+    navigateToTermsDetail: (termId: String) -> Unit,
     viewModel: OnboardingViewModel,
 ) {
     val termsUiState by viewModel.termsUiState.collectAsStateWithLifecycle()
@@ -64,6 +66,7 @@ fun OnboardingTermsRoute(
             viewModel.agreeToTerms(agreedIds)
             navigateToOnboardingContent()
         },
+        onDetailClick = navigateToTermsDetail,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -73,6 +76,7 @@ fun OnboardingTermsScreen(
     termsUiState: OnboardingTermsUiState,
     onBackClick: () -> Unit,
     onAgreeClick: (List<String>) -> Unit,
+    onDetailClick: (termId: String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val terms = (termsUiState.termsState as? UiState.Success)?.data ?: emptyList()
@@ -183,9 +187,7 @@ fun OnboardingTermsScreen(
                                     expandedStates = expandedStates.toMutableList()
                                         .also { it[index] = !it[index] }
                                 },
-                                onDetailClick = {
-                                    // TODO: 노션 약관 링크 확정 후 내부 웹뷰로 열기
-                                },
+                                onDetailClick = { onDetailClick(term.id) },
                             )
                             Spacer(Modifier.height(4.dp))
                         }
@@ -264,11 +266,13 @@ private fun TermRow(
                     )
                     .padding(start = 12.dp, top = 12.dp, end = 12.dp, bottom = 16.dp),
             ) {
+                // 전문(term.content)은 "자세히 보기" 웹뷰에서 보여주고, 여기에는 안내 문구만 노출한다.
                 Text(
-                    text = term.content,
+                    text = TermGuides.summaryOf(term.type) ?: term.content,
                     style = FlintTheme.typography.body2R14,
-                    color = FlintTheme.colors.gray300,
+                    color = FlintTheme.colors.white,
                 )
+
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = "자세히 보기",
