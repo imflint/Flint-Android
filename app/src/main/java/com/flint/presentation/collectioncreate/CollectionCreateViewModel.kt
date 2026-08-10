@@ -343,11 +343,11 @@ class CollectionCreateViewModel @Inject constructor(
         _uiState.update { it.copy(thumbnailImageUri = null, existingThumbnailUrl = null) }
     }
 
-    fun addContentImageUri(contentId: String, uri: Uri) {
+    fun setContentImageUris(contentId: String, uris: List<Uri>) {
         _uiState.update { state ->
             val current = state.contentDetailsMap[contentId] ?: ContentDetail()
-            if (current.contentImageUris.size >= 5) return@update state
-            val updated = current.copy(contentImageUris = current.contentImageUris + uri)
+            val maxSelectable = (5 - current.existingImageUrls.size).coerceAtLeast(0)
+            val updated = current.copy(contentImageUris = uris.take(maxSelectable))
             state.copy(contentDetailsMap = state.contentDetailsMap + (contentId to updated))
         }
     }

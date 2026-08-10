@@ -1,8 +1,13 @@
 package com.flint.presentation.collectioncreate
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -59,6 +65,7 @@ import com.flint.presentation.collectioncreate.component.CollectionCreateContent
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentReason
 import com.flint.presentation.collectioncreate.component.CollectionCreateContentSection
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
+import com.flint.presentation.collectioncreate.component.GalleryImagePickerDialog
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -84,6 +91,8 @@ fun CollectionCreateRoute(
         }
     }
 
+    val context = LocalContext.current
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ) { uri: Uri? ->
@@ -91,13 +100,26 @@ fun CollectionCreateRoute(
         viewModel.updateThumbnailImageUri(uri)
     }
 
+    val readImagesPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Manifest.permission.READ_MEDIA_IMAGES
+    } else {
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    }
+
     var pendingContentId by rememberSaveable { mutableStateOf<String?>(null) }
-    val contentImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-    ) { uri: Uri? ->
-        uri ?: return@rememberLauncherForActivityResult
-        pendingContentId?.let { contentId -> viewModel.addContentImageUri(contentId, uri) }
-        pendingContentId = null
+    var pendingMaxSelectable by rememberSaveable { mutableStateOf(5) }
+    var pendingInitialSelectedImages by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var isGalleryPickerVisible by rememberSaveable { mutableStateOf(false) }
+
+    val readImagesPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            isGalleryPickerVisible = true
+        } else {
+            pendingContentId = null
+            Toast.makeText(context, "사진 접근 권한이 필요해요", Toast.LENGTH_SHORT).show()
+        }
     }
 
     CollectionCreateScreen(
@@ -114,16 +136,38 @@ fun CollectionCreateRoute(
         onGalleryClick = { galleryLauncher.launch("image/*") },
         onThumbnailDelete = viewModel::deleteThumbnail,
         onSelectContentImage = { contentId ->
-            val currentCount = uiState.contentDetailsMap[contentId]?.contentImageUris?.size ?: 0
-            if (currentCount < 5) {
-                pendingContentId = contentId
-                contentImageLauncher.launch("image/*")
+            val detail = uiState.contentDetailsMap[contentId]
+            pendingContentId = contentId
+            pendingMaxSelectable = (5 - (detail?.existingImageUrls?.size ?: 0)).coerceAtLeast(0)
+            pendingInitialSelectedImages = detail?.contentImageUris ?: emptyList()
+            if (ContextCompat.checkSelfPermission(context, readImagesPermission) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                isGalleryPickerVisible = true
+            } else {
+                readImagesPermissionLauncher.launch(readImagesPermission)
             }
         },
         onRemoveExistingContentImage = viewModel::removeExistingContentImageUrl,
         onRemoveContentImage = viewModel::removeContentImageUri,
         modifier = Modifier.padding(paddingValues),
     )
+
+    if (isGalleryPickerVisible) {
+        GalleryImagePickerDialog(
+            maxSelectable = pendingMaxSelectable,
+            initialSelectedImages = pendingInitialSelectedImages,
+            onConfirm = { uris ->
+                pendingContentId?.let { contentId -> viewModel.setContentImageUris(contentId, uris) }
+                pendingContentId = null
+                isGalleryPickerVisible = false
+            },
+            onDismiss = {
+                pendingContentId = null
+                isGalleryPickerVisible = false
+            },
+        )
+    }
 }
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
