@@ -11,14 +11,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
 import com.flint.core.designsystem.component.button.FlintButtonState
@@ -40,6 +45,33 @@ fun OnboardingDoneRoute(
         if (signupUiState.isSuccess) {
             navigateToHome()
         }
+    }
+
+    // End 화면에서 시작하기를 누르지 않은 채 다른 화면(다른 앱 등)에 다녀온 뒤 돌아온 경우,
+    // End 화면에 그대로 머무르지 않고 닉네임 입력 화면으로 되돌린다.
+    // (회원가입이 완료되기 전 사용자가 복귀할 수 있는 온보딩의 가장 마지막 지점은 닉네임 입력 화면)
+    val currentSignupUiState by rememberUpdatedState(signupUiState)
+    val currentNavigateUp by rememberUpdatedState(navigateUp)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        var hasStopped = false
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_STOP -> hasStopped = true
+                Lifecycle.Event.ON_RESUME -> {
+                    if (hasStopped) {
+                        hasStopped = false
+                        // 그 사이 회원가입이 성공했다면(드문 케이스) Home 이동 로직에 맡기고 여기서는 건드리지 않는다.
+                        if (!currentSignupUiState.isSuccess) {
+                            currentNavigateUp()
+                        }
+                    }
+                }
+                else -> Unit
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     OnboardingDoneScreen(

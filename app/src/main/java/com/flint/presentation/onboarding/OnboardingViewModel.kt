@@ -176,6 +176,19 @@ class OnboardingViewModel
         }
     }
 
+    // 닉네임 입력 페이지 재진입 시(예: End 화면에서 뒤로가기) 호출.
+    // 기존에 입력한 닉네임 텍스트는 유지하되, 중복확인 결과는 초기화해
+    // 사용자가 "다음"으로 넘어가기 전 중복확인을 다시 하도록 강제한다.
+    fun resetNicknameCheck() {
+        nicknameCheckJob?.cancel()
+        _uiState.update { currentState ->
+            currentState.copy(
+                isNicknameAvailable = null,
+                nicknameErrorType = null,
+            )
+        }
+    }
+
     fun updateProfileImage(uri: Uri?) {
         _uiState.update { it.copy(profileImageUri = uri) }
     }

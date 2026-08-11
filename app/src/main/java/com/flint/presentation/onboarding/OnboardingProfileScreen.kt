@@ -67,6 +67,13 @@ fun OnboardingProfileRoute(
     var toastMessage by remember { mutableStateOf("") }
     var isToastSuccess by remember { mutableStateOf(false) }
 
+    // 닉네임 입력 페이지에 (재)진입할 때마다 실행된다.
+    // End 화면까지 갔다가 시작하기를 누르지 않고 뒤로 돌아온 경우를 포함해,
+    // 이전에 입력했던 닉네임이 남아있어도 중복확인 결과는 항상 다시 확인하도록 초기화한다.
+    LaunchedEffect(Unit) {
+        viewModel.resetNicknameCheck()
+    }
+
     LaunchedEffect(Unit) {
         viewModel.profileEvent.collect { event ->
             when (event) {
