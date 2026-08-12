@@ -180,7 +180,7 @@ private fun ExplorePageItem(
 
         Column(modifier.padding(horizontal = 16.dp)) {
             Text(
-                text = "$contentTitle ($year)",
+                text = contentTitle,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.display2M28,
                 maxLines = 2,
