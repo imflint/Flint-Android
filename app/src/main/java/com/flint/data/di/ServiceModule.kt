@@ -4,6 +4,7 @@ import com.flint.data.api.AuthApi
 import com.flint.data.api.BookmarkApi
 import com.flint.data.api.CollectionApi
 import com.flint.data.api.ContentApi
+import com.flint.data.api.ExplorationApi
 import com.flint.data.api.HomeApi
 import com.flint.data.api.SearchApi
 import com.flint.data.api.StorageApi
@@ -54,4 +55,8 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideTermsApi(retrofit: Retrofit): TermsApi = retrofit.create(TermsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideExplorationApi(retrofit: Retrofit): ExplorationApi = retrofit.create(ExplorationApi::class.java)
 }

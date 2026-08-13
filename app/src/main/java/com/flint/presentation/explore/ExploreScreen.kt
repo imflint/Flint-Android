@@ -39,7 +39,7 @@ import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.core.designsystem.component.topappbar.FlintLogoTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
-import com.flint.domain.model.collection.CollectionsModel
+import com.flint.domain.model.exploration.ExplorationItemModel
 import com.flint.presentation.explore.uistate.ExploreUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -59,12 +59,26 @@ fun ExploreRoute(
         }
 
         is UiState.Success -> {
-            val uiState = (uiState as UiState.Success<ExploreUiState>).data
-            ExploreScreen(
-                collections = uiState.collections,
-                onWatchCollectionButtonClick = navigateToCollectionDetail,
-                onMakeCollectionButtonClick = navigateToCollectionCreate,
-                onLoadNextPage = viewModel::loadNextPage,
+            val data = (uiState as UiState.Success<ExploreUiState>).data
+
+            if (data.isEmpty) {
+                ExploreEmptyPage(modifier = Modifier.padding(paddingValues))
+            } else {
+                ExploreScreen(
+                    items = data.items,
+                    isEnd = data.isEnd,
+                    initialPage = data.initialPage,
+                    onWatchCollectionButtonClick = navigateToCollectionDetail,
+                    onMakeCollectionButtonClick = navigateToCollectionCreate,
+                    onLoadNextSession = viewModel::advanceToNextSession,
+                    modifier = Modifier.padding(paddingValues),
+                )
+            }
+        }
+
+        UiState.Failure -> {
+            ExploreErrorPage(
+                onRetryClick = viewModel::retry,
                 modifier = Modifier.padding(paddingValues),
             )
         }
@@ -75,25 +89,30 @@ fun ExploreRoute(
 
 @Composable
 private fun ExploreScreen(
-    collections: ImmutableList<CollectionsModel.Collection>,
+    items: ImmutableList<ExplorationItemModel>,
+    isEnd: Boolean,
+    initialPage: Int,
     onWatchCollectionButtonClick: (collectionId: String, imageUrl: String) -> Unit,
     onMakeCollectionButtonClick: () -> Unit,
-    onLoadNextPage: () -> Unit,
+    onLoadNextSession: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pageCount: Int = collections.size
-    val pagerState: PagerState = rememberPagerState(pageCount = { pageCount + 1 })
+    val itemCount: Int = items.size
+    val pagerState: PagerState = rememberPagerState(
+        initialPage = initialPage,
+        pageCount = { itemCount + 1 },
+    )
 
     LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage >= pageCount - 3 && pageCount > 0) {
-            onLoadNextPage()
+        if (!isEnd && pagerState.currentPage >= itemCount - 3 && itemCount > 0) {
+            onLoadNextSession()
         }
     }
 
     Column(
         modifier
             .run {
-                if (pagerState.currentPage < pageCount) {
+                if (pagerState.currentPage < itemCount) {
                     background(FlintTheme.colors.background)
                 } else {
                     background(
@@ -109,21 +128,38 @@ private fun ExploreScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
         ) { page: Int ->
-            val collection: CollectionsModel.Collection? = collections.getOrNull(page)
+            val item: ExplorationItemModel? = items.getOrNull(page)
 
-            if (collection != null) {
-                ExplorePageItem(
-                    imageUrl = collection.imageUrl,
-                    id = collection.collectionId,
-                    contentTitle = collection.contentTitle,
-                    contentDescription = collection.contentDescription,
-                    onButtonClick = { onWatchCollectionButtonClick(it, collection.imageUrl) },
-                )
-            } else {
-                ExploreEndPage(
-                    onButtonClick = onMakeCollectionButtonClick,
-                    modifier = Modifier.fillMaxSize(),
-                )
+            when {
+                item != null -> {
+                    ExplorePageItem(
+                        imageUrl = item.imageUrl,
+                        collectionId = item.collectionId,
+                        contentTitle = item.title,
+                        contentDescription = item.description,
+                        year = item.year,
+                        onButtonClick = { onWatchCollectionButtonClick(it, item.imageUrl) },
+                    )
+                }
+                // isEnd == true일 때만 진짜 End 화면을 보여준다.
+                isEnd -> {
+                    ExploreEndPage(
+                        onButtonClick = onMakeCollectionButtonClick,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                // isEnd == false인데 item이 없는 경우(다음 세션 로딩 중/실패 등)는
+                // End로 오해하지 않도록 로딩 표시만 하고 대기한다.
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(FlintTheme.colors.background),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        FlintLoadingIndicator()
+                    }
+                }
             }
         }
     }
@@ -132,9 +168,10 @@ private fun ExploreScreen(
 @Composable
 private fun ExplorePageItem(
     imageUrl: String,
-    id: String,
+    collectionId: String,
     contentTitle: String,
     contentDescription: String,
+    year: Int,
     onButtonClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -188,7 +225,7 @@ private fun ExplorePageItem(
             FlintLargeButton(
                 text = "이 컬렉션 보러가기",
                 state = FlintButtonState.ColorOutline,
-                onClick = { onButtonClick(id) },
+                onClick = { onButtonClick(collectionId) },
                 modifier =
                     Modifier
                         .padding(bottom = 16.dp)
@@ -205,16 +242,17 @@ private fun ExplorePageItemPreview() {
     FlintTheme {
         ExplorePageItem(
             imageUrl = "https://buly.kr/G3Edbfu",
-            id = "",
+            collectionId = "",
             contentTitle = "너의 모든 것".repeat(10),
             contentDescription =
                 """
-                뉴욕의 서점 매니저이자 반듯한 독서가, 조. 
-                그가 대학원생 벡을 만나 한눈에 반한다. 
-                하지만 훈훈했던 그의 첫인상은 잠시일 뿐, 
+                뉴욕의 서점 매니저이자 반듯한 독서가, 조.
+                그가 대학원생 벡을 만나 한눈에 반한다.
+                하지만 훈훈했던 그의 첫인상은 잠시일 뿐,
                 감추어진 조의 뒤틀린 이면이 드러난다.
-                
+
                 """.trimIndent().repeat(10),
+            year = 2014,
             onButtonClick = {},
         )
     }
@@ -281,29 +319,145 @@ private fun ExploreEndPagePreview() {
     }
 }
 
+// 아직 첫 탐색 세션(30개)이 준비되지 않은 경우(state == EMPTY)
+@Composable
+private fun ExploreEmptyPage(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .background(FlintTheme.colors.background)
+                .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        FlintLogoTopAppbar(backgroundColor = Color.Transparent)
+
+        Spacer(Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(R.drawable.ic_gradient_pencil),
+            contentDescription = null,
+        )
+
+        Spacer(Modifier.height(47.dp))
+
+        Text(
+            text = "탐색 콘텐츠를 준비하고 있어요",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.head1Sb22,
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        Text(
+            text = "곧 새로운 작품들로 찾아올게요\n조금만 기다려주세요!",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.body1M16,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(Modifier.weight(1f))
+    }
+}
+
+@Preview
+@Composable
+private fun ExploreEmptyPagePreview() {
+    FlintTheme {
+        ExploreEmptyPage()
+    }
+}
+
+// 탐색 세션 조회(getExplorationSession) 실패 시(state == Failure)
+@Composable
+private fun ExploreErrorPage(
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .background(FlintTheme.colors.background)
+                .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        FlintLogoTopAppbar(backgroundColor = Color.Transparent)
+
+        Spacer(Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(R.drawable.ic_gradient_pencil),
+            contentDescription = null,
+        )
+
+        Spacer(Modifier.height(47.dp))
+
+        Text(
+            text = "탐색 콘텐츠를 불러오지 못했어요",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.head1Sb22,
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        Text(
+            text = "네트워크 상태를 확인한 뒤\n다시 시도해주세요!",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.body1M16,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        FlintLargeButton(
+            text = "다시 시도하기",
+            state = FlintButtonState.Able,
+            onClick = onRetryClick,
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 20.dp)
+                    .fillMaxWidth(),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ExploreErrorPagePreview() {
+    FlintTheme {
+        ExploreErrorPage(onRetryClick = {})
+    }
+}
+
 @Preview
 @Composable
 private fun ExploreScreenPreview() {
     FlintTheme {
         ExploreScreen(
-            collections =
+            items =
                 List(10) {
-                    CollectionsModel.Collection(
-                        collectionId = "0",
-                        contentTitle = "너의 모든 것",
-                        imageUrl = "https://buly.kr/G3Edbfu",
-                        contentDescription =
+                    ExplorationItemModel(
+                        contentId = "0",
+                        title = "너의 모든 것",
+                        description =
                             """
                             뉴욕의 서점 매니저이자 반듯한 독서가, 조.
                             그가 대학원생 벡을 만나 한눈에 반한다.
                             하지만 훈훈했던 그의 첫인상은 잠시일 뿐,
                             감추어진 조의 뒤틀린 이면이 드러난다.
                             """.trimIndent(),
+                        imageUrl = "https://buly.kr/G3Edbfu",
+                        year = 2014,
+                        collectionId = "0",
                     )
                 }.toImmutableList(),
+            isEnd = false,
+            initialPage = 0,
             onWatchCollectionButtonClick = { _, _ -> },
             onMakeCollectionButtonClick = {},
-            onLoadNextPage = {},
+            onLoadNextSession = {},
             modifier =
                 Modifier
                     .padding(PaddingValues())
