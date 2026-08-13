@@ -31,6 +31,6 @@ private fun ExplorationResponseDto.Item.toModel(): ExplorationItemModel =
         title = title,
         description = description,
         imageUrl = imageUrl,
-        year = year,
+        year = year ?: 0,
         collectionId = collectionId,
     )

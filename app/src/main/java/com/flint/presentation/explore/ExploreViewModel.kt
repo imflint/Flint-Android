@@ -32,6 +32,11 @@ class ExploreViewModel @Inject constructor(
         loadSession()
     }
 
+    fun retry() {
+        _uiState.update { UiState.Loading }
+        loadSession()
+    }
+
     private fun loadSession() {
         viewModelScope.launch {
             explorationRepository.getExplorationSession()

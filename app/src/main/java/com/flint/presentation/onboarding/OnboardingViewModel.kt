@@ -329,6 +329,9 @@ class OnboardingViewModel
 
     // ---------- onboarding signup ----------
     fun signup() {
+        // 이미 요청이 진행 중이면 중복 호출하지 않는다.
+        if (_signupUiState.value.isLoading) return
+
         viewModelScope.launch {
             _signupUiState.update { it.copy(signupState = UiState.Loading) }
 

@@ -76,6 +76,13 @@ fun ExploreRoute(
             }
         }
 
+        UiState.Failure -> {
+            ExploreErrorPage(
+                onRetryClick = viewModel::retry,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+
         else -> {}
     }
 }
@@ -91,9 +98,10 @@ private fun ExploreScreen(
     modifier: Modifier = Modifier,
 ) {
     val itemCount: Int = items.size
+    val totalPageCount: Int = if (isEnd) itemCount + 1 else itemCount
     val pagerState: PagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { itemCount + 1 },
+        pageCount = { totalPageCount },
     )
 
     LaunchedEffect(pagerState.currentPage) {
@@ -123,20 +131,36 @@ private fun ExploreScreen(
         ) { page: Int ->
             val item: ExplorationItemModel? = items.getOrNull(page)
 
-            if (item != null) {
-                ExplorePageItem(
-                    imageUrl = item.imageUrl,
-                    collectionId = item.collectionId,
-                    contentTitle = item.title,
-                    contentDescription = item.description,
-                    year = item.year,
-                    onButtonClick = { onWatchCollectionButtonClick(it, item.imageUrl) },
-                )
-            } else {
-                ExploreEndPage(
-                    onButtonClick = onMakeCollectionButtonClick,
-                    modifier = Modifier.fillMaxSize(),
-                )
+            when {
+                item != null -> {
+                    ExplorePageItem(
+                        imageUrl = item.imageUrl,
+                        collectionId = item.collectionId,
+                        contentTitle = item.title,
+                        contentDescription = item.description,
+                        year = item.year,
+                        onButtonClick = { onWatchCollectionButtonClick(it, item.imageUrl) },
+                    )
+                }
+                // isEnd == true일 때만 진짜 End 화면을 보여준다.
+                isEnd -> {
+                    ExploreEndPage(
+                        onButtonClick = onMakeCollectionButtonClick,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                // isEnd == false인데 item이 없는 경우(다음 세션 로딩 중/실패 등)는
+                // End로 오해하지 않도록 로딩 표시만 하고 대기한다.
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(FlintTheme.colors.background),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        FlintLoadingIndicator()
+                    }
+                }
             }
         }
     }
@@ -343,6 +367,68 @@ private fun ExploreEmptyPage(
 private fun ExploreEmptyPagePreview() {
     FlintTheme {
         ExploreEmptyPage()
+    }
+}
+
+// 탐색 세션 조회(getExplorationSession) 실패 시(state == Failure)
+@Composable
+private fun ExploreErrorPage(
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .background(FlintTheme.colors.background)
+                .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        FlintLogoTopAppbar(backgroundColor = Color.Transparent)
+
+        Spacer(Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(R.drawable.ic_gradient_pencil),
+            contentDescription = null,
+        )
+
+        Spacer(Modifier.height(47.dp))
+
+        Text(
+            text = "탐색 콘텐츠를 불러오지 못했어요",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.head1Sb22,
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        Text(
+            text = "네트워크 상태를 확인한 뒤\n다시 시도해주세요!",
+            color = FlintTheme.colors.white,
+            style = FlintTheme.typography.body1M16,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        FlintLargeButton(
+            text = "다시 시도하기",
+            state = FlintButtonState.Able,
+            onClick = onRetryClick,
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 20.dp)
+                    .fillMaxWidth(),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ExploreErrorPagePreview() {
+    FlintTheme {
+        ExploreErrorPage(onRetryClick = {})
     }
 }
 

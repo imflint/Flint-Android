@@ -62,7 +62,7 @@ fun OnboardingDoneRoute(
                     if (hasStopped) {
                         hasStopped = false
                         // 그 사이 회원가입이 성공했다면(드문 케이스) Home 이동 로직에 맡기고 여기서는 건드리지 않는다.
-                        if (!currentSignupUiState.isSuccess) {
+                        if (!currentSignupUiState.isSuccess && !currentSignupUiState.isLoading) {
                             currentNavigateUp()
                         }
                     }
