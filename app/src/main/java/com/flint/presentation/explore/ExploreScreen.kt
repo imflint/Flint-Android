@@ -98,10 +98,9 @@ private fun ExploreScreen(
     modifier: Modifier = Modifier,
 ) {
     val itemCount: Int = items.size
-    val totalPageCount: Int = if (isEnd) itemCount + 1 else itemCount
     val pagerState: PagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { totalPageCount },
+        pageCount = { itemCount + 1 },
     )
 
     LaunchedEffect(pagerState.currentPage) {

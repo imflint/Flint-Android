@@ -18,5 +18,5 @@ data class ExploreUiState(
         get() = state == ExplorationState.EMPTY
 
     val canAdvance: Boolean
-        get() = !isLoadingNext && hasNext && (state == ExplorationState.IN_PROGRESS || state == ExplorationState.UNKNOWN)
+        get() = !isLoadingNext && (state == ExplorationState.IN_PROGRESS || state == ExplorationState.UNKNOWN)
 }
