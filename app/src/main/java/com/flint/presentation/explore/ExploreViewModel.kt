@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.flint.core.common.util.UiState
 import com.flint.domain.model.exploration.ExplorationItemModel
 import com.flint.domain.model.exploration.ExplorationSessionModel
+import com.flint.domain.model.exploration.ExplorationState
 import com.flint.domain.repository.ExplorationRepository
 import com.flint.presentation.explore.uistate.ExploreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,6 +87,12 @@ class ExploreViewModel @Inject constructor(
         session: ExplorationSessionModel,
         previousItems: ImmutableList<ExplorationItemModel>,
     ) {
+        if (session.state == ExplorationState.UNKNOWN) {
+            _uiState.update { UiState.Failure }
+            Timber.e("알 수 없는 탐색 state로 세션을 적용할 수 없어 에러 화면으로 대체합니다.")
+            return
+        }
+
         val mergedItems = if (session.isEnd && previousItems.isNotEmpty()) {
             previousItems
         } else {
