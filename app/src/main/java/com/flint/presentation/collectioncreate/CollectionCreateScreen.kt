@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,13 +38,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -54,6 +63,7 @@ import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintIconButton
 import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.textfield.CollectionInputTextField
+import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
@@ -65,6 +75,7 @@ import com.flint.presentation.collectioncreate.component.CollectionCreateContent
 import com.flint.presentation.collectioncreate.component.CollectionCreateThumbnail
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 
 @Composable
 fun CollectionCreateRoute(
@@ -183,63 +194,98 @@ fun CollectionCreateScreen(
     var isModalVisible by remember { mutableStateOf(false) }
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     var isThumbnailBottomSheetVisible by remember { mutableStateOf(false) }
+    var showValidationErrors by rememberSaveable { mutableStateOf(false) }
+    var toastMessage by remember { mutableStateOf<String?>(null) }
+    var toastRequestId by remember { mutableStateOf(0) }
+    // 같은 문자열을 다시 대입하면 State 값이 안 바뀌어(구조적 동등성) 리컴포즈가 안 될 수 있으므로,
+    // 매 요청마다 카운터를 증가시켜 ShowToast 의 LaunchedEffect 타이머가 항상 재시작되도록 한다.
+    fun showToast(message: String) {
+        toastMessage = message
+        toastRequestId++
+    }
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .background(color = FlintTheme.colors.background)
+    // 필드 자체에 매달아 두면 리스트 구성이 바뀌어도(아이템 추가/삭제/순서 변경) 정확한 필드로 스크롤된다.
+    // 다만 완료 버튼은 리스트 맨 아래에 있어서, 에러 필드가 화면 밖 -> 아직 컴포즈되지 않았을 수 있다.
+    // 이 경우 bringIntoView() 가 실패하므로, 대략적인 인덱스로 먼저 스크롤해 컴포지션을 강제한다.
+    // (인덱스가 다소 어긋나도 근처로만 가면 되므로, 이 하드코딩은 point 2 만큼 취약하지 않다.)
+    val titleItemIndex = 1
+    val publicItemIndex = 3
+    val addContentHeaderIndex = 4
+    val firstContentItemIndex = addContentHeaderIndex + 1
+
+    val titleBringIntoViewRequester = remember { BringIntoViewRequester() }
+    val publicBringIntoViewRequester = remember { BringIntoViewRequester() }
+    val addContentBringIntoViewRequester = remember { BringIntoViewRequester() }
+    val contentReasonBringIntoViewRequesters = remember { mutableMapOf<String, BringIntoViewRequester>() }
+    fun reasonBringIntoViewRequester(contentId: String): BringIntoViewRequester =
+        contentReasonBringIntoViewRequesters.getOrPut(contentId) { BringIntoViewRequester() }
+
+    Box(
+        modifier = modifier.fillMaxSize(),
     ) {
-        FlintBackTopAppbar(onClick = onBackClick)
-
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(color = FlintTheme.colors.background)
         ) {
-            // 썸네일
-            item {
-                CollectionCreateThumbnail(
-                    imageUrl = uiState.thumbnailImageUri ?: uiState.existingThumbnailUrl,
-                    onClick = { isThumbnailBottomSheetVisible = true },
-                )
+            FlintBackTopAppbar(onClick = onBackClick)
 
-                Spacer(Modifier.height(20.dp))
-            }
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                // 썸네일
+                item {
+                    CollectionCreateThumbnail(
+                        imageUrl = uiState.thumbnailImageUri ?: uiState.existingThumbnailUrl,
+                        onClick = { isThumbnailBottomSheetVisible = true },
+                    )
 
-            // 컬렉션 제목
-            item {
-                CollectionTitle(
-                    title = uiState.title,
-                    onTitleChanged = onTitleChanged,
-                    modifier = Modifier.padding(horizontal = (16).dp),
-                )
-            }
+                    Spacer(Modifier.height(20.dp))
+                }
 
-            // 컬렉션 소개
-            item {
-                CollectionDescription(
-                    description = uiState.description,
-                    onDescriptionChanged = onDescriptionChanged,
-                    modifier = Modifier.padding(horizontal = (16).dp),
-                )
-            }
+                // 컬렉션 제목
+                item {
+                    CollectionTitle(
+                        title = uiState.title,
+                        onTitleChanged = onTitleChanged,
+                        isError = showValidationErrors && uiState.title.isBlank(),
+                        bringIntoViewRequester = titleBringIntoViewRequester,
+                        modifier = Modifier.padding(horizontal = (16).dp),
+                    )
+                }
 
-            // 컬렉션 공개 여부
-            item {
-                CollectionPublicSection(
-                    isPublic = uiState.isPublic,
-                    onPublicChanged = onPublicChanged,
-                    modifier = Modifier.padding(horizontal = (16).dp),
-                )
+                // 컬렉션 소개
+                item {
+                    CollectionDescription(
+                        description = uiState.description,
+                        onDescriptionChanged = onDescriptionChanged,
+                        modifier = Modifier.padding(horizontal = (16).dp),
+                    )
+                }
 
-                Spacer(Modifier.height(20.dp))
-            }
+                // 컬렉션 공개 여부
+                item {
+                    CollectionPublicSection(
+                        isPublic = uiState.isPublic,
+                        onPublicChanged = onPublicChanged,
+                        isError = showValidationErrors && uiState.isPublic == null,
+                        bringIntoViewRequester = publicBringIntoViewRequester,
+                        modifier = Modifier.padding(horizontal = (16).dp),
+                    )
 
-            // 작품 추가 섹션
-            item {
-                CollectionAddContentSection(
+                    Spacer(Modifier.height(20.dp))
+                }
+
+                // 작품 추가 섹션
+                collectionAddContentSection(
                     selectedContents = uiState.selectedContents,
                     contentDetailsMap = uiState.contentDetailsMap,
+                    showValidationErrors = showValidationErrors,
                     onDeleteRequest = { content ->
                         contentToDelete = content
                         isModalVisible = true
@@ -250,38 +296,85 @@ fun CollectionCreateScreen(
                     onSelectContentImage = onSelectContentImage,
                     onRemoveExistingContentImage = onRemoveExistingContentImage,
                     onRemoveContentImage = onRemoveContentImage,
-                    modifier = Modifier.padding(horizontal = (16).dp),
+                    headerBringIntoViewRequester = addContentBringIntoViewRequester,
+                    reasonBringIntoViewRequesterFor = ::reasonBringIntoViewRequester,
                 )
 
-                Spacer(Modifier.height(20.dp))
-            }
+                item {
+                    Text(
+                        text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. 컬렉션 이용 시 저작권을 준수해 주세요.",
+                        color = FlintTheme.colors.gray300,
+                        style = FlintTheme.typography.caption1R12,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
 
-            item {
-                Text(
-                    text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. \n컬렉션 이용 시 저작권을 준수해 주세요.",
-                    color = FlintTheme.colors.gray300,
-                    style = FlintTheme.typography.caption1R12,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+                    Spacer(Modifier.height(12.dp))
+                }
 
-                Spacer(Modifier.height(12.dp))
+                // 완료 버튼 - 고정되지 않고 스크롤해야 노출됨
+                item {
+                    FlintLargeButton(
+                        text = "완료",
+                        state = if (uiState.isLoading) FlintButtonState.Disable else FlintButtonState.Able,
+                        onClick = {
+                            when {
+                                uiState.isFinishButtonEnabled -> {
+                                    showValidationErrors = false
+                                    onFinishClick()
+                                }
+                                !uiState.isRequiredFieldsFilled -> {
+                                    showValidationErrors = true
+                                    showToast("필수 항목을 모두 입력해주세요")
+
+                                    val firstInvalidContentIndex = uiState.selectedContents.indexOfFirst {
+                                        uiState.contentDetailsMap[it.id]?.reason.isNullOrBlank()
+                                    }
+                                    coroutineScope.launch {
+                                        val (coarseIndex, requester) = when {
+                                            uiState.title.isBlank() ->
+                                                titleItemIndex to titleBringIntoViewRequester
+                                            uiState.isPublic == null ->
+                                                publicItemIndex to publicBringIntoViewRequester
+                                            firstInvalidContentIndex >= 0 -> {
+                                                val contentId = uiState.selectedContents[firstInvalidContentIndex].id
+                                                (firstContentItemIndex + firstInvalidContentIndex) to
+                                                    reasonBringIntoViewRequester(contentId)
+                                            }
+                                            else ->
+                                                addContentHeaderIndex to addContentBringIntoViewRequester
+                                        }
+                                        // 에러 필드가 화면 밖이라 아직 컴포즈되지 않았을 수 있으므로 먼저 근처로 스크롤해
+                                        // 컴포지션을 강제한 뒤, 정확한 위치는 bringIntoView() 가 보정한다.
+                                        lazyListState.scrollToItem(coarseIndex)
+                                        runCatching { requester.bringIntoView() }
+                                    }
+                                }
+                                uiState.isLoading -> Unit
+                                else -> showToast("변경된 내용이 없어요")
+                            }
+                        },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                        enabled = !uiState.isLoading,
+                    )
+                }
             }
         }
 
-        FlintLargeButton(
-            text = "완료",
-            state = if (uiState.isFinishButtonEnabled) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = {
-                onFinishClick()
-          },
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-            enabled = uiState.isFinishButtonEnabled,
-        )
+        toastMessage?.let { message ->
+            ShowToast(
+                text = message,
+                key = toastRequestId,
+                imageVector = ImageVector.vectorResource(R.drawable.ic_toast_error),
+                paddingValues = PaddingValues.Zero,
+                yOffset = 120.dp,
+                imeYOffset = 16.dp,
+                hide = { toastMessage = null },
+            )
+        }
     }
-
 
     if (isModalVisible) {
         CollectionCreateContentDeleteModal(
@@ -325,7 +418,9 @@ fun CollectionCreateScreen(
 private fun CollectionTitle(
     title: String,
     onTitleChanged: (String) -> Unit,
+    bringIntoViewRequester: BringIntoViewRequester,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
 ){
     Column(modifier = modifier) {
         Text(
@@ -337,7 +432,9 @@ private fun CollectionTitle(
         Spacer(Modifier.height(16.dp))
 
         CollectionInputTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .bringIntoViewRequester(bringIntoViewRequester),
             value = title,
             placeholder = "컬렉션의 제목을 입력해주세요.",
             onValueChanged = onTitleChanged,
@@ -345,6 +442,7 @@ private fun CollectionTitle(
             singleLine = true,
             maxLines = 1,
             isShowLengthTitle = true,
+            isError = isError,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             )
@@ -394,7 +492,9 @@ private fun CollectionDescription(
 private fun CollectionPublicSection(
     isPublic: Boolean?,
     onPublicChanged: (Boolean?) -> Unit,
+    bringIntoViewRequester: BringIntoViewRequester,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -405,14 +505,14 @@ private fun CollectionPublicSection(
 
         Spacer(Modifier.height(16.dp))
 
-        Row {
+        Row(modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)) {
             FlintIconButton(
                 text = "공개",
                 iconRes = R.drawable.ic_share,
                 state = when (isPublic) {
                     true -> FlintButtonState.ColorOutline
                     false -> FlintButtonState.Disable
-                    else -> FlintButtonState.Outline
+                    else -> if (isError) FlintButtonState.Error else FlintButtonState.Outline
                 },
                 onClick = { onPublicChanged(true) },
                 modifier = Modifier.weight(1f),
@@ -426,7 +526,7 @@ private fun CollectionPublicSection(
                 state = when (isPublic) {
                     true -> FlintButtonState.Disable
                     false -> FlintButtonState.ColorOutline
-                    else -> FlintButtonState.Outline
+                    else -> if (isError) FlintButtonState.Error else FlintButtonState.Outline
                 },
                 onClick = { onPublicChanged(false) },
                 modifier = Modifier.weight(1f),
@@ -436,8 +536,7 @@ private fun CollectionPublicSection(
     }
 }
 
-@Composable
-private fun CollectionAddContentSection(
+private fun LazyListScope.collectionAddContentSection(
     selectedContents: ImmutableList<SearchContentItemModel>,
     contentDetailsMap: Map<String, ContentDetail>,
     onDeleteRequest: (SearchContentItemModel) -> Unit,
@@ -447,36 +546,52 @@ private fun CollectionAddContentSection(
     onSelectContentImage: (contentId: String) -> Unit,
     onRemoveExistingContentImage: (contentId: String, index: Int) -> Unit,
     onRemoveContentImage: (contentId: String, index: Int) -> Unit,
-    modifier: Modifier = Modifier,
+    showValidationErrors: Boolean,
+    headerBringIntoViewRequester: BringIntoViewRequester,
+    reasonBringIntoViewRequesterFor: (contentId: String) -> BringIntoViewRequester,
 ) {
-    Column(modifier = modifier) {
-        Text(
-            text = "작품 추가",
-            color = FlintTheme.colors.white,
-            style = FlintTheme.typography.head3M18,
-        )
+    item {
+        val isContentCountError = showValidationErrors && selectedContents.size < 2
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .bringIntoViewRequester(headerBringIntoViewRequester),
         ) {
             Text(
-                text = "작품을 2개 이상 추가해주세요.",
-                color = FlintTheme.colors.gray200,
-                style = FlintTheme.typography.body2R14,
-            )
-            Text(
-                text = "${selectedContents.size}/10",
+                text = "작품 추가",
                 color = FlintTheme.colors.white,
-                style = FlintTheme.typography.body2R14,
+                style = FlintTheme.typography.head3M18,
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "작품을 2개 이상 추가해주세요.",
+                    color = if (isContentCountError) FlintTheme.colors.error500 else FlintTheme.colors.gray200,
+                    style = FlintTheme.typography.body2R14,
+                )
+                Text(
+                    text = "${selectedContents.size}/10",
+                    color = FlintTheme.colors.white,
+                    style = FlintTheme.typography.body2R14,
+                )
+            }
         }
+    }
 
-        selectedContents.forEach { content ->
-            val detail = contentDetailsMap[content.id] ?: ContentDetail()
+    items(
+        items = selectedContents,
+        key = { content -> content.id },
+    ) { content ->
+        val detail = contentDetailsMap[content.id] ?: ContentDetail()
 
-            Spacer(Modifier.height(28.dp))
+        // LazyColumn 의 verticalArrangement(16dp)와 합쳐 기존과 동일한 28dp 간격을 만든다.
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Spacer(Modifier.height(12.dp))
 
             Icon(
                 painter = painterResource(R.drawable.ic_deselect_large_pri),
@@ -515,21 +630,29 @@ private fun CollectionAddContentSection(
                 onSelectImageClick = { onSelectContentImage(content.id) },
                 isSpoiler = detail.isSpoiler,
                 onSpoilerChanged = { isSpoiler -> onSpoilerChanged(content.id, isSpoiler) },
+                isError = showValidationErrors && detail.reason.isBlank(),
+                modifier = Modifier.bringIntoViewRequester(reasonBringIntoViewRequesterFor(content.id)),
             )
         }
+    }
 
-        Spacer(Modifier.height(28.dp))
+    item {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Spacer(Modifier.height(12.dp))
 
-        FlintIconButton(
-            text = "작품 추가하기",
-            iconRes = R.drawable.ic_plus,
-            state = FlintButtonState.ColorOutline,
-            onClick = onAddContentClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 80.dp),
-            contentPadding = PaddingValues(vertical = 28.dp)
-        )
+            FlintIconButton(
+                text = "작품 추가하기",
+                iconRes = R.drawable.ic_plus,
+                state = FlintButtonState.ColorOutline,
+                onClick = onAddContentClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 80.dp),
+                contentPadding = PaddingValues(vertical = 28.dp)
+            )
+
+            Spacer(Modifier.height(4.dp))
+        }
     }
 }
 

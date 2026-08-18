@@ -55,6 +55,7 @@ data class Colors(
     val gray900: Color,
     val white: Color,
     val background: Color,
+    val subBackground: Color,
     val error200: Color,
     val error500: Color,
     val error700: Color,
@@ -119,6 +120,7 @@ val FlintColors =
         gray900 = Color(0xFF151821),
         white = Color(0xFFFFFFFF),
         background = Color(0xFF121212),
+        subBackground = Color(0xFF18191B),
         error200 = Color(0xFFFFD7DB),
         error500 = Color(0xFFFF4D62),
         error700 = Color(0xFFB53746),
@@ -403,6 +405,11 @@ private fun FlintColorsPreview() {
             Box(
                 Modifier
                     .background(color = FlintColors.background)
+                    .size(100.dp),
+            )
+            Box(
+                Modifier
+                    .background(color = FlintColors.subBackground)
                     .size(100.dp),
             )
             Box(

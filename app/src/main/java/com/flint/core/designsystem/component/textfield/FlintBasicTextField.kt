@@ -50,6 +50,7 @@ fun FlintBasicTextField(
     textStyle: TextStyle = FlintTheme.typography.body1R16,
     backgroundColor: Color = FlintTheme.colors.gray800,
     borderColor: Color = Color.Unspecified,
+    isError: Boolean = false,
     paddingValues: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -65,8 +66,8 @@ fun FlintBasicTextField(
                 .clip(RoundedCornerShape(radius))
                 .background(backgroundColor)
                 .border(
-                    width = 1.dp,
-                    color = borderColor,
+                    width = if (isError) 2.dp else 1.dp,
+                    color = if (isError) FlintTheme.colors.error500 else borderColor,
                     shape = RoundedCornerShape(radius),
                 )
                 .clickable(

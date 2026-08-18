@@ -45,13 +45,16 @@ data class CollectionCreateUiState(
         }
     )
 
-    val isFinishButtonEnabled: Boolean get() =
-        !isLoading &&
+    val isRequiredFieldsFilled: Boolean get() =
         title.isNotBlank() &&
         isPublic != null &&
         selectedContents.size >= 2 &&
-        (!isEditMode || hasChanges) &&
         selectedContents.all { contentDetailsMap[it.id]?.reason?.isNotBlank() == true }
+
+    val isFinishButtonEnabled: Boolean get() =
+        !isLoading &&
+        isRequiredFieldsFilled &&
+        (!isEditMode || hasChanges)
 
     val isCancelModalVisible: Boolean =
         contentDetailsMap.values.any { it.reason.isNotBlank() }

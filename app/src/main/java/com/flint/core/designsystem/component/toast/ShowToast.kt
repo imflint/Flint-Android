@@ -1,9 +1,12 @@
 package com.flint.core.designsystem.component.toast
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +26,7 @@ import com.flint.core.designsystem.theme.FlintTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ShowToast(
     text: String,
@@ -30,11 +34,15 @@ fun ShowToast(
     paddingValues: PaddingValues,
     yOffset: Dp,
     hide: () -> Unit,
+    imeYOffset: Dp = yOffset,
+    key: Any = text,
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key) {
         delay(2.seconds)
         hide()
     }
+
+    val bottomOffset = if (WindowInsets.isImeVisible) imeYOffset else yOffset
 
     Box(
         modifier = Modifier
@@ -47,7 +55,7 @@ fun ShowToast(
             imageVector = imageVector,
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(bottom = yOffset),
+                .padding(bottom = bottomOffset),
         )
     }
 }

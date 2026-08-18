@@ -78,6 +78,23 @@ enum class FlintButtonState() {
             get() = BorderStroke(2.dp, FlintTheme.colors.primary400)
     },
 
+    Error {
+        override val background: Brush
+            @Composable
+            @ReadOnlyComposable
+            get() = SolidColor(FlintTheme.colors.gray800)
+
+        override val contentColor: Color
+            @Composable
+            @ReadOnlyComposable
+            get() = FlintTheme.colors.white
+
+        override val border: BorderStroke
+            @Composable
+            @ReadOnlyComposable
+            get() = BorderStroke(2.dp, FlintTheme.colors.error500)
+    },
+
     Destructive {
         override val background: Brush
             @Composable
