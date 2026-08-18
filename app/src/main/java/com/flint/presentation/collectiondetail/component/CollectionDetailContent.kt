@@ -44,7 +44,11 @@ fun CollectionDetailContent(
     onSpoilClick: (contentId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier
+                .fillMaxWidth()
+                .background(FlintTheme.colors.subBackground),
+    ) {
         Spacer(Modifier.height(48.dp))
 
         if (content.customImageUrls.isNotEmpty()) {
