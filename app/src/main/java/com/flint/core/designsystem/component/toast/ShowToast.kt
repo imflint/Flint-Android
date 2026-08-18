@@ -35,8 +35,9 @@ fun ShowToast(
     yOffset: Dp,
     hide: () -> Unit,
     imeYOffset: Dp = yOffset,
+    key: Any = text,
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key) {
         delay(2.seconds)
         hide()
     }

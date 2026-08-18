@@ -196,6 +196,13 @@ fun CollectionCreateScreen(
     var isThumbnailBottomSheetVisible by remember { mutableStateOf(false) }
     var showValidationErrors by rememberSaveable { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
+    var toastRequestId by remember { mutableStateOf(0) }
+    // 같은 문자열을 다시 대입하면 State 값이 안 바뀌어(구조적 동등성) 리컴포즈가 안 될 수 있으므로,
+    // 매 요청마다 카운터를 증가시켜 ShowToast 의 LaunchedEffect 타이머가 항상 재시작되도록 한다.
+    fun showToast(message: String) {
+        toastMessage = message
+        toastRequestId++
+    }
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -317,7 +324,7 @@ fun CollectionCreateScreen(
                                 }
                                 !uiState.isRequiredFieldsFilled -> {
                                     showValidationErrors = true
-                                    toastMessage = "필수 항목을 모두 입력해주세요"
+                                    showToast("필수 항목을 모두 입력해주세요")
 
                                     val firstInvalidContentIndex = uiState.selectedContents.indexOfFirst {
                                         uiState.contentDetailsMap[it.id]?.reason.isNullOrBlank()
@@ -343,7 +350,7 @@ fun CollectionCreateScreen(
                                     }
                                 }
                                 uiState.isLoading -> Unit
-                                else -> toastMessage = "변경된 내용이 없어요"
+                                else -> showToast("변경된 내용이 없어요")
                             }
                         },
                         modifier =
@@ -359,6 +366,7 @@ fun CollectionCreateScreen(
         toastMessage?.let { message ->
             ShowToast(
                 text = message,
+                key = toastRequestId,
                 imageVector = ImageVector.vectorResource(R.drawable.ic_toast_error),
                 paddingValues = PaddingValues.Zero,
                 yOffset = 120.dp,
