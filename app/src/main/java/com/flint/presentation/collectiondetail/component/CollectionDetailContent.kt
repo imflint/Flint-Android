@@ -44,24 +44,25 @@ fun CollectionDetailContent(
     onSpoilClick: (contentId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-                .fillMaxWidth()
-                .background(FlintTheme.colors.subBackground),
-    ) {
-        Spacer(Modifier.height(48.dp))
+    Column(modifier = modifier.fillMaxWidth()) {
+        // 카드 사이 36dp 여백은 배경색 밖에 둬서 화면 기본 배경(검정)이 그대로 보이게 한다.
+        Spacer(Modifier.height(36.dp))
 
-        if (content.customImageUrls.isNotEmpty()) {
-            CollectionDetailContentCarousel(content = content)
+        Column(
+            modifier = Modifier
+                    .fillMaxWidth()
+                    .background(FlintTheme.colors.subBackground),
+        ) {
+            if (content.customImageUrls.isNotEmpty()) {
+                CollectionDetailContentCarousel(content = content)
+            }
 
-            Spacer(Modifier.height(32.dp))
+            CollectionDetailContentInfo(
+                content = content,
+                onBookmarkIconClick = onBookmarkIconClick,
+                onSpoilClick = onSpoilClick,
+            )
         }
-
-        CollectionDetailContentInfo(
-            content = content,
-            onBookmarkIconClick = onBookmarkIconClick,
-            onSpoilClick = onSpoilClick,
-        )
     }
 }
 
@@ -123,7 +124,7 @@ private fun CollectionDetailContentInfo(
     Column(
         modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
