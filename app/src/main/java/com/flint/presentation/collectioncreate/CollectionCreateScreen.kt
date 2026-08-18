@@ -193,7 +193,7 @@ fun CollectionCreateScreen(
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     var isThumbnailBottomSheetVisible by remember { mutableStateOf(false) }
     var showValidationErrors by rememberSaveable { mutableStateOf(false) }
-    var showRequiredFieldsToast by remember { mutableStateOf(false) }
+    var toastMessage by remember { mutableStateOf<String?>(null) }
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -292,7 +292,7 @@ fun CollectionCreateScreen(
                 item {
                     FlintLargeButton(
                         text = "완료",
-                        state = FlintButtonState.Able,
+                        state = if (uiState.isLoading) FlintButtonState.Disable else FlintButtonState.Able,
                         onClick = {
                             when {
                                 uiState.isFinishButtonEnabled -> {
@@ -301,7 +301,7 @@ fun CollectionCreateScreen(
                                 }
                                 !uiState.isRequiredFieldsFilled -> {
                                     showValidationErrors = true
-                                    showRequiredFieldsToast = true
+                                    toastMessage = "필수 항목을 모두 입력해주세요"
 
                                     val firstInvalidContentIndex = uiState.selectedContents.indexOfFirst {
                                         uiState.contentDetailsMap[it.id]?.reason.isNullOrBlank()
@@ -316,25 +316,28 @@ fun CollectionCreateScreen(
                                         lazyListState.animateScrollToItem(targetIndex)
                                     }
                                 }
+                                uiState.isLoading -> Unit
+                                else -> toastMessage = "변경된 내용이 없어요"
                             }
                         },
                         modifier =
                             Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
+                        enabled = !uiState.isLoading,
                     )
                 }
             }
         }
 
-        if (showRequiredFieldsToast) {
+        toastMessage?.let { message ->
             ShowToast(
-                text = "필수 항목을 모두 입력해주세요",
+                text = message,
                 imageVector = ImageVector.vectorResource(R.drawable.ic_toast_error),
                 paddingValues = PaddingValues.Zero,
                 yOffset = 120.dp,
                 imeYOffset = 16.dp,
-                hide = { showRequiredFieldsToast = false },
+                hide = { toastMessage = null },
             )
         }
     }
