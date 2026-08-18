@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -202,136 +203,140 @@ fun CollectionCreateScreen(
     val addContentHeaderIndex = 4
     val firstContentItemIndex = addContentHeaderIndex + 1
 
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .background(color = FlintTheme.colors.background)
+    Box(
+        modifier = modifier.fillMaxSize(),
     ) {
-        FlintBackTopAppbar(onClick = onBackClick)
-
-        LazyColumn(
-            state = lazyListState,
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(color = FlintTheme.colors.background)
         ) {
-            // 썸네일
-            item {
-                CollectionCreateThumbnail(
-                    imageUrl = uiState.thumbnailImageUri ?: uiState.existingThumbnailUrl,
-                    onClick = { isThumbnailBottomSheetVisible = true },
-                )
+            FlintBackTopAppbar(onClick = onBackClick)
 
-                Spacer(Modifier.height(20.dp))
-            }
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                // 썸네일
+                item {
+                    CollectionCreateThumbnail(
+                        imageUrl = uiState.thumbnailImageUri ?: uiState.existingThumbnailUrl,
+                        onClick = { isThumbnailBottomSheetVisible = true },
+                    )
 
-            // 컬렉션 제목
-            item {
-                CollectionTitle(
-                    title = uiState.title,
-                    onTitleChanged = onTitleChanged,
-                    isError = showValidationErrors && uiState.title.isBlank(),
-                    modifier = Modifier.padding(horizontal = (16).dp),
-                )
-            }
+                    Spacer(Modifier.height(20.dp))
+                }
 
-            // 컬렉션 소개
-            item {
-                CollectionDescription(
-                    description = uiState.description,
-                    onDescriptionChanged = onDescriptionChanged,
-                    modifier = Modifier.padding(horizontal = (16).dp),
-                )
-            }
+                // 컬렉션 제목
+                item {
+                    CollectionTitle(
+                        title = uiState.title,
+                        onTitleChanged = onTitleChanged,
+                        isError = showValidationErrors && uiState.title.isBlank(),
+                        modifier = Modifier.padding(horizontal = (16).dp),
+                    )
+                }
 
-            // 컬렉션 공개 여부
-            item {
-                CollectionPublicSection(
-                    isPublic = uiState.isPublic,
-                    onPublicChanged = onPublicChanged,
-                    isError = showValidationErrors && uiState.isPublic == null,
-                    modifier = Modifier.padding(horizontal = (16).dp),
-                )
+                // 컬렉션 소개
+                item {
+                    CollectionDescription(
+                        description = uiState.description,
+                        onDescriptionChanged = onDescriptionChanged,
+                        modifier = Modifier.padding(horizontal = (16).dp),
+                    )
+                }
 
-                Spacer(Modifier.height(20.dp))
-            }
+                // 컬렉션 공개 여부
+                item {
+                    CollectionPublicSection(
+                        isPublic = uiState.isPublic,
+                        onPublicChanged = onPublicChanged,
+                        isError = showValidationErrors && uiState.isPublic == null,
+                        modifier = Modifier.padding(horizontal = (16).dp),
+                    )
 
-            // 작품 추가 섹션 - 작품별로 개별 아이템이어야 특정 작품으로 정확히 스크롤할 수 있다.
-            collectionAddContentSection(
-                selectedContents = uiState.selectedContents,
-                contentDetailsMap = uiState.contentDetailsMap,
-                showValidationErrors = showValidationErrors,
-                onDeleteRequest = { content ->
-                    contentToDelete = content
-                    isModalVisible = true
-                },
-                onSpoilerChanged = onSpoilerChanged,
-                onReasonChanged = onReasonChanged,
-                onAddContentClick = onAddContentClick,
-                onSelectContentImage = onSelectContentImage,
-                onRemoveExistingContentImage = onRemoveExistingContentImage,
-                onRemoveContentImage = onRemoveContentImage,
-            )
+                    Spacer(Modifier.height(20.dp))
+                }
 
-            item {
-                Text(
-                    text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. 컬렉션 이용 시 저작권을 준수해 주세요.",
-                    color = FlintTheme.colors.gray300,
-                    style = FlintTheme.typography.caption1R12,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-
-                Spacer(Modifier.height(12.dp))
-            }
-
-            // 완료 버튼 - 고정되지 않고 스크롤해야 노출됨
-            item {
-                FlintLargeButton(
-                    text = "완료",
-                    state = FlintButtonState.Able,
-                    onClick = {
-                        when {
-                            uiState.isFinishButtonEnabled -> {
-                                showValidationErrors = false
-                                onFinishClick()
-                            }
-                            !uiState.isRequiredFieldsFilled -> {
-                                showValidationErrors = true
-                                showRequiredFieldsToast = true
-
-                                val firstInvalidContentIndex = uiState.selectedContents.indexOfFirst {
-                                    uiState.contentDetailsMap[it.id]?.reason.isNullOrBlank()
-                                }
-                                val targetIndex = when {
-                                    uiState.title.isBlank() -> titleItemIndex
-                                    uiState.isPublic == null -> publicItemIndex
-                                    firstInvalidContentIndex >= 0 -> firstContentItemIndex + firstInvalidContentIndex
-                                    else -> addContentHeaderIndex
-                                }
-                                coroutineScope.launch {
-                                    lazyListState.animateScrollToItem(targetIndex)
-                                }
-                            }
-                        }
+                // 작품 추가 섹션 - 작품별로 개별 아이템이어야 특정 작품으로 정확히 스크롤할 수 있다.
+                collectionAddContentSection(
+                    selectedContents = uiState.selectedContents,
+                    contentDetailsMap = uiState.contentDetailsMap,
+                    showValidationErrors = showValidationErrors,
+                    onDeleteRequest = { content ->
+                        contentToDelete = content
+                        isModalVisible = true
                     },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                    onSpoilerChanged = onSpoilerChanged,
+                    onReasonChanged = onReasonChanged,
+                    onAddContentClick = onAddContentClick,
+                    onSelectContentImage = onSelectContentImage,
+                    onRemoveExistingContentImage = onRemoveExistingContentImage,
+                    onRemoveContentImage = onRemoveContentImage,
                 )
+
+                item {
+                    Text(
+                        text = "Flint에서 제공하는 영화 · 드라마를 포함한 모든 콘텐츠의 저작권은 각 권리자에게 있으며, 관련 법령에 따라 보호됩니다. 컬렉션 이용 시 저작권을 준수해 주세요.",
+                        color = FlintTheme.colors.gray300,
+                        style = FlintTheme.typography.caption1R12,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+
+                    Spacer(Modifier.height(12.dp))
+                }
+
+                // 완료 버튼 - 고정되지 않고 스크롤해야 노출됨
+                item {
+                    FlintLargeButton(
+                        text = "완료",
+                        state = FlintButtonState.Able,
+                        onClick = {
+                            when {
+                                uiState.isFinishButtonEnabled -> {
+                                    showValidationErrors = false
+                                    onFinishClick()
+                                }
+                                !uiState.isRequiredFieldsFilled -> {
+                                    showValidationErrors = true
+                                    showRequiredFieldsToast = true
+
+                                    val firstInvalidContentIndex = uiState.selectedContents.indexOfFirst {
+                                        uiState.contentDetailsMap[it.id]?.reason.isNullOrBlank()
+                                    }
+                                    val targetIndex = when {
+                                        uiState.title.isBlank() -> titleItemIndex
+                                        uiState.isPublic == null -> publicItemIndex
+                                        firstInvalidContentIndex >= 0 -> firstContentItemIndex + firstInvalidContentIndex
+                                        else -> addContentHeaderIndex
+                                    }
+                                    coroutineScope.launch {
+                                        lazyListState.animateScrollToItem(targetIndex)
+                                    }
+                                }
+                            }
+                        },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
             }
         }
-    }
 
-    if (showRequiredFieldsToast) {
-        ShowToast(
-            text = "필수 항목을 모두 입력해주세요",
-            imageVector = ImageVector.vectorResource(R.drawable.ic_toast_error),
-            paddingValues = PaddingValues.Zero,
-            yOffset = 120.dp,
-            imeYOffset = 16.dp,
-            hide = { showRequiredFieldsToast = false },
-        )
+        if (showRequiredFieldsToast) {
+            ShowToast(
+                text = "필수 항목을 모두 입력해주세요",
+                imageVector = ImageVector.vectorResource(R.drawable.ic_toast_error),
+                paddingValues = PaddingValues.Zero,
+                yOffset = 120.dp,
+                imeYOffset = 16.dp,
+                hide = { showRequiredFieldsToast = false },
+            )
+        }
     }
 
     if (isModalVisible) {
