@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -197,11 +199,21 @@ fun CollectionCreateScreen(
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    // LazyColumn 아이템 순서가 고정이므로, 인덱스로 필수 항목 섹션을 가리켜 에러 발생 시 스크롤한다.
+    // 필드 자체에 매달아 두면 리스트 구성이 바뀌어도(아이템 추가/삭제/순서 변경) 정확한 필드로 스크롤된다.
+    // 다만 완료 버튼은 리스트 맨 아래에 있어서, 에러 필드가 화면 밖 -> 아직 컴포즈되지 않았을 수 있다.
+    // 이 경우 bringIntoView() 가 실패하므로, 대략적인 인덱스로 먼저 스크롤해 컴포지션을 강제한다.
+    // (인덱스가 다소 어긋나도 근처로만 가면 되므로, 이 하드코딩은 point 2 만큼 취약하지 않다.)
     val titleItemIndex = 1
     val publicItemIndex = 3
     val addContentHeaderIndex = 4
     val firstContentItemIndex = addContentHeaderIndex + 1
+
+    val titleBringIntoViewRequester = remember { BringIntoViewRequester() }
+    val publicBringIntoViewRequester = remember { BringIntoViewRequester() }
+    val addContentBringIntoViewRequester = remember { BringIntoViewRequester() }
+    val contentReasonBringIntoViewRequesters = remember { mutableMapOf<String, BringIntoViewRequester>() }
+    fun reasonBringIntoViewRequester(contentId: String): BringIntoViewRequester =
+        contentReasonBringIntoViewRequesters.getOrPut(contentId) { BringIntoViewRequester() }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -235,6 +247,7 @@ fun CollectionCreateScreen(
                         title = uiState.title,
                         onTitleChanged = onTitleChanged,
                         isError = showValidationErrors && uiState.title.isBlank(),
+                        bringIntoViewRequester = titleBringIntoViewRequester,
                         modifier = Modifier.padding(horizontal = (16).dp),
                     )
                 }
@@ -254,13 +267,14 @@ fun CollectionCreateScreen(
                         isPublic = uiState.isPublic,
                         onPublicChanged = onPublicChanged,
                         isError = showValidationErrors && uiState.isPublic == null,
+                        bringIntoViewRequester = publicBringIntoViewRequester,
                         modifier = Modifier.padding(horizontal = (16).dp),
                     )
 
                     Spacer(Modifier.height(20.dp))
                 }
 
-                // 작품 추가 섹션 - 작품별로 개별 아이템이어야 특정 작품으로 정확히 스크롤할 수 있다.
+                // 작품 추가 섹션
                 collectionAddContentSection(
                     selectedContents = uiState.selectedContents,
                     contentDetailsMap = uiState.contentDetailsMap,
@@ -275,6 +289,8 @@ fun CollectionCreateScreen(
                     onSelectContentImage = onSelectContentImage,
                     onRemoveExistingContentImage = onRemoveExistingContentImage,
                     onRemoveContentImage = onRemoveContentImage,
+                    headerBringIntoViewRequester = addContentBringIntoViewRequester,
+                    reasonBringIntoViewRequesterFor = ::reasonBringIntoViewRequester,
                 )
 
                 item {
@@ -306,14 +322,24 @@ fun CollectionCreateScreen(
                                     val firstInvalidContentIndex = uiState.selectedContents.indexOfFirst {
                                         uiState.contentDetailsMap[it.id]?.reason.isNullOrBlank()
                                     }
-                                    val targetIndex = when {
-                                        uiState.title.isBlank() -> titleItemIndex
-                                        uiState.isPublic == null -> publicItemIndex
-                                        firstInvalidContentIndex >= 0 -> firstContentItemIndex + firstInvalidContentIndex
-                                        else -> addContentHeaderIndex
-                                    }
                                     coroutineScope.launch {
-                                        lazyListState.animateScrollToItem(targetIndex)
+                                        val (coarseIndex, requester) = when {
+                                            uiState.title.isBlank() ->
+                                                titleItemIndex to titleBringIntoViewRequester
+                                            uiState.isPublic == null ->
+                                                publicItemIndex to publicBringIntoViewRequester
+                                            firstInvalidContentIndex >= 0 -> {
+                                                val contentId = uiState.selectedContents[firstInvalidContentIndex].id
+                                                (firstContentItemIndex + firstInvalidContentIndex) to
+                                                    reasonBringIntoViewRequester(contentId)
+                                            }
+                                            else ->
+                                                addContentHeaderIndex to addContentBringIntoViewRequester
+                                        }
+                                        // 에러 필드가 화면 밖이라 아직 컴포즈되지 않았을 수 있으므로 먼저 근처로 스크롤해
+                                        // 컴포지션을 강제한 뒤, 정확한 위치는 bringIntoView() 가 보정한다.
+                                        lazyListState.scrollToItem(coarseIndex)
+                                        runCatching { requester.bringIntoView() }
                                     }
                                 }
                                 uiState.isLoading -> Unit
@@ -384,6 +410,7 @@ fun CollectionCreateScreen(
 private fun CollectionTitle(
     title: String,
     onTitleChanged: (String) -> Unit,
+    bringIntoViewRequester: BringIntoViewRequester,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
 ){
@@ -397,7 +424,9 @@ private fun CollectionTitle(
         Spacer(Modifier.height(16.dp))
 
         CollectionInputTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .bringIntoViewRequester(bringIntoViewRequester),
             value = title,
             placeholder = "컬렉션의 제목을 입력해주세요.",
             onValueChanged = onTitleChanged,
@@ -455,6 +484,7 @@ private fun CollectionDescription(
 private fun CollectionPublicSection(
     isPublic: Boolean?,
     onPublicChanged: (Boolean?) -> Unit,
+    bringIntoViewRequester: BringIntoViewRequester,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
 ) {
@@ -467,7 +497,7 @@ private fun CollectionPublicSection(
 
         Spacer(Modifier.height(16.dp))
 
-        Row {
+        Row(modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)) {
             FlintIconButton(
                 text = "공개",
                 iconRes = R.drawable.ic_share,
@@ -509,12 +539,17 @@ private fun LazyListScope.collectionAddContentSection(
     onRemoveExistingContentImage: (contentId: String, index: Int) -> Unit,
     onRemoveContentImage: (contentId: String, index: Int) -> Unit,
     showValidationErrors: Boolean,
+    headerBringIntoViewRequester: BringIntoViewRequester,
+    reasonBringIntoViewRequesterFor: (contentId: String) -> BringIntoViewRequester,
 ) {
-    // 작품별로 개별 LazyColumn 아이템이어야 특정 작품 위치로 정확히 스크롤할 수 있다.
     item {
         val isContentCountError = showValidationErrors && selectedContents.size < 2
 
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .bringIntoViewRequester(headerBringIntoViewRequester),
+        ) {
             Text(
                 text = "작품 추가",
                 color = FlintTheme.colors.white,
@@ -588,6 +623,7 @@ private fun LazyListScope.collectionAddContentSection(
                 isSpoiler = detail.isSpoiler,
                 onSpoilerChanged = { isSpoiler -> onSpoilerChanged(content.id, isSpoiler) },
                 isError = showValidationErrors && detail.reason.isBlank(),
+                modifier = Modifier.bringIntoViewRequester(reasonBringIntoViewRequesterFor(content.id)),
             )
         }
     }
