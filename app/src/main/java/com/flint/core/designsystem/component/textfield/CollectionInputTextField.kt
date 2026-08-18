@@ -34,6 +34,7 @@ fun CollectionInputTextField(
     maxLines: Int,
     isShowLengthTitle: Boolean,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
@@ -48,6 +49,7 @@ fun CollectionInputTextField(
             maxLength = maxLength,
             singleLine = singleLine,
             maxLines = maxLines,
+            isError = isError,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             paddingValues = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
