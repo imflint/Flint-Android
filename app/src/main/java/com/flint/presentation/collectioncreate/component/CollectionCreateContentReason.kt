@@ -41,6 +41,7 @@ fun CollectionCreateContentReason(
     isSpoiler: Boolean,
     onSpoilerChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -61,7 +62,8 @@ fun CollectionCreateContentReason(
             singleLine = false,
             maxLength = Int.MAX_VALUE,
             maxLines = Int.MAX_VALUE,
-            isShowLengthTitle = false
+            isShowLengthTitle = false,
+            isError = isError,
         )
 
         Row(
