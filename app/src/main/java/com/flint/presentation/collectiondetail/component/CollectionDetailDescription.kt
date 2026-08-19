@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.type.UserRoleType
 
@@ -43,7 +43,7 @@ fun CollectionDetailDescription(
                 text = authorNickname,
                 color = FlintTheme.colors.white,
                 style = FlintTheme.typography.head2Sb20,
-                modifier = Modifier.noRippleClickable(
+                modifier = Modifier.flintCardClickable(
                     onClick = { onAuthorNicknameClick() }
                 )
             )

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,9 +22,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.FlintPressDefaults
+import com.flint.core.designsystem.interaction.pressClickable
+import com.flint.core.designsystem.interaction.pressScale
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -44,12 +48,16 @@ fun FlintGenreChip(
 
     val contentColor = FlintTheme.colors.white
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     Text(
         text = text,
         color = contentColor,
         style = FlintTheme.typography.body2M14,
         modifier =
             modifier
+                // 칩은 clip 된 배경을 가지고 있어서 딤이 모서리를 따라 잘린다. 축소 + 딤 둘 다 준다.
+                .pressScale(interactionSource, pressedScale = FlintPressDefaults.BUTTON_SCALE)
                 .clip(shape)
                 .run {
                     if (border != null)
@@ -58,7 +66,11 @@ fun FlintGenreChip(
                         this
                 }
                 .background(color = backgroundColor, shape = shape)
-                .noRippleClickable(onClick = onClick)
+                .pressClickable(
+                    interactionSource = interactionSource,
+                    role = Role.Button,
+                    onClick = onClick,
+                )
                 .padding(contentPadding),
     )
 }

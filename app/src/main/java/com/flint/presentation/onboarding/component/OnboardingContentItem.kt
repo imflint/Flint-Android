@@ -1,7 +1,6 @@
 package com.flint.presentation.onboarding.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.addKoreanLineBreaks
 import com.flint.core.designsystem.component.image.NetworkImage
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.theme.FlintColors
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -54,7 +54,7 @@ fun OnboardingContentItem(
                 Modifier
                     .aspectRatio(2f / 3f) // 영화 포스터 2:3 비율 유지
                     .clip(RoundedCornerShape(0.dp))
-                    .clickable { onClick() },
+                    .flintCardClickable { onClick() },
         ) {
             // 영화 포스터 이미지
             NetworkImage(

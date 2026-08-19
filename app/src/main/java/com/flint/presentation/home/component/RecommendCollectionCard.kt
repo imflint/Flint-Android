@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
@@ -47,7 +47,7 @@ fun RecommendCollectionCard(
             .height(320.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
-            .noRippleClickable { onItemClick(item.id) },
+            .flintCardClickable { onItemClick(item.id) },
     ) {
         NetworkImage(
             imageUrl = item.thumbnailUrl,

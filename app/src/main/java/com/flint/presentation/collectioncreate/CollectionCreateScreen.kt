@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,6 +64,7 @@ import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.search.SearchContentItemModel
 import com.flint.domain.model.search.SearchContentListModel
@@ -599,7 +599,7 @@ private fun LazyListScope.collectionAddContentSection(
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .align(Alignment.End)
-                    .clickable(onClick = { onDeleteRequest(content) })
+                    .flintIconClickable(onClick = { onDeleteRequest(content) })
                     .padding(vertical = 10.dp)
                     .size(28.dp),
             )

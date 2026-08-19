@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.BlurMaskFilter
 import android.graphics.Rect
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,20 +20,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.flint.core.designsystem.interaction.flintNoFeedbackClickable
 
+/**
+ * 시각적 피드백 없이 클릭만 받는다.
+ *
+ * 이제는 중복 클릭 방지가 함께 걸린 [flintNoFeedbackClickable] 로 위임한다.
+ * 새로 작성하는 코드에서 버튼·카드·아이콘처럼 눌림이 보여야 하는 요소에는
+ * [com.flint.core.designsystem.interaction.flintClickable] 을 쓸 것.
+ */
 @Composable
-inline fun Modifier.noRippleClickable(
+fun Modifier.noRippleClickable(
     enabled: Boolean = true,
-    crossinline onClick: () -> Unit,
-): Modifier =
-    composed {
-        this.clickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() },
-            onClick = { onClick() },
-            enabled = enabled,
-        )
-    }
+    onClick: () -> Unit,
+): Modifier = flintNoFeedbackClickable(enabled = enabled, onClick = onClick)
 
 @Composable
 fun Modifier.dropShadow(

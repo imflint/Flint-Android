@@ -12,9 +12,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.FlintPressDefaults
+import com.flint.core.designsystem.interaction.flintClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -28,7 +30,15 @@ fun FlintBasicToggle(
         onCheckedChange = null,
         modifier =
             modifier
-                .noRippleClickable { onCheckedChange(!isChecked) }
+                .flintClickable(
+                    // 트랙이 캡슐 모양이라 사각 딤이 튀어나온다. 축소만 쓴다.
+                    pressedScale = FlintPressDefaults.ICON_SCALE,
+                    // 로컬 상태 토글이라 연속으로 껐다 켜는 조작을 막으면 안 된다.
+                    throttleMillis = 0L,
+                    role = Role.Switch,
+                    indication = null,
+                    onClick = { onCheckedChange(!isChecked) },
+                )
                 .padding(vertical = 10.dp),
         thumbContent = {
             Box(

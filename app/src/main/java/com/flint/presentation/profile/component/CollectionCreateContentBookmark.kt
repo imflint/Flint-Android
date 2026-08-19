@@ -1,7 +1,6 @@
 package com.flint.presentation.profile.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
+import com.flint.core.designsystem.interaction.flintCardClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.type.OttType
 
@@ -173,7 +174,7 @@ private fun CollectionCreateContentBookmarkTag(
             modifier =
                 Modifier
                     .size(24.dp)
-                    .clickable(onClick = onClick),
+                    .flintIconClickable(onClick = onClick),
         )
 
         Spacer(modifier = Modifier.height(2.dp))
@@ -192,7 +193,7 @@ private fun CollectionCreateContentBookmarkMore(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.flintCardClickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(

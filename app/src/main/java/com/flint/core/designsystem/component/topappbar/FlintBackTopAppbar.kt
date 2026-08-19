@@ -11,7 +11,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -33,7 +33,7 @@ fun FlintBackTopAppbar(
         backgroundColor = backgroundColor,
         navigationIcon = {
             Icon(
-                modifier = Modifier.noRippleClickable(onClick = onClick),
+                modifier = Modifier.flintIconClickable(onClick = onClick),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_back),
                 contentDescription = null,
                 tint = FlintTheme.colors.white,
@@ -43,14 +43,14 @@ fun FlintBackTopAppbar(
         action = {
             if (closeable) {
                 Icon(
-                    modifier = Modifier.noRippleClickable(onClick = onActionClick),
+                    modifier = Modifier.flintIconClickable(onClick = onActionClick),
                     imageVector = ImageVector.vectorResource(R.drawable.ic_cancel),
                     contentDescription = null,
                     tint = FlintTheme.colors.white,
                 )
             } else {
                 Text(
-                    modifier = Modifier.noRippleClickable(onClick = onActionClick),
+                    modifier = Modifier.flintIconClickable(onClick = onActionClick),
                     text = actionText,
                     color = textColor,
                     style = textStyle,

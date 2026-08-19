@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.common.extension.addKoreanLineBreaks
 import com.flint.core.common.extension.dropShadow
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.image.ProfileImage
 import com.flint.core.designsystem.theme.FlintTheme
@@ -152,7 +152,7 @@ private fun CollectionFileContent(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                     modifier = Modifier
                         .size(48.dp)
-                        .noRippleClickable(onClick = onBookmarkClick),
+                        .flintIconClickable(onClick = onBookmarkClick),
                 ) {
                     Image(
                         imageVector =

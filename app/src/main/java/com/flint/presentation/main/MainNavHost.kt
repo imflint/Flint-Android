@@ -56,6 +56,10 @@ fun MainNavHost(
         NavHost(
             navController = navigator.navController,
             startDestination = navigator.startDestination,
+            enterTransition = { flintEnterTransition() },
+            exitTransition = { flintExitTransition() },
+            popEnterTransition = { flintPopEnterTransition() },
+            popExitTransition = { flintPopExitTransition() },
         ) {
             splashNavGraph(
                 paddingValues = paddingValues,

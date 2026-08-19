@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.R
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -267,7 +268,7 @@ private fun ProfileScreen(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_back),
                         contentDescription = null,
                         tint = FlintTheme.colors.white,
-                        modifier = Modifier.noRippleClickable { onBackClick() },
+                        modifier = Modifier.flintIconClickable { onBackClick() },
                     )
                 }
             },
@@ -277,7 +278,7 @@ private fun ProfileScreen(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
                         contentDescription = "설정",
                         tint = FlintTheme.colors.white,
-                        modifier = Modifier.noRippleClickable { onSettingsClick() },
+                        modifier = Modifier.flintIconClickable { onSettingsClick() },
                     )
                 }
             },

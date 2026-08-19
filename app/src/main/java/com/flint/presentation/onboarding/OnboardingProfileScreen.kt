@@ -5,7 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,6 +52,8 @@ import com.flint.core.designsystem.component.image.EditProfileImage
 import com.flint.core.designsystem.component.textfield.FlintBasicTextField
 import com.flint.core.designsystem.component.toast.ShowToast
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.core.designsystem.interaction.pressClickable
+import com.flint.core.designsystem.interaction.pressScale
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.onboarding.event.OnboardingProfileEvent
 
@@ -204,15 +207,22 @@ fun OnboardingProfileScreen(
                         },
                     )
 
+                    val checkInteractionSource = remember { MutableInteractionSource() }
+
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
+                            .pressScale(checkInteractionSource, enabled = canCheckNickname)
                             .clip(RoundedCornerShape(8.dp))
                             .background(
                                 if (canCheckNickname) FlintTheme.colors.primary400
                                 else FlintTheme.colors.gray700
                             )
-                            .clickable(enabled = canCheckNickname) {
+                            .pressClickable(
+                                interactionSource = checkInteractionSource,
+                                enabled = canCheckNickname,
+                                role = Role.Button,
+                            ) {
                                 keyboardController?.hide()
                                 onCheckNickname()
                             }

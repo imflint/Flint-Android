@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 data class MenuBottomSheetData(
@@ -53,7 +53,7 @@ fun MenuBottomSheet(
                         Modifier
                             .fillMaxWidth()
                             .height(60.dp)
-                            .noRippleClickable {
+                            .flintCardClickable {
                                 item.clickAction()
                                 onDismiss()
                             },

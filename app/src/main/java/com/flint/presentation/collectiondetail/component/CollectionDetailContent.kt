@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.component.collection.Spoiler
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
@@ -164,7 +164,7 @@ private fun CollectionDetailContentInfo(
 
             Column(
                 modifier = Modifier
-                    .noRippleClickable(onClick = { onBookmarkIconClick(content.id) })
+                    .flintIconClickable(onClick = { onBookmarkIconClick(content.id) })
                     .padding(top = 6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

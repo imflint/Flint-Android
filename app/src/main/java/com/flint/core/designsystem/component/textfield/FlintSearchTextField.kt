@@ -20,7 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -52,7 +52,7 @@ fun FlintSearchTextField(
                     Modifier
                         .padding(12.dp)
                         .size(24.dp)
-                        .noRippleClickable(
+                        .flintIconClickable(
                             onClick = {
                                 keyboardController?.hide()
                                 if (value.isNotEmpty()) {

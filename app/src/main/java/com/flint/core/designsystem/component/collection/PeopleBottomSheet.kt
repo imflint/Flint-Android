@@ -3,7 +3,6 @@
 package com.flint.core.designsystem.component.collection
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.component.bottomsheet.FlintBasicBottomSheet
 import com.flint.core.designsystem.component.image.ProfileImage
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.type.UserRoleType
@@ -116,7 +116,7 @@ private fun Author(
         modifier =
             modifier
                 .defaultMinSize(minHeight = 48.dp)
-                .clickable(onClick = { onClick(author.userId) }),
+                .flintCardClickable(onClick = { onClick(author.userId) }),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ProfileImage(

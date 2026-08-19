@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,16 +19,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
+import com.flint.core.designsystem.interaction.FlintPressDefaults
+import com.flint.core.designsystem.interaction.pressClickable
+import com.flint.core.designsystem.interaction.pressScale
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -41,15 +46,20 @@ fun FlintBasicButton(
     enabled: Boolean = true,
     contentPadding: PaddingValues,
     @DrawableRes leadingIconRes: Int? = null,
+    pressedScale: Float = FlintPressDefaults.BUTTON_SCALE,
 ) {
     val background: Brush = state.background
     val contentColor: Color = state.contentColor
     val border: BorderStroke? = state.border
     val shape = RoundedCornerShape(8.dp)
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     Row(
         modifier =
             modifier
+                // 축소가 border/clip 보다 앞에 있어야 테두리와 모서리까지 같이 줄어든다.
+                .pressScale(interactionSource, enabled, pressedScale)
                 .run {
                     if (border != null) {
                         border(border = border, shape = shape)
@@ -59,7 +69,12 @@ fun FlintBasicButton(
                 }
                 .clip(shape)
                 .background(background)
-                .clickable(enabled = enabled, onClick = onClick)
+                .pressClickable(
+                    interactionSource = interactionSource,
+                    enabled = enabled,
+                    role = Role.Button,
+                    onClick = onClick,
+                )
                 .padding(contentPadding),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,

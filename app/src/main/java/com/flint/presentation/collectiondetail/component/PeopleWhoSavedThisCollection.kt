@@ -1,7 +1,6 @@
 package com.flint.presentation.collectiondetail.component
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +24,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.component.image.ProfileImage
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.domain.type.UserRoleType
@@ -58,7 +58,7 @@ fun PeopleWhoSavedThisCollection(
                 contentDescription = null,
                 modifier = Modifier
                         .size(24.dp)
-                        .clickable(onClick = onMoreClick)
+                        .flintIconClickable(onClick = onMoreClick)
                         .padding(vertical = 1.dp)
                         .padding(end = 3.dp),
                 tint = FlintTheme.colors.white,

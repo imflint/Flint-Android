@@ -22,7 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.collectiondetail.report.ReportReason
@@ -72,7 +72,7 @@ private fun ReportCheckItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .noRippleClickable(onClick = onCheckClick),
+            .flintCardClickable(onClick = onCheckClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(

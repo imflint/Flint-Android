@@ -1,7 +1,6 @@
 package com.flint.presentation.collectioncreate.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -19,6 +18,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -64,7 +64,7 @@ fun AddContentSelectItemTag(
         modifier =
             Modifier
                 .size(48.dp)
-                .clickable(onClick = onClick),
+                .flintIconClickable(onClick = onClick),
     )
 }
 

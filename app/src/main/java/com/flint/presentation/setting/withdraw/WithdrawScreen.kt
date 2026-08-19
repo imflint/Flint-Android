@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintLargeButton
 import com.flint.core.designsystem.component.topappbar.FlintBackTopAppbar
@@ -101,7 +101,7 @@ private fun WithdrawScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .noRippleClickable(onClick = onToggleConfirm)
+                .flintCardClickable(onClick = onToggleConfirm)
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

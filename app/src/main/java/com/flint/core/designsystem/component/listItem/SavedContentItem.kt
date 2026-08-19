@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
 import com.flint.core.designsystem.theme.FlintTheme
@@ -32,7 +32,7 @@ fun SavedContentItem(
         modifier =
             modifier
                 .width(120.dp)
-                .noRippleClickable {
+                .flintCardClickable {
                     onItemClick(contentModel.id)
                 },
     ) {

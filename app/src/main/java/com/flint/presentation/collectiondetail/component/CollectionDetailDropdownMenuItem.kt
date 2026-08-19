@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 private val DropdownMenuItemShape = RoundedCornerShape(8.dp)
@@ -23,7 +23,7 @@ fun CollectionReportDropdownMenuItem(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .background(color = FlintTheme.colors.gray700, shape = DropdownMenuItemShape)
-            .noRippleClickable(onClick = onClick)
+            .flintCardClickable(onClick = onClick)
             .then(DropdownMenuItemPadding),
         contentAlignment = Alignment.Center,
     ) {
@@ -46,7 +46,7 @@ fun CollectionEditDeleteDropdownMenuItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .noRippleClickable(onClick = onEditClick)
+                .flintCardClickable(onClick = onEditClick)
                 .then(DropdownMenuItemPadding),
             contentAlignment = Alignment.Center,
         ) {
@@ -62,7 +62,7 @@ fun CollectionEditDeleteDropdownMenuItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .noRippleClickable(onClick = onDeleteClick)
+                .flintCardClickable(onClick = onDeleteClick)
                 .then(DropdownMenuItemPadding),
             contentAlignment = Alignment.Center,
         ) {

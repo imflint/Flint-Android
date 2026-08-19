@@ -36,7 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.common.util.TermGuides
 import com.flint.core.common.util.UiState
 import com.flint.core.designsystem.component.button.FlintButtonState
@@ -112,7 +113,7 @@ fun OnboardingTermsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .noRippleClickable {
+                        .flintCardClickable {
                             val newState = !allChecked
                             checkedStates = List(terms.size) { newState }
                         }
@@ -237,7 +238,7 @@ private fun TermRow(
                 ),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.noRippleClickable(onClick = onCheckClick),
+                modifier = Modifier.flintIconClickable(onClick = onCheckClick),
             )
             Spacer(Modifier.width(12.dp))
             Text(
@@ -252,7 +253,7 @@ private fun TermRow(
                 tint = FlintTheme.colors.gray400,
                 modifier = Modifier
                     .rotate(if (isExpanded) 180f else 0f)
-                    .noRippleClickable(onClick = onExpandClick),
+                    .flintIconClickable(onClick = onExpandClick),
             )
         }
 
@@ -281,7 +282,7 @@ private fun TermRow(
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
                         .align(Alignment.End)
-                        .noRippleClickable(onClick = onDetailClick),
+                        .flintIconClickable(onClick = onDetailClick),
                 )
             }
         }

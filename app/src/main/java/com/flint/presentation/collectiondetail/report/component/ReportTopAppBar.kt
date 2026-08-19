@@ -14,7 +14,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -37,7 +37,7 @@ fun ReportTopAppBar(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .noRippleClickable(onClick = onCancelClick)
+                .flintIconClickable(onClick = onCancelClick)
                 .size(48.dp),
             contentAlignment = Alignment.Center,
         ) {

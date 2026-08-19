@@ -1,5 +1,6 @@
 package com.flint.core.designsystem.component.toast
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.flint.core.designsystem.component.snackbar.SaveToast
 import com.flint.core.designsystem.theme.FlintTheme
 import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ShowSaveToast(
@@ -27,8 +27,14 @@ fun ShowSaveToast(
     yOffset: Dp,
     hide: () -> Unit,
 ) {
+    // 퇴장 애니메이션을 그리려면 hide() 를 애니메이션 뒤로 미뤄야 한다. ShowToast 와 같은 방식.
+    var visible by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        delay(2.seconds)
+        visible = true
+        delay(TOAST_VISIBLE_MILLIS)
+        visible = false
+        delay(TOAST_EXIT_MILLIS.toLong())
         hide()
     }
 
@@ -36,12 +42,16 @@ fun ShowSaveToast(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter,
     ) {
-        SaveToast(
-            navigateToSavedCollection = navigateToSavedCollection,
+        AnimatedVisibility(
+            visible = visible,
+            enter = toastEnterTransition(),
+            exit = toastExitTransition(),
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(bottom = yOffset),
-        )
+        ) {
+            SaveToast(navigateToSavedCollection = navigateToSavedCollection)
+        }
     }
 }
 

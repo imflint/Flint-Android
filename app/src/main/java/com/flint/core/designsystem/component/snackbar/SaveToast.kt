@@ -2,7 +2,6 @@ package com.flint.core.designsystem.component.snackbar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -59,7 +59,7 @@ fun SaveToast(
             Spacer(Modifier.height(4.dp))
 
             Row(
-                modifier = Modifier.clickable(onClick = navigateToSavedCollection),
+                modifier = Modifier.flintCardClickable(onClick = navigateToSavedCollection),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(

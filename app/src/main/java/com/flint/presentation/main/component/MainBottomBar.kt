@@ -28,7 +28,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.presentation.main.MainTab
 import kotlinx.collections.immutable.ImmutableList
@@ -89,7 +89,7 @@ private fun RowScope.MainBottomBarItem(
     Column(
         modifier =
             Modifier
-                .noRippleClickable(onClick = onClick)
+                .flintIconClickable(onClick = onClick)
                 .weight(1f)
                 .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

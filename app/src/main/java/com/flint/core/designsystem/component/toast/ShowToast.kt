@@ -1,5 +1,11 @@
 package com.flint.core.designsystem.component.toast
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.theme.FlintTheme
 import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -37,8 +42,16 @@ fun ShowToast(
     imeYOffset: Dp = yOffset,
     key: Any = text,
 ) {
+    // 호출부가 `if (show) ShowToast(...)` 형태라 hide() 가 불리는 순간 컴포지션에서 빠져
+    // 퇴장 애니메이션을 그릴 수 없다. 그래서 퇴장 애니메이션을 먼저 재생하고 끝난 뒤에 hide() 를 부른다.
+    var visible by remember { mutableStateOf(false) }
+
+    // key 가 바뀌면(같은 문구를 다시 띄우는 경우 포함) 타이머와 등장 애니메이션을 처음부터 다시 돌린다.
     LaunchedEffect(key) {
-        delay(2.seconds)
+        visible = true
+        delay(TOAST_VISIBLE_MILLIS)
+        visible = false
+        delay(TOAST_EXIT_MILLIS.toLong())
         hide()
     }
 
@@ -50,13 +63,19 @@ fun ShowToast(
             .imePadding(),
         contentAlignment = Alignment.BottomCenter,
     ) {
-        FlintToast(
-            text = text,
-            imageVector = imageVector,
+        AnimatedVisibility(
+            visible = visible,
+            enter = toastEnterTransition(),
+            exit = toastExitTransition(),
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(bottom = bottomOffset),
-        )
+        ) {
+            FlintToast(
+                text = text,
+                imageVector = imageVector,
+            )
+        }
     }
 }
 
@@ -95,3 +114,17 @@ private fun ShowToastWithoutIconPreview() {
         }
     }
 }
+
+internal const val TOAST_VISIBLE_MILLIS = 2000L
+internal const val TOAST_ENTER_MILLIS = 220
+internal const val TOAST_EXIT_MILLIS = 180
+
+/** 아래에서 살짝 올라오며 나타난다. */
+internal fun toastEnterTransition() =
+    fadeIn(animationSpec = tween(TOAST_ENTER_MILLIS)) +
+        slideInVertically(animationSpec = tween(TOAST_ENTER_MILLIS)) { height -> height / 2 }
+
+/** 나타날 때보다 짧게, 조금만 내려가며 사라진다. */
+internal fun toastExitTransition() =
+    fadeOut(animationSpec = tween(TOAST_EXIT_MILLIS)) +
+        slideOutVertically(animationSpec = tween(TOAST_EXIT_MILLIS)) { height -> height / 4 }

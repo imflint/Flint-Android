@@ -2,7 +2,7 @@ package com.flint.presentation.collectioncreate.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -26,11 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.component.textfield.CollectionInputTextField
 import com.flint.core.designsystem.component.toggle.FlintBasicToggle
+import com.flint.core.designsystem.interaction.pressClickable
+import com.flint.core.designsystem.interaction.pressScale
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -71,13 +74,20 @@ fun CollectionCreateContentReason(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val selectImageInteractionSource = remember { MutableInteractionSource() }
+
             Box(
                 modifier = Modifier
                     .size(width = 48.dp, height = 28.dp)
+                    .pressScale(selectImageInteractionSource)
                     .border(1.dp, Color(0xFF1ABFF2), RoundedCornerShape(60.dp))
                     .clip(RoundedCornerShape(60.dp))
                     .background(Color(0xFF21242C))
-                    .clickable(onClick = onSelectImageClick),
+                    .pressClickable(
+                        interactionSource = selectImageInteractionSource,
+                        role = Role.Button,
+                        onClick = onSelectImageClick,
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

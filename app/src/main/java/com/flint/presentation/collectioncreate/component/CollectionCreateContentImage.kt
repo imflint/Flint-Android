@@ -2,7 +2,6 @@ package com.flint.presentation.collectioncreate.component
 
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.component.image.NetworkImage
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -103,7 +103,7 @@ fun CollectionCreateContentImage(
                     tint = Color.Unspecified,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .clickable {
+                        .flintIconClickable {
                             deletedIndex = index
                             if (index < existingImageUrls.size) {
                                 onDeleteExistingClick(index)

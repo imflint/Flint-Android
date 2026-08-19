@@ -22,7 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.component.listItem.CollectionItem
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.collection.CollectionListModel
@@ -75,7 +75,7 @@ fun CollectionSection(
                     modifier =
                         Modifier
                             .size(48.dp)
-                            .noRippleClickable {
+                            .flintCardClickable {
                                 onAllClick()
                             }.padding(12.dp),
                 )

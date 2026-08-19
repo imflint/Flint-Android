@@ -25,7 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 
 @Composable
@@ -51,7 +51,7 @@ fun CollectionDetailTopAppBar(
         Icon(
             modifier = Modifier
                 .size(48.dp)
-                .noRippleClickable(onClick = onBackClick)
+                .flintIconClickable(onClick = onBackClick)
                 .padding(12.dp),
             imageVector = ImageVector.vectorResource(R.drawable.ic_back),
             contentDescription = stringResource(R.string.cd_back),
@@ -64,7 +64,7 @@ fun CollectionDetailTopAppBar(
             Icon(
                 modifier = Modifier
                     .size(48.dp)
-                    .noRippleClickable(onClick = { showSettingsMenu = true }),
+                    .flintIconClickable(onClick = { showSettingsMenu = true }),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_kebab),
                 contentDescription = stringResource(R.string.cd_more_options),
                 tint = FlintTheme.colors.white,

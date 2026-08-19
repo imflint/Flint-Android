@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.theme.FlintTheme
 
@@ -53,7 +53,7 @@ private fun CollectionCreateEmptyThumbnail(
             modifier
                 .fillMaxWidth()
                 .aspectRatio(360f / 140f)
-                .noRippleClickable(onClick = onClick),
+                .flintCardClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Image(
@@ -82,7 +82,7 @@ private fun CollectionCreateFillThumbnail(
             modifier
                 .fillMaxWidth()
                 .aspectRatio(360f / 240f)
-                .noRippleClickable(onClick = onClick),
+                .flintCardClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         NetworkImage(

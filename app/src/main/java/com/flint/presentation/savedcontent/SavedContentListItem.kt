@@ -1,7 +1,6 @@
 package com.flint.presentation.savedcontent
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.flint.R
 import com.flint.core.designsystem.component.image.NetworkImage
 import com.flint.core.designsystem.component.listView.OttHorizontalList
+import com.flint.core.designsystem.interaction.flintCardClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.type.OttType
 
@@ -150,7 +151,7 @@ private fun SavedContentListItemInfo(
         }
 
         Row(
-            modifier = Modifier.clickable(onClick = onMoreContentClick),
+            modifier = Modifier.flintCardClickable(onClick = onMoreContentClick),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -186,7 +187,7 @@ private fun SavedContentListItemBookmark(
             modifier =
                 Modifier
                     .size(24.dp)
-                    .clickable(onClick = onBookmarkClick),
+                    .flintIconClickable(onClick = onBookmarkClick),
         )
 
         Spacer(modifier = Modifier.height(2.dp))

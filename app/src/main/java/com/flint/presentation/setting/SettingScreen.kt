@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintCardClickable
 import com.flint.core.designsystem.component.button.FlintButtonState
 import com.flint.core.designsystem.component.button.FlintMediumButton
 import com.flint.core.designsystem.component.image.ProfileImage
@@ -177,7 +177,7 @@ private fun SettingScreen(
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .noRippleClickable(onClick = onWithdrawClick)
+                    .flintCardClickable(onClick = onWithdrawClick)
                     .padding(vertical = 16.dp),
             )
         }
@@ -247,7 +247,7 @@ private fun SettingMenuItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .noRippleClickable(onClick = onClick)
+            .flintCardClickable(onClick = onClick)
             .padding(horizontal = 20.dp, vertical = verticalPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {

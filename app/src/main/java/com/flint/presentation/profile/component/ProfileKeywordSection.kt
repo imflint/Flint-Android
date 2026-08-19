@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.flint.R
-import com.flint.core.common.extension.noRippleClickable
+import com.flint.core.designsystem.interaction.flintIconClickable
 import com.flint.core.designsystem.theme.FlintTheme
 import com.flint.domain.model.user.KeywordItemModel
 import com.flint.domain.model.user.KeywordListModel
@@ -83,7 +83,7 @@ fun ProfileKeywordSection(
                             tint = FlintTheme.colors.gray300,
                             modifier = Modifier
                                 .size(20.dp)
-                                .noRippleClickable { onInfoClick() },
+                                .flintIconClickable { onInfoClick() },
                         )
                     }
                 }
@@ -148,7 +148,7 @@ private fun ProfileRefreshButton(
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.noRippleClickable(
+        modifier = modifier.flintIconClickable(
             onClick = { if (isEnabled && !isRecalculating) onRefreshClick() },
         ),
     ) {
