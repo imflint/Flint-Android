@@ -16,6 +16,20 @@ val properties =
         load(project.rootProject.file("local.properties").inputStream())
     }
 
+// 릴리즈 서명 정보는 local.properties 에서 읽는다.
+// 키스토어(*.jks)와 local.properties 는 .gitignore 로 막혀 있어 저장소에 올라가지 않는다.
+// CI 나 갓 클론한 환경처럼 키스토어가 없는 곳에서도 debug 빌드는 그대로 되어야 하므로,
+// 경로가 지정된 경우에만 서명 설정을 만든다.
+val releaseKeystorePath: String? = properties.getProperty("release.keystore.path")
+val releaseKeystore = releaseKeystorePath?.let { rootProject.file(it) }
+
+// 경로를 적어 두고 파일이 없는 건 오타일 가능성이 높으므로 조용히 넘기지 않는다.
+if (releaseKeystorePath != null && releaseKeystore?.exists() != true) {
+    error("release.keystore.path 가 가리키는 키스토어를 찾을 수 없습니다: $releaseKeystorePath")
+}
+
+val hasReleaseSigning = releaseKeystore != null
+
 android {
     namespace = "com.flint.android"
     compileSdk =
@@ -48,8 +62,22 @@ android {
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = releaseKeystore
+                storePassword = properties.getProperty("release.keystore.password")
+                keyAlias = properties.getProperty("release.key.alias")
+                keyPassword = properties.getProperty("release.key.password")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
