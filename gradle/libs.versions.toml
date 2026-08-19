@@ -54,6 +54,9 @@ timber = "5.0.1"
 # Kakao
 kakao = "2.21.0"
 
+# Analytics
+amplitude = "1.21.3"
+
 [libraries]
 # AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -103,6 +106,9 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Kakao
 kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
+
+# Analytics
+amplitude-analytics = { group = "com.amplitude", name = "analytics-android", version.ref = "amplitude" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

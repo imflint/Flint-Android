@@ -60,6 +60,11 @@ android {
         val kakaoNativeAppKey = properties["kakao.native.app.key"].toString()
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
+
+        // 키가 없으면 빈 문자열이 되고, 이때는 Amplitude 대신 로그만 남기는 구현이 주입된다.
+        // (CI 나 키를 아직 발급받지 못한 팀원 환경에서 빌드가 깨지지 않도록)
+        val amplitudeApiKey = properties.getProperty("amplitude.api.key").orEmpty()
+        buildConfigField("String", "AMPLITUDE_API_KEY", "\"$amplitudeApiKey\"")
     }
 
     signingConfigs {
@@ -124,6 +129,9 @@ dependencies {
 
     // Debug
     debugImplementation(libs.bundles.debug)
+
+    // Analytics
+    implementation(libs.amplitude.analytics)
 
     // Kakao
     implementation(libs.kakao.user)
