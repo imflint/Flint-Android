@@ -1,0 +1,73 @@
+package com.flint.android.presentation.profile.navigation
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
+import com.flint.android.core.navigation.MainTabRoute
+import com.flint.android.core.navigation.Route
+import com.flint.android.core.navigation.model.CollectionListRouteType
+import com.flint.android.presentation.profile.ProfileRoute
+
+const val KEY_PROFILE_UPDATED = "key_profile_updated"
+
+fun NavController.navigateToMyProfile(
+    navOptions: NavOptions? = null
+) {
+    navigate((MainTabRoute.Profile), navOptions)
+}
+
+fun NavController.navigateToProfile(
+    userId: String? = null,
+    navOptions: NavOptions? = null,
+) {
+    navigate(Route.Profile(userId = userId), navOptions)
+}
+
+fun NavGraphBuilder.myProfileNavGraph(
+    paddingValues: PaddingValues,
+    navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
+    navigateToSavedContentList: (userId: String?) -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToSetting: () -> Unit = {},
+) {
+    composable<MainTabRoute.Profile> { entry ->
+        val shouldRefreshProfile by entry.savedStateHandle
+            .getStateFlow(KEY_PROFILE_UPDATED, false)
+            .collectAsStateWithLifecycle()
+
+        ProfileRoute(
+            paddingValues = paddingValues,
+            navigateUp = {},
+            navigateToCollectionList = navigateToCollectionList,
+            navigateToSavedContentList = navigateToSavedContentList,
+            navigateToCollectionDetail = navigateToCollectionDetail,
+            navigateToSetting = navigateToSetting,
+            shouldRefreshProfile = shouldRefreshProfile,
+            onProfileRefreshed = {
+                entry.savedStateHandle[KEY_PROFILE_UPDATED] = false
+            },
+        )
+    }
+}
+
+fun NavGraphBuilder.profileNavGraph(
+    paddingValues: PaddingValues,
+    navigateUp: () -> Unit,
+    navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
+    navigateToSavedContentList: (userId: String?) -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
+) {
+    composable<Route.Profile> {
+        ProfileRoute(
+            paddingValues = paddingValues,
+            navigateUp = navigateUp,
+            navigateToCollectionList = navigateToCollectionList,
+            navigateToSavedContentList = navigateToSavedContentList,
+            navigateToCollectionDetail = navigateToCollectionDetail,
+        )
+    }
+}

@@ -1,0 +1,417 @@
+package com.flint.android.presentation.onboarding
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.android.core.common.util.UiState
+import com.flint.android.core.designsystem.component.button.FlintButtonState
+import com.flint.android.core.designsystem.component.button.FlintLargeButton
+import com.flint.android.core.designsystem.component.image.SelectedContentItem
+import com.flint.android.core.designsystem.component.textfield.FlintSearchTextField
+import com.flint.android.core.designsystem.component.indicator.FlintLoadingIndicator
+import com.flint.android.core.designsystem.component.topappbar.FlintBackTopAppbar
+import com.flint.android.core.designsystem.component.view.FlintSearchEmptyView
+import com.flint.android.core.designsystem.theme.FlintTheme
+import com.flint.android.domain.model.search.SearchContentItemModel
+import com.flint.android.domain.model.search.SearchContentListModel
+import com.flint.android.presentation.onboarding.component.FlintGenreChip
+import com.flint.android.presentation.onboarding.component.OnboardingContentItem
+import com.flint.android.presentation.onboarding.component.StepProgressBar
+
+@Composable
+fun OnboardingContentRoute(
+    paddingValues: PaddingValues,
+    navigateToOnboardingProfile: () -> Unit,
+    navigateUp: () -> Unit,
+    viewModel: OnboardingViewModel = hiltViewModel(),
+) {
+    val contentUiState by viewModel.contentUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadInitialContents()
+    }
+
+    OnboardingContentScreen(
+        contentUiState = contentUiState,
+        onBackClick = navigateUp,
+        onNextClick = navigateToOnboardingProfile,
+        onSearchKeywordChanged = viewModel::updateSearchKeyword,
+        onSearchAction = viewModel::searchContents,
+        onClearAction = viewModel::clearSearchKeyword,
+        onContentClick = viewModel::toggleContentSelection,
+        onRemoveContent = viewModel::toggleContentSelection,
+        onGenreClick = viewModel::selectGenre,
+        onLoadMore = viewModel::loadMoreContents,
+        modifier = Modifier.padding(paddingValues),
+    )
+}
+
+@Composable
+fun OnboardingContentScreen(
+    contentUiState: OnboardingContentUiState,
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
+    onSearchKeywordChanged: (String) -> Unit,
+    onSearchAction: () -> Unit,
+    onClearAction: () -> Unit,
+    onContentClick: (SearchContentItemModel) -> Unit,
+    onRemoveContent: (SearchContentItemModel) -> Unit,
+    onGenreClick: (String) -> Unit,
+    onLoadMore: () -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val gridState = rememberLazyGridState()
+
+    // 스크롤 끝 감지 → 다음 페이지 로드
+    LaunchedEffect(gridState.canScrollForward) {
+        if (!gridState.canScrollForward && contentUiState.nextCursor != null && !contentUiState.isLoadingMore) {
+            onLoadMore()
+        }
+    }
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(color = FlintTheme.colors.background),
+    ) {
+        FlintBackTopAppbar(
+            onClick = onBackClick,
+        )
+
+        StepProgressBar(
+            currentStep = contentUiState.selectedContents.size,
+            totalSteps = OnboardingContentUiState.REQUIRED_SELECTION_COUNT,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+
+        Spacer(modifier = Modifier.height(23.dp))
+
+        // 전체 콘텐츠를 LazyVerticalGrid로 구성
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            state = gridState,
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            // 타이틀 영역 - 스크롤됨
+            item(span = { GridItemSpan(3) }) {
+                Column {
+                    Text(
+                        text = "내 취향에 가까운 작품\n7개를 골라주세요",
+                        color = FlintTheme.colors.white,
+                        style = FlintTheme.typography.display2M28,
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            }
+
+            // 검색창 - sticky header (상단에 고정)
+            stickyHeader {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .zIndex(1f)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(FlintTheme.colors.background)
+                            .padding(bottom = 16.dp)
+                    ) {
+                        // 장르 칩 가로 스크롤
+                        LazyRow(
+                            modifier = Modifier
+                                .height(48.dp)
+                                .layout { measurable, constraints ->
+                                    val sidePadding = 16.dp.roundToPx()
+                                    val placeable = measurable.measure(
+                                        constraints.copy(
+                                            maxWidth = constraints.maxWidth + sidePadding * 2,
+                                        ),
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.place(-sidePadding, 0)
+                                    }
+                                },
+                            contentPadding = PaddingValues(start = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            items(OnboardingContentUiState.GENRES.keys.toList()) { genre ->
+                                val isSelected = contentUiState.selectedGenres.contains(genre)
+                                FlintGenreChip(
+                                    text = genre,
+                                    isSelected = isSelected,
+                                    onClick = { onGenreClick(genre) },
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        FlintSearchTextField(
+                            placeholder = "작품 이름",
+                            value = contentUiState.searchKeyword,
+                            onValueChanged = onSearchKeywordChanged,
+                            onSearchAction = onSearchAction,
+                            onClearAction = onClearAction,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                            keyboardActions = KeyboardActions(
+                                onSearch = {
+                                    keyboardController?.hide()
+                                    onSearchAction()
+                                }
+                            ),
+                        )
+
+                        // 선택된 영화 가로 스크롤
+                        if (contentUiState.selectedContents.isNotEmpty()) {
+                            val lazyListState = rememberLazyListState()
+
+                            // 새로운 아이템이 추가될 때 왼쪽 자동 스크롤
+                            LaunchedEffect(contentUiState.selectedContents.size) {
+                                lazyListState.animateScrollToItem(0)
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            LazyRow(
+                                state = lazyListState,
+                                modifier = Modifier.layout { measurable, constraints ->
+                                    val sidePadding = 16.dp.roundToPx()
+                                    val placeable = measurable.measure(
+                                        constraints.copy(
+                                            maxWidth = constraints.maxWidth + sidePadding * 2,
+                                        ),
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.place(-sidePadding, 0)
+                                    }
+                                },
+                                contentPadding = PaddingValues(start = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(0.dp),
+                            ) {
+                                items(
+                                    items = contentUiState.selectedContents,
+                                    key = { it.id }
+                                ) { content ->
+                                    SelectedContentItem(
+                                        imageUrl = content.posterUrl,
+                                        onRemoveClick = { onRemoveContent(content) },
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(12.dp)
+                            .align(Alignment.BottomCenter)
+                            .graphicsLayer { translationY = size.height }
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Black.copy(alpha = 0.25f),
+                                        Color.Transparent
+                                    )
+                                )
+                            )
+                    )
+                }
+            }
+
+            // 영화 검색 목록
+            when (val searchResultsState = contentUiState.searchResults) {
+                is UiState.Empty, is UiState.Failure -> {
+                    item(span = { GridItemSpan(3) }) {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(300.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            FlintSearchEmptyView(
+                                title = "아직 준비 중인 작품이에요"
+                            )
+                        }
+                    }
+                }
+                is UiState.Loading -> {
+                    item(span = { GridItemSpan(3) }) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            FlintLoadingIndicator()
+                        }
+                    }
+                }
+                is UiState.Success -> {
+                    if (searchResultsState.data.isEmpty()) {
+                        item(span = { GridItemSpan(3) }) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(300.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                FlintSearchEmptyView(
+                                    title = "아직 준비 중인 작품이에요"
+                                )
+                            }
+                        }
+                    } else {
+                        // 영화 목록 그리드
+                        itemsIndexed(
+                            items = searchResultsState.data,
+                            key = { _, content -> content.id }
+                        ) { index, content ->
+                            val topPadding = if (index >= 3) 20.dp else 0.dp
+
+                            OnboardingContentItem(
+                                imageUrl = content.posterUrl,
+                                title = content.title,
+                                director = content.author,
+                                releaseYear = content.year.toString(),
+                                isSelected = contentUiState.isContentSelected(content.id),
+                                onClick = { onContentClick(content) },
+                                modifier = Modifier.padding(top = topPadding),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        FlintLargeButton(
+            text = "다음",
+            state = if (contentUiState.canProceed) FlintButtonState.Able else FlintButtonState.Disable,
+            onClick = { if (contentUiState.canProceed) onNextClick() },
+            enabled = contentUiState.canProceed,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 20.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "기본 목록 상태")
+@Composable
+private fun OnboardingContentScreenListPreview() {
+    FlintTheme {
+        OnboardingContentScreen(
+            contentUiState = OnboardingContentUiState(
+                searchResults = UiState.Success(
+                    SearchContentListModel.FakeList
+                ),
+            ),
+            onBackClick = {},
+            onNextClick = {},
+            onSearchKeywordChanged = {},
+            onSearchAction = {},
+            onClearAction = {},
+            onContentClick = {},
+            onRemoveContent = {},
+            onGenreClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "검색 결과 없음 상태")
+@Composable
+private fun OnboardingContentScreenEmptyPreview() {
+    var text by remember { mutableStateOf("") }
+
+    FlintTheme {
+        OnboardingContentScreen(
+            contentUiState = OnboardingContentUiState(
+                searchKeyword = text
+            ),
+            onBackClick = {},
+            onNextClick = {},
+            onSearchKeywordChanged = {
+                text = it
+            },
+            onSearchAction = {},
+            onClearAction = {},
+            onContentClick = {},
+            onRemoveContent = {},
+            onGenreClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "장르 칩 인터랙티브")
+@Composable
+private fun OnboardingContentScreenGenreInteractivePreview() {
+    var selectedGenres by remember { mutableStateOf(emptySet<String>()) }
+
+    FlintTheme {
+        OnboardingContentScreen(
+            contentUiState = OnboardingContentUiState(
+                searchResults = UiState.Success(SearchContentListModel.FakeList),
+                selectedGenres = selectedGenres,
+            ),
+            onBackClick = {},
+            onNextClick = {},
+            onSearchKeywordChanged = {},
+            onSearchAction = {},
+            onClearAction = {},
+            onContentClick = {},
+            onRemoveContent = {},
+            onGenreClick = { genre ->
+                selectedGenres = if (selectedGenres.contains(genre)) {
+                    selectedGenres - genre
+                } else {
+                    selectedGenres + genre
+                }
+            },
+        )
+    }
+}

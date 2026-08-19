@@ -1,0 +1,32 @@
+package com.flint.android.presentation.home.navigation
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
+import com.flint.android.core.navigation.MainTabRoute
+import com.flint.android.core.navigation.model.CollectionListRouteType
+import com.flint.android.presentation.home.HomeRoute
+
+fun NavController.navigateToHome(navOptions: NavOptions? = null) {
+    navigate(MainTabRoute.Home, navOptions)
+}
+
+fun NavGraphBuilder.homeNavGraph(
+    paddingValues: PaddingValues,
+    navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
+    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionCreate: () -> Unit,
+    navigateToExplore: () -> Unit
+) {
+    composable<MainTabRoute.Home> {
+        HomeRoute(
+            paddingValues = paddingValues,
+            navigateToCollectionList = navigateToCollectionList,
+            navigateToCollectionDetail = navigateToCollectionDetail,
+            navigateToCollectionCreate = navigateToCollectionCreate,
+            navigateToExplore = navigateToExplore
+        )
+    }
+}

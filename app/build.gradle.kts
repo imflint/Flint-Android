@@ -17,14 +17,14 @@ val properties =
     }
 
 android {
-    namespace = "com.flint"
+    namespace = "com.flint.android"
     compileSdk =
         libs.versions.compileSdk
             .get()
             .toInt()
 
     defaultConfig {
-        applicationId = "com.flint"
+        applicationId = "com.flint.android"
         minSdk =
             libs.versions.minSdk
                 .get()
