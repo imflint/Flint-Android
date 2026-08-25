@@ -91,8 +91,20 @@ class OnboardingViewModel
         }
     }
 
-    fun agreeToTerms(termIds: List<String>) {
-        _termsUiState.update { it.copy(agreedTermsIds = termIds) }
+    fun toggleTermChecked(termId: String) {
+        _termsUiState.update { it.toggleChecked(termId) }
+    }
+
+    fun toggleAllTermsChecked() {
+        _termsUiState.update { it.toggleAllChecked() }
+    }
+
+    fun toggleTermExpanded(termId: String) {
+        _termsUiState.update { it.toggleExpanded(termId) }
+    }
+
+    fun agreeToTerms() {
+        _termsUiState.update { it.copy(agreedTermsIds = it.agreedIds) }
     }
 
     // ---------- onboarding profile ----------

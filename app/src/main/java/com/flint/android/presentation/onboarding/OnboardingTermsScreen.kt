@@ -22,9 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -63,8 +60,11 @@ fun OnboardingTermsRoute(
     OnboardingTermsScreen(
         termsUiState = termsUiState,
         onBackClick = navigateUp,
-        onAgreeClick = { agreedIds ->
-            viewModel.agreeToTerms(agreedIds)
+        onCheckClick = viewModel::toggleTermChecked,
+        onAllCheckClick = viewModel::toggleAllTermsChecked,
+        onExpandClick = viewModel::toggleTermExpanded,
+        onAgreeClick = {
+            viewModel.agreeToTerms()
             navigateToOnboardingContent()
         },
         onDetailClick = navigateToTermsDetail,
@@ -76,20 +76,16 @@ fun OnboardingTermsRoute(
 fun OnboardingTermsScreen(
     termsUiState: OnboardingTermsUiState,
     onBackClick: () -> Unit,
-    onAgreeClick: (List<String>) -> Unit,
+    onCheckClick: (termId: String) -> Unit,
+    onAllCheckClick: () -> Unit,
+    onExpandClick: (termId: String) -> Unit,
+    onAgreeClick: () -> Unit,
     onDetailClick: (termId: String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val terms = (termsUiState.termsState as? UiState.Success)?.data ?: emptyList()
-    var checkedStates by remember(terms) { mutableStateOf(List(terms.size) { false }) }
-    var expandedStates by remember(terms) { mutableStateOf(List(terms.size) { false }) }
-
-    // 필수 약관이 모두 체크되어야 버튼 활성화
-    val requiredAllChecked = terms.isNotEmpty() && terms.indices
-        .filter { terms[it].required }
-        .all { checkedStates[it] }
-
-    val allChecked = terms.isNotEmpty() && checkedStates.all { it }
+    val terms = termsUiState.terms
+    val requiredAllChecked = termsUiState.canProceed
+    val allChecked = termsUiState.isAllChecked
 
     Column(
         modifier = modifier
@@ -113,10 +109,7 @@ fun OnboardingTermsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .flintCardClickable {
-                            val newState = !allChecked
-                            checkedStates = List(terms.size) { newState }
-                        }
+                        .flintCardClickable(onClick = onAllCheckClick)
                         .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -175,19 +168,13 @@ fun OnboardingTermsScreen(
                     ) {
                         Spacer(Modifier.height(16.dp))
 
-                        terms.forEachIndexed { index, term ->
+                        terms.forEach { term ->
                             TermRow(
                                 term = term,
-                                isChecked = checkedStates[index],
-                                isExpanded = expandedStates[index],
-                                onCheckClick = {
-                                    checkedStates = checkedStates.toMutableList()
-                                        .also { it[index] = !it[index] }
-                                },
-                                onExpandClick = {
-                                    expandedStates = expandedStates.toMutableList()
-                                        .also { it[index] = !it[index] }
-                                },
+                                isChecked = termsUiState.isChecked(term.id),
+                                isExpanded = termsUiState.isExpanded(term.id),
+                                onCheckClick = { onCheckClick(term.id) },
+                                onExpandClick = { onExpandClick(term.id) },
                                 onDetailClick = { onDetailClick(term.id) },
                             )
                             Spacer(Modifier.height(4.dp))
@@ -200,12 +187,7 @@ fun OnboardingTermsScreen(
         FlintLargeButton(
             text = "동의하기",
             state = if (requiredAllChecked) FlintButtonState.Able else FlintButtonState.Disable,
-            onClick = {
-                val agreedIds = terms.indices
-                    .filter { checkedStates[it] }
-                    .map { terms[it].id }
-                onAgreeClick(agreedIds)
-            },
+            onClick = onAgreeClick,
             enabled = requiredAllChecked,
             modifier = Modifier
                 .fillMaxWidth()
@@ -236,7 +218,7 @@ private fun TermRow(
                 imageVector = ImageVector.vectorResource(
                     if (isChecked) R.drawable.ic_check_fill else R.drawable.ic_check_empty
                 ),
-                contentDescription = null,
+                contentDescription = "${term.title} 동의",
                 tint = Color.Unspecified,
                 modifier = Modifier.flintIconClickable(onClick = onCheckClick),
             )
@@ -249,7 +231,7 @@ private fun TermRow(
             )
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_down),
-                contentDescription = null,
+                contentDescription = "${term.title} 펼치기",
                 tint = FlintTheme.colors.gray400,
                 modifier = Modifier
                     .rotate(if (isExpanded) 180f else 0f)
@@ -328,6 +310,9 @@ private fun OnboardingTermsScreenPreview() {
                 )
             ),
             onBackClick = {},
+            onCheckClick = {},
+            onAllCheckClick = {},
+            onExpandClick = {},
             onAgreeClick = {},
         )
     }

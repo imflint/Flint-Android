@@ -11,7 +11,49 @@ import kotlinx.collections.immutable.persistentListOf
 data class OnboardingTermsUiState(
     val termsState: UiState<List<TermModel>> = UiState.Empty,
     val agreedTermsIds: List<String> = emptyList(),
-)
+    // 체크/펼침 상태는 화면이 아니라 여기에 둔다. 화면 로컬 remember에 두면
+    // '자세히 보기'나 다음 온보딩 단계로 이동할 때 컴포지션이 해제되며 초기화된다.
+    val checkedTermIds: Set<String> = emptySet(),
+    val expandedTermIds: Set<String> = emptySet(),
+) {
+    val terms: List<TermModel>
+        get() = (termsState as? UiState.Success)?.data ?: emptyList()
+
+    fun isChecked(termId: String): Boolean = termId in checkedTermIds
+
+    fun isExpanded(termId: String): Boolean = termId in expandedTermIds
+
+    val isAllChecked: Boolean
+        get() = terms.isNotEmpty() && terms.all { it.id in checkedTermIds }
+
+    // 필수 약관이 모두 체크되어야 동의하기 버튼이 활성화된다
+    val canProceed: Boolean
+        get() = terms.isNotEmpty() && terms.filter { it.required }.all { it.id in checkedTermIds }
+
+    // 약관 목록 순서를 따라 체크된 것만 수집한다
+    val agreedIds: List<String>
+        get() = terms.filter { it.id in checkedTermIds }.map { it.id }
+
+    fun toggleChecked(termId: String): OnboardingTermsUiState = copy(
+        checkedTermIds = if (termId in checkedTermIds) {
+            checkedTermIds - termId
+        } else {
+            checkedTermIds + termId
+        },
+    )
+
+    fun toggleAllChecked(): OnboardingTermsUiState = copy(
+        checkedTermIds = if (isAllChecked) emptySet() else terms.map { it.id }.toSet(),
+    )
+
+    fun toggleExpanded(termId: String): OnboardingTermsUiState = copy(
+        expandedTermIds = if (termId in expandedTermIds) {
+            expandedTermIds - termId
+        } else {
+            expandedTermIds + termId
+        },
+    )
+}
 
 enum class NicknameErrorType {
     DUPLICATE,      // 이미 사용 중인 닉네임
