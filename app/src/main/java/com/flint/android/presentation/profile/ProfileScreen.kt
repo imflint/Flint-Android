@@ -277,7 +277,7 @@ private fun ProfileScreen(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
                         contentDescription = "설정",
-                        tint = FlintTheme.colors.white,
+                        tint = FlintTheme.colors.gray200,
                         modifier = Modifier.flintIconClickable { onSettingsClick() },
                     )
                 }

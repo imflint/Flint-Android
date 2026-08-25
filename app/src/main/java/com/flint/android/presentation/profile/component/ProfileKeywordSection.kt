@@ -94,10 +94,9 @@ fun ProfileKeywordSection(
                     color = FlintTheme.colors.gray100,
                 )
             }
-            if (isMyProfile) {
+            if (isMyProfile && isRecalculatable) {
                 ProfileRefreshButton(
                     onRefreshClick = onRefreshClick,
-                    isEnabled = isRecalculatable,
                     isRecalculating = isRecalculating,
                 )
             }
@@ -129,11 +128,10 @@ fun ProfileKeywordSection(
 @Composable
 private fun ProfileRefreshButton(
     onRefreshClick: () -> Unit,
-    isEnabled: Boolean,
     isRecalculating: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val iconTint = if (isEnabled) FlintTheme.colors.secondary400 else FlintTheme.colors.gray400
+    val iconTint = FlintTheme.colors.secondary400
 
     val infiniteTransition = rememberInfiniteTransition(label = "refresh_rotation")
     val rotation by infiniteTransition.animateFloat(
@@ -149,7 +147,7 @@ private fun ProfileRefreshButton(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.flintIconClickable(
-            onClick = { if (isEnabled && !isRecalculating) onRefreshClick() },
+            onClick = { if (!isRecalculating) onRefreshClick() },
         ),
     ) {
         Icon(
