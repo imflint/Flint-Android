@@ -5,7 +5,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
@@ -110,15 +109,10 @@ class MainNavigator(
         launchSingleTop = true
     }
 
-    fun navigateToLogin() {
-        navController.navigateToLogin(
-            navOptions {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            },
-        )
+    // 시작 목적지(Splash)는 홈 진입 시 이미 스택에서 제거되므로 popUpTo(startDestination)으로는
+    // 아무것도 정리되지 않는다. 로그인 화면에서는 앱으로 되돌아갈 수 없어야 하므로 스택을 전부 비운다.
+    fun navigateToLogin(navOptions: NavOptions? = clearStackNavOptions) {
+        navController.navigateToLogin(navOptions)
     }
 
     fun navigateToOnBoarding(tempToken: String, navOptions: NavOptions? = clearStackNavOptions) {
