@@ -1,13 +1,13 @@
 package com.flint.android.presentation.setting.withdraw
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -17,11 +17,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -138,21 +142,28 @@ private fun WithdrawNoticeList(modifier: Modifier = Modifier) {
         "관련 법령에 따라 일부 정보는 일정 기간 보관될 수 있으며, 해당 정보는 법적 의무 이외의 목적으로 사용되지 않습니다.",
     )
 
-    Column(modifier = modifier) {
+    // 번호와 본문을 별도 Text로 나누면 숫자 글리프와 한글 글리프의 시각 중심이 달라
+    // 미세하게 어긋나 보인다. 하나의 Text로 합치고 두 번째 줄부터 번호 너비만큼
+    // 들여쓰기(hanging indent)하면 같은 줄 박스를 쓰므로 어긋날 여지가 없다.
+    val style = FlintTheme.typography.body1M16
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
         notices.forEachIndexed { index, text ->
-            Row {
-                Text(
-                    text = "${index + 1}. ",
-                    style = FlintTheme.typography.body1M16,
-                    color = FlintTheme.colors.gray300,
-                )
-                Text(
-                    text = text,
-                    style = FlintTheme.typography.body1M16,
-                    color = FlintTheme.colors.gray300,
-                    modifier = Modifier.offset(y = (-3).dp)
-                )
+            val marker = "${index + 1}. "
+            val indent = remember(marker, style, density) {
+                with(density) { textMeasurer.measure(marker, style).size.width.toSp() }
             }
+
+            Text(
+                text = marker + text,
+                style = style.copy(textIndent = TextIndent(restLine = indent)),
+                color = FlintTheme.colors.gray300,
+            )
         }
     }
 }
