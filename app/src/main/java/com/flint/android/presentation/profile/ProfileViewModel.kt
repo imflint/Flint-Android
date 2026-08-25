@@ -61,11 +61,17 @@ class ProfileViewModel @Inject constructor(
                                 if (change.isBookmarked) {
                                     data.savedContents
                                 } else {
+                                    val hadItem = data.savedContents.contents.any { it.id == change.id }
                                     val filtered = data.savedContents.contents
                                         .filter { it.id != change.id }
                                         .toPersistentList()
                                     data.savedContents.copy(
-                                        totalCount = maxOf(0, data.savedContents.totalCount - 1),
+                                        // 목록에 없던 항목까지 감소시키면 totalCount와 실제 목록이 어긋나므로, 실제로 제거된 경우에만 감소시킨다.
+                                        totalCount = if (hadItem) {
+                                            maxOf(0, data.savedContents.totalCount - 1)
+                                        } else {
+                                            data.savedContents.totalCount
+                                        },
                                         contents = filtered,
                                     )
                                 }

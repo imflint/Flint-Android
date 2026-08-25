@@ -16,8 +16,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -112,7 +115,7 @@ fun OnboardingProfileRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun OnboardingProfileScreen(
     nickname: String,
@@ -135,6 +138,15 @@ fun OnboardingProfileScreen(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var showProfileBottomSheet by remember { mutableStateOf(false) }
+    var pendingProfileBottomSheet by remember { mutableStateOf(false) }
+    val imeVisible = WindowInsets.isImeVisible
+
+    LaunchedEffect(imeVisible) {
+        if (pendingProfileBottomSheet && !imeVisible) {
+            pendingProfileBottomSheet = false
+            showProfileBottomSheet = true
+        }
+    }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -168,11 +180,14 @@ fun OnboardingProfileScreen(
                     EditProfileImage(
                         imageUrl = profileImageUri?.toString() ?: "",
                         onEditClick = {
-                            // 닉네임 입력 중 키보드가 떠 있는 상태에서 바텀시트가 같이 올라오면
-                            // 키보드가 내려가는 애니메이션과 겹쳐 붕 뜬 것처럼 보이는 문제가 있어
-                            // 키보드부터 내리고 바텀시트를 띄운다.
-                            keyboardController?.hide()
-                            showProfileBottomSheet = true
+                            // 키보드가 떠 있으면 먼저 내리고, 완전히 내려간 뒤(위 LaunchedEffect)에
+                            // 바텀시트를 띄운다. 키보드가 이미 없으면 바로 띄운다.
+                            if (imeVisible) {
+                                keyboardController?.hide()
+                                pendingProfileBottomSheet = true
+                            } else {
+                                showProfileBottomSheet = true
+                            }
                         }
                     )
 

@@ -375,8 +375,15 @@ class OnboardingViewModel
             return
         }
 
-        val imageBytes = withContext(Dispatchers.IO) {
-            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        val imageBytes = runCatching {
+            withContext(Dispatchers.IO) {
+                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            }
+        }.getOrElse { error ->
+            // 파일 스트림을 여는/읽는 도중 예외가 나면 회원가입 자체를 실패로 만들지 않도록
+            // 여기서 잡아서 이미지 업로드만 건너뛴다.
+            Timber.e(error, "Failed to read profile image bytes")
+            return
         } ?: return
 
         storageRepository.uploadToS3(
