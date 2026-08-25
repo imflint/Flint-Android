@@ -335,18 +335,20 @@ class OnboardingViewModel
         viewModelScope.launch {
             _signupUiState.update { it.copy(signupState = UiState.Loading) }
 
-            val profileImageUrl = uploadProfileImageIfNeeded()
-
+            // 프로필 이미지 presigned URL 발급 API는 인증(Access Token)이 필요한데,
+            // 회원가입 전에는 Access Token이 없어 항상 403이 발생한다.
+            // 따라서 이미지 업로드는 회원가입으로 계정을 만들고 토큰을 발급받은 뒤에 진행한다.
             val signupRequest = SignupRequestModel(
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
                 favoriteContentIds = _contentUiState.value.selectedContents.map { it.id },
                 agreedTermsIds = _termsUiState.value.agreedTermsIds,
-                profileImageUrl = profileImageUrl,
+                profileImageUrl = null,
             )
 
             authRepository.signup(signupRequest)
                 .onSuccess { response ->
+                    uploadProfileImageIfNeeded()
                     _signupUiState.update { it.copy(signupState = UiState.Success(Unit)) }
                     Timber.d("Signup success: userId=${response.userId}")
                 }
@@ -357,8 +359,8 @@ class OnboardingViewModel
         }
     }
 
-    private suspend fun uploadProfileImageIfNeeded(): String? {
-        val uri = _uiState.value.profileImageUri ?: return null
+    private suspend fun uploadProfileImageIfNeeded() {
+        val uri = _uiState.value.profileImageUri ?: return
 
         val mimeType = withContext(Dispatchers.IO) {
             context.contentResolver.getType(uri)
@@ -370,12 +372,12 @@ class OnboardingViewModel
             extension = extension,
         ).getOrElse { error ->
             Timber.e(error, "Failed to get presigned URL")
-            return null
+            return
         }
 
         val imageBytes = withContext(Dispatchers.IO) {
             context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        } ?: return null
+        } ?: return
 
         storageRepository.uploadToS3(
             uploadUrl = presignedUrl.uploadUrl,
@@ -383,10 +385,11 @@ class OnboardingViewModel
             mimeType = mimeType,
         ).getOrElse { error ->
             Timber.e(error, "Failed to upload profile image to S3")
-            return null
+            return
         }
 
-        return presignedUrl.key
+        userRepository.updateProfileImage(presignedUrl.key)
+            .onFailure { error -> Timber.e(error, "Failed to update profile image after signup") }
     }
 
     private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
