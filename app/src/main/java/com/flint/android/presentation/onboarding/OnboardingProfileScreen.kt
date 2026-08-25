@@ -147,93 +147,105 @@ fun OnboardingProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
-                .imePadding()
         ) {
-            FlintBackTopAppbar(
-                onClick = onBackClick,
-            )
-
+            // "다음" 버튼은 키보드와 무관하게 화면 하단에 고정되어야 하므로,
+            // 키보드를 따라 올라와야 하는 상단(탑바 + 입력 영역)만 imePadding으로 감싼다.
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .imePadding(),
             ) {
-
-                EditProfileImage(
-                    imageUrl = profileImageUri?.toString() ?: "",
-                    onEditClick = { showProfileBottomSheet = true }
+                FlintBackTopAppbar(
+                    onClick = onBackClick,
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "어떤 이름으로 불러드릴까요?",
-                    color = FlintTheme.colors.white,
-                    style = FlintTheme.typography.head3M18,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    FlintBasicTextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        placeholder = "닉네임",
-                        value = nickname,
-                        singleLine = true,
-                        maxLines = 1,
-                        maxLength = OnboardingProfileUiState.MAX_LENGTH,
-                        onValueChange = onNicknameChange,
-                        borderColor = if (!isFormatValid || isNicknameAvailable == false) {
-                            FlintTheme.colors.error500
-                        } else {
-                            Color.Unspecified
-                        },
-                        trailingContent = {
-                            Text(
-                                text = "${nickname.graphemeLength}/${OnboardingProfileUiState.MAX_LENGTH}",
-                                style = FlintTheme.typography.body1R16,
-                                color = FlintTheme.colors.gray300,
-                            )
-                        },
+                    EditProfileImage(
+                        imageUrl = profileImageUri?.toString() ?: "",
+                        onEditClick = {
+                            // 닉네임 입력 중 키보드가 떠 있는 상태에서 바텀시트가 같이 올라오면
+                            // 키보드가 내려가는 애니메이션과 겹쳐 붕 뜬 것처럼 보이는 문제가 있어
+                            // 키보드부터 내리고 바텀시트를 띄운다.
+                            keyboardController?.hide()
+                            showProfileBottomSheet = true
+                        }
                     )
 
-                    val checkInteractionSource = remember { MutableInteractionSource() }
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                    Box(
+                    Text(
+                        text = "어떤 이름으로 불러드릴까요?",
+                        color = FlintTheme.colors.white,
+                        style = FlintTheme.typography.head3M18,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
                         modifier = Modifier
-                            .fillMaxHeight()
-                            .pressScale(checkInteractionSource, enabled = canCheckNickname)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(
-                                if (canCheckNickname) FlintTheme.colors.primary400
-                                else FlintTheme.colors.gray700
-                            )
-                            .pressClickable(
-                                interactionSource = checkInteractionSource,
-                                enabled = canCheckNickname,
-                                role = Role.Button,
-                            ) {
-                                keyboardController?.hide()
-                                onCheckNickname()
-                            }
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                        contentAlignment = Alignment.Center,
+                            .fillMaxWidth()
+                            .height(40.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            text = "확인",
-                            color = if (canCheckNickname) FlintTheme.colors.white else FlintTheme.colors.gray400,
-                            style = if (canCheckNickname) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
+                        FlintBasicTextField(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            placeholder = "닉네임",
+                            value = nickname,
+                            singleLine = true,
+                            maxLines = 1,
+                            maxLength = OnboardingProfileUiState.MAX_LENGTH,
+                            onValueChange = onNicknameChange,
+                            borderColor = if (!isFormatValid || isNicknameAvailable == false) {
+                                FlintTheme.colors.error500
+                            } else {
+                                Color.Unspecified
+                            },
+                            trailingContent = {
+                                Text(
+                                    text = "${nickname.graphemeLength}/${OnboardingProfileUiState.MAX_LENGTH}",
+                                    style = FlintTheme.typography.body1R16,
+                                    color = FlintTheme.colors.gray300,
+                                )
+                            },
                         )
+
+                        val checkInteractionSource = remember { MutableInteractionSource() }
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .pressScale(checkInteractionSource, enabled = canCheckNickname)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(
+                                    if (canCheckNickname) FlintTheme.colors.primary400
+                                    else FlintTheme.colors.gray700
+                                )
+                                .pressClickable(
+                                    interactionSource = checkInteractionSource,
+                                    enabled = canCheckNickname,
+                                    role = Role.Button,
+                                ) {
+                                    keyboardController?.hide()
+                                    onCheckNickname()
+                                }
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "확인",
+                                color = if (canCheckNickname) FlintTheme.colors.white else FlintTheme.colors.gray400,
+                                style = if (canCheckNickname) FlintTheme.typography.body1Sb16 else FlintTheme.typography.body1M16,
+                            )
+                        }
                     }
                 }
             }
