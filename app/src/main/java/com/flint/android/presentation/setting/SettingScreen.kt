@@ -231,6 +231,7 @@ private fun SettingProfileSection(
             state = FlintButtonState.ColorOutline,
             onClick = onEditProfileClick,
             textStyle = FlintTheme.typography.body2M14,
+            borderWidth = 1.dp,
             modifier = Modifier.weight(0.8f),
         )
     }

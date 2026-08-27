@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flint.android.R
 import com.flint.android.core.designsystem.interaction.FlintPressDefaults
@@ -47,10 +48,14 @@ fun FlintBasicButton(
     contentPadding: PaddingValues,
     @DrawableRes leadingIconRes: Int? = null,
     pressedScale: Float = FlintPressDefaults.BUTTON_SCALE,
+    // 상태가 정한 테두리 굵기를 화면 단위로 덮어쓸 때만 지정한다. null이면 상태 기본값을 쓴다.
+    borderWidth: Dp? = null,
 ) {
     val background: Brush = state.background
     val contentColor: Color = state.contentColor
-    val border: BorderStroke? = state.border
+    val border: BorderStroke? = state.border?.let { stroke ->
+        if (borderWidth == null) stroke else BorderStroke(borderWidth, stroke.brush)
+    }
     val shape = RoundedCornerShape(8.dp)
 
     val interactionSource = remember { MutableInteractionSource() }

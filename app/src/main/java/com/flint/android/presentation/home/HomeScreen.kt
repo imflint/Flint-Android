@@ -150,7 +150,7 @@ private fun HomeScreen(
 
                     SavedContentsSection(
                         title = "최근 저장한 콘텐츠",
-                        description = "현재 구독 중인 OTT에서 볼 수 있는 작품들이에요",
+                        description = "관심이 가는 작품들을 다시 만나보세요",
                         isAllVisible = false,
                         onAllClick = {},
                         contentModelList = savedContentModelList,
