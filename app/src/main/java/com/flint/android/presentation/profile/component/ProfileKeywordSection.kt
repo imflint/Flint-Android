@@ -94,7 +94,7 @@ fun ProfileKeywordSection(
                     color = FlintTheme.colors.gray100,
                 )
             }
-            if (isMyProfile && isRecalculatable) {
+            if (isMyProfile && (isRecalculatable || isRecalculating)) {
                 ProfileRefreshButton(
                     onRefreshClick = onRefreshClick,
                     isRecalculating = isRecalculating,
@@ -147,7 +147,8 @@ private fun ProfileRefreshButton(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.flintIconClickable(
-            onClick = { if (!isRecalculating) onRefreshClick() },
+            enabled = !isRecalculating,
+            onClick = onRefreshClick,
         ),
     ) {
         Icon(

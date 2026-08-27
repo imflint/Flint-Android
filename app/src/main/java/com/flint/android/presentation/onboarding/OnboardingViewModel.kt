@@ -1,6 +1,5 @@
 package com.flint.android.presentation.onboarding
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -11,18 +10,14 @@ import com.flint.android.core.navigation.Route
 import com.flint.android.domain.model.auth.SignupRequestModel
 import com.flint.android.domain.model.search.SearchContentItemModel
 import com.flint.android.domain.repository.AuthRepository
+import com.flint.android.domain.repository.ProfileImageUploader
 import com.flint.android.domain.repository.SearchRepository
-import com.flint.android.domain.repository.StorageRepository
 import com.flint.android.domain.repository.TermsRepository
 import com.flint.android.domain.repository.UserRepository
-import com.flint.android.domain.type.FileExtension
 import com.flint.android.domain.type.OttType
-import com.flint.android.domain.type.StoragePathType
 import com.flint.android.presentation.onboarding.event.OnboardingProfileEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,18 +26,16 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel
 @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val userRepository: UserRepository,
     private val searchRepository: SearchRepository,
     private val authRepository: AuthRepository,
-    private val storageRepository: StorageRepository,
+    private val profileImageUploader: ProfileImageUploader,
     private val termsRepository: TermsRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -362,47 +355,7 @@ class OnboardingViewModel
     private suspend fun uploadProfileImageIfNeeded() {
         val uri = _uiState.value.profileImageUri ?: return
 
-        val mimeType = withContext(Dispatchers.IO) {
-            context.contentResolver.getType(uri)
-        } ?: "image/jpeg"
-        val extension = mimeTypeToFileExtension(mimeType)
-
-        val presignedUrl = storageRepository.getPresignedUrl(
-            pathType = StoragePathType.USER_PROFILE,
-            extension = extension,
-        ).getOrElse { error ->
-            Timber.e(error, "Failed to get presigned URL")
-            return
-        }
-
-        val imageBytes = runCatching {
-            withContext(Dispatchers.IO) {
-                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            }
-        }.getOrElse { error ->
-            // 파일 스트림을 여는/읽는 도중 예외가 나면 회원가입 자체를 실패로 만들지 않도록
-            // 여기서 잡아서 이미지 업로드만 건너뛴다.
-            Timber.e(error, "Failed to read profile image bytes")
-            return
-        } ?: return
-
-        storageRepository.uploadToS3(
-            uploadUrl = presignedUrl.uploadUrl,
-            imageBytes = imageBytes,
-            mimeType = mimeType,
-        ).getOrElse { error ->
-            Timber.e(error, "Failed to upload profile image to S3")
-            return
-        }
-
-        userRepository.updateProfileImage(presignedUrl.key)
+        profileImageUploader.upload(uri)
             .onFailure { error -> Timber.e(error, "Failed to update profile image after signup") }
-    }
-
-    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
-        "image/png" -> FileExtension.PNG
-        "image/gif" -> FileExtension.GIF
-        "image/webp" -> FileExtension.WEBP
-        else -> FileExtension.JPEG
     }
 }

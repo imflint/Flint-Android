@@ -9,17 +9,16 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -32,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +59,7 @@ import com.flint.android.core.designsystem.interaction.pressClickable
 import com.flint.android.core.designsystem.interaction.pressScale
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.presentation.onboarding.event.OnboardingProfileEvent
+import kotlinx.coroutines.delay
 
 @Composable
 fun OnboardingProfileRoute(
@@ -137,13 +138,25 @@ fun OnboardingProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var showProfileBottomSheet by remember { mutableStateOf(false) }
-    var pendingProfileBottomSheet by remember { mutableStateOf(false) }
+    var showProfileBottomSheet by rememberSaveable { mutableStateOf(false) }
+    // 0이면 대기 중인 요청이 없다는 뜻. 클릭할 때마다 증가시켜서, 이전 요청과 새 요청을
+    // 구분하고(회전 등 config change에도 rememberSaveable로 값이 유지된다).
+    var pendingBottomSheetToken by rememberSaveable { mutableStateOf(0) }
     val imeVisible = WindowInsets.isImeVisible
 
-    LaunchedEffect(imeVisible) {
-        if (pendingProfileBottomSheet && !imeVisible) {
-            pendingProfileBottomSheet = false
+    LaunchedEffect(pendingBottomSheetToken, imeVisible) {
+        val token = pendingBottomSheetToken
+        if (token == 0) return@LaunchedEffect
+
+        if (imeVisible) {
+            // 키보드가 내려갔다는 신호(WindowInsets.isImeVisible == false)가 오지 않는
+            // 기기(하드웨어 키보드 등)를 대비해, 일정 시간 뒤에는 강제로 바텀시트를 띄운다.
+            delay(300)
+        }
+
+        // delay 도중 새 클릭이 들어와 token이 바뀌었다면 그 요청은 무시한다.
+        if (pendingBottomSheetToken == token) {
+            pendingBottomSheetToken = 0
             showProfileBottomSheet = true
         }
     }
@@ -160,12 +173,9 @@ fun OnboardingProfileScreen(
                 .fillMaxSize()
                 .background(color = FlintTheme.colors.background)
         ) {
-            // "다음" 버튼은 키보드와 무관하게 화면 하단에 고정되어야 하므로,
-            // 키보드를 따라 올라와야 하는 상단(탑바 + 입력 영역)만 imePadding으로 감싼다.
             Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .imePadding(),
+                    .weight(1f),
             ) {
                 FlintBackTopAppbar(
                     onClick = onBackClick,
@@ -184,7 +194,7 @@ fun OnboardingProfileScreen(
                             // 바텀시트를 띄운다. 키보드가 이미 없으면 바로 띄운다.
                             if (imeVisible) {
                                 keyboardController?.hide()
-                                pendingProfileBottomSheet = true
+                                pendingBottomSheetToken += 1
                             } else {
                                 showProfileBottomSheet = true
                             }
