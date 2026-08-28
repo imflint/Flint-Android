@@ -27,7 +27,7 @@ data class CollectionCreateUiState(
     val originalContentDetails: Map<String, Pair<Boolean, String>> = emptyMap(),
     val originalContentImageUrls: Map<String, List<String>> = emptyMap(),
 ) {
-    private val isEditMode: Boolean get() = originalTitle != null
+    val isEditMode: Boolean get() = originalTitle != null
 
     private val hasChanges: Boolean get() = isEditMode && (
         title != originalTitle ||
@@ -44,6 +44,20 @@ data class CollectionCreateUiState(
             detail.existingImageUrls != (originalContentImageUrls[id] ?: emptyList<String>())
         }
     )
+
+    // 뒤로가기 이탈 확인 팝업 노출 여부: 수정 모드는 원본 대비 변경 여부, 작성 모드는 입력 여부로 판단한다.
+    val isDirty: Boolean get() = if (isEditMode) {
+        hasChanges
+    } else {
+        title.isNotBlank() ||
+            description.isNotBlank() ||
+            isPublic != null ||
+            thumbnailImageUri != null ||
+            selectedContents.isNotEmpty() ||
+            contentDetailsMap.values.any { detail ->
+                detail.isSpoiler || detail.reason.isNotBlank() || detail.contentImageUris.isNotEmpty()
+            }
+    }
 
     val isRequiredFieldsFilled: Boolean get() =
         title.isNotBlank() &&

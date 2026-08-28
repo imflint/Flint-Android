@@ -12,6 +12,7 @@ import com.flint.android.domain.repository.CollectionRepository
 import com.flint.android.domain.repository.HomeRepository
 import com.flint.android.domain.repository.UserRepository
 import com.flint.android.core.navigation.model.CollectionListRouteType
+import com.flint.android.presentation.collectiondetail.navigation.KEY_SHOW_DELETE_SUCCESS_TOAST
 import com.flint.android.presentation.collectionlist.sideeffect.CollectionListSideEffect
 import com.flint.android.presentation.collectionlist.uistate.CollectionListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,6 +52,14 @@ class CollectionListViewModel @Inject constructor(
         val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
         setAppBarTitle(routeReceiveData.routeType.title)
         getCollectionList(routeReceiveData)
+
+        savedStateHandle.getStateFlow(KEY_SHOW_DELETE_SUCCESS_TOAST, false)
+            .onEach { showDeleteSuccessToast ->
+                if (showDeleteSuccessToast) {
+                    getCollectionList(routeReceiveData)
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun setAppBarTitle(title: String) {

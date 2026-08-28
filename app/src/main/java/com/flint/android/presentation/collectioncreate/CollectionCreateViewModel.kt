@@ -35,6 +35,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 const val MAX_CONTENT_IMAGE_COUNT = 5
+const val MAX_CONTENT_COUNT = 10
 
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
@@ -106,10 +107,12 @@ class CollectionCreateViewModel @Inject constructor(
                 collectionRepository
                     .postCollectionCreate(requestModel.toDto())
                     .onSuccess {
-                        println("컬렉션 생성 성공")
                         _createSuccess.emit(UiState.Success(it.collectionId))
                     }
-                    .onFailure { e -> println("컬렉션 생성 실패: ${e.message}") }
+                    .onFailure { e ->
+                        Timber.e(e, "컬렉션 생성 실패")
+                        _createSuccess.emit(UiState.Failure)
+                    }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -209,7 +212,10 @@ class CollectionCreateViewModel @Inject constructor(
                     .onSuccess {
                         _createSuccess.emit(UiState.Success(collectionId))
                     }
-                    .onFailure { e -> Timber.e(e, "컬렉션 수정 실패") }
+                    .onFailure { e ->
+                        Timber.e(e, "컬렉션 수정 실패")
+                        _createSuccess.emit(UiState.Failure)
+                    }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -284,7 +290,7 @@ class CollectionCreateViewModel @Inject constructor(
                     contentDetailsMap = newDetailsMap
                 )
             } else {
-                if (currentList.size < 10) {
+                if (currentList.size < MAX_CONTENT_COUNT) {
                     currentList + content
                 } else {
                     currentList

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.flint.android.R
 import com.flint.android.core.designsystem.interaction.flintIconClickable
 import com.flint.android.core.designsystem.component.collection.Spoiler
+import com.flint.android.core.designsystem.component.image.AdaptiveScaleNetworkImage
 import com.flint.android.core.designsystem.component.image.NetworkImage
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.domain.model.content.ContentModelNew
@@ -80,13 +80,10 @@ private fun CollectionDetailContentCarousel(content: ContentModelNew) {
         userScrollEnabled = images.size > 1,
         modifier = Modifier.fillMaxWidth(),
     ) { page ->
-        NetworkImage(
+        AdaptiveScaleNetworkImage(
             imageUrl = images[page % images.size],
-            modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(360f / 270f)
-                    .background(FlintTheme.colors.gray800),
-            contentScale = ContentScale.Fit,
+            letterboxColor = FlintTheme.colors.gray800,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 

@@ -1,0 +1,87 @@
+package com.flint.android.core.designsystem.component.image
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import com.flint.android.R
+
+/**
+ * 이미지 비율과 컨테이너 비율의 편차가 이 값을 초과하면 원본 비율을 유지한 채 여백(Fit)을 두고,
+ * 그렇지 않으면 컨테이너를 꽉 채우도록 Crop 한다.
+ */
+private const val ASPECT_RATIO_DEVIATION_THRESHOLD = 1.6f
+
+/**
+ * 이미지 원본 비율이 컨테이너 비율과 크게 다를 때만 여백(Fit)을 두고,
+ * 그 외에는 컨테이너를 꽉 채우는(Crop) 이미지 컴포넌트.
+ */
+@Composable
+fun AdaptiveScaleNetworkImage(
+    imageUrl: Any?,
+    letterboxColor: Color,
+    modifier: Modifier = Modifier,
+    containerHeight: Dp = 270.dp,
+    placePainter: Painter = painterResource(R.drawable.img_network_loading),
+    errorPainter: Painter = painterResource(R.drawable.img_network_loading),
+    contentDescription: String? = null,
+) {
+    if (LocalInspectionMode.current) {
+        Image(
+            painter = painterResource(R.drawable.img_dummy_poster),
+            contentDescription = contentDescription,
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+                    .fillMaxWidth()
+                    .height(containerHeight),
+        )
+        return
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+                .fillMaxWidth()
+                .height(containerHeight)
+                .background(letterboxColor),
+    ) {
+        val containerRatio = maxWidth.value / containerHeight.value
+        var contentScale by remember(imageUrl, containerRatio) {
+            mutableStateOf(ContentScale.Crop)
+        }
+
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = contentDescription,
+            contentScale = contentScale,
+            placeholder = placePainter,
+            error = errorPainter,
+            onSuccess = { success ->
+                val image = success.result.image
+                contentScale = if (image.width > 0 && image.height > 0) {
+                    val imageRatio = image.width.toFloat() / image.height.toFloat()
+                    val deviation = maxOf(imageRatio, containerRatio) / minOf(imageRatio, containerRatio)
+                    if (deviation > ASPECT_RATIO_DEVIATION_THRESHOLD) ContentScale.Fit else ContentScale.Crop
+                } else {
+                    ContentScale.Crop
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
+}

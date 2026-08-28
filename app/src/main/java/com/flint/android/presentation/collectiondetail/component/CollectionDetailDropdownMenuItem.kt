@@ -3,8 +3,7 @@ package com.flint.android.presentation.collectiondetail.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -16,15 +15,15 @@ import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.theme.FlintTheme
 
 private val DropdownMenuItemShape = RoundedCornerShape(8.dp)
-private val DropdownMenuItemPadding = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)
+private val DropdownMenuItemSize = Modifier.size(width = 104.dp, height = 48.dp)
 
 @Composable
 fun CollectionReportDropdownMenuItem(onClick: () -> Unit) {
     Box(
         modifier = Modifier
+            .then(DropdownMenuItemSize)
             .background(color = FlintTheme.colors.gray700, shape = DropdownMenuItemShape)
-            .flintCardClickable(onClick = onClick)
-            .then(DropdownMenuItemPadding),
+            .flintCardClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -45,9 +44,8 @@ fun CollectionEditDeleteDropdownMenuItem(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .flintCardClickable(onClick = onEditClick)
-                .then(DropdownMenuItemPadding),
+                .then(DropdownMenuItemSize)
+                .flintCardClickable(onClick = onEditClick),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -61,9 +59,8 @@ fun CollectionEditDeleteDropdownMenuItem(
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .flintCardClickable(onClick = onDeleteClick)
-                .then(DropdownMenuItemPadding),
+                .then(DropdownMenuItemSize)
+                .flintCardClickable(onClick = onDeleteClick),
             contentAlignment = Alignment.Center,
         ) {
             Text(

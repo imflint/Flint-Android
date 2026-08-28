@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,12 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.android.R
-import com.flint.android.core.designsystem.component.image.NetworkImage
+import com.flint.android.core.designsystem.component.image.AdaptiveScaleNetworkImage
 import com.flint.android.core.designsystem.interaction.flintIconClickable
 import com.flint.android.core.designsystem.theme.FlintTheme
 
@@ -89,13 +87,10 @@ fun CollectionCreateContentImage(
         ) { page ->
             val index = page % images.size
             Box {
-                NetworkImage(
+                AdaptiveScaleNetworkImage(
                     imageUrl = images[index],
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(360f / 270f)
-                        .background(FlintTheme.colors.gray800),
+                    letterboxColor = FlintTheme.colors.gray800,
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_deselect_large_gray),
