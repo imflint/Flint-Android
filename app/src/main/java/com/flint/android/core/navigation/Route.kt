@@ -46,6 +46,8 @@ interface Route {
         val collectionId: String,
         val targetImageUrl: String? = null,
         val showEditSuccessToast: Boolean = false,
+        /** 분석용 진입 경로. CollectionSource.value 문자열을 담는다. */
+        val source: String = "",
     ) : Route
 
     @Serializable

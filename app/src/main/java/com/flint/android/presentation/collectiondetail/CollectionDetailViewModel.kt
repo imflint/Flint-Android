@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.flint.android.core.analytics.AnalyticsTracker
+import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.common.util.DataStoreKey.USER_ID
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.navigation.Route
@@ -38,6 +40,7 @@ import javax.inject.Inject
 class CollectionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val bookmarkRepository: BookmarkRepository,
+    private val analyticsTracker: AnalyticsTracker,
     private val collectionRepository: CollectionRepository,
     private val preferencesManager: PreferencesManager,
 ) : ViewModel() {
@@ -80,6 +83,10 @@ class CollectionDetailViewModel @Inject constructor(
             if (currentState != initialCollectionBookmarkState) {
                 bookmarkRepository.toggleCollectionBookmark(uiState.collectionDetail.id)
                     .onSuccess { isBookmarked: Boolean ->
+                        // 정의서의 save_collection 은 저장 행위만 집계한다. 저장 해제는 보내지 않는다.
+                        if (isBookmarked) {
+                            analyticsTracker.track(FlintEvent.SaveCollection(uiState.collectionDetail.id))
+                        }
                         updateCollectionBookmarkState(isBookmarked)
                         getCollectionBookmarkUsers()
                         _sideEffect.emit(
@@ -164,6 +171,9 @@ class CollectionDetailViewModel @Inject constructor(
             if (currentContent.isBookmarked != initialState) {
                 bookmarkRepository.toggleContentBookmark(contentId)
                     .onSuccess { isBookmarked: Boolean ->
+                        if (isBookmarked) {
+                            analyticsTracker.track(FlintEvent.SaveContent(contentId))
+                        }
                         updateContentIsBookmarkedOnly(
                             contentId = contentId,
                             isBookmarked = isBookmarked,

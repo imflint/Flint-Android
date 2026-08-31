@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.android.core.analytics.CollectionSource
 import com.flint.android.core.common.extension.noRippleClickable
 import com.flint.android.core.designsystem.interaction.flintIconClickable
 import com.flint.android.R
@@ -63,7 +64,7 @@ fun ProfileRoute(
     navigateUp: () -> Unit,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: (userId: String?) -> Unit,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, source: CollectionSource) -> Unit,
     navigateToSetting: () -> Unit = {},
     shouldRefreshProfile: Boolean = false,
     onProfileRefreshed: () -> Unit = {},
@@ -100,7 +101,12 @@ fun ProfileRoute(
         modifier = Modifier.padding(paddingValues),
         uiState = uiState,
         onBackClick = navigateUp,
-        onCollectionItemClick = navigateToCollectionDetail,
+        onCreatedCollectionItemClick = { collectionId ->
+            navigateToCollectionDetail(collectionId, CollectionSource.MY_CREATED)
+        },
+        onSavedCollectionItemClick = { collectionId ->
+            navigateToCollectionDetail(collectionId, CollectionSource.MY_SAVED)
+        },
         onSettingsClick = navigateToSetting,
         onContentItemClick = { contentId ->
             val ottList = (uiState.sectionData as? UiState.Success)
@@ -141,7 +147,8 @@ private fun ProfileScreen(
     onRefreshClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
-    onCollectionItemClick: (collectionId: String) -> Unit,
+    onCreatedCollectionItemClick: (collectionId: String) -> Unit,
+    onSavedCollectionItemClick: (collectionId: String) -> Unit,
     onContentItemClick: (contentId: String) -> Unit = {},
     onContentMoreClick: () -> Unit = {},
     onCreatedCollectionMoreClick: () -> Unit,
@@ -213,7 +220,7 @@ private fun ProfileScreen(
                             CollectionSection(
                                 title = "${userName}님의 컬렉션",
                                 description = "${userName}님이 생성한 컬렉션이에요",
-                                onItemClick = onCollectionItemClick,
+                                onItemClick = onCreatedCollectionItemClick,
                                 isAllVisible = true,
                                 onAllClick = onCreatedCollectionMoreClick,
                                 collectionListModel = sectionData.data.createCollections,
@@ -228,7 +235,7 @@ private fun ProfileScreen(
                             CollectionSection(
                                 title = "저장한 컬렉션",
                                 description = "${userName}님이 저장한 컬렉션이에요",
-                                onItemClick = onCollectionItemClick,
+                                onItemClick = onSavedCollectionItemClick,
                                 isAllVisible = true,
                                 onAllClick = onSavedCollectionMoreClick,
                                 collectionListModel = sectionData.data.savedCollections,
@@ -295,7 +302,8 @@ private fun ProfileScreenPreview(
         ProfileScreen(
             modifier = Modifier.fillMaxSize(),
             uiState = uiState,
-            onCollectionItemClick = {},
+            onCreatedCollectionItemClick = {},
+            onSavedCollectionItemClick = {},
             onCreatedCollectionMoreClick = {},
             onSavedCollectionMoreClick = {}
         )

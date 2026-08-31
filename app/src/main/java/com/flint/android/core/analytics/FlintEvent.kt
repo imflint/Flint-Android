@@ -174,6 +174,17 @@ enum class CollectionSource(
     EXPLORE("explore"),
     MY_SAVED("my_saved"),
     MY_CREATED("my_created"),
+    ;
+
+    companion object {
+        /**
+         * 네비게이션 인자로 실어 보낸 문자열을 되돌린다.
+         *
+         * 타입 안전 라우트가 enum 을 그대로 담지 못해 value 문자열로 오간다.
+         * 알 수 없는 값이면 잘못된 경로로 집계하는 대신 null 을 반환해 이벤트를 생략한다.
+         */
+        fun from(value: String): CollectionSource? = entries.find { it.value == value }
+    }
 }
 
 private const val DURATION_SEC = "duration_sec"

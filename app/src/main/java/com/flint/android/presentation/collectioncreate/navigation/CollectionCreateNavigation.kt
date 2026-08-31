@@ -8,6 +8,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import androidx.navigation.navigation
+import com.flint.android.core.analytics.CollectionSource
 import com.flint.android.core.common.extension.sharedViewModel
 import com.flint.android.core.navigation.Route
 import com.flint.android.presentation.collectioncreate.AddContentRoute
@@ -52,6 +53,7 @@ fun NavGraphBuilder.collectionCreateNavGraph(
                     if (viewModel.isEditMode) {
                         navController.navigateToCollectionDetail(
                             collectionId = collectionId,
+                            source = CollectionSource.MY_CREATED,
                             showEditSuccessToast = true,
                             navOptions = navOptions {
                                 popUpTo<Route.CollectionDetail> { inclusive = true }
@@ -59,7 +61,10 @@ fun NavGraphBuilder.collectionCreateNavGraph(
                         )
                     } else {
                         navController.popBackStack<Route.CollectionCreateGraph>(inclusive = true)
-                        navController.navigateToCollectionDetail(collectionId = collectionId)
+                        navController.navigateToCollectionDetail(
+                            collectionId = collectionId,
+                            source = CollectionSource.MY_CREATED,
+                        )
                     }
                 },
                 viewModel = viewModel

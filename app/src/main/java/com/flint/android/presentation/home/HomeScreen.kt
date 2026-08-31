@@ -23,6 +23,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.android.core.analytics.CollectionSource
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.HomeContentType
+import com.flint.android.core.analytics.LocalAnalyticsTracker
+import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.android.core.designsystem.component.listView.CollectionSection
@@ -42,12 +47,13 @@ import com.flint.android.presentation.home.sideeffect.HomeSideEffect
 fun HomeRoute(
     paddingValues: PaddingValues,
     navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, source: CollectionSource) -> Unit,
     navigateToCollectionCreate: () -> Unit,
     navigateToExplore: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+    val analyticsTracker = LocalAnalyticsTracker.current
 
     var showOttListBottomSheet by remember { mutableStateOf(false) }
     var ottListModel by remember { mutableStateOf(OttListModel()) }
@@ -76,16 +82,28 @@ fun HomeRoute(
             val bookmarkedContentList = (uiState.bookmarkedContentListLoadState as? UiState.Success)?.data ?: BookmarkedContentListModel()
             val popularCollectionList = (uiState.popularCollectionListLoadState as? UiState.Success)?.data ?: CollectionListModel()
 
+            // 정의서상 홈 진입은 "데이터 로딩 완료 후 정상 표시 시점" 이라 Success 분기에서 보낸다.
+            TrackScreenView(FlintEvent.ViewHome)
+
             HomeScreen(
                 userName = uiState.userName,
                 recommendCollectionModelList = recommendedCollectionList,
                 famousCollectionModelList = popularCollectionList,
                 savedContentModelList = bookmarkedContentList,
                 navigateToCollectionCreate = { navigateToCollectionCreate() },
-                onFamousCollectionItemClick = { navigateToCollectionDetail(it) },
+                onFamousCollectionItemClick = {
+                    analyticsTracker.track(FlintEvent.ClickHomeContent(HomeContentType.POPULAR))
+                    navigateToCollectionDetail(it, CollectionSource.HOME_POPULAR)
+                },
                 onFamousCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.FAMOUS) },
-                onRecommendCollectionItemClick = { navigateToCollectionDetail(it) },
-                onSavedContentItemClick = { viewModel.showOttList(it) },
+                onRecommendCollectionItemClick = {
+                    analyticsTracker.track(FlintEvent.ClickHomeContent(HomeContentType.FLINER))
+                    navigateToCollectionDetail(it, CollectionSource.HOME_FLINNER)
+                },
+                onSavedContentItemClick = {
+                    analyticsTracker.track(FlintEvent.ClickHomeContent(HomeContentType.RECENTLY_SAVED))
+                    viewModel.showOttList(it)
+                },
                 modifier = Modifier.padding(paddingValues),
             )
         }

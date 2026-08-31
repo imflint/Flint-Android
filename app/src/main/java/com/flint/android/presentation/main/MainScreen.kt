@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.LocalAnalyticsTracker
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.presentation.main.component.MainBottomBar
 import kotlinx.collections.immutable.toImmutableList
@@ -19,6 +21,7 @@ fun MainScreen(navigator: MainNavigator) {
     val isBottomBarVisible by navigator.isBottomBarVisible.collectAsStateWithLifecycle()
     val currentTab by navigator.currentTab.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
+    val analyticsTracker = LocalAnalyticsTracker.current
 
     Box(
         modifier = Modifier
@@ -36,7 +39,10 @@ fun MainScreen(navigator: MainNavigator) {
                     visible = isBottomBarVisible,
                     tabs = MainTab.entries.toImmutableList(),
                     currentTab = currentTab,
-                    onTabSelected = navigator::navigate,
+                    onTabSelected = { tab ->
+                        analyticsTracker.track(FlintEvent.ClickBottomNavigation(tab.toAnalyticsTab()))
+                        navigator.navigate(tab)
+                    },
                 )
             },
         ) { paddingValues ->
