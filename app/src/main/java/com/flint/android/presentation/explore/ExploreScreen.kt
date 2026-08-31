@@ -36,6 +36,7 @@ import com.flint.android.R
 import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.analytics.LocalAnalyticsTracker
 import com.flint.android.core.analytics.TrackDwellTime
+import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.designsystem.component.button.FlintButtonState
 import com.flint.android.core.designsystem.component.button.FlintLargeButton
@@ -75,6 +76,9 @@ fun ExploreRoute(
             if (data.isEmpty) {
                 ExploreEmptyPage(modifier = Modifier.padding(paddingValues))
             } else {
+                // 기획 확정 기준: 로딩이 끝나고 콘텐츠가 실제로 표시된 시점.
+                TrackScreenView(FlintEvent.ViewExplore)
+
                 ExploreScreen(
                     items = data.items,
                     isEnd = data.isEnd,
