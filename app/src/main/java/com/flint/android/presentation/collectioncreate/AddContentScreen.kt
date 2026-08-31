@@ -90,6 +90,7 @@ fun AddContentScreen(
     var isModalVisible by remember { mutableStateOf(false) }
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     val lazyRowState = rememberLazyListState()
+    val lazyColumnState = rememberLazyListState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -171,6 +172,7 @@ fun AddContentScreen(
                 )
             } else {
                 LazyColumn(
+                    state = lazyColumnState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -203,17 +205,19 @@ fun AddContentScreen(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(148.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, FlintTheme.colors.background)
+        if (lazyColumnState.canScrollForward) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(148.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, FlintTheme.colors.background)
+                        )
                     )
-                )
-        )
+            )
+        }
     }
     if (isModalVisible) {
         CollectionCreateContentDeleteModal(
