@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.flint.android.core.analytics.AnalyticsTracker
+import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.common.util.suspendRunCatching
 import com.flint.android.core.navigation.Route
@@ -34,6 +36,7 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
 
     val userId = savedStateHandle.toRoute<Route.Profile>().userId
@@ -162,6 +165,9 @@ class ProfileViewModel @Inject constructor(
         _uiState.update { it.copy(isRecalculating = true) }
         userRepository.recalculateKeywords()
             .onSuccess {
+                // 정의서의 update_keyword. 재계산이 성공한 시점만 집계한다.
+                analyticsTracker.track(FlintEvent.UpdateKeyword)
+
                 // 버튼 즉시 비활성화 후 키워드 재조회
                 _uiState.update { it.copy(profile = it.profile.copy(keywordRecalculatable = false)) }
                 userRepository.getUserKeywords(userId = null)
