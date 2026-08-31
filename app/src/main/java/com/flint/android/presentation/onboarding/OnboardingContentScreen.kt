@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.designsystem.component.button.FlintButtonState
 import com.flint.android.core.designsystem.component.button.FlintLargeButton
@@ -63,6 +65,8 @@ fun OnboardingContentRoute(
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val contentUiState by viewModel.contentUiState.collectAsStateWithLifecycle()
+
+    TrackScreenView(FlintEvent.ViewFilmSelect)
 
     LaunchedEffect(Unit) {
         viewModel.loadInitialContents()

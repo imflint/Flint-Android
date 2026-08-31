@@ -6,6 +6,9 @@ object DataStoreKey {
     const val USER_ID = "userId"
     const val USER_NAME = "userName"
     const val USER_EMAIL = "userEmail"
+
+    /** 온보딩 소요시간 측정용 시작 시각(밀리초). 온보딩 완료 시 지운다. */
+    const val ONBOARDING_STARTED_AT = "onboardingStartedAt"
 }
 
 object ExternalLinks {

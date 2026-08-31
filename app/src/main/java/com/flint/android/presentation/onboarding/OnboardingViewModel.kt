@@ -6,8 +6,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.flint.android.core.analytics.AnalyticsTracker
+import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.navigation.Route
+import com.flint.android.data.analytics.OnboardingDurationStore
 import com.flint.android.domain.model.auth.SignupRequestModel
 import com.flint.android.domain.model.search.SearchContentItemModel
 import com.flint.android.domain.repository.AuthRepository
@@ -44,10 +47,17 @@ class OnboardingViewModel
     private val authRepository: AuthRepository,
     private val storageRepository: StorageRepository,
     private val termsRepository: TermsRepository,
+    private val analyticsTracker: AnalyticsTracker,
+    private val onboardingDurationStore: OnboardingDurationStore,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val tempToken: String = savedStateHandle.toRoute<Route.OnboardingGraph>().tempToken
+
+    init {
+        // 이 ViewModel 은 온보딩 그래프에 스코프되어 있어 생성 시점이 곧 온보딩 진입 시점이다.
+        viewModelScope.launch { onboardingDurationStore.startIfAbsent() }
+    }
 
     private val _uiState = MutableStateFlow(OnboardingProfileUiState())
     val uiState: StateFlow<OnboardingProfileUiState> = _uiState.asStateFlow()
@@ -339,6 +349,25 @@ class OnboardingViewModel
         }
     }
 
+    /**
+     * 회원가입이 성공한 시점이 곧 온보딩이 끝난 시점이므로 완료 지표를 함께 남긴다.
+     *
+     * 소요시간은 시작 기록이 없거나 값이 비정상이면 생략하고, 완료 이벤트만 보낸다.
+     * 시간이 빠지더라도 완료 건수는 정확해야 하기 때문이다.
+     */
+    private suspend fun trackOnboardingCompleted(userId: Long) {
+        // 회원가입 응답은 Long, 로그인 응답은 String 으로 타입이 달라 문자열로 맞춘다.
+        // 두 경로에서 같은 사용자로 이어지려면 형식이 같아야 한다.
+        analyticsTracker.setUserId(userId.toString())
+
+        onboardingDurationStore.elapsedSecondsOrNull()?.let { durationSec ->
+            analyticsTracker.track(FlintEvent.CompleteOnboarding(durationSec))
+        }
+        analyticsTracker.track(FlintEvent.CompleteSignup)
+
+        onboardingDurationStore.clear()
+    }
+
     // ---------- onboarding signup ----------
     fun signup() {
         // 이미 요청이 진행 중이면 중복 호출하지 않는다.
@@ -360,6 +389,7 @@ class OnboardingViewModel
             authRepository.signup(signupRequest)
                 .onSuccess { response ->
                     _signupUiState.update { it.copy(signupState = UiState.Success(Unit)) }
+                    trackOnboardingCompleted(response.userId)
                     Timber.d("Signup success: userId=${response.userId}")
                 }
                 .onFailure { error ->
