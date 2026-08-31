@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,6 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.android.R
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.LocalAnalyticsTracker
+import com.flint.android.core.analytics.TrackDwellTime
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.designsystem.component.button.FlintButtonState
 import com.flint.android.core.designsystem.component.button.FlintLargeButton
@@ -43,6 +47,7 @@ import com.flint.android.domain.model.exploration.ExplorationItemModel
 import com.flint.android.presentation.explore.uistate.ExploreUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun ExploreRoute(
@@ -52,6 +57,12 @@ fun ExploreRoute(
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val uiState: UiState<ExploreUiState> by viewModel.uiState.collectAsStateWithLifecycle()
+    val analyticsTracker = LocalAnalyticsTracker.current
+
+    // 로딩·빈 화면·에러도 탐색 페이지에 머문 시간이므로 상태와 무관하게 전체를 감싼다.
+    TrackDwellTime { durationSec ->
+        analyticsTracker.track(FlintEvent.ExitExplore(durationSec))
+    }
 
     when (uiState) {
         UiState.Loading -> {
@@ -68,7 +79,10 @@ fun ExploreRoute(
                     items = data.items,
                     isEnd = data.isEnd,
                     initialPage = data.initialPage,
-                    onWatchCollectionButtonClick = navigateToCollectionDetail,
+                    onWatchCollectionButtonClick = { collectionId, imageUrl ->
+                        analyticsTracker.track(FlintEvent.ClickExploreCollection(collectionId))
+                        navigateToCollectionDetail(collectionId, imageUrl)
+                    },
                     onMakeCollectionButtonClick = navigateToCollectionCreate,
                     onLoadNextSession = viewModel::advanceToNextSession,
                     modifier = Modifier.padding(paddingValues),
@@ -107,6 +121,18 @@ private fun ExploreScreen(
         if (!isEnd && pagerState.currentPage >= itemCount - 3 && itemCount > 0) {
             onLoadNextSession()
         }
+    }
+
+    // 기획 확정 기준: 머문 시간과 무관하게 페이지가 바뀔 때마다 노출로 집계한다.
+    // 마지막 페이지는 작품이 아닌 종료 화면이라 items 범위 밖은 보내지 않는다.
+    val exploreAnalyticsTracker = LocalAnalyticsTracker.current
+    LaunchedEffect(pagerState, items) {
+        snapshotFlow { pagerState.currentPage }
+            .distinctUntilChanged()
+            .collect { page ->
+                val item = items.getOrNull(page) ?: return@collect
+                exploreAnalyticsTracker.track(FlintEvent.ViewExploreContent(item.contentId))
+            }
     }
 
     Column(
