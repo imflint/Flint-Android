@@ -209,7 +209,10 @@ fun CollectionCreateScreen(
         if (uiState.isDirty) showLeaveConfirmModal = true else onBackClick()
     }
 
-    BackHandler(onBack = ::requestBack)
+    // 로컬 함수 참조(::requestBack)는 Kotlin의 CallableReference.equals()가 캡처된 상태가 아니라
+    // 참조 대상 함수 자체만 비교하므로, 리컴포즈마다 새로 캡처된 uiState 를 Compose 가 "안 바뀜"으로
+    // 오판해 콜백이 최초 진입 시점 상태에 고정될 수 있다. 람다로 감싸 매 리컴포즈마다 갱신되게 한다.
+    BackHandler(onBack = { requestBack() })
 
     // 같은 문자열을 다시 대입하면 State 값이 안 바뀌어(구조적 동등성) 리컴포즈가 안 될 수 있으므로,
     // 매 요청마다 카운터를 증가시켜 ShowToast 의 LaunchedEffect 타이머가 항상 재시작되도록 한다.
@@ -245,7 +248,7 @@ fun CollectionCreateScreen(
                     .fillMaxSize()
                     .background(color = FlintTheme.colors.background)
         ) {
-            FlintBackTopAppbar(onClick = ::requestBack)
+            FlintBackTopAppbar(onClick = { requestBack() })
 
             LazyColumn(
                 state = lazyListState,
