@@ -60,11 +60,6 @@ fun ExploreRoute(
     val uiState: UiState<ExploreUiState> by viewModel.uiState.collectAsStateWithLifecycle()
     val analyticsTracker = LocalAnalyticsTracker.current
 
-    // 로딩·빈 화면·에러도 탐색 페이지에 머문 시간이므로 상태와 무관하게 전체를 감싼다.
-    TrackDwellTime { durationSec ->
-        analyticsTracker.track(FlintEvent.ExitExplore(durationSec))
-    }
-
     when (uiState) {
         UiState.Loading -> {
             FlintLoadingIndicator()
@@ -78,6 +73,12 @@ fun ExploreRoute(
             } else {
                 // 기획 확정 기준: 로딩이 끝나고 콘텐츠가 실제로 표시된 시점.
                 TrackScreenView(FlintEvent.ViewExplore)
+
+                // 진입과 이탈의 집계 범위를 맞춰야 두 수를 대조해 유실을 확인할 수 있다.
+                // 그래서 체류시간도 콘텐츠가 표시된 구간에서만 잰다.
+                TrackDwellTime { durationSec ->
+                    analyticsTracker.track(FlintEvent.ExitExplore(durationSec))
+                }
 
                 ExploreScreen(
                     items = data.items,
