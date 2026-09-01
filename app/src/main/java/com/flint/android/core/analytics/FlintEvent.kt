@@ -143,23 +143,21 @@ sealed class FlintEvent(
     /** 사용자 키워드 업데이트 완료 */
     data object UpdateKeyword : FlintEvent("update_keyword")
 
-    /** 저장한 작품 목록에서 이전에 저장한 작품을 다시 확인 */
+    /**
+     * 저장한 작품 목록에서 이전에 저장한 작품을 다시 확인.
+     *
+     * 저장함에서 어떤 컬렉션을 다시 열어봤는지는 view_collection 의 source(my_saved)로
+     * 알 수 있어, 컬렉션 쪽 대응 이벤트는 중복이므로 두지 않는다.
+     */
     data class ViewSavedContent(
         val contentId: String,
     ) : FlintEvent("view_saved_content", mapOf(CONTENT_ID to contentId))
-
-    /** 저장한 컬렉션 목록에서 이전에 저장한 컬렉션을 다시 확인 */
-    data class ViewSavedCollection(
-        val collectionId: String,
-    ) : FlintEvent("view_saved_collection", mapOf(COLLECTION_ID to collectionId))
 }
 
 /** 홈에서 클릭한 콘텐츠 영역 */
 enum class HomeContentType(
     val value: String,
 ) {
-    // 정의서의 content_type 은 "fliner", source 는 "home_flinner" 로 철자가 다르다.
-    // 어느 쪽이 맞는지 기획 확인 후 한쪽으로 통일할 것.
     FLINER("fliner"),
     RECENTLY_SAVED("recently_saved"),
     POPULAR("popular"),
@@ -178,7 +176,7 @@ enum class BottomNavigationTab(
 enum class CollectionSource(
     val value: String,
 ) {
-    HOME_FLINNER("home_flinner"),
+    HOME_FLINER("home_fliner"),
     HOME_POPULAR("home_popular"),
     EXPLORE("explore"),
     MY_SAVED("my_saved"),

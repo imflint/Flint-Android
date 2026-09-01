@@ -6,13 +6,18 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.coroutines.delay
 
 /**
  * 화면 진입 이벤트를 컴포저블에서 바로 보낼 수 있도록 [AnalyticsTracker] 를 트리에 흘려준다.
@@ -96,3 +101,40 @@ fun TrackDwellTime(onExit: (durationSec: Long) -> Unit) {
 }
 
 private const val MILLIS_PER_SECOND = 1_000L
+
+/**
+ * 목록 항목이 화면에 충분히 오래 보였을 때 노출로 집계한다.
+ *
+ * 기준은 기획 확정값이다 — 항목 높이의 [minVisibleFraction] 이상이 화면에 드러난 채로
+ * [minVisibleMillis] 이상 유지되어야 한다. 스크롤로 빠르게 지나친 항목은 제외된다.
+ *
+ * 한 번 보낸 항목은 [alreadyTracked] 로 걸러 같은 방문 안에서 다시 보내지 않는다.
+ * 위아래로 오르내리며 같은 항목을 여러 번 지나쳐도 한 번만 집계된다.
+ *
+ * 가시 비율은 잘려서 실제로 보이는 높이를 항목 전체 높이로 나눠 구한다.
+ */
+@Composable
+fun Modifier.onItemImpression(
+    key: Any,
+    alreadyTracked: (Any) -> Boolean,
+    onImpression: (Any) -> Unit,
+    minVisibleFraction: Float = 0.5f,
+    minVisibleMillis: Long = 1_000L,
+): Modifier {
+    val currentOnImpression by rememberUpdatedState(onImpression)
+    val currentAlreadyTracked by rememberUpdatedState(alreadyTracked)
+    var isSufficientlyVisible by remember(key) { mutableStateOf(false) }
+
+    LaunchedEffect(key, isSufficientlyVisible) {
+        if (!isSufficientlyVisible || currentAlreadyTracked(key)) return@LaunchedEffect
+        // 이 시간이 지나기 전에 화면에서 벗어나면 코루틴이 취소되어 집계되지 않는다.
+        delay(minVisibleMillis)
+        if (!currentAlreadyTracked(key)) currentOnImpression(key)
+    }
+
+    return onGloballyPositioned { coordinates ->
+        val height = coordinates.size.height
+        val visibleHeight = coordinates.boundsInWindow().height
+        isSufficientlyVisible = height > 0 && visibleHeight / height >= minVisibleFraction
+    }
+}

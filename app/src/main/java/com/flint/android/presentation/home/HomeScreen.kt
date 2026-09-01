@@ -98,7 +98,7 @@ fun HomeRoute(
                 onFamousCollectionAllClick = { navigateToCollectionList(CollectionListRouteType.FAMOUS) },
                 onRecommendCollectionItemClick = {
                     analyticsTracker.track(FlintEvent.ClickHomeContent(HomeContentType.FLINER))
-                    navigateToCollectionDetail(it, CollectionSource.HOME_FLINNER)
+                    navigateToCollectionDetail(it, CollectionSource.HOME_FLINER)
                 },
                 onSavedContentItemClick = {
                     analyticsTracker.track(FlintEvent.ClickHomeContent(HomeContentType.RECENTLY_SAVED))
