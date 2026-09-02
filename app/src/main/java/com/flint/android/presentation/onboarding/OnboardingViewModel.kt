@@ -1,6 +1,5 @@
 package com.flint.android.presentation.onboarding
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,18 +13,14 @@ import com.flint.android.data.analytics.OnboardingDurationStore
 import com.flint.android.domain.model.auth.SignupRequestModel
 import com.flint.android.domain.model.search.SearchContentItemModel
 import com.flint.android.domain.repository.AuthRepository
+import com.flint.android.domain.repository.ProfileImageUploader
 import com.flint.android.domain.repository.SearchRepository
-import com.flint.android.domain.repository.StorageRepository
 import com.flint.android.domain.repository.TermsRepository
 import com.flint.android.domain.repository.UserRepository
-import com.flint.android.domain.type.FileExtension
 import com.flint.android.domain.type.OttType
-import com.flint.android.domain.type.StoragePathType
 import com.flint.android.presentation.onboarding.event.OnboardingProfileEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,18 +29,16 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel
 @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val userRepository: UserRepository,
     private val searchRepository: SearchRepository,
     private val authRepository: AuthRepository,
-    private val storageRepository: StorageRepository,
+    private val profileImageUploader: ProfileImageUploader,
     private val termsRepository: TermsRepository,
     private val analyticsTracker: AnalyticsTracker,
     private val onboardingDurationStore: OnboardingDurationStore,
@@ -376,18 +369,20 @@ class OnboardingViewModel
         viewModelScope.launch {
             _signupUiState.update { it.copy(signupState = UiState.Loading) }
 
-            val profileImageUrl = uploadProfileImageIfNeeded()
-
+            // 프로필 이미지 presigned URL 발급 API는 인증(Access Token)이 필요한데,
+            // 회원가입 전에는 Access Token이 없어 항상 403이 발생한다.
+            // 따라서 이미지 업로드는 회원가입으로 계정을 만들고 토큰을 발급받은 뒤에 진행한다.
             val signupRequest = SignupRequestModel(
                 tempToken = tempToken,
                 nickname = _uiState.value.nickname,
                 favoriteContentIds = _contentUiState.value.selectedContents.map { it.id },
                 agreedTermsIds = _termsUiState.value.agreedTermsIds,
-                profileImageUrl = profileImageUrl,
+                profileImageUrl = null,
             )
 
             authRepository.signup(signupRequest)
                 .onSuccess { response ->
+                    uploadProfileImageIfNeeded()
                     _signupUiState.update { it.copy(signupState = UiState.Success(Unit)) }
                     trackOnboardingCompleted(response.userId)
                     Timber.d("Signup success: userId=${response.userId}")
@@ -399,42 +394,10 @@ class OnboardingViewModel
         }
     }
 
-    private suspend fun uploadProfileImageIfNeeded(): String? {
-        val uri = _uiState.value.profileImageUri ?: return null
+    private suspend fun uploadProfileImageIfNeeded() {
+        val uri = _uiState.value.profileImageUri ?: return
 
-        val mimeType = withContext(Dispatchers.IO) {
-            context.contentResolver.getType(uri)
-        } ?: "image/jpeg"
-        val extension = mimeTypeToFileExtension(mimeType)
-
-        val presignedUrl = storageRepository.getPresignedUrl(
-            pathType = StoragePathType.USER_PROFILE,
-            extension = extension,
-        ).getOrElse { error ->
-            Timber.e(error, "Failed to get presigned URL")
-            return null
-        }
-
-        val imageBytes = withContext(Dispatchers.IO) {
-            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        } ?: return null
-
-        storageRepository.uploadToS3(
-            uploadUrl = presignedUrl.uploadUrl,
-            imageBytes = imageBytes,
-            mimeType = mimeType,
-        ).getOrElse { error ->
-            Timber.e(error, "Failed to upload profile image to S3")
-            return null
-        }
-
-        return presignedUrl.key
-    }
-
-    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
-        "image/png" -> FileExtension.PNG
-        "image/gif" -> FileExtension.GIF
-        "image/webp" -> FileExtension.WEBP
-        else -> FileExtension.JPEG
+        profileImageUploader.upload(uri)
+            .onFailure { error -> Timber.e(error, "Failed to update profile image after signup") }
     }
 }

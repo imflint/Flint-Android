@@ -12,6 +12,7 @@ import com.flint.android.core.navigation.Route
 import com.flint.android.domain.model.bookmark.BookmarkChange
 import com.flint.android.domain.model.user.KeywordListModel
 import com.flint.android.domain.repository.BookmarkRepository
+import com.flint.android.domain.repository.CollectionRepository
 import com.flint.android.domain.repository.ContentRepository
 import com.flint.android.domain.repository.UserRepository
 import com.flint.android.presentation.profile.sideeffect.ProfileSideEffect
@@ -36,6 +37,7 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val collectionRepository: CollectionRepository,
     private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
 
@@ -50,47 +52,119 @@ class ProfileViewModel @Inject constructor(
     init {
         getProfile()
         observeBookmarkChanges()
+        observeCollectionDeletions()
+    }
+
+    // 컬렉션 상세 등 다른 화면에서 컬렉션을 삭제해도
+    // 내가 생성한 컬렉션 / 저장한 컬렉션 가로 리스트에 즉시 반영되도록 구독한다.
+    private fun observeCollectionDeletions() {
+        viewModelScope.launch {
+            collectionRepository.collectionDeletions.collect { deletedCollectionId ->
+                _uiState.update { state ->
+                    val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
+                    val updated = data.copy(
+                        createCollections = data.createCollections.copy(
+                            collections = data.createCollections.collections
+                                .filter { it.id != deletedCollectionId }
+                                .toPersistentList(),
+                        ),
+                        savedCollections = data.savedCollections.copy(
+                            collections = data.savedCollections.collections
+                                .filter { it.id != deletedCollectionId }
+                                .toPersistentList(),
+                        ),
+                    )
+                    state.copy(sectionData = UiState.Success(updated))
+                }
+            }
+        }
     }
 
     private fun observeBookmarkChanges() {
         viewModelScope.launch {
             bookmarkRepository.bookmarkChanges.collect { change ->
-                _uiState.update { state ->
-                    val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
-                    val updated = when (change) {
-                        is BookmarkChange.Content -> {
-                            // 내 프로필 / 타 유저 공통: isBookmarked 토글만, 목록에서 제거하지 않음
-                            val updatedContents = data.savedContents.copy(
-                                contents = data.savedContents.contents
-                                    .map { if (it.id == change.id) it.copy(isBookmarked = change.isBookmarked) else it }
-                                    .toPersistentList()
-                            )
-                            data.copy(savedContents = updatedContents)
-                        }
-                        is BookmarkChange.Collection -> {
-                            val updatedCollections = if (userId == null) {
-                                // 내 프로필: 북마크 취소 시 목록에서 제거
-                                if (change.isBookmarked) data.savedCollections
-                                else {
-                                    val filtered = data.savedCollections.collections
-                                        .filter { it.id != change.id }
-                                        .toPersistentList()
-                                    data.savedCollections.copy(collections = filtered)
-                                }
-                            } else {
-                                // 타 유저 프로필: isBookmarked 토글만 (상대방 목록에서 제거 X)
-                                data.savedCollections.copy(
-                                    collections = data.savedCollections.collections
-                                        .map { if (it.id == change.id) it.copy(isBookmarked = change.isBookmarked) else it }
-                                        .toPersistentList()
-                                )
-                            }
-                            data.copy(savedCollections = updatedCollections)
-                        }
-                    }
-                    state.copy(sectionData = UiState.Success(updated))
+                when (change) {
+                    is BookmarkChange.Content -> handleContentBookmarkChange(change)
+                    is BookmarkChange.Collection -> handleCollectionBookmarkChange(change)
                 }
             }
+        }
+    }
+
+    private fun handleContentBookmarkChange(change: BookmarkChange.Content) {
+        if (userId == null && change.isBookmarked) {
+            // 내 프로필에서 재북마크된 경우: 취소되면서 목록에서 이미 제거된 아이템은
+            // 로컬에 제목/이미지 등 정보가 남아있지 않아 그대로 되살릴 수 없다.
+            // 그래서 depth 0 가로 리스트에 정확한 데이터/순서로 다시 보이도록 목록 자체를 다시 불러온다.
+            // (다른 화면의 북마크 토글이 이 네트워크 호출 때문에 밀리지 않도록 별도 코루틴으로 처리한다.)
+            viewModelScope.launch {
+                userRepository.getUserBookmarkedContents(userId = null)
+                    .onSuccess { refreshed ->
+                        _uiState.update { state ->
+                            val current = (state.sectionData as? UiState.Success)?.data ?: return@update state
+                            state.copy(sectionData = UiState.Success(current.copy(savedContents = refreshed)))
+                        }
+                    }
+                    .onFailure { Timber.e(it, "Failed to reload saved contents after re-bookmark") }
+            }
+            return
+        }
+
+        _uiState.update { state ->
+            val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
+            val updatedContents = if (userId == null) {
+                // 내 프로필: 북마크 취소 시 목록에서 제거
+                data.savedContents.copy(
+                    totalCount = maxOf(0, data.savedContents.totalCount - 1),
+                    contents = data.savedContents.contents
+                        .filter { it.id != change.id }
+                        .toPersistentList(),
+                )
+            } else {
+                // 타 유저 프로필: isBookmarked 토글만 (상대방 목록에서 제거 X)
+                data.savedContents.copy(
+                    contents = data.savedContents.contents
+                        .map { if (it.id == change.id) it.copy(isBookmarked = change.isBookmarked) else it }
+                        .toPersistentList()
+                )
+            }
+            state.copy(sectionData = UiState.Success(data.copy(savedContents = updatedContents)))
+        }
+    }
+
+    private fun handleCollectionBookmarkChange(change: BookmarkChange.Collection) {
+        if (userId == null && change.isBookmarked) {
+            // 콘텐츠와 동일한 이유로, 내 프로필에서 재북마크된 컬렉션도 목록을 다시 불러온다.
+            viewModelScope.launch {
+                userRepository.getUserBookmarkedCollections(userId = null)
+                    .onSuccess { refreshed ->
+                        _uiState.update { state ->
+                            val current = (state.sectionData as? UiState.Success)?.data ?: return@update state
+                            state.copy(sectionData = UiState.Success(current.copy(savedCollections = refreshed)))
+                        }
+                    }
+                    .onFailure { Timber.e(it, "Failed to reload saved collections after re-bookmark") }
+            }
+            return
+        }
+
+        _uiState.update { state ->
+            val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
+            val updatedCollections = if (userId == null) {
+                // 내 프로필: 북마크 취소 시 목록에서 제거
+                val filtered = data.savedCollections.collections
+                    .filter { it.id != change.id }
+                    .toPersistentList()
+                data.savedCollections.copy(collections = filtered)
+            } else {
+                // 타 유저 프로필: isBookmarked 토글만 (상대방 목록에서 제거 X)
+                data.savedCollections.copy(
+                    collections = data.savedCollections.collections
+                        .map { if (it.id == change.id) it.copy(isBookmarked = change.isBookmarked) else it }
+                        .toPersistentList()
+                )
+            }
+            state.copy(sectionData = UiState.Success(data.copy(savedCollections = updatedCollections)))
         }
     }
 

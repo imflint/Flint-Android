@@ -154,8 +154,14 @@ fun SavedContentScreen(
         if (uiState.contents is UiState.Success && uiState.filteredContents.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
 
+            val displayCount = if (uiState.searchKeyword.isBlank()) {
+                uiState.totalCount
+            } else {
+                uiState.filteredContents.size
+            }
+
             Text(
-                text = "총 ${uiState.filteredContents.size}개",
+                text = "총 ${displayCount}개",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 color = FlintTheme.colors.gray100,
                 style = FlintTheme.typography.body2R14,

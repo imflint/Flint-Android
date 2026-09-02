@@ -58,6 +58,7 @@ fun CollectionListRoute(
     CollectionListScreen(
         modifier = Modifier.padding(paddingValues),
         title = uiState.appbarTitle,
+        routeType = uiState.routeType,
         onBackClick = navigateUp,
         onCollectionItemClick = { collectionId ->
             navigateToCollectionDetail(collectionId, uiState.routeType.toCollectionSource())
@@ -113,6 +114,7 @@ fun CollectionListRoute(
 private fun CollectionListScreen(
     onBackClick: () -> Unit,
     title: String,
+    routeType: CollectionListRouteType,
     collectionList: UiState<CollectionListModel>,
     onCollectionItemClick: (collectionId: String) -> Unit,
     onBookmarkClick: (collectionId: String) -> Unit,
@@ -149,8 +151,14 @@ private fun CollectionListScreen(
                             ) {
                                 Spacer(Modifier.height(12.dp))
 
+                                val displayCount = if (routeType == CollectionListRouteType.SAVED) {
+                                    collections.count { it.isBookmarked }
+                                } else {
+                                    collections.size
+                                }
+
                                 Text(
-                                    text = "총 ${collections.size}개",
+                                    text = "총 ${displayCount}개",
                                     color = FlintTheme.colors.gray100,
                                     modifier =
                                         Modifier
@@ -211,6 +219,7 @@ private fun CollectionListScreenPreview() {
         CollectionListScreen(
             onBackClick = {},
             title = "전체 컬렉션",
+            routeType = CollectionListRouteType.CREATED,
             collectionList = UiState.Success(CollectionListModel.FakeList),
             onCollectionItemClick = {},
             onBookmarkClick = {},
