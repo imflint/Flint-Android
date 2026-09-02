@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Amplitude SDK 가 네트워크 상태를 감지해 오프라인 구간의 이벤트를 큐잉하는 데 필요하다.
+         없으면 연결이 끊긴 동안 발생한 이벤트가 유실될 수 있다. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".FlintApplication"
