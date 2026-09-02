@@ -1,18 +1,13 @@
 package com.flint.android.presentation.setting.editprofile
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flint.android.core.common.util.DataStoreKey.USER_NAME
 import com.flint.android.data.local.PreferencesManager
-import com.flint.android.domain.repository.StorageRepository
+import com.flint.android.domain.repository.ProfileImageUploader
 import com.flint.android.domain.repository.UserRepository
-import com.flint.android.domain.type.FileExtension
-import com.flint.android.domain.type.StoragePathType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,16 +16,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val preferencesManager: PreferencesManager,
     private val userRepository: UserRepository,
-    private val storageRepository: StorageRepository,
+    private val profileImageUploader: ProfileImageUploader,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EditProfileUiState())
@@ -119,7 +112,7 @@ class EditProfileViewModel @Inject constructor(
                         }
                 }
                 state.profileImageUri != null -> {
-                    uploadProfileImage(state.profileImageUri)
+                    profileImageUploader.upload(state.profileImageUri)
                         .onFailure {
                             Timber.e(it, "Failed to save profile image")
                             return@launch
@@ -136,44 +129,5 @@ class EditProfileViewModel @Inject constructor(
             }
             _navigateUp.emit(Unit)
         }
-    }
-
-    private suspend fun uploadProfileImage(uri: Uri): Result<Unit> {
-        val mimeType = withContext(Dispatchers.IO) {
-            context.contentResolver.getType(uri)
-        } ?: "image/jpeg"
-
-        val extension = mimeTypeToFileExtension(mimeType)
-
-        val presignedUrl = storageRepository.getPresignedUrl(
-            pathType = StoragePathType.USER_PROFILE,
-            extension = extension,
-        ).getOrElse { error ->
-            Timber.e(error, "Failed to get presigned URL")
-            return Result.failure(error)
-        }
-
-        val imageBytes = withContext(Dispatchers.IO) {
-            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        } ?: return Result.failure(IllegalStateException("Failed to open image stream"))
-
-        storageRepository.uploadToS3(
-            uploadUrl = presignedUrl.uploadUrl,
-            imageBytes = imageBytes,
-            mimeType = mimeType,
-        ).getOrElse { error ->
-            Timber.e(error, "Failed to upload profile image to S3")
-            return Result.failure(error)
-        }
-
-        return userRepository.updateProfileImage(presignedUrl.key)
-            .map { }
-    }
-
-    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
-        "image/png" -> FileExtension.PNG
-        "image/gif" -> FileExtension.GIF
-        "image/webp" -> FileExtension.WEBP
-        else -> FileExtension.JPEG
     }
 }

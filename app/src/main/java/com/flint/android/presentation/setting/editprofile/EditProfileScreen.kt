@@ -8,14 +8,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -27,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +57,7 @@ import com.flint.android.core.designsystem.component.topappbar.FlintBackTopAppba
 import com.flint.android.core.designsystem.interaction.pressClickable
 import com.flint.android.core.designsystem.interaction.pressScale
 import com.flint.android.core.designsystem.theme.FlintTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun EditProfileRoute(
@@ -83,7 +88,7 @@ fun EditProfileRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun EditProfileScreen(
     uiState: EditProfileUiState,
@@ -98,7 +103,24 @@ private fun EditProfileScreen(
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
     var isToastSuccess by remember { mutableStateOf(false) }
-    var showProfileBottomSheet by remember { mutableStateOf(false) }
+    var showProfileBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var pendingBottomSheetToken by rememberSaveable { mutableStateOf(0) }
+    val imeVisible = WindowInsets.isImeVisible
+
+    LaunchedEffect(pendingBottomSheetToken, imeVisible) {
+        val token = pendingBottomSheetToken
+        if (token == 0) return@LaunchedEffect
+
+        if (imeVisible) {
+            // 하드웨어 키보드 등 IME 숨김 신호가 오지 않는 기기를 대비한 타임아웃.
+            delay(300)
+        }
+
+        if (pendingBottomSheetToken == token) {
+            pendingBottomSheetToken = 0
+            showProfileBottomSheet = true
+        }
+    }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -149,7 +171,14 @@ private fun EditProfileScreen(
                         uiState.profileImageUri != null -> uiState.profileImageUri.toString()
                         else -> uiState.profileImageUrl ?: ""
                     },
-                    onEditClick = { showProfileBottomSheet = true },
+                    onEditClick = {
+                        if (imeVisible) {
+                            keyboardController?.hide()
+                            pendingBottomSheetToken += 1
+                        } else {
+                            showProfileBottomSheet = true
+                        }
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))

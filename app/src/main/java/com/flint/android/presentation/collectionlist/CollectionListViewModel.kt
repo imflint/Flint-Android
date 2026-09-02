@@ -48,7 +48,27 @@ class CollectionListViewModel @Inject constructor(
     init {
         val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
         setAppBarTitle(routeReceiveData.routeType.title)
+        _uiState.update { it.copy(routeType = routeReceiveData.routeType) }
         getCollectionList(routeReceiveData)
+        observeCollectionDeletions()
+    }
+
+    // 컬렉션 상세 등 다른 화면에서 컬렉션을 삭제해도 이 목록에 즉시 반영되도록 구독한다.
+    private fun observeCollectionDeletions() {
+        viewModelScope.launch {
+            collectionRepository.collectionDeletions.collect { deletedCollectionId ->
+                _uiState.update { currentState ->
+                    val collectionList = currentState.collectionList
+                    if (collectionList !is UiState.Success) return@update currentState
+
+                    val filtered = collectionList.data.collections
+                        .filter { it.id != deletedCollectionId }
+                        .toImmutableList()
+
+                    currentState.copy(collectionList = UiState.Success(CollectionListModel(collections = filtered)))
+                }
+            }
+        }
     }
 
     private fun setAppBarTitle(title: String) {
