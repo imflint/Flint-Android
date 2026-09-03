@@ -12,7 +12,6 @@ import com.flint.android.domain.repository.CollectionRepository
 import com.flint.android.domain.repository.HomeRepository
 import com.flint.android.domain.repository.UserRepository
 import com.flint.android.core.navigation.model.CollectionListRouteType
-import com.flint.android.presentation.collectiondetail.navigation.KEY_SHOW_DELETE_SUCCESS_TOAST
 import com.flint.android.presentation.collectionlist.sideeffect.CollectionListSideEffect
 import com.flint.android.presentation.collectionlist.uistate.CollectionListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,8 +23,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,19 +48,26 @@ class CollectionListViewModel @Inject constructor(
     init {
         val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
         setAppBarTitle(routeReceiveData.routeType.title)
+        getCollectionList(routeReceiveData)
+        observeCollectionDeletions()
+    }
 
-        val showDeleteSuccessToast = savedStateHandle.get<Boolean>(KEY_SHOW_DELETE_SUCCESS_TOAST) ?: false
-        if (!showDeleteSuccessToast) {
-            getCollectionList(routeReceiveData)
-        }
+    // 컬렉션 상세 등 다른 화면에서 컬렉션을 삭제해도 이 목록에 즉시 반영되도록 구독한다.
+    private fun observeCollectionDeletions() {
+        viewModelScope.launch {
+            collectionRepository.collectionDeletions.collect { deletedCollectionId ->
+                _uiState.update { currentState ->
+                    val collectionList = currentState.collectionList
+                    if (collectionList !is UiState.Success) return@update currentState
 
-        savedStateHandle.getStateFlow(KEY_SHOW_DELETE_SUCCESS_TOAST, false)
-            .onEach { showDeleteSuccessToast ->
-                if (showDeleteSuccessToast) {
-                    getCollectionList(routeReceiveData)
+                    val filtered = collectionList.data.collections
+                        .filter { it.id != deletedCollectionId }
+                        .toImmutableList()
+
+                    currentState.copy(collectionList = UiState.Success(CollectionListModel(collections = filtered)))
                 }
             }
-            .launchIn(viewModelScope)
+        }
     }
 
     private fun setAppBarTitle(title: String) {
