@@ -90,6 +90,7 @@ fun AddContentScreen(
     var isModalVisible by remember { mutableStateOf(false) }
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     val lazyRowState = rememberLazyListState()
+    val lazyColumnState = rememberLazyListState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -98,6 +99,8 @@ fun AddContentScreen(
             lazyRowState.scrollToItem(selectedContents.size - 1)
         }
     }
+
+    val isEmptyViewShown = contentList.isEmpty() && uiState.searchText.isNotBlank()
 
     Box(
         modifier = modifier
@@ -164,13 +167,14 @@ fun AddContentScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            if (contentList.isEmpty() && uiState.searchText.isNotBlank()) {
+            if (isEmptyViewShown) {
                 FlintSearchEmptyView(
                     title = "아직 준비 중인 작품이에요",
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
                 LazyColumn(
+                    state = lazyColumnState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -203,17 +207,19 @@ fun AddContentScreen(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(148.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, FlintTheme.colors.background)
+        if (!isEmptyViewShown && lazyColumnState.canScrollForward) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(148.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, FlintTheme.colors.background)
+                        )
                     )
-                )
-        )
+            )
+        }
     }
     if (isModalVisible) {
         CollectionCreateContentDeleteModal(
