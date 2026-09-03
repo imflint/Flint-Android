@@ -100,6 +100,8 @@ fun AddContentScreen(
         }
     }
 
+    val isEmptyViewShown = contentList.isEmpty() && uiState.searchText.isNotBlank()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -165,7 +167,7 @@ fun AddContentScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            if (contentList.isEmpty() && uiState.searchText.isNotBlank()) {
+            if (isEmptyViewShown) {
                 FlintSearchEmptyView(
                     title = "아직 준비 중인 작품이에요",
                     modifier = Modifier.fillMaxSize()
@@ -205,7 +207,7 @@ fun AddContentScreen(
             }
         }
 
-        if (lazyColumnState.canScrollForward) {
+        if (!isEmptyViewShown && lazyColumnState.canScrollForward) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -29,35 +29,33 @@ data class CollectionCreateUiState(
 ) {
     val isEditMode: Boolean get() = originalTitle != null
 
-    private val hasChanges: Boolean get() = isEditMode && (
-        title != originalTitle ||
+    // 수정 모드에서는 원본과 비교하고, 작성 모드에서는 기본값(null/빈 값)과 비교한다.
+    // originalXxx 필드들은 작성 모드에서 기본값을 가지므로 두 모드에서 동일한 식으로 계산할 수 있다.
+    private val fieldsChanged: Boolean get() =
+        title != (originalTitle ?: "") ||
         description != originalDescription ||
         isPublic != originalIsPublic ||
         thumbnailImageUri != null ||
-        existingThumbnailUrl != originalThumbnailUrl ||
         selectedContents.map { it.id }.toSet() != originalContentIds ||
         contentDetailsMap.any { (id, detail) ->
             val original = originalContentDetails[id]
-            detail.isSpoiler != original?.first ||
-            detail.reason != original?.second ||
-            detail.contentImageUris.isNotEmpty() ||
+            detail.isSpoiler != (original?.first ?: false) ||
+            detail.reason != (original?.second ?: "") ||
+            detail.contentImageUris.isNotEmpty()
+        }
+
+    // 수정 모드에서만 의미가 있는 필드(기존 썸네일/이미지 URL) 변경 여부.
+    private val editModeFieldsChanged: Boolean get() = isEditMode && (
+        existingThumbnailUrl != originalThumbnailUrl ||
+        contentDetailsMap.any { (id, detail) ->
             detail.existingImageUrls != (originalContentImageUrls[id] ?: emptyList<String>())
         }
     )
 
+    private val hasChanges: Boolean get() = isEditMode && (fieldsChanged || editModeFieldsChanged)
+
     // 뒤로가기 이탈 확인 팝업 노출 여부: 수정 모드는 원본 대비 변경 여부, 작성 모드는 입력 여부로 판단한다.
-    val isDirty: Boolean get() = if (isEditMode) {
-        hasChanges
-    } else {
-        title.isNotBlank() ||
-            description.isNotBlank() ||
-            isPublic != null ||
-            thumbnailImageUri != null ||
-            selectedContents.isNotEmpty() ||
-            contentDetailsMap.values.any { detail ->
-                detail.isSpoiler || detail.reason.isNotBlank() || detail.contentImageUris.isNotEmpty()
-            }
-    }
+    val isDirty: Boolean get() = fieldsChanged || editModeFieldsChanged
 
     val isRequiredFieldsFilled: Boolean get() =
         title.isNotBlank() &&

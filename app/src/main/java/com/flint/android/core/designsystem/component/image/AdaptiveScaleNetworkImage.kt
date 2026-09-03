@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -19,7 +17,8 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import com.flint.android.R
 
 /**
@@ -43,8 +42,8 @@ fun AdaptiveScaleNetworkImage(
     contentDescription: String? = null,
 ) {
     if (LocalInspectionMode.current) {
-        Image(
-            painter = painterResource(R.drawable.img_dummy_poster),
+        NetworkImage(
+            imageUrl = imageUrl,
             contentDescription = contentDescription,
             contentScale = ContentScale.Crop,
             modifier = modifier
@@ -61,26 +60,29 @@ fun AdaptiveScaleNetworkImage(
                 .background(letterboxColor),
     ) {
         val containerRatio = maxWidth.value / containerHeight.value
-        var contentScale by remember(imageUrl, containerRatio) {
-            mutableStateOf(ContentScale.Crop)
-        }
 
-        AsyncImage(
+        val painter = rememberAsyncImagePainter(
             model = imageUrl,
-            contentDescription = contentDescription,
-            contentScale = contentScale,
             placeholder = placePainter,
             error = errorPainter,
-            onSuccess = { success ->
-                val image = success.result.image
-                contentScale = if (image.width > 0 && image.height > 0) {
-                    val imageRatio = image.width.toFloat() / image.height.toFloat()
-                    val deviation = maxOf(imageRatio, containerRatio) / minOf(imageRatio, containerRatio)
-                    if (deviation > ASPECT_RATIO_DEVIATION_THRESHOLD) ContentScale.Fit else ContentScale.Crop
-                } else {
-                    ContentScale.Crop
-                }
-            },
+        )
+        val painterState by painter.state.collectAsState()
+        val successState = painterState as? AsyncImagePainter.State.Success
+        val contentScale = successState?.let {
+            val image = it.result.image
+            if (image.width > 0 && image.height > 0) {
+                val imageRatio = image.width.toFloat() / image.height.toFloat()
+                val deviation = maxOf(imageRatio, containerRatio) / minOf(imageRatio, containerRatio)
+                if (deviation > ASPECT_RATIO_DEVIATION_THRESHOLD) ContentScale.Fit else ContentScale.Crop
+            } else {
+                ContentScale.Crop
+            }
+        } ?: ContentScale.Crop
+
+        Image(
+            painter = painter,
+            contentDescription = contentDescription,
+            contentScale = contentScale,
             modifier = Modifier.fillMaxSize(),
         )
     }

@@ -51,7 +51,11 @@ class CollectionListViewModel @Inject constructor(
     init {
         val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
         setAppBarTitle(routeReceiveData.routeType.title)
-        getCollectionList(routeReceiveData)
+
+        val showDeleteSuccessToast = savedStateHandle.get<Boolean>(KEY_SHOW_DELETE_SUCCESS_TOAST) ?: false
+        if (!showDeleteSuccessToast) {
+            getCollectionList(routeReceiveData)
+        }
 
         savedStateHandle.getStateFlow(KEY_SHOW_DELETE_SUCCESS_TOAST, false)
             .onEach { showDeleteSuccessToast ->

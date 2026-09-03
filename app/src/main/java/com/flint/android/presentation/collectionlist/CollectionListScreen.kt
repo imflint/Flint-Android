@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -114,6 +115,8 @@ private fun CollectionListScreen(
     onBookmarkClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val lazyGridState = rememberLazyGridState()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -134,6 +137,7 @@ private fun CollectionListScreen(
                 is UiState.Success -> {
                     with(collectionList.data) {
                         LazyVerticalGrid(
+                            state = lazyGridState,
                             contentPadding = PaddingValues(10.dp),
                             columns = GridCells.Fixed(2),
                             horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
@@ -186,17 +190,19 @@ private fun CollectionListScreen(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(148.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, FlintTheme.colors.background)
+        if (collectionList is UiState.Success && lazyGridState.canScrollForward) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(148.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, FlintTheme.colors.background)
+                        )
                     )
-                )
-        )
+            )
+        }
     }
 }
 
