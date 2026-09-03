@@ -18,7 +18,13 @@ data class CollectionCreateUiState(
     val contents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val searchText: String = "",
     val isLoading: Boolean = false,
-    // 수정 모드 원본값 (null이면 생성 모드)
+    // 수정 모드 여부의 단일 기준. editingCollectionId(라우트 인자) 존재 여부로 ViewModel이 최초 설정하며,
+    // 원본 데이터 로드 성공 여부(originalTitle 등)와는 독립적이다.
+    val isEditMode: Boolean = false,
+    // 수정 모드에서 원본 데이터 로드가 실패했는지 여부. true면 저장 시 기존 컬렉션을 잘못된 값으로
+    // 덮어쓸 수 있으므로 완료 버튼을 막는다.
+    val editLoadFailed: Boolean = false,
+    // 수정 모드 원본값 (로드 성공 전까지는 null/빈 값)
     val originalTitle: String? = null,
     val originalDescription: String = "",
     val originalIsPublic: Boolean? = null,
@@ -27,8 +33,6 @@ data class CollectionCreateUiState(
     val originalContentDetails: Map<String, Pair<Boolean, String>> = emptyMap(),
     val originalContentImageUrls: Map<String, List<String>> = emptyMap(),
 ) {
-    val isEditMode: Boolean get() = originalTitle != null
-
     // 수정 모드에서는 원본과 비교하고, 작성 모드에서는 기본값(null/빈 값)과 비교한다.
     // originalXxx 필드들은 작성 모드에서 기본값을 가지므로 두 모드에서 동일한 식으로 계산할 수 있다.
     private val fieldsChanged: Boolean get() =
@@ -65,6 +69,7 @@ data class CollectionCreateUiState(
 
     val isFinishButtonEnabled: Boolean get() =
         !isLoading &&
+        !editLoadFailed &&
         isRequiredFieldsFilled &&
         (!isEditMode || hasChanges)
 

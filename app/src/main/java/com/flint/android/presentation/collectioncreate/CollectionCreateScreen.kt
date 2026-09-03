@@ -220,6 +220,13 @@ fun CollectionCreateScreen(
         toastMessage = message
         toastRequestId++
     }
+
+    LaunchedEffect(uiState.editLoadFailed) {
+        if (uiState.editLoadFailed) {
+            showToast("컬렉션 정보를 불러오지 못했어요. 다시 시도해주세요")
+        }
+    }
+
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -335,6 +342,9 @@ fun CollectionCreateScreen(
                         state = if (uiState.isLoading) FlintButtonState.Disable else FlintButtonState.Able,
                         onClick = {
                             when {
+                                uiState.editLoadFailed -> {
+                                    showToast("컬렉션 정보를 불러오지 못했어요. 다시 시도해주세요")
+                                }
                                 uiState.isFinishButtonEnabled -> {
                                     showValidationErrors = false
                                     onFinishClick()

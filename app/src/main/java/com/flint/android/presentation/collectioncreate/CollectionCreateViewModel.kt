@@ -48,7 +48,7 @@ class CollectionCreateViewModel @Inject constructor(
 
     private val editingCollectionId: String? = savedStateHandle["collectionId"]
     val isEditMode: Boolean = editingCollectionId != null
-    private val _uiState = MutableStateFlow(CollectionCreateUiState())
+    private val _uiState = MutableStateFlow(CollectionCreateUiState(isEditMode = isEditMode))
     val uiState: StateFlow<CollectionCreateUiState> = _uiState.asStateFlow()
 
     private val searchQuery = MutableStateFlow("")
@@ -68,6 +68,11 @@ class CollectionCreateViewModel @Inject constructor(
     fun onClickFinish() {
         if (_uiState.value.isLoading) return
         if (editingCollectionId != null) {
+            if (_uiState.value.editLoadFailed) {
+                // 원본 데이터를 불러오지 못한 상태로는 기존 컬렉션을 덮어쓸 수 없다.
+                viewModelScope.launch { _createSuccess.emit(UiState.Failure) }
+                return
+            }
             putCollectionUpdate(editingCollectionId)
         } else {
             postCollectionCreate()
@@ -167,7 +172,10 @@ class CollectionCreateViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure { e -> Timber.e(e, "컬렉션 편집 로드 실패") }
+                .onFailure { e ->
+                    Timber.e(e, "컬렉션 편집 로드 실패")
+                    _uiState.update { it.copy(editLoadFailed = true) }
+                }
         }
     }
 
