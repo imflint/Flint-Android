@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.android.R
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.LocalAnalyticsTracker
+import com.flint.android.core.analytics.onItemImpression
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.android.core.designsystem.component.indicator.FlintLoadingIndicator
@@ -238,6 +242,11 @@ private fun SavedContentList(
     onMoreClick: (ottList: List<OttType>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val analyticsTracker = LocalAnalyticsTracker.current
+
+    // 같은 저장함 방문 안에서는 작품당 한 번만 보낸다.
+    // 화면을 벗어나면 함께 사라지므로 다시 들어오면 새 방문으로 집계된다.
+    val trackedContentIds = rememberSaveable { arrayListOf<String>() }
     if (contents.isEmpty()) {
         Box(
             modifier = modifier.fillMaxSize(),
@@ -258,7 +267,16 @@ private fun SavedContentList(
             key = { it.id },
         ) { content ->
             CollectionCreateContentBookmark(
-                modifier = Modifier.animateItem(),
+                modifier = Modifier
+                    .animateItem()
+                    .onItemImpression(
+                        key = content.id,
+                        alreadyTracked = { id -> id in trackedContentIds },
+                        onImpression = { id ->
+                            trackedContentIds.add(id as String)
+                            analyticsTracker.track(FlintEvent.ViewSavedContent(id))
+                        },
+                    ),
                 onBookmarkClick = { onBookmarkClick(content.id) },
                 onMoreClick = { onMoreClick(content.getOttSimpleList) },
                 isBookmarked = content.isBookmarked,

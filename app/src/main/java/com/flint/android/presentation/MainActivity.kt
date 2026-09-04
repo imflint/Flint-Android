@@ -6,12 +6,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.flint.android.R
+import com.flint.android.core.analytics.AnalyticsTracker
+import com.flint.android.core.analytics.LocalAnalyticsTracker
 import com.flint.android.core.designsystem.component.modal.OneButtonModal
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.data.di.interceptor.NetworkError
@@ -28,35 +31,40 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var networkErrorManager: NetworkErrorManager
 
+    @Inject
+    lateinit var analyticsTracker: AnalyticsTracker
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             FlintTheme {
-                var networkError by remember { mutableStateOf<NetworkError?>(null) }
+                CompositionLocalProvider(LocalAnalyticsTracker provides analyticsTracker) {
+                    var networkError by remember { mutableStateOf<NetworkError?>(null) }
 
-                LaunchedEffect(Unit) {
-                    networkErrorManager.networkError.collect { error ->
-                        networkError = error
+                    LaunchedEffect(Unit) {
+                        networkErrorManager.networkError.collect { error ->
+                            networkError = error
+                        }
                     }
-                }
 
-                val navigator = rememberMainNavigator()
-                MainScreen(
-                    navigator = navigator,
-                )
-
-                networkError?.let { error ->
-                    OneButtonModal(
-                        icon = R.drawable.ic_gradient_none,
-                        title = "문제가 발생했어요",
-                        message = "잠시 후 다시 시도해주세요",
-                        buttonText = "다시 시작하기",
-                        onConfirm = {
-                            restartApplication()
-                        },
-                        onDismiss = {}
+                    val navigator = rememberMainNavigator()
+                    MainScreen(
+                        navigator = navigator,
                     )
+
+                    networkError?.let { error ->
+                        OneButtonModal(
+                            icon = R.drawable.ic_gradient_none,
+                            title = "문제가 발생했어요",
+                            message = "잠시 후 다시 시도해주세요",
+                            buttonText = "다시 시작하기",
+                            onConfirm = {
+                                restartApplication()
+                            },
+                            onDismiss = {}
+                        )
+                    }
                 }
             }
         }

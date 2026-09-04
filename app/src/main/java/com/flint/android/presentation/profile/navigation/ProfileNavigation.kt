@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.flint.android.core.analytics.CollectionSource
 import com.flint.android.core.navigation.MainTabRoute
 import com.flint.android.core.navigation.Route
 import com.flint.android.core.navigation.model.CollectionListRouteType
@@ -31,7 +32,7 @@ fun NavGraphBuilder.myProfileNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: (userId: String?) -> Unit,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, source: CollectionSource) -> Unit,
     navigateToSetting: () -> Unit = {},
 ) {
     composable<MainTabRoute.Profile> { entry ->
@@ -59,7 +60,7 @@ fun NavGraphBuilder.profileNavGraph(
     navigateUp: () -> Unit,
     navigateToCollectionList: (routeType: CollectionListRouteType, userId: String?) -> Unit,
     navigateToSavedContentList: (userId: String?) -> Unit,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, source: CollectionSource) -> Unit,
 ) {
     composable<Route.Profile> {
         ProfileRoute(

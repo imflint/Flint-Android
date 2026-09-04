@@ -63,6 +63,7 @@ fun LoginRoute(
 
     LoginScreen(
         onKakaoLoginClick = {
+            viewModel.trackSignupClick()
             kakaoLoginManager.login(context) { result ->
                 result.onSuccess { token ->
                     viewModel.socialVerifyWithKakao(

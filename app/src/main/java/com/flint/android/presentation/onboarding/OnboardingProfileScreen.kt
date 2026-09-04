@@ -47,6 +47,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chattymin.pebble.graphemeLength
 import com.flint.android.R
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.designsystem.component.bottomsheet.MenuBottomSheet
 import com.flint.android.core.designsystem.component.bottomsheet.MenuBottomSheetData
 import com.flint.android.core.designsystem.component.button.FlintButtonState
@@ -69,6 +71,8 @@ fun OnboardingProfileRoute(
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    TrackScreenView(FlintEvent.ViewNickname)
 
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }

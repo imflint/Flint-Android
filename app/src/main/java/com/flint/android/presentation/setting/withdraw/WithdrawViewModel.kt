@@ -2,6 +2,7 @@ package com.flint.android.presentation.setting.withdraw
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flint.android.core.analytics.AnalyticsTracker
 import com.flint.android.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +23,7 @@ data class WithdrawUiState(
 @HiltViewModel
 class WithdrawViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WithdrawUiState())
@@ -40,7 +42,10 @@ class WithdrawViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             authRepository.withdraw()
-                .onSuccess { _navigateToWithdrawComplete.emit(Unit) }
+                .onSuccess {
+                    analyticsTracker.reset()
+                    _navigateToWithdrawComplete.emit(Unit)
+                }
                 .onFailure {
                     Timber.e(it)
                     _uiState.update { state -> state.copy(isLoading = false) }

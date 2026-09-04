@@ -55,6 +55,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.flint.android.R
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.designsystem.component.bottomsheet.MenuBottomSheet
 import com.flint.android.core.designsystem.component.bottomsheet.MenuBottomSheetData
@@ -86,6 +88,11 @@ fun CollectionCreateRoute(
     viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // 같은 화면을 수정에도 쓰므로, 정의서의 "컬렉션 생성 페이지 진입" 은 생성 모드에서만 보낸다.
+    if (!viewModel.isEditMode) {
+        TrackScreenView(FlintEvent.ViewCreateCollection)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.createSuccess.collect { uistate ->

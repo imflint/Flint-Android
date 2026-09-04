@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.flint.android.core.analytics.CollectionSource
 import com.flint.android.core.navigation.Route
 import com.flint.android.core.navigation.model.CollectionListRouteType
 import com.flint.android.presentation.collectioncreate.navigation.navigateToCollectionCreate
@@ -133,11 +134,13 @@ class MainNavigator(
 
     fun navigateToCollectionDetail(
         collectionId: String,
+        source: CollectionSource,
         targetImageUrl: String? = null,
         navOptions: NavOptions? = null,
     ) {
         navController.navigateToCollectionDetail(
             collectionId = collectionId,
+            source = source,
             targetImageUrl = targetImageUrl,
             navOptions = navOptions,
         )

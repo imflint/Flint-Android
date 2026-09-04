@@ -104,6 +104,15 @@ sealed class FlintEvent(
     // ────────── 탐색 ──────────
 
     /**
+     * 탐색 페이지 진입.
+     *
+     * 정의서에는 없던 이벤트로, 진입 수와 이탈 수를 대조해 기록 유실을 확인하기 위해
+     * 기획 확인 후 추가했다. view_home 과 같은 기준으로 데이터 로딩이 끝나고
+     * 콘텐츠가 실제로 표시된 시점에 보낸다.
+     */
+    data object ViewExplore : FlintEvent("view_explore")
+
+    /**
      * 탐색에서 개별 작품 노출.
      *
      * 노출 이벤트는 스크롤할 때마다 발생해 볼륨이 커진다.
@@ -134,23 +143,21 @@ sealed class FlintEvent(
     /** 사용자 키워드 업데이트 완료 */
     data object UpdateKeyword : FlintEvent("update_keyword")
 
-    /** 저장한 작품 목록에서 이전에 저장한 작품을 다시 확인 */
+    /**
+     * 저장한 작품 목록에서 이전에 저장한 작품을 다시 확인.
+     *
+     * 저장함에서 어떤 컬렉션을 다시 열어봤는지는 view_collection 의 source(my_saved)로
+     * 알 수 있어, 컬렉션 쪽 대응 이벤트는 중복이므로 두지 않는다.
+     */
     data class ViewSavedContent(
         val contentId: String,
     ) : FlintEvent("view_saved_content", mapOf(CONTENT_ID to contentId))
-
-    /** 저장한 컬렉션 목록에서 이전에 저장한 컬렉션을 다시 확인 */
-    data class ViewSavedCollection(
-        val collectionId: String,
-    ) : FlintEvent("view_saved_collection", mapOf(COLLECTION_ID to collectionId))
 }
 
 /** 홈에서 클릭한 콘텐츠 영역 */
 enum class HomeContentType(
     val value: String,
 ) {
-    // 정의서의 content_type 은 "fliner", source 는 "home_flinner" 로 철자가 다르다.
-    // 어느 쪽이 맞는지 기획 확인 후 한쪽으로 통일할 것.
     FLINER("fliner"),
     RECENTLY_SAVED("recently_saved"),
     POPULAR("popular"),
@@ -169,11 +176,22 @@ enum class BottomNavigationTab(
 enum class CollectionSource(
     val value: String,
 ) {
-    HOME_FLINNER("home_flinner"),
+    HOME_FLINER("home_fliner"),
     HOME_POPULAR("home_popular"),
     EXPLORE("explore"),
     MY_SAVED("my_saved"),
     MY_CREATED("my_created"),
+    ;
+
+    companion object {
+        /**
+         * 네비게이션 인자로 실어 보낸 문자열을 되돌린다.
+         *
+         * 타입 안전 라우트가 enum 을 그대로 담지 못해 value 문자열로 오간다.
+         * 알 수 없는 값이면 잘못된 경로로 집계하는 대신 null 을 반환해 이벤트를 생략한다.
+         */
+        fun from(value: String): CollectionSource? = entries.find { it.value == value }
+    }
 }
 
 private const val DURATION_SEC = "duration_sec"

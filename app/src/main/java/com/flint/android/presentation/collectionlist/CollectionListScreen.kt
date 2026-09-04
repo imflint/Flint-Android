@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.android.core.analytics.CollectionSource
 import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.designsystem.component.indicator.FlintLoadingIndicator
@@ -36,6 +37,7 @@ import com.flint.android.core.designsystem.component.toast.ShowSaveToast
 import com.flint.android.core.designsystem.component.toast.ShowToast
 import com.flint.android.core.designsystem.component.topappbar.FlintBackTopAppbar
 import com.flint.android.core.designsystem.theme.FlintTheme
+import com.flint.android.core.navigation.model.toCollectionSource
 import com.flint.android.domain.model.collection.CollectionListModel
 import com.flint.android.core.navigation.model.CollectionListRouteType
 import com.flint.android.presentation.collectionlist.component.CollectionFileItem
@@ -45,7 +47,7 @@ import com.flint.android.presentation.collectionlist.sideeffect.CollectionListSi
 fun CollectionListRoute(
     paddingValues: PaddingValues,
     navigateUp: () -> Unit,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, source: CollectionSource) -> Unit,
     navigateToCollectionList: (CollectionListRouteType) -> Unit,
     viewModel: CollectionListViewModel = hiltViewModel()
 ) {
@@ -58,7 +60,9 @@ fun CollectionListRoute(
         title = uiState.appbarTitle,
         routeType = uiState.routeType,
         onBackClick = navigateUp,
-        onCollectionItemClick = navigateToCollectionDetail,
+        onCollectionItemClick = { collectionId ->
+            navigateToCollectionDetail(collectionId, uiState.routeType.toCollectionSource())
+        },
         onBookmarkClick = viewModel::toggleCollectionBookmark,
         collectionList = uiState.collectionList,
     )
