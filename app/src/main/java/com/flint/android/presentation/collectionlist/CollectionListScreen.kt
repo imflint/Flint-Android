@@ -57,6 +57,7 @@ fun CollectionListRoute(
         modifier = Modifier.padding(paddingValues),
         title = uiState.appbarTitle,
         routeType = uiState.routeType,
+        isMyProfile = uiState.userId == null,
         onBackClick = navigateUp,
         onCollectionItemClick = navigateToCollectionDetail,
         onBookmarkClick = viewModel::toggleCollectionBookmark,
@@ -111,6 +112,7 @@ private fun CollectionListScreen(
     onBackClick: () -> Unit,
     title: String,
     routeType: CollectionListRouteType,
+    isMyProfile: Boolean,
     collectionList: UiState<CollectionListModel>,
     onCollectionItemClick: (collectionId: String) -> Unit,
     onBookmarkClick: (collectionId: String) -> Unit,
@@ -147,7 +149,7 @@ private fun CollectionListScreen(
                             ) {
                                 Spacer(Modifier.height(12.dp))
 
-                                val displayCount = if (routeType == CollectionListRouteType.SAVED) {
+                                val displayCount = if (routeType == CollectionListRouteType.SAVED && isMyProfile) {
                                     collections.count { it.isBookmarked }
                                 } else {
                                     collections.size
@@ -216,6 +218,7 @@ private fun CollectionListScreenPreview() {
             onBackClick = {},
             title = "전체 컬렉션",
             routeType = CollectionListRouteType.CREATED,
+            isMyProfile = true,
             collectionList = UiState.Success(CollectionListModel.FakeList),
             onCollectionItemClick = {},
             onBookmarkClick = {},
