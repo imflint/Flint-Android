@@ -7,5 +7,6 @@ import com.flint.android.domain.model.collection.CollectionListModel
 data class CollectionListUiState(
     val appbarTitle: String = "",
     val routeType: CollectionListRouteType = CollectionListRouteType.CREATED,
+    val userId: String? = null,
     val collectionList: UiState<CollectionListModel> = UiState.Loading
 )
