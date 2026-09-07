@@ -9,6 +9,7 @@ import com.flint.android.domain.model.content.BookmarkedContentListModel
 import com.flint.android.domain.model.content.ContentModel
 import com.flint.android.domain.type.OttType
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 
 // /api/v1/users/{userId}/bookmarked-contents (타 유저)
 fun BookmarkedContentListResponseDto.toModel() : BookmarkedContentListModel {
@@ -27,7 +28,9 @@ fun BookmarkedContentResponseDto.toModel() : BookmarkedContentItemModel {
         bookmarkCount = bookmarkCount,
         isBookmarked = isBookmarked,
         getOttSimpleList = getOttSimpleList.mapNotNull { ottSimple ->
-            runCatching { OttType.valueOf(ottSimple.ottName) }.getOrNull()
+            runCatching { OttType.valueOf(ottSimple.ottName) }
+                .onFailure { Timber.w("Unknown OTT name from server: ${ottSimple.ottName}") }
+                .getOrNull()
         }
     )
 }

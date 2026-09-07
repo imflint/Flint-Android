@@ -48,6 +48,7 @@ class CollectionListViewModel @Inject constructor(
     init {
         val routeReceiveData = savedStateHandle.toRoute<Route.CollectionList>()
         setAppBarTitle(routeReceiveData.routeType.title)
+        _uiState.update { it.copy(routeType = routeReceiveData.routeType) }
         getCollectionList(routeReceiveData)
         observeCollectionDeletions()
     }

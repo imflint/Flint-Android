@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.navigation.Route
+import com.flint.android.domain.model.bookmark.BookmarkChange
 import com.flint.android.domain.model.bookmark.BookmarkException
 import com.flint.android.domain.repository.BookmarkRepository
 import com.flint.android.domain.repository.UserRepository
@@ -40,6 +41,40 @@ class SavedContentViewModel @Inject constructor(
 
     init {
         loadBookmarkedContents()
+        observeBookmarkChanges()
+    }
+
+    private fun observeBookmarkChanges() {
+        viewModelScope.launch {
+            bookmarkRepository.bookmarkChanges.collect { change ->
+                if (change !is BookmarkChange.Content) return@collect
+
+                _uiState.update { state ->
+                    val currentList = (state.contents as? UiState.Success)?.data ?: return@update state
+                    val hasItem = currentList.contents.any { it.id == change.id }
+
+                    val updatedContents = if (hasItem) {
+                        currentList.contents
+                            .map { if (it.id == change.id) it.copy(isBookmarked = change.isBookmarked) else it }
+                            .toPersistentList()
+                    } else {
+                        currentList.contents
+                    }
+
+                    val updatedTotalCount = if (userId == null) {
+                        maxOf(0, currentList.totalCount + if (change.isBookmarked) 1 else -1)
+                    } else {
+                        currentList.totalCount
+                    }
+
+                    state.copy(
+                        contents = UiState.Success(
+                            currentList.copy(totalCount = updatedTotalCount, contents = updatedContents),
+                        ),
+                    )
+                }
+            }
+        }
     }
 
 
@@ -89,17 +124,6 @@ class SavedContentViewModel @Inject constructor(
             bookmarkRepository.toggleContentBookmark(contentId)
                 .onSuccess { isBookmarked ->
                     Timber.d("toggleBookmark success: isBookmarked=$isBookmarked")
-                    _uiState.update { state ->
-                        val currentList = (state.contents as? UiState.Success)?.data
-                            ?: return@update state
-                        val updated = currentList.copy(
-                            totalCount = maxOf(0, currentList.totalCount + if (isBookmarked) 1 else -1),
-                            contents = currentList.contents
-                                .map { if (it.id == contentId) it.copy(isBookmarked = isBookmarked) else it }
-                                .toPersistentList()
-                        )
-                        state.copy(contents = UiState.Success(updated))
-                    }
                     _sideEffect.emit(SavedContentSideEffect.ToggleBookmarkSuccess(isBookmarked))
                 }
                 .onFailure { throwable ->

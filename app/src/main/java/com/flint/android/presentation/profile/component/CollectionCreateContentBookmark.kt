@@ -69,6 +69,7 @@ fun CollectionCreateContentBookmark(
             title = title,
             director = director,
             createdYear = createdYear,
+            ottList = ottList,
             onMoreClick = onMoreClick,
             modifier =
                 Modifier
@@ -114,6 +115,7 @@ private fun CollectionCreateContentBookmarkInfo(
     title: String,
     director: String,
     createdYear: Int,
+    ottList: List<OttType>,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -147,9 +149,11 @@ private fun CollectionCreateContentBookmarkInfo(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        CollectionCreateContentBookmarkMore(
-            onClick = onMoreClick,
-        )
+        if (ottList.isNotEmpty()) {
+            CollectionCreateContentBookmarkMore(
+                onClick = onMoreClick,
+            )
+        }
     }
 }
 
