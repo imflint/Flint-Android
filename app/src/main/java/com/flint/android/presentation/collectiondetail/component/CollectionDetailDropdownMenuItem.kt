@@ -3,7 +3,7 @@ package com.flint.android.presentation.collectiondetail.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -16,12 +16,14 @@ import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.theme.FlintTheme
 
 private val DropdownMenuItemShape = RoundedCornerShape(8.dp)
-private val DropdownMenuItemPadding = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)
+private val DropdownMenuItemMinWidth = Modifier.defaultMinSize(minWidth = 104.dp)
+private val DropdownMenuItemPadding = Modifier.padding(vertical = 13.dp)
 
 @Composable
 fun CollectionReportDropdownMenuItem(onClick: () -> Unit) {
     Box(
         modifier = Modifier
+            .then(DropdownMenuItemMinWidth)
             .background(color = FlintTheme.colors.gray700, shape = DropdownMenuItemShape)
             .flintCardClickable(onClick = onClick)
             .then(DropdownMenuItemPadding),
@@ -45,7 +47,7 @@ fun CollectionEditDeleteDropdownMenuItem(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .then(DropdownMenuItemMinWidth)
                 .flintCardClickable(onClick = onEditClick)
                 .then(DropdownMenuItemPadding),
             contentAlignment = Alignment.Center,
@@ -61,7 +63,7 @@ fun CollectionEditDeleteDropdownMenuItem(
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .then(DropdownMenuItemMinWidth)
                 .flintCardClickable(onClick = onDeleteClick)
                 .then(DropdownMenuItemPadding),
             contentAlignment = Alignment.Center,

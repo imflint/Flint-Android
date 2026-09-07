@@ -13,6 +13,7 @@ import com.flint.android.domain.model.collection.CollectionReportRequestModel
 import com.flint.android.domain.model.collection.CollectionsModel
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -23,7 +24,10 @@ class CollectionRepository @Inject constructor(
     // 컬렉션 삭제 시 발생하는 전역 이벤트 (삭제된 collectionId).
     // 컬렉션 상세에서 삭제해도 이전 depth의 목록(생성한 컬렉션 리스트, MY 프로필 등)에
     // 즉시 반영되도록 구독한다.
-    private val _collectionDeletions = MutableSharedFlow<String>()
+    private val _collectionDeletions = MutableSharedFlow<String>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
     val collectionDeletions = _collectionDeletions.asSharedFlow()
 
     // 컬렉션 목록 조회 (페이지네이션)

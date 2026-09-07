@@ -35,6 +35,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 const val MAX_CONTENT_IMAGE_COUNT = 5
+const val MAX_CONTENT_COUNT = 10
 
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
@@ -47,7 +48,7 @@ class CollectionCreateViewModel @Inject constructor(
 
     private val editingCollectionId: String? = savedStateHandle["collectionId"]
     val isEditMode: Boolean = editingCollectionId != null
-    private val _uiState = MutableStateFlow(CollectionCreateUiState())
+    private val _uiState = MutableStateFlow(CollectionCreateUiState(isEditMode = isEditMode))
     val uiState: StateFlow<CollectionCreateUiState> = _uiState.asStateFlow()
 
     private val searchQuery = MutableStateFlow("")
@@ -67,6 +68,11 @@ class CollectionCreateViewModel @Inject constructor(
     fun onClickFinish() {
         if (_uiState.value.isLoading) return
         if (editingCollectionId != null) {
+            if (_uiState.value.editLoadFailed) {
+                // 원본 데이터를 불러오지 못한 상태로는 기존 컬렉션을 덮어쓸 수 없다.
+                viewModelScope.launch { _createSuccess.emit(UiState.Failure) }
+                return
+            }
             putCollectionUpdate(editingCollectionId)
         } else {
             postCollectionCreate()
@@ -106,10 +112,12 @@ class CollectionCreateViewModel @Inject constructor(
                 collectionRepository
                     .postCollectionCreate(requestModel.toDto())
                     .onSuccess {
-                        println("컬렉션 생성 성공")
                         _createSuccess.emit(UiState.Success(it.collectionId))
                     }
-                    .onFailure { e -> println("컬렉션 생성 실패: ${e.message}") }
+                    .onFailure { e ->
+                        Timber.e(e, "컬렉션 생성 실패")
+                        _createSuccess.emit(UiState.Failure)
+                    }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -164,7 +172,10 @@ class CollectionCreateViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure { e -> Timber.e(e, "컬렉션 편집 로드 실패") }
+                .onFailure { e ->
+                    Timber.e(e, "컬렉션 편집 로드 실패")
+                    _uiState.update { it.copy(editLoadFailed = true) }
+                }
         }
     }
 
@@ -209,7 +220,10 @@ class CollectionCreateViewModel @Inject constructor(
                     .onSuccess {
                         _createSuccess.emit(UiState.Success(collectionId))
                     }
-                    .onFailure { e -> Timber.e(e, "컬렉션 수정 실패") }
+                    .onFailure { e ->
+                        Timber.e(e, "컬렉션 수정 실패")
+                        _createSuccess.emit(UiState.Failure)
+                    }
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -284,7 +298,7 @@ class CollectionCreateViewModel @Inject constructor(
                     contentDetailsMap = newDetailsMap
                 )
             } else {
-                if (currentList.size < 10) {
+                if (currentList.size < MAX_CONTENT_COUNT) {
                     currentList + content
                 } else {
                     currentList
