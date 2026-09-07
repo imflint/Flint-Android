@@ -10,6 +10,7 @@ import com.flint.android.core.navigation.Route
 import com.flint.android.domain.model.bookmark.BookmarkChange
 import com.flint.android.domain.model.user.KeywordListModel
 import com.flint.android.domain.repository.BookmarkRepository
+import com.flint.android.domain.repository.CollectionRepository
 import com.flint.android.domain.repository.ContentRepository
 import com.flint.android.domain.repository.UserRepository
 import com.flint.android.presentation.profile.sideeffect.ProfileSideEffect
@@ -34,6 +35,7 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val contentRepository: ContentRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val collectionRepository: CollectionRepository,
 ) : ViewModel() {
 
     val userId = savedStateHandle.toRoute<Route.Profile>().userId
@@ -47,6 +49,7 @@ class ProfileViewModel @Inject constructor(
     init {
         getProfile()
         observeBookmarkChanges()
+        observeCollectionDeletions()
     }
 
     private fun observeBookmarkChanges() {
@@ -85,6 +88,31 @@ class ProfileViewModel @Inject constructor(
                             data.copy(savedCollections = updatedCollections)
                         }
                     }
+                    state.copy(sectionData = UiState.Success(updated))
+                }
+            }
+        }
+    }
+
+    // 컬렉션 상세 등 다른 화면에서 컬렉션을 삭제해도 프로필의 컬렉션 목록에 즉시 반영되도록 구독한다.
+    private fun observeCollectionDeletions() {
+        viewModelScope.launch {
+            collectionRepository.collectionDeletions.collect { deletedCollectionId ->
+                _uiState.update { state ->
+                    val data = (state.sectionData as? UiState.Success)?.data ?: return@update state
+
+                    val updated = data.copy(
+                        createCollections = data.createCollections.copy(
+                            collections = data.createCollections.collections
+                                .filter { it.id != deletedCollectionId }
+                                .toPersistentList()
+                        ),
+                        savedCollections = data.savedCollections.copy(
+                            collections = data.savedCollections.collections
+                                .filter { it.id != deletedCollectionId }
+                                .toPersistentList()
+                        ),
+                    )
                     state.copy(sectionData = UiState.Success(updated))
                 }
             }

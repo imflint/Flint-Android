@@ -3,7 +3,8 @@ package com.flint.android.presentation.collectiondetail.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -15,15 +16,17 @@ import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.theme.FlintTheme
 
 private val DropdownMenuItemShape = RoundedCornerShape(8.dp)
-private val DropdownMenuItemSize = Modifier.size(width = 104.dp, height = 48.dp)
+private val DropdownMenuItemMinWidth = Modifier.defaultMinSize(minWidth = 104.dp)
+private val DropdownMenuItemPadding = Modifier.padding(vertical = 13.dp)
 
 @Composable
 fun CollectionReportDropdownMenuItem(onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .then(DropdownMenuItemSize)
+            .then(DropdownMenuItemMinWidth)
             .background(color = FlintTheme.colors.gray700, shape = DropdownMenuItemShape)
-            .flintCardClickable(onClick = onClick),
+            .flintCardClickable(onClick = onClick)
+            .then(DropdownMenuItemPadding),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -44,8 +47,9 @@ fun CollectionEditDeleteDropdownMenuItem(
     ) {
         Box(
             modifier = Modifier
-                .then(DropdownMenuItemSize)
-                .flintCardClickable(onClick = onEditClick),
+                .then(DropdownMenuItemMinWidth)
+                .flintCardClickable(onClick = onEditClick)
+                .then(DropdownMenuItemPadding),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -59,8 +63,9 @@ fun CollectionEditDeleteDropdownMenuItem(
 
         Box(
             modifier = Modifier
-                .then(DropdownMenuItemSize)
-                .flintCardClickable(onClick = onDeleteClick),
+                .then(DropdownMenuItemMinWidth)
+                .flintCardClickable(onClick = onDeleteClick)
+                .then(DropdownMenuItemPadding),
             contentAlignment = Alignment.Center,
         ) {
             Text(
