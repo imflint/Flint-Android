@@ -26,6 +26,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.android.R
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.designsystem.component.button.FlintButtonState
 import com.flint.android.core.designsystem.component.button.FlintLargeButton
 import com.flint.android.core.designsystem.component.topappbar.FlintBackTopAppbar
@@ -39,6 +41,8 @@ fun OnboardingDoneRoute(
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val signupUiState by viewModel.signupUiState.collectAsStateWithLifecycle()
+
+    TrackScreenView(FlintEvent.ViewOnboardingDone)
 
     // 회원가입 성공 시 Home으로 이동
     LaunchedEffect(signupUiState.isSuccess) {

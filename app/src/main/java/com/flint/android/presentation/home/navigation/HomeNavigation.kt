@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.flint.android.core.analytics.CollectionSource
 import com.flint.android.core.navigation.MainTabRoute
 import com.flint.android.core.navigation.model.CollectionListRouteType
 import com.flint.android.presentation.home.HomeRoute
@@ -16,7 +17,7 @@ fun NavController.navigateToHome(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
     navigateToCollectionList: (routeType: CollectionListRouteType) -> Unit,
-    navigateToCollectionDetail: (collectionId: String) -> Unit,
+    navigateToCollectionDetail: (collectionId: String, source: CollectionSource) -> Unit,
     navigateToCollectionCreate: () -> Unit,
     navigateToExplore: () -> Unit
 ) {

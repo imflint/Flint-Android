@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flint.android.R
+import com.flint.android.core.analytics.FlintEvent
+import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.interaction.flintIconClickable
 import com.flint.android.core.common.util.TermGuides
@@ -52,6 +54,8 @@ fun OnboardingTermsRoute(
     viewModel: OnboardingViewModel,
 ) {
     val termsUiState by viewModel.termsUiState.collectAsStateWithLifecycle()
+
+    TrackScreenView(FlintEvent.ViewTos)
 
     LaunchedEffect(Unit) {
         viewModel.loadTerms()

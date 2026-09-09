@@ -2,6 +2,7 @@ package com.flint.android.presentation.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flint.android.core.analytics.AnalyticsTracker
 import com.flint.android.core.common.util.DataStoreKey.USER_NAME
 import com.flint.android.data.local.PreferencesManager
 import com.flint.android.domain.repository.AuthRepository
@@ -23,6 +24,7 @@ class SettingViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
+    private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingUiState())
@@ -62,7 +64,11 @@ class SettingViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
-                .onSuccess { _navigateToLogin.emit(Unit) }
+                .onSuccess {
+                    // 초기화하지 않으면 같은 기기에서 다음에 로그인한 사람의 행동이 이전 사용자에 붙는다.
+                    analyticsTracker.reset()
+                    _navigateToLogin.emit(Unit)
+                }
                 .onFailure { Timber.e(it) }
         }
     }

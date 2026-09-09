@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.flint.android.core.analytics.AnalyticsTracker
+import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.common.util.UiState
 import com.flint.android.domain.mapper.collection.toDto
 import com.flint.android.domain.model.collection.CollectionCreateContentModel
@@ -44,6 +46,7 @@ class CollectionCreateViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository,
     private val searchRepository: SearchRepository,
     private val storageRepository: StorageRepository,
+    private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
 
     private val editingCollectionId: String? = savedStateHandle["collectionId"]
@@ -112,6 +115,7 @@ class CollectionCreateViewModel @Inject constructor(
                 collectionRepository
                     .postCollectionCreate(requestModel.toDto())
                     .onSuccess {
+                        analyticsTracker.track(FlintEvent.CompleteCreateCollection(it.collectionId))
                         _createSuccess.emit(UiState.Success(it.collectionId))
                     }
                     .onFailure { e ->

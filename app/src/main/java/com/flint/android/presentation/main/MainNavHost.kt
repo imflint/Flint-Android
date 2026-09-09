@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.flint.android.core.analytics.CollectionSource
 import com.flint.android.core.designsystem.component.toast.ShowToast
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.presentation.collectioncreate.navigation.collectionCreateNavGraph
@@ -121,7 +122,13 @@ fun MainNavHost(
 
             exploreNavGraph(
                 paddingValues = paddingValues,
-                navigateToCollectionDetail = navigator::navigateToCollectionDetail,
+                navigateToCollectionDetail = { collectionId, imageUrl ->
+                    navigator.navigateToCollectionDetail(
+                        collectionId = collectionId,
+                        source = CollectionSource.EXPLORE,
+                        targetImageUrl = imageUrl,
+                    )
+                },
                 navigateToCollectionCreate = navigator::navigateToCollectionCreate,
             )
 
