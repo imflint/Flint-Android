@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +60,7 @@ fun CollectionListRoute(
         modifier = Modifier.padding(paddingValues),
         title = uiState.appbarTitle,
         routeType = uiState.routeType,
+        isMyProfile = uiState.userId == null,
         onBackClick = navigateUp,
         onCollectionItemClick = { collectionId ->
             navigateToCollectionDetail(collectionId, uiState.routeType.toCollectionSource())
@@ -115,11 +117,14 @@ private fun CollectionListScreen(
     onBackClick: () -> Unit,
     title: String,
     routeType: CollectionListRouteType,
+    isMyProfile: Boolean,
     collectionList: UiState<CollectionListModel>,
     onCollectionItemClick: (collectionId: String) -> Unit,
     onBookmarkClick: (collectionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val lazyGridState = rememberLazyGridState()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -140,6 +145,7 @@ private fun CollectionListScreen(
                 is UiState.Success -> {
                     with(collectionList.data) {
                         LazyVerticalGrid(
+                            state = lazyGridState,
                             contentPadding = PaddingValues(10.dp),
                             columns = GridCells.Fixed(2),
                             horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
@@ -151,7 +157,7 @@ private fun CollectionListScreen(
                             ) {
                                 Spacer(Modifier.height(12.dp))
 
-                                val displayCount = if (routeType == CollectionListRouteType.SAVED) {
+                                val displayCount = if (routeType == CollectionListRouteType.SAVED && isMyProfile) {
                                     collections.count { it.isBookmarked }
                                 } else {
                                     collections.size
@@ -198,17 +204,19 @@ private fun CollectionListScreen(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(148.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, FlintTheme.colors.background)
+        if (collectionList is UiState.Success && lazyGridState.canScrollForward) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(148.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, FlintTheme.colors.background)
+                        )
                     )
-                )
-        )
+            )
+        }
     }
 }
 
@@ -220,6 +228,7 @@ private fun CollectionListScreenPreview() {
             onBackClick = {},
             title = "전체 컬렉션",
             routeType = CollectionListRouteType.CREATED,
+            isMyProfile = true,
             collectionList = UiState.Success(CollectionListModel.FakeList),
             onCollectionItemClick = {},
             onBookmarkClick = {},

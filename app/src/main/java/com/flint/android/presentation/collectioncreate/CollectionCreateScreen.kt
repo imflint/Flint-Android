@@ -2,6 +2,7 @@ package com.flint.android.presentation.collectioncreate
 
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -74,7 +75,9 @@ import com.flint.android.presentation.collectioncreate.component.CollectionCreat
 import com.flint.android.presentation.collectioncreate.component.CollectionCreateContentImage
 import com.flint.android.presentation.collectioncreate.component.CollectionCreateContentReason
 import com.flint.android.presentation.collectioncreate.component.CollectionCreateContentSection
+import com.flint.android.presentation.collectioncreate.component.CollectionCreateLeaveModal
 import com.flint.android.presentation.collectioncreate.component.CollectionCreateThumbnail
+import com.flint.android.presentation.collectioncreate.component.CollectionEditLeaveModal
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
@@ -88,6 +91,7 @@ fun CollectionCreateRoute(
     viewModel: CollectionCreateViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     // 같은 화면을 수정에도 쓰므로, 정의서의 "컬렉션 생성 페이지 진입" 은 생성 모드에서만 보낸다.
     if (!viewModel.isEditMode) {
@@ -101,12 +105,14 @@ fun CollectionCreateRoute(
                     navigateToCollectionDetail(uistate.data)
                     viewModel.resetCreateSuccess()
                 }
+                is UiState.Failure -> {
+                    Toast.makeText(context, "저장에 실패했어요. 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                    viewModel.resetCreateSuccess()
+                }
                 else -> {}
             }
         }
     }
-
-    val context = LocalContext.current
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -157,7 +163,7 @@ fun CollectionCreateRoute(
             when {
                 remainingSlots == 0 -> Toast.makeText(
                     context,
-                    "사진은 최대 ${MAX_CONTENT_IMAGE_COUNT}장까지 등록할 수 있어요",
+                    "작품 이미지는 최대 ${MAX_CONTENT_IMAGE_COUNT}개까지 추가할 수 있어요",
                     Toast.LENGTH_SHORT,
                 ).show()
 
@@ -202,14 +208,32 @@ fun CollectionCreateScreen(
     var contentToDelete by remember { mutableStateOf<SearchContentItemModel?>(null) }
     var isThumbnailBottomSheetVisible by remember { mutableStateOf(false) }
     var showValidationErrors by rememberSaveable { mutableStateOf(false) }
+    var showLeaveConfirmModal by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf<String?>(null) }
     var toastRequestId by remember { mutableStateOf(0) }
+
+    fun requestBack() {
+        if (uiState.isDirty) showLeaveConfirmModal = true else onBackClick()
+    }
+
+    // 로컬 함수 참조(::requestBack)는 Kotlin의 CallableReference.equals()가 캡처된 상태가 아니라
+    // 참조 대상 함수 자체만 비교하므로, 리컴포즈마다 새로 캡처된 uiState 를 Compose 가 "안 바뀜"으로
+    // 오판해 콜백이 최초 진입 시점 상태에 고정될 수 있다. 람다로 감싸 매 리컴포즈마다 갱신되게 한다.
+    BackHandler(onBack = { requestBack() })
+
     // 같은 문자열을 다시 대입하면 State 값이 안 바뀌어(구조적 동등성) 리컴포즈가 안 될 수 있으므로,
     // 매 요청마다 카운터를 증가시켜 ShowToast 의 LaunchedEffect 타이머가 항상 재시작되도록 한다.
     fun showToast(message: String) {
         toastMessage = message
         toastRequestId++
     }
+
+    LaunchedEffect(uiState.editLoadFailed) {
+        if (uiState.editLoadFailed) {
+            showToast("컬렉션 정보를 불러오지 못했어요. 다시 시도해주세요")
+        }
+    }
+
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -238,7 +262,7 @@ fun CollectionCreateScreen(
                     .fillMaxSize()
                     .background(color = FlintTheme.colors.background)
         ) {
-            FlintBackTopAppbar(onClick = onBackClick)
+            FlintBackTopAppbar(onClick = { requestBack() })
 
             LazyColumn(
                 state = lazyListState,
@@ -325,6 +349,9 @@ fun CollectionCreateScreen(
                         state = if (uiState.isLoading) FlintButtonState.Disable else FlintButtonState.Able,
                         onClick = {
                             when {
+                                uiState.editLoadFailed -> {
+                                    showToast("컬렉션 정보를 불러오지 못했어요. 다시 시도해주세요")
+                                }
                                 uiState.isFinishButtonEnabled -> {
                                     showValidationErrors = false
                                     onFinishClick()
@@ -395,6 +422,20 @@ fun CollectionCreateScreen(
                 isModalVisible = false
             },
         )
+    }
+
+    if (showLeaveConfirmModal) {
+        val onLeaveConfirm = {
+            showLeaveConfirmModal = false
+            onBackClick()
+        }
+        val onLeaveDismiss = { showLeaveConfirmModal = false }
+
+        if (uiState.isEditMode) {
+            CollectionEditLeaveModal(onConfirm = onLeaveConfirm, onDismiss = onLeaveDismiss)
+        } else {
+            CollectionCreateLeaveModal(onConfirm = onLeaveConfirm, onDismiss = onLeaveDismiss)
+        }
     }
 
     if (isThumbnailBottomSheetVisible) {
@@ -582,7 +623,7 @@ private fun LazyListScope.collectionAddContentSection(
                     style = FlintTheme.typography.body2R14,
                 )
                 Text(
-                    text = "${selectedContents.size}/10",
+                    text = "${selectedContents.size}/$MAX_CONTENT_COUNT",
                     color = FlintTheme.colors.white,
                     style = FlintTheme.typography.body2R14,
                 )
@@ -643,22 +684,24 @@ private fun LazyListScope.collectionAddContentSection(
         }
     }
 
-    item {
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Spacer(Modifier.height(12.dp))
+    if (selectedContents.size < MAX_CONTENT_COUNT) {
+        item {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Spacer(Modifier.height(12.dp))
 
-            FlintIconButton(
-                text = "작품 추가하기",
-                iconRes = R.drawable.ic_plus,
-                state = FlintButtonState.ColorOutline,
-                onClick = onAddContentClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .defaultMinSize(minHeight = 80.dp),
-                contentPadding = PaddingValues(vertical = 28.dp)
-            )
+                FlintIconButton(
+                    text = "작품 추가하기",
+                    iconRes = R.drawable.ic_plus,
+                    state = FlintButtonState.ColorOutline,
+                    onClick = onAddContentClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 80.dp),
+                    contentPadding = PaddingValues(vertical = 28.dp)
+                )
 
-            Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(4.dp))
+            }
         }
     }
 }
