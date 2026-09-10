@@ -9,10 +9,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect as ComposeRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
@@ -91,5 +98,59 @@ fun Modifier.draw9Patch(
                 draw(it.nativeCanvas)
             }
         }
+    }
+}
+
+
+fun Modifier.innerShadow(
+    shape: Shape,
+    color: Color = Color.Black,
+    blur: Dp = 4.dp,
+    offsetX: Dp = 0.dp,
+    offsetY: Dp = 0.dp,
+) = drawWithContent {
+    drawContent()
+
+    if (size.minDimension <= 0f) return@drawWithContent
+
+    val outline = shape.createOutline(size, layoutDirection, this)
+
+    val holePath = Path().apply {
+        fillType = PathFillType.EvenOdd
+        addRect(
+            ComposeRect(
+                -size.width,
+                -size.height,
+                size.width * 2f,
+                size.height * 2f,
+            ),
+        )
+        addOutline(outline)
+    }
+
+    val shadowPaint = Paint().apply { this.color = color }
+    val blurPx = blur.toPx()
+    if (blurPx > 0f) {
+        shadowPaint.asFrameworkPaint().maskFilter =
+            BlurMaskFilter(blurPx, BlurMaskFilter.Blur.NORMAL)
+    }
+
+    val maskPaint = Paint().apply {
+        this.color = Color.Black
+        blendMode = BlendMode.DstIn
+    }
+
+    drawIntoCanvas { canvas ->
+        canvas.saveLayer(ComposeRect(Offset.Zero, size), Paint())
+
+        val dx = offsetX.toPx()
+        val dy = offsetY.toPx()
+        canvas.translate(dx, dy)
+        canvas.drawPath(holePath, shadowPaint)
+        canvas.translate(-dx, -dy)
+
+        canvas.drawOutline(outline, maskPaint)
+
+        canvas.restore()
     }
 }

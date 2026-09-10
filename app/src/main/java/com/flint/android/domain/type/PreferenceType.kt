@@ -1,8 +1,6 @@
 package com.flint.android.domain.type
 
-import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
-import com.flint.android.R
 import com.flint.android.core.designsystem.theme.FlintColors
 
 sealed class KeywordType {
@@ -15,26 +13,10 @@ sealed class KeywordType {
 
 enum class PreferenceType(
     val color: Color,
-    @DrawableRes val backgroundRes: Int,
 ) {
-    GREEN(
-        color = FlintColors.green,
-        backgroundRes = R.drawable.bg_tag_green,
-    ),
-    ORANGE(
-        color = FlintColors.orange,
-        backgroundRes = R.drawable.bg_tag_orange,
-    ),
-    YELLOW(
-        color = FlintColors.yellow,
-        backgroundRes = R.drawable.bg_tag_yellow,
-    ),
-    BLUE(
-        color = FlintColors.blue,
-        backgroundRes = R.drawable.bg_tag_blue,
-    ),
-    PINK(
-        color = FlintColors.pink,
-        backgroundRes = R.drawable.bg_tag_pink,
-    ),
+    GREEN(color = FlintColors.green),
+    ORANGE(color = FlintColors.orange),
+    YELLOW(color = FlintColors.yellow),
+    BLUE(color = FlintColors.blue),
+    PINK(color = FlintColors.pink),
 }
