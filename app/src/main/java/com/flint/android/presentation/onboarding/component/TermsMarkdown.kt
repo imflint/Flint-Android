@@ -26,10 +26,16 @@ private val NUMBERED_REGEX = Regex("""^(\d+\.)\s+(.*)$""")
 private val BULLET_REGEX = Regex("""^[-*•]\s+(.*)$""")
 private val BOLD_REGEX = Regex("""\*\*(.+?)\*\*""")
 
+/**
+ * Notion 에서 내보낸 약관 본문에는 `<aside>` 같은 블록 태그가 그대로 섞여 들어온다.
+ * 한 줄 전체가 태그 하나인 경우만 걸러내므로 본문 중간의 부등호는 건드리지 않는다.
+ */
+private val HTML_BLOCK_TAG_REGEX = Regex("""^</?[a-zA-Z][\w-]*\s*/?>$""")
+
 fun parseTermsMarkdown(content: String): List<TermsBlock> =
     content.lines()
         .map { it.trim() }
-        .filter { it.isNotEmpty() }
+        .filter { it.isNotEmpty() && !HTML_BLOCK_TAG_REGEX.matches(it) }
         .map { line ->
             HEADING_REGEX.matchEntire(line)?.let {
                 return@map TermsBlock.Heading(parseInline(it.groupValues[1]))
