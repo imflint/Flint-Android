@@ -79,7 +79,7 @@ data class Colors(
     val blueGradient: Brush,
     val primary400Gradient: Brush,
     val grayGradient: Brush,
-    val gray800Gradient: Brush,
+    val cardShadeGradient: Brush,
     val navbarGradient: Brush,
     val thumbnailGradient: Brush,
     val userBadgeGradient: Brush,
@@ -184,18 +184,30 @@ val FlintColors =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF062845).copy(alpha = 0f), Color(0xFF062845).copy(1f)),
             ),
-        primary400Gradient =
-            Brush.verticalGradient(
-                colors = listOf(Color(0xFF1ABFF2).copy(0f), Color(0xFF1ABFF2).copy(0.35f)),
-            ),
+        primary400Gradient = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset(size.width * 0.5f, 0f),
+                    to = Offset(size.width * 0.5f, size.height * 1.15f),
+                    colors = listOf(Color(0xFF1ABFF2).copy(alpha = 0f), Color(0xFF1ABFF2).copy(alpha = 0.35f)),
+                    colorStops = listOf(0.26f, 1f),
+                )
+            }
+        },
         grayGradient =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF21242C).copy(alpha = 0f), Color(0xFF21242C).copy(alpha = 1f)),
             ),
-        gray800Gradient =
-            Brush.verticalGradient(
-                colors = listOf(Color(0xFF21242C).copy(alpha = 0f), Color(0xFF21242C).copy(alpha = 0.35f)),
-            ),
+        cardShadeGradient = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset(size.width * 0.5f, 0f),
+                    to = Offset(size.width * 0.5f, size.height * 1.15f),
+                    colors = listOf(Color(0xFF2D4254).copy(alpha = 0f), Color(0xFF2D4254)),
+                    colorStops = listOf(0.26f, 1f),
+                )
+            }
+        },
         navbarGradient =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF121212).copy(alpha = 1f), Color(0xFF121212).copy(alpha = 0f)),
