@@ -3,6 +3,7 @@ package com.flint.android.data.analytics
 import android.content.Context
 import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
+import com.amplitude.core.events.BaseEvent
 import com.flint.android.BuildConfig
 import com.flint.android.core.analytics.AnalyticsTracker
 import com.flint.android.core.analytics.FlintEvent
@@ -24,6 +25,7 @@ class AmplitudeAnalyticsTracker(
             Configuration(
                 apiKey = apiKey,
                 context = context,
+                callback = ::logUploadResult,
             ),
         )
 
@@ -47,7 +49,27 @@ class AmplitudeAnalyticsTracker(
         }
         amplitude.reset()
     }
+
+    /**
+     * 업로드 결과를 남긴다.
+     *
+     * SDK 는 서버가 재시도 불가 응답(400 등)을 주면 이벤트를 버리고 로컬 큐에서도 지운다.
+     * 그래서 큐가 비어 있다는 것만으로는 전송 성공을 알 수 없어, 실패를 여기서 드러낸다.
+     */
+    private fun logUploadResult(
+        event: BaseEvent,
+        status: Int,
+        message: String,
+    ) {
+        if (status == HTTP_OK) {
+            if (BuildConfig.DEBUG) Timber.tag(ANALYTICS_TAG).d("uploaded %s", event.eventType)
+        } else {
+            Timber.tag(ANALYTICS_TAG).w("upload failed %s status=%d %s", event.eventType, status, message)
+        }
+    }
 }
+
+private const val HTTP_OK = 200
 
 /**
  * 전송 없이 로그만 남기는 [AnalyticsTracker].
