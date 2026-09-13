@@ -32,6 +32,12 @@ import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.domain.model.collection.CollectionItemModel
 
 private val THUMBNAIL_HEIGHT = 202.dp
+
+/**
+ * 썸네일을 카드 배경으로 잦아들게 하는 그라데이션의 시작 지점.
+ * 끝은 항상 썸네일 하단이라, 여기서 [THUMBNAIL_HEIGHT] 를 빼면 그라데이션 높이가 된다.
+ */
+private val MID_GRADIENT_TOP = 42.dp
 private val BADGE_HEIGHT = 32.dp
 
 /** 배지가 썸네일 위로 겹쳐 올라가는 높이. 배지는 178~210dp 구간에 놓인다. */
@@ -69,9 +75,9 @@ fun RecommendCollectionCard(
 
         Box(
             modifier = Modifier
-                .padding(top = 70.dp)
+                .padding(top = MID_GRADIENT_TOP)
                 .fillMaxWidth()
-                .height(132.dp)
+                .height(THUMBNAIL_HEIGHT - MID_GRADIENT_TOP)
                 .background(midGradient),
         )
 
