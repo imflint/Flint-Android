@@ -2,11 +2,12 @@ package com.flint.android.presentation.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -32,6 +33,7 @@ import com.flint.android.presentation.login.component.KakaoLoginButton
 import com.flint.android.presentation.login.event.LoginNavigationEvent
 import com.flint.android.presentation.login.data.VerifyStatusData
 import timber.log.Timber
+import kotlin.math.max
 
 @Composable
 fun LoginRoute(
@@ -61,6 +63,8 @@ fun LoginRoute(
         }
     }
 
+    // Splash -> Login 전환 시 로고 위치가 그대로 이어지도록, Splash와 동일하게
+    // 화면 전체(엣지투엣지)를 기준으로 배치
     LoginScreen(
         onKakaoLoginClick = {
             kakaoLoginManager.login(context) { result ->
@@ -76,7 +80,6 @@ fun LoginRoute(
                 }
             }
         },
-        modifier = Modifier.padding(paddingValues)
     )
 }
 
@@ -85,7 +88,7 @@ fun LoginScreen(
     onKakaoLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    BoxWithConstraints(
         modifier =
             modifier
                 .fillMaxSize()
@@ -99,15 +102,27 @@ fun LoginScreen(
                     spread = 0.dp,
                 ),
     ) {
+        // 스플래시-> 1440x3120 캔버스를 ContentScale.Crop + 중앙 정렬로 그림
+        // 같은 계산을 그대로 재현해서 로고의 크기와 위치를 맞추면, 기기 화면 크기와 무관하게
+        // 스플래시가 끝난 그 자리에 로그인 화면의 로고가 정확히 겹침
+        val splashScale = max(
+            maxWidth.value / SPLASH_CANVAS_WIDTH,
+            maxHeight.value / SPLASH_CANVAS_HEIGHT,
+        )
+        val splashCanvasLeft = (maxWidth.value - SPLASH_CANVAS_WIDTH * splashScale) / 2f
+        val splashCanvasTop = (maxHeight.value - SPLASH_CANVAS_HEIGHT * splashScale) / 2f
+
         Image(
             painter = painterResource(R.drawable.img_flint_title),
             contentDescription = null,
             modifier =
                 Modifier
-                    .align(Alignment.Center)
-                    .width(160.dp)
-                    .height(56.dp)
-                    .offset(y = (-32).dp),
+                    .offset(
+                        x = (splashCanvasLeft + SPLASH_LOGO_LEFT * splashScale).dp,
+                        y = (splashCanvasTop + SPLASH_LOGO_TOP * splashScale).dp,
+                    )
+                    .width((SPLASH_LOGO_WIDTH * splashScale).dp)
+                    .height((SPLASH_LOGO_HEIGHT * splashScale).dp),
         )
 
         KakaoLoginButton(
@@ -115,6 +130,7 @@ fun LoginScreen(
                 Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
                     .padding(bottom = 60.dp)
                     .padding(horizontal = 20.dp),
             onClick = {
@@ -123,6 +139,14 @@ fun LoginScreen(
         )
     }
 }
+
+// 로티 캔버스 크기와 로고 레이어 값 (단위: Lottie 컴포지션 px)
+private const val SPLASH_CANVAS_WIDTH = 1440f
+private const val SPLASH_CANVAS_HEIGHT = 3120f
+private const val SPLASH_LOGO_WIDTH = 640f
+private const val SPLASH_LOGO_HEIGHT = 224f
+private const val SPLASH_LOGO_LEFT = 437.474f
+private const val SPLASH_LOGO_TOP = 1190.855f
 
 @Preview
 @Composable
