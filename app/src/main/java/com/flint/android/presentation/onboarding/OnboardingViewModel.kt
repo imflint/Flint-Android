@@ -216,9 +216,7 @@ class OnboardingViewModel
     }
 
     fun clearSearchKeyword() {
-        _contentUiState.update { it.copy(searchKeyword = "") }
-        val genres = _contentUiState.value.selectedGenres
-        getSearchContentList(keyword = null, genres = genres)
+        updateSearchKeyword("")
     }
 
     fun searchContents() {

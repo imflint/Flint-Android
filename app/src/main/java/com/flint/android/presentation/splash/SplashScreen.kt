@@ -2,7 +2,6 @@ package com.flint.android.presentation.splash
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +26,6 @@ import androidx.compose.runtime.setValue
 
 @Composable
 fun SplashRoute(
-    paddingValues: PaddingValues,
     navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
@@ -54,29 +52,23 @@ fun SplashRoute(
 fun SplashScreen(onAnimationFinished: () -> Unit) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.flint_lottie))
 
-    // 로티 마지막 프레임(레이어 op = 90)에서 로고 레이어가 화면에서 빠져 빈 화면이 된다.
-    // 그 상태로 로그인 화면과 크로스페이드되면 로고가 한 번 깜빡이므로,
-    // 로고가 아직 남아있는 프레임까지만 재생해 그 화면 그대로 로그인 화면으로 넘긴다.
+    // 로고 레이어가 사라지는 빈 프레임 전까지만 재생 (로티 파일 교체 대비, endFrame에서 유도)
+    val logoOutFrame = composition?.endFrame?.toInt()
     val animationState = animateLottieCompositionAsState(
         composition = composition,
-        clipSpec = LottieClipSpec.Frame(max = LOGO_LAYER_OUT_FRAME, maxInclusive = false),
+        clipSpec = logoOutFrame?.let { LottieClipSpec.Frame(max = it, maxInclusive = false) },
     )
 
-    // 애니메이션이 끝까지 재생되면 콜백 실행
-    LaunchedEffect(key1 = animationState.isAtEnd) {
+    // composition도 key에 포함: 애니메이터 배율 0 설정에서 isAtEnd가 처음부터 true로 스냅되는 경우 대비
+    LaunchedEffect(composition, animationState.isAtEnd) {
         if (composition != null && animationState.isAtEnd) {
             onAnimationFinished()
         }
     }
 
-    // progress 콜백이 오지 않는 예외 상황에 대비
-    LaunchedEffect(key1 = composition) {
-        val timeoutMillis = composition
-            ?.duration
-            ?.toLong()
-            ?.plus(ANIMATION_TIMEOUT_MARGIN_MILLIS)
-            ?: COMPOSITION_LOAD_TIMEOUT_MILLIS
-        delay(timeoutMillis)
+    // 화면 진입 시점부터 고정 상한 (composition 로드 지연과 무관하게 최대 대기시간 보장)
+    LaunchedEffect(Unit) {
+        delay(FALLBACK_TIMEOUT_MILLIS)
         onAnimationFinished()
     }
 
@@ -96,14 +88,8 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
     }
 }
 
-// 로티에서 로고 레이어가 화면에서 빠지는 프레임 (flint_lottie.json 의 로고 레이어 op)
-private const val LOGO_LAYER_OUT_FRAME = 90
-
-// 로티 재생이 끝난 뒤 progress 콜백을 기다려주는 여유 시간
-private const val ANIMATION_TIMEOUT_MARGIN_MILLIS = 500L
-
-// 로티 컴포지션 로드에 실패했을 때 스플래시에 머무는 최대 시간
-private const val COMPOSITION_LOAD_TIMEOUT_MILLIS = 2000L
+// progress 콜백 누락 시 대비용 최대 대기시간. 정상적으로는 isAtEnd가 먼저 호출됨
+private const val FALLBACK_TIMEOUT_MILLIS = 4000L
 
 @Preview(showBackground = true)
 @Composable

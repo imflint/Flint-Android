@@ -50,6 +50,7 @@ fun ProfileKeywordChip(
     }
 }
 
+@Composable
 private fun Modifier.glassTagBackground(baseColor: Color): Modifier {
     val shape = RoundedCornerShape(percent = 50)
     return this
