@@ -66,10 +66,20 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
         }
     }
 
-    // 화면 진입 시점부터 고정 상한 (composition 로드 지연과 무관하게 최대 대기시간 보장)
-    LaunchedEffect(Unit) {
-        delay(FALLBACK_TIMEOUT_MILLIS)
-        onAnimationFinished()
+    // progress 콜백 누락 대비 fallback. 로드 전/후를 나눠서, 로드가 늦어져도
+    // clip된 재생 시간이 끝나기 전에 잘리지 않게 하고, 로드 자체가 안 끝나는
+    // 경우에도 상한을 둔다.
+    LaunchedEffect(composition) {
+        val composed = composition
+        if (composed == null) {
+            delay(COMPOSITION_LOAD_TIMEOUT_MILLIS)
+            onAnimationFinished()
+        } else {
+            val outFrame = (logoOutFrame ?: composed.endFrame.toInt()).toFloat()
+            val clippedDurationMillis = composed.duration * (outFrame / composed.endFrame)
+            delay(clippedDurationMillis.toLong() + PLAYBACK_FALLBACK_MARGIN_MILLIS)
+            onAnimationFinished()
+        }
     }
 
     Box(
@@ -88,8 +98,11 @@ fun SplashScreen(onAnimationFinished: () -> Unit) {
     }
 }
 
-// progress 콜백 누락 시 대비용 최대 대기시간. 정상적으로는 isAtEnd가 먼저 호출됨
-private const val FALLBACK_TIMEOUT_MILLIS = 4000L
+// composition 로드 자체가 끝나지 않을 때의 상한
+private const val COMPOSITION_LOAD_TIMEOUT_MILLIS = 2500L
+
+// clip된 재생이 끝난 뒤 isAtEnd 콜백을 기다려주는 여유 시간
+private const val PLAYBACK_FALLBACK_MARGIN_MILLIS = 500L
 
 @Preview(showBackground = true)
 @Composable
