@@ -44,6 +44,9 @@ data class BookmarkedContentResponseDto(
     val id: String,
     @SerialName("title")
     val title: String,
+    // 영화 감독 또는 TV creator. 정보가 없으면 null
+    @SerialName("author")
+    val author: String? = null,
     @SerialName("year")
     val year: Int,
     @SerialName("imageUrl")

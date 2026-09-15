@@ -6,7 +6,8 @@ import kotlinx.collections.immutable.persistentListOf
 
 data class BookmarkedContentListModel(
     val totalCount: Int = 0,
-    val contents: ImmutableList<BookmarkedContentItemModel> = persistentListOf()
+    val contents: ImmutableList<BookmarkedContentItemModel> = persistentListOf(),
+    val nextCursor: String? = null,
 ) {
     companion object {
         val FakeList = BookmarkedContentListModel(
@@ -33,6 +34,7 @@ data class BookmarkedContentListModel(
 data class BookmarkedContentItemModel(
     val id: String = "",
     val title: String = "",
+    val author: String? = null,
     val year: Int = 0,
     val imageUrl: String = "",
     val bookmarkCount: Int = 0,

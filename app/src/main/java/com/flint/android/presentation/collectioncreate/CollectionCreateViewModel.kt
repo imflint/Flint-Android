@@ -11,8 +11,10 @@ import com.flint.android.core.common.util.UiState
 import com.flint.android.domain.mapper.collection.toDto
 import com.flint.android.domain.model.collection.CollectionCreateContentModel
 import com.flint.android.domain.model.collection.CollectionCreateRequestModel
+import com.flint.android.domain.model.content.BookmarkedContentItemModel
 import com.flint.android.domain.model.search.SearchContentItemModel
 import com.flint.android.domain.repository.CollectionRepository
+import com.flint.android.domain.repository.ContentRepository
 import com.flint.android.domain.repository.SearchRepository
 import com.flint.android.domain.repository.StorageRepository
 import com.flint.android.domain.type.FileExtension
@@ -38,6 +40,7 @@ import javax.inject.Inject
 
 const val MAX_CONTENT_IMAGE_COUNT = 5
 const val MAX_CONTENT_COUNT = 10
+private const val BOOKMARKED_CONTENT_PAGE_SIZE = 20
 
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
@@ -45,6 +48,7 @@ class CollectionCreateViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val collectionRepository: CollectionRepository,
     private val searchRepository: SearchRepository,
+    private val contentRepository: ContentRepository,
     private val storageRepository: StorageRepository,
     private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
@@ -62,7 +66,7 @@ class CollectionCreateViewModel @Inject constructor(
 
     init {
         observeSearchQuery()
-        loadInitialContents()
+        loadBookmarkedContents()
         if (editingCollectionId != null) {
             loadCollectionForEdit(editingCollectionId)
         }
@@ -332,6 +336,13 @@ class CollectionCreateViewModel @Inject constructor(
                 .map { it.trim() }
                 .distinctUntilChanged()
                 .collectLatest { query ->
+                    // 검색어가 없을 때는 전체 검색 API가 아니라, 사용자가 저장한 작품을
+                    // 최신순으로 내려주는 북마크 전용 API를 써야 한다.
+                    if (query.isBlank()) {
+                        loadBookmarkedContents()
+                        return@collectLatest
+                    }
+
                     searchRepository.getSearchContentList(query)
                         .onSuccess { model ->
                             _uiState.update { it.copy(contents = model.contents) }
@@ -343,17 +354,54 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
-    private fun loadInitialContents() {
+    private fun loadBookmarkedContents() {
         viewModelScope.launch {
-            searchRepository.getSearchContentList("")
+            contentRepository.getBookmarkedContentList(cursor = null, size = BOOKMARKED_CONTENT_PAGE_SIZE)
                 .onSuccess { model ->
-                    _uiState.update { it.copy(contents = model.contents) }
+                    val mapped = model.contents.map { c -> c.toSearchContentItemModel() }.toImmutableList()
+                    _uiState.update { it.copy(contents = mapped, nextCursor = model.nextCursor) }
                 }
                 .onFailure {
-                    _uiState.update { it.copy(contents = persistentListOf()) }
+                    _uiState.update { it.copy(contents = persistentListOf(), nextCursor = null) }
+                }
+
+            contentRepository.getBookmarkedContentCount()
+                .onSuccess { count -> _uiState.update { it.copy(savedContentCount = count) } }
+                .onFailure { _uiState.update { it.copy(savedContentCount = null) } }
+        }
+    }
+
+    fun loadMoreBookmarkedContents() {
+        val state = _uiState.value
+        if (state.searchText.isNotBlank() || state.isLoadingMore) return
+        val cursor = state.nextCursor ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingMore = true) }
+            contentRepository.getBookmarkedContentList(cursor = cursor, size = BOOKMARKED_CONTENT_PAGE_SIZE)
+                .onSuccess { model ->
+                    _uiState.update {
+                        it.copy(
+                            contents = (it.contents + model.contents.map { c -> c.toSearchContentItemModel() }).toImmutableList(),
+                            nextCursor = model.nextCursor,
+                            isLoadingMore = false,
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update { it.copy(isLoadingMore = false) }
                 }
         }
     }
+
+    private fun BookmarkedContentItemModel.toSearchContentItemModel(): SearchContentItemModel =
+        SearchContentItemModel(
+            id = id,
+            title = title,
+            author = author ?: "",
+            posterUrl = imageUrl,
+            year = year,
+        )
 
     fun updateThumbnailImageUri(uri: Uri?) {
         _uiState.update { it.copy(thumbnailImageUri = uri) }

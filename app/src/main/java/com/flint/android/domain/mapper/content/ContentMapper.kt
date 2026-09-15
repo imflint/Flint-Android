@@ -3,10 +3,8 @@ package com.flint.android.domain.mapper.content
 import com.flint.android.data.dto.content.response.BookmarkedContentListResponseDto
 import com.flint.android.data.dto.content.response.BookmarkedContentResponseDto
 import com.flint.android.data.dto.content.response.OttSimpleResponseDto
-import com.flint.android.data.dto.search.SearchBookmarkedContentsResponseDto
 import com.flint.android.domain.model.content.BookmarkedContentItemModel
 import com.flint.android.domain.model.content.BookmarkedContentListModel
-import com.flint.android.domain.model.content.ContentModel
 import com.flint.android.domain.type.OttType
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
@@ -23,6 +21,7 @@ fun BookmarkedContentResponseDto.toModel() : BookmarkedContentItemModel {
     return BookmarkedContentItemModel(
         id = id,
         title = title,
+        author = author,
         year = year,
         imageUrl = imageUrl,
         bookmarkCount = bookmarkCount,
@@ -33,17 +32,4 @@ fun BookmarkedContentResponseDto.toModel() : BookmarkedContentItemModel {
                 .getOrNull()
         }
     )
-}
-
-fun SearchBookmarkedContentsResponseDto.toModel() : List<ContentModel> {
-    return data.map {
-        ContentModel(
-            bookmarkId = it.bookmarkId,
-            contentId = it.contentId,
-            title = it.title,
-            author = it.author,
-            posterImage = it.posterUrl,
-            year = it.year
-        )
-    }
 }

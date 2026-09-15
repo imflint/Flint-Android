@@ -30,6 +30,7 @@ fun AddContentSelectItem(
     director: String,
     createdYear: Int,
     modifier: Modifier = Modifier,
+    isMaxReached: Boolean = false,
 ) {
     Row(
         modifier = modifier
@@ -47,6 +48,8 @@ fun AddContentSelectItem(
 
         AddContentSelectItemTag(
             isSelected = isSelected,
+            // 10개 선택 시, 이미 선택된 항목이 아니면 버튼이 터치에 반응하지 않는다.
+            enabled = isSelected || !isMaxReached,
             onClick = onCheckClick,
         )
     }
@@ -56,6 +59,7 @@ fun AddContentSelectItem(
 fun AddContentSelectItemTag(
     isSelected: Boolean,
     onClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     Icon(
         imageVector = ImageVector.vectorResource(if (isSelected) R.drawable.ic_check_fill else R.drawable.ic_check_empty),
@@ -64,7 +68,7 @@ fun AddContentSelectItemTag(
         modifier =
             Modifier
                 .size(48.dp)
-                .flintIconClickable(onClick = onClick),
+                .flintIconClickable(enabled = enabled, onClick = onClick),
     )
 }
 

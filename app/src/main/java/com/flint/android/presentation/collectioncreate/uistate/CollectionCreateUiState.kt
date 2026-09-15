@@ -16,6 +16,10 @@ data class CollectionCreateUiState(
     val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val contentDetailsMap: Map<String, ContentDetail> = emptyMap(),
     val contents: ImmutableList<SearchContentItemModel> = persistentListOf(),
+    val savedContentCount: Int? = null,
+    // 저장한 작품 목록(무한 스크롤)의 다음 페이지 커서. null이면 마지막 페이지.
+    val nextCursor: String? = null,
+    val isLoadingMore: Boolean = false,
     val searchText: String = "",
     val isLoading: Boolean = false,
     // 수정 모드 여부의 단일 기준. editingCollectionId(라우트 인자) 존재 여부로 ViewModel이 최초 설정하며,
