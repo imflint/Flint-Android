@@ -1,6 +1,5 @@
 package com.flint.android.presentation.login.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -13,13 +12,11 @@ fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.loginNavGraph(
-    paddingValues: PaddingValues,
     navigateToOnBoarding: (tempToken: String) -> Unit,
     navigateToHome: () -> Unit,
 ) {
     composable<Route.Login> {
         LoginRoute(
-            paddingValues = paddingValues,
             navigateToOnBoarding = navigateToOnBoarding,
             navigateToHome = navigateToHome,
         )

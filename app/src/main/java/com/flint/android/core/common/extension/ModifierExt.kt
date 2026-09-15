@@ -1,25 +1,27 @@
 package com.flint.android.core.common.extension
 
-import android.content.Context
 import android.graphics.BlurMaskFilter
-import android.graphics.Rect
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect as ComposeRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.flint.android.core.designsystem.interaction.flintNoFeedbackClickable
 
 /**
@@ -80,16 +82,66 @@ fun Modifier.dropShadow(
     }
 }
 
-fun Modifier.draw9Patch(
-    context: Context,
-    @DrawableRes ninePatchRes: Int,
-) = this.drawBehind {
-    drawIntoCanvas {
-        ContextCompat.getDrawable(context, ninePatchRes)?.let { ninePatch ->
-            ninePatch.run {
-                bounds = Rect(0, 0, size.width.toInt(), size.height.toInt())
-                draw(it.nativeCanvas)
+@Composable
+fun Modifier.innerShadow(
+    shape: Shape,
+    color: Color = Color.Black,
+    blur: Dp = 4.dp,
+    offsetX: Dp = 0.dp,
+    offsetY: Dp = 0.dp,
+) = composed {
+    val density = LocalDensity.current
+
+    // dropShadow와 동일하게 Paint/BlurMaskFilter를 remember (매 프레임 재할당 방지)
+    val shadowPaint = remember(color, blur) {
+        Paint().apply {
+            this.color = color
+            val blurPx = with(density) { blur.toPx() }
+            if (blurPx > 0f) {
+                this.asFrameworkPaint().maskFilter =
+                    BlurMaskFilter(blurPx, BlurMaskFilter.Blur.NORMAL)
             }
+        }
+    }
+
+    val maskPaint = remember {
+        Paint().apply {
+            this.color = Color.Black
+            blendMode = BlendMode.DstIn
+        }
+    }
+
+    // drawBehind는 콘텐츠보다 먼저 그려져서, 그림자가 텍스트를 덮지 않는다
+    drawBehind {
+        if (size.minDimension <= 0f) return@drawBehind
+
+        val outline = shape.createOutline(size, layoutDirection, this)
+
+        val holePath = Path().apply {
+            fillType = PathFillType.EvenOdd
+            addRect(
+                ComposeRect(
+                    -size.width,
+                    -size.height,
+                    size.width * 2f,
+                    size.height * 2f,
+                ),
+            )
+            addOutline(outline)
+        }
+
+        drawIntoCanvas { canvas ->
+            canvas.saveLayer(ComposeRect(Offset.Zero, size), Paint())
+
+            val dx = offsetX.toPx()
+            val dy = offsetY.toPx()
+            canvas.translate(dx, dy)
+            canvas.drawPath(holePath, shadowPaint)
+            canvas.translate(-dx, -dy)
+
+            canvas.drawOutline(outline, maskPaint)
+
+            canvas.restore()
         }
     }
 }

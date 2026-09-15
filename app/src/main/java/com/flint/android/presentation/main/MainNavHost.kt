@@ -63,13 +63,11 @@ fun MainNavHost(
             popExitTransition = { flintPopExitTransition() },
         ) {
             splashNavGraph(
-                paddingValues = paddingValues,
                 navigateToLogin = navigator::navigateToLogin,
                 navigateToHome = navigator::navigateToHome,
             )
 
             loginNavGraph(
-                paddingValues = paddingValues,
                 navigateToOnBoarding = navigator::navigateToOnBoarding,
                 navigateToHome = navigator::navigateToHome,
             )
