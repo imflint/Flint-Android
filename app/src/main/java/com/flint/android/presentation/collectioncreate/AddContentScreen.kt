@@ -116,7 +116,7 @@ fun AddContentScreen(
         }
     }
 
-    LaunchedEffect(shouldLoadMore, uiState.searchText) {
+    LaunchedEffect(shouldLoadMore, uiState.searchText, uiState.nextCursor) {
         if (shouldLoadMore && uiState.searchText.isBlank()) {
             onLoadMore()
         }

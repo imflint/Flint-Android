@@ -66,7 +66,6 @@ class CollectionCreateViewModel @Inject constructor(
 
     init {
         observeSearchQuery()
-        loadBookmarkedContents()
         if (editingCollectionId != null) {
             loadCollectionForEdit(editingCollectionId)
         }
@@ -354,21 +353,21 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
-    private fun loadBookmarkedContents() {
-        viewModelScope.launch {
-            contentRepository.getBookmarkedContentList(cursor = null, size = BOOKMARKED_CONTENT_PAGE_SIZE)
-                .onSuccess { model ->
-                    val mapped = model.contents.map { c -> c.toSearchContentItemModel() }.toImmutableList()
-                    _uiState.update { it.copy(contents = mapped, nextCursor = model.nextCursor) }
-                }
-                .onFailure {
-                    _uiState.update { it.copy(contents = persistentListOf(), nextCursor = null) }
-                }
+    // collectLatest 블록 안에서 직접 호출되어야 검색어 변경 시 진행 중인 요청이 취소된다.
+    // viewModelScope.launch로 새 코루틴을 띄우면 그 취소 대상에서 벗어나 버린다.
+    private suspend fun loadBookmarkedContents() {
+        contentRepository.getBookmarkedContentList(cursor = null, size = BOOKMARKED_CONTENT_PAGE_SIZE)
+            .onSuccess { model ->
+                val mapped = model.contents.map { c -> c.toSearchContentItemModel() }.toImmutableList()
+                _uiState.update { it.copy(contents = mapped, nextCursor = model.nextCursor) }
+            }
+            .onFailure {
+                _uiState.update { it.copy(contents = persistentListOf(), nextCursor = null) }
+            }
 
-            contentRepository.getBookmarkedContentCount()
-                .onSuccess { count -> _uiState.update { it.copy(savedContentCount = count) } }
-                .onFailure { _uiState.update { it.copy(savedContentCount = null) } }
-        }
+        contentRepository.getBookmarkedContentCount()
+            .onSuccess { count -> _uiState.update { it.copy(savedContentCount = count) } }
+            .onFailure { _uiState.update { it.copy(savedContentCount = null) } }
     }
 
     fun loadMoreBookmarkedContents() {
@@ -380,12 +379,19 @@ class CollectionCreateViewModel @Inject constructor(
             _uiState.update { it.copy(isLoadingMore = true) }
             contentRepository.getBookmarkedContentList(cursor = cursor, size = BOOKMARKED_CONTENT_PAGE_SIZE)
                 .onSuccess { model ->
-                    _uiState.update {
-                        it.copy(
-                            contents = (it.contents + model.contents.map { c -> c.toSearchContentItemModel() }).toImmutableList(),
-                            nextCursor = model.nextCursor,
-                            isLoadingMore = false,
-                        )
+                    _uiState.update { current ->
+                        // 요청을 시작한 뒤 검색어가 바뀌었거나(북마크 목록을 더 이상 보고 있지 않음),
+                        // nextCursor가 이미 다른 값으로 갈아치워진 경우(예: 검색어가 비어 loadBookmarkedContents가
+                        // 새로 실행됨) 이 응답은 오래된 것이므로 목록에 반영하지 않는다.
+                        if (current.searchText.isNotBlank() || current.nextCursor != cursor) {
+                            current.copy(isLoadingMore = false)
+                        } else {
+                            current.copy(
+                                contents = (current.contents + model.contents.map { c -> c.toSearchContentItemModel() }).toImmutableList(),
+                                nextCursor = model.nextCursor,
+                                isLoadingMore = false,
+                            )
+                        }
                     }
                 }
                 .onFailure {
