@@ -122,6 +122,7 @@ fun CollectionCreateRoute(
     }
 
     var pendingContentId by rememberSaveable { mutableStateOf<String?>(null) }
+    var contentImageLimitReachedCount by remember { mutableStateOf(0) }
 
     val onContentImagesPicked: (List<Uri>) -> Unit = { uris ->
         pendingContentId?.let { contentId -> viewModel.addContentImageUris(contentId, uris) }
@@ -161,11 +162,7 @@ fun CollectionCreateRoute(
             val remainingSlots = (uiState.contentDetailsMap[contentId] ?: ContentDetail()).remainingImageSlots
             val imageOnlyRequest = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             when {
-                remainingSlots == 0 -> Toast.makeText(
-                    context,
-                    "작품 이미지는 최대 ${MAX_CONTENT_IMAGE_COUNT}개까지 추가할 수 있어요",
-                    Toast.LENGTH_SHORT,
-                ).show()
+                remainingSlots == 0 -> contentImageLimitReachedCount++
 
                 remainingSlots == 1 -> {
                     pendingContentId = contentId
@@ -180,6 +177,7 @@ fun CollectionCreateRoute(
         },
         onRemoveExistingContentImage = viewModel::removeExistingContentImageUrl,
         onRemoveContentImage = viewModel::removeContentImageUri,
+        contentImageLimitReachedCount = contentImageLimitReachedCount,
         modifier = Modifier.padding(paddingValues),
     )
 }
@@ -202,6 +200,7 @@ fun CollectionCreateScreen(
     onSelectContentImage: (contentId: String) -> Unit = {},
     onRemoveExistingContentImage: (contentId: String, index: Int) -> Unit = { _, _ -> },
     onRemoveContentImage: (contentId: String, index: Int) -> Unit = { _, _ -> },
+    contentImageLimitReachedCount: Int = 0,
     modifier: Modifier = Modifier,
 ) {
     var isModalVisible by remember { mutableStateOf(false) }
@@ -231,6 +230,12 @@ fun CollectionCreateScreen(
     LaunchedEffect(uiState.editLoadFailed) {
         if (uiState.editLoadFailed) {
             showToast("컬렉션 정보를 불러오지 못했어요. 다시 시도해주세요")
+        }
+    }
+
+    LaunchedEffect(contentImageLimitReachedCount) {
+        if (contentImageLimitReachedCount > 0) {
+            showToast("작품 이미지는 최대 ${MAX_CONTENT_IMAGE_COUNT}개까지 추가할 수 있어요")
         }
     }
 
@@ -403,8 +408,7 @@ fun CollectionCreateScreen(
                 key = toastRequestId,
                 imageVector = ImageVector.vectorResource(R.drawable.ic_toast_error),
                 paddingValues = PaddingValues.Zero,
-                yOffset = 120.dp,
-                imeYOffset = 16.dp,
+                yOffset = 16.dp,
                 hide = { toastMessage = null },
             )
         }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,9 +17,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +66,7 @@ fun AddContentRoute(
         onSearchTextChanged = viewModel::updateSearch,
         onToggleContent = viewModel::toggleContent,
         onRemoveContent = viewModel::removeContent,
+        onLoadMore = viewModel::loadMoreBookmarkedContents,
         onBackClick = {
             viewModel.resetSearchText()
             navigateUp()
@@ -83,6 +87,7 @@ fun AddContentScreen(
     onSearchTextChanged: (String) -> Unit = {},
     onToggleContent: (SearchContentItemModel) -> Unit = {},
     onRemoveContent: (SearchContentItemModel) -> Unit,
+    onLoadMore: () -> Unit = {},
     onBackClick: () -> Unit,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -101,6 +106,21 @@ fun AddContentScreen(
     }
 
     val isEmptyViewShown = contentList.isEmpty() && uiState.searchText.isNotBlank()
+
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val layoutInfo = lazyColumnState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf false
+            totalItems > 5 && lastVisible.index >= totalItems - 5
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore, uiState.searchText, uiState.nextCursor) {
+        if (shouldLoadMore && uiState.searchText.isBlank()) {
+            onLoadMore()
+        }
+    }
 
     Box(
         modifier = modifier
@@ -179,11 +199,35 @@ fun AddContentScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
+                    if (uiState.searchText.isBlank()) {
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.Bottom,
+                            ) {
+                                Text(
+                                    text = "저장한 작품",
+                                    color = FlintTheme.colors.white,
+                                    style = FlintTheme.typography.head3M18,
+                                )
+                                uiState.savedContentCount?.let { count ->
+                                    Text(
+                                        text = "총 ${count}개",
+                                        color = FlintTheme.colors.gray300,
+                                        style = FlintTheme.typography.body1M16,
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     items(
                         items = contentList,
                         key = { it.id },
                     ) { content ->
                         val isSelected = selectedContents.any { it.id == content.id }
+                        val isMaxReached = selectedContents.size >= MAX_CONTENT_COUNT
 
                         AddContentSelectItem(
                             onCheckClick = {
@@ -197,6 +241,7 @@ fun AddContentScreen(
                                 } else onToggleContent(content)
                             },
                             isSelected = isSelected,
+                            isMaxReached = isMaxReached,
                             posterImageUrl = content.posterUrl,
                             title = content.title,
                             director = content.author,

@@ -11,8 +11,10 @@ import com.flint.android.core.common.util.UiState
 import com.flint.android.domain.mapper.collection.toDto
 import com.flint.android.domain.model.collection.CollectionCreateContentModel
 import com.flint.android.domain.model.collection.CollectionCreateRequestModel
+import com.flint.android.domain.model.content.BookmarkedContentItemModel
 import com.flint.android.domain.model.search.SearchContentItemModel
 import com.flint.android.domain.repository.CollectionRepository
+import com.flint.android.domain.repository.ContentRepository
 import com.flint.android.domain.repository.SearchRepository
 import com.flint.android.domain.repository.StorageRepository
 import com.flint.android.domain.type.FileExtension
@@ -38,6 +40,7 @@ import javax.inject.Inject
 
 const val MAX_CONTENT_IMAGE_COUNT = 5
 const val MAX_CONTENT_COUNT = 10
+private const val BOOKMARKED_CONTENT_PAGE_SIZE = 20
 
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
@@ -45,6 +48,7 @@ class CollectionCreateViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val collectionRepository: CollectionRepository,
     private val searchRepository: SearchRepository,
+    private val contentRepository: ContentRepository,
     private val storageRepository: StorageRepository,
     private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
@@ -62,7 +66,6 @@ class CollectionCreateViewModel @Inject constructor(
 
     init {
         observeSearchQuery()
-        loadInitialContents()
         if (editingCollectionId != null) {
             loadCollectionForEdit(editingCollectionId)
         }
@@ -332,9 +335,16 @@ class CollectionCreateViewModel @Inject constructor(
                 .map { it.trim() }
                 .distinctUntilChanged()
                 .collectLatest { query ->
+                    // 검색어가 없을 때는 전체 검색 API가 아니라, 사용자가 저장한 작품을
+                    // 최신순으로 내려주는 북마크 전용 API를 써야 한다.
+                    if (query.isBlank()) {
+                        loadBookmarkedContents()
+                        return@collectLatest
+                    }
+
                     searchRepository.getSearchContentList(query)
                         .onSuccess { model ->
-                            _uiState.update { it.copy(contents = model.contents) }
+                            _uiState.update { it.copy(contents = model.contents, nextCursor = null) }
                         }
                         .onFailure {
                             _uiState.update { it.copy(contents = persistentListOf()) }
@@ -343,17 +353,65 @@ class CollectionCreateViewModel @Inject constructor(
         }
     }
 
-    private fun loadInitialContents() {
+    // collectLatest 블록 안에서 직접 호출되어야 검색어 변경 시 진행 중인 요청이 취소된다.
+    // viewModelScope.launch로 새 코루틴을 띄우면 그 취소 대상에서 벗어나 버린다.
+    private suspend fun loadBookmarkedContents() {
+        contentRepository.getBookmarkedContentList(cursor = null, size = BOOKMARKED_CONTENT_PAGE_SIZE)
+            .onSuccess { model ->
+                val mapped = model.contents.map { c -> c.toSearchContentItemModel() }.toImmutableList()
+                _uiState.update { it.copy(contents = mapped, nextCursor = model.nextCursor) }
+            }
+            .onFailure {
+                _uiState.update { it.copy(contents = persistentListOf(), nextCursor = null) }
+            }
+
+        contentRepository.getBookmarkedContentCount()
+            .onSuccess { count -> _uiState.update { it.copy(savedContentCount = count) } }
+            .onFailure { _uiState.update { it.copy(savedContentCount = null) } }
+    }
+
+    fun loadMoreBookmarkedContents() {
+        val state = _uiState.value
+        if (state.searchText.isNotBlank() || state.isLoadingMore) return
+        val cursor = state.nextCursor ?: return
+
         viewModelScope.launch {
-            searchRepository.getSearchContentList("")
+            _uiState.update { it.copy(isLoadingMore = true) }
+            contentRepository.getBookmarkedContentList(cursor = cursor, size = BOOKMARKED_CONTENT_PAGE_SIZE)
                 .onSuccess { model ->
-                    _uiState.update { it.copy(contents = model.contents) }
+                    _uiState.update { current ->
+                        // 요청을 시작한 뒤 검색어가 바뀌었거나(북마크 목록을 더 이상 보고 있지 않음),
+                        // nextCursor가 이미 다른 값으로 갈아치워진 경우(예: 검색어가 비어 loadBookmarkedContents가
+                        // 새로 실행됨) 이 응답은 오래된 것이므로 목록에 반영하지 않는다.
+                        if (current.searchText.isNotBlank() || current.nextCursor != cursor) {
+                            current.copy(isLoadingMore = false)
+                        } else {
+                            val existingIds = current.contents.mapTo(mutableSetOf()) { it.id }
+                            val newContents = model.contents
+                                .map { c -> c.toSearchContentItemModel() }
+                                .filterNot { it.id in existingIds }
+                            current.copy(
+                                contents = (current.contents + newContents).toImmutableList(),
+                                nextCursor = model.nextCursor,
+                                isLoadingMore = false,
+                            )
+                        }
+                    }
                 }
                 .onFailure {
-                    _uiState.update { it.copy(contents = persistentListOf()) }
+                    _uiState.update { it.copy(isLoadingMore = false) }
                 }
         }
     }
+
+    private fun BookmarkedContentItemModel.toSearchContentItemModel(): SearchContentItemModel =
+        SearchContentItemModel(
+            id = id,
+            title = title,
+            author = author ?: "",
+            posterUrl = imageUrl,
+            year = year,
+        )
 
     fun updateThumbnailImageUri(uri: Uri?) {
         _uiState.update { it.copy(thumbnailImageUri = uri) }

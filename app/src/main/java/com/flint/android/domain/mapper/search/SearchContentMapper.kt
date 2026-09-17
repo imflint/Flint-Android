@@ -23,4 +23,3 @@ private fun SearchContentsResponseDto.Content.toModel(): SearchContentItemModel{
 }
 
 
-

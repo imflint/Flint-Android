@@ -91,10 +91,10 @@ fun CollectionCreateContentReason(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_background_photo),
+                    painter = painterResource(R.drawable.ic_add_photo),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(14.dp),
+                    modifier = Modifier.size(24.dp),
                 )
             }
             Row(
