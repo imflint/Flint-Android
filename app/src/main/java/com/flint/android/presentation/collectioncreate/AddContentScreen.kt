@@ -111,8 +111,8 @@ fun AddContentScreen(
         derivedStateOf {
             val layoutInfo = lazyColumnState.layoutInfo
             val totalItems = layoutInfo.totalItemsCount
-            val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            totalItems > 0 && lastVisibleIndex >= totalItems - 5
+            val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf false
+            totalItems > 5 && lastVisible.index >= totalItems - 5
         }
     }
 

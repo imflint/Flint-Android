@@ -344,7 +344,7 @@ class CollectionCreateViewModel @Inject constructor(
 
                     searchRepository.getSearchContentList(query)
                         .onSuccess { model ->
-                            _uiState.update { it.copy(contents = model.contents) }
+                            _uiState.update { it.copy(contents = model.contents, nextCursor = null) }
                         }
                         .onFailure {
                             _uiState.update { it.copy(contents = persistentListOf()) }
@@ -386,8 +386,12 @@ class CollectionCreateViewModel @Inject constructor(
                         if (current.searchText.isNotBlank() || current.nextCursor != cursor) {
                             current.copy(isLoadingMore = false)
                         } else {
+                            val existingIds = current.contents.mapTo(mutableSetOf()) { it.id }
+                            val newContents = model.contents
+                                .map { c -> c.toSearchContentItemModel() }
+                                .filterNot { it.id in existingIds }
                             current.copy(
-                                contents = (current.contents + model.contents.map { c -> c.toSearchContentItemModel() }).toImmutableList(),
+                                contents = (current.contents + newContents).toImmutableList(),
                                 nextCursor = model.nextCursor,
                                 isLoadingMore = false,
                             )
