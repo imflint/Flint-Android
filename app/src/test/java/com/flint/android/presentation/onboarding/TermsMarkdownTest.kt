@@ -61,6 +61,58 @@ class TermsMarkdownTest {
     }
 
     @Test
+    fun `한 줄 전체가 HTML 블록 태그면 블록으로 만들지 않는다`() {
+        val blocks = parseTermsMarkdown("<aside>\n성명 : 김가영\n</aside>")
+
+        assertEquals(1, blocks.size)
+        assertEquals("성명 : 김가영", blocks[0].text.text)
+    }
+
+    @Test
+    fun `들여쓰기된 HTML 블록 태그도 걸러낸다`() {
+        val blocks = parseTermsMarkdown("    <aside>\n    직책 : 대표\n    </aside>")
+
+        assertEquals(1, blocks.size)
+        assertEquals("직책 : 대표", blocks[0].text.text)
+    }
+
+    @Test
+    fun `본문 중간의 부등호는 그대로 남는다`() {
+        val blocks = parseTermsMarkdown("보관 기간은 <30일> 입니다.")
+
+        assertEquals(1, blocks.size)
+        assertEquals("보관 기간은 <30일> 입니다.", blocks[0].text.text)
+    }
+
+    @Test
+    fun `개인정보 보호책임자 안내는 태그 없이 본문만 남는다`() {
+        val content = """
+            1. 사이트는 개인정보 보호책임자를 지정하고 있습니다.
+
+                <aside>
+
+                **개인정보 보호책임자**
+
+                성명 : 김가영
+
+                직책 : 대표
+
+                </aside>
+
+            2. 정보주체께서는 문의하실 수 있습니다.
+        """.trimIndent()
+
+        val blocks = parseTermsMarkdown(content)
+
+        assertEquals(5, blocks.size)
+        assertEquals("1.", (blocks[0] as TermsBlock.ListItem).marker)
+        assertEquals("개인정보 보호책임자", blocks[1].text.text)
+        assertEquals("성명 : 김가영", blocks[2].text.text)
+        assertEquals("직책 : 대표", blocks[3].text.text)
+        assertEquals("2.", (blocks[4] as TermsBlock.ListItem).marker)
+    }
+
+    @Test
     fun `실제 약관 형태의 문서를 블록 순서대로 변환한다`() {
         val content = """
             ### **제1조. 목적**

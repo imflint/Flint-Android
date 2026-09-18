@@ -21,6 +21,26 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+/**
+ * 투명 -> 불투명으로 잦아드는 그라데이션의 색 목록. [Brush.verticalGradient] 는 색을 균등 간격으로 배치한다.
+ *
+ * 알파를 선형으로 올리면 그라데이션이 시작되는 지점에서 기울기가 0에서 일정값으로 한 번에 꺾여
+ * 가로줄처럼 보인다. 시작 기울기가 0인 2차 곡선(alpha = t*t)을 쓰면 시작점이 눈에 띄지 않는다.
+ *
+ * 끝에서는 [FADE_OPAQUE_AT] 지점에 미리 불투명해지도록 해서, 덮어야 할 경계에 원본이 남지 않게 한다.
+ * 마지막까지 알파를 올리면 경계 직전에 원본이 몇 % 남아 오히려 잘린 자국이 보인다.
+ */
+private const val FADE_OPAQUE_AT = 11f / 12f
+
+private fun easedFadeColors(
+    color: Color,
+    steps: Int = 12,
+): List<Color> =
+    List(steps + 1) { index ->
+        val t = (index.toFloat() / steps / FADE_OPAQUE_AT).coerceAtMost(1f)
+        color.copy(alpha = t * t)
+    }
+
 @Immutable
 data class Colors(
     val primary50: Color,
@@ -79,7 +99,7 @@ data class Colors(
     val blueGradient: Brush,
     val primary400Gradient: Brush,
     val grayGradient: Brush,
-    val gray800Gradient: Brush,
+    val cardShadeGradient: Brush,
     val navbarGradient: Brush,
     val thumbnailGradient: Brush,
     val userBadgeGradient: Brush,
@@ -180,22 +200,28 @@ val FlintColors =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF424BBD).copy(1f), Color(0xFF121212).copy(alpha = 0.04f)),
             ),
-        blueGradient =
-            Brush.verticalGradient(
-                colors = listOf(Color(0xFF062845).copy(alpha = 0f), Color(0xFF062845).copy(1f)),
-            ),
-        primary400Gradient =
-            Brush.verticalGradient(
-                colors = listOf(Color(0xFF1ABFF2).copy(0f), Color(0xFF1ABFF2).copy(0.35f)),
-            ),
-        grayGradient =
-            Brush.verticalGradient(
-                colors = listOf(Color(0xFF21242C).copy(alpha = 0f), Color(0xFF21242C).copy(alpha = 1f)),
-            ),
-        gray800Gradient =
-            Brush.verticalGradient(
-                colors = listOf(Color(0xFF21242C).copy(alpha = 0f), Color(0xFF21242C).copy(alpha = 0.35f)),
-            ),
+        blueGradient = Brush.verticalGradient(colors = easedFadeColors(Color(0xFF062845))),
+        primary400Gradient = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset(size.width * 0.5f, 0f),
+                    to = Offset(size.width * 0.5f, size.height * 1.15f),
+                    colors = listOf(Color(0xFF1ABFF2).copy(alpha = 0f), Color(0xFF1ABFF2).copy(alpha = 0.35f)),
+                    colorStops = listOf(0.26f, 1f),
+                )
+            }
+        },
+        grayGradient = Brush.verticalGradient(colors = easedFadeColors(Color(0xFF21242C))),
+        cardShadeGradient = object : ShaderBrush() {
+            override fun createShader(size: Size): Shader {
+                return LinearGradientShader(
+                    from = Offset(size.width * 0.5f, 0f),
+                    to = Offset(size.width * 0.5f, size.height * 1.15f),
+                    colors = listOf(Color(0xFF2D4254).copy(alpha = 0f), Color(0xFF2D4254)),
+                    colorStops = listOf(0.26f, 1f),
+                )
+            }
+        },
         navbarGradient =
             Brush.verticalGradient(
                 colors = listOf(Color(0xFF121212).copy(alpha = 1f), Color(0xFF121212).copy(alpha = 0f)),

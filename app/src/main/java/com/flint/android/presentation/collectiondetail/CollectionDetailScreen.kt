@@ -2,6 +2,7 @@ package com.flint.android.presentation.collectiondetail
 
 import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -287,7 +289,7 @@ fun CollectionDetailScreen(
             val targetIndex: Int = contents.indexOfFirst { it.imageUrl == targetImageUrl }
             if (targetIndex == -1) return@LaunchedEffect
 
-            lazyListState.animateScrollToItem(CONTENT_LIST_HEADER_ITEM_COUNT + targetIndex)
+            lazyListState.animateScrollToCenteredItem(CONTENT_LIST_HEADER_ITEM_COUNT + targetIndex)
         }
 
         if (showPeopleBottomSheet) {
@@ -382,6 +384,26 @@ fun CollectionDetailScreen(
             )
         }
     }
+}
+
+/**
+ * [index] 아이템이 뷰포트 중앙에 오도록 스크롤한다.
+ *
+ * 아이템 높이는 실제로 배치되기 전에는 알 수 없으므로, 먼저 상단 정렬로 스크롤해
+ * 아이템을 화면에 올린 뒤 중앙까지 남은 거리만큼 추가로 이동한다.
+ * 아이템이 뷰포트보다 크면 중앙에 맞출 때 윗부분이 잘려 나가므로 상단 정렬을 유지한다.
+ */
+private suspend fun LazyListState.animateScrollToCenteredItem(index: Int) {
+    animateScrollToItem(index)
+
+    val item: LazyListItemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index } ?: return
+    val viewportStart: Int = layoutInfo.viewportStartOffset
+    val viewportEnd: Int = layoutInfo.viewportEndOffset
+    if (item.size >= viewportEnd - viewportStart) return
+
+    val itemCenter: Int = item.offset + item.size / 2
+    val viewportCenter: Int = (viewportStart + viewportEnd) / 2
+    animateScrollBy((itemCenter - viewportCenter).toFloat())
 }
 
 private data class ScreenPreviewData(
