@@ -28,6 +28,7 @@ import com.flint.android.presentation.profile.navigation.KEY_PROFILE_UPDATED
 import com.flint.android.presentation.profile.navigation.myProfileNavGraph
 import com.flint.android.presentation.profile.navigation.profileNavGraph
 import com.flint.android.presentation.savedcontent.navigation.savedContentListNavGraph
+import com.flint.android.presentation.setting.editprofile.navigation.KEY_SHOW_PROFILE_UPDATED_TOAST
 import com.flint.android.presentation.setting.editprofile.navigation.editProfileNavGraph
 import com.flint.android.presentation.setting.navigation.settingNavGraph
 import com.flint.android.presentation.setting.withdraw.navigation.withdrawCompleteNavGraph
@@ -47,6 +48,9 @@ fun MainNavHost(
     val showReportSuccessToast = currentBackStackEntry
         ?.savedStateHandle
         ?.get<Boolean>(KEY_SHOW_REPORT_SUCCESS_TOAST) ?: false
+    val showProfileUpdatedToast = currentBackStackEntry
+        ?.savedStateHandle
+        ?.get<Boolean>(KEY_SHOW_PROFILE_UPDATED_TOAST) ?: false
 
     Box(
         modifier =
@@ -163,6 +167,10 @@ fun MainNavHost(
                     } catch (_: IllegalArgumentException) {
                         // MainTabRoute.Profile이 백스택에 없는 경우 무시
                     }
+                    // 프로필 수정 화면은 곧 pop 되므로, 돌아갈 화면(설정)에 토스트 플래그를 남긴다.
+                    navigator.navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(KEY_SHOW_PROFILE_UPDATED_TOAST, true)
                 },
             )
 
@@ -196,6 +204,18 @@ fun MainNavHost(
                 yOffset = 12.dp,
                 hide = {
                     currentBackStackEntry?.savedStateHandle?.set(KEY_SHOW_REPORT_SUCCESS_TOAST, false)
+                },
+            )
+        }
+
+        if (showProfileUpdatedToast) {
+            ShowToast(
+                text = "프로필이 수정되었어요",
+                imageVector = null,
+                paddingValues = paddingValues,
+                yOffset = 12.dp,
+                hide = {
+                    currentBackStackEntry?.savedStateHandle?.set(KEY_SHOW_PROFILE_UPDATED_TOAST, false)
                 },
             )
         }

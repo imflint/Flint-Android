@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import com.flint.android.core.navigation.Route
 import com.flint.android.presentation.setting.editprofile.EditProfileRoute
 
+const val KEY_SHOW_PROFILE_UPDATED_TOAST = "showProfileUpdatedToast"
+
 fun NavController.navigateToEditProfile(navOptions: NavOptions? = null) {
     navigate(Route.EditProfile, navOptions)
 }
