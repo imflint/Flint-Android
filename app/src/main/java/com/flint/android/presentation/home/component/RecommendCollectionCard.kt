@@ -16,20 +16,32 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.component.image.NetworkImage
 import com.flint.android.core.designsystem.component.image.ProfileImage
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.domain.model.collection.CollectionItemModel
+
+private val CARD_WIDTH = 270.dp
+private val TITLE_HORIZONTAL_PADDING = 48.dp
+private val DESCRIPTION_HORIZONTAL_PADDING = 34.dp
 
 private val THUMBNAIL_HEIGHT = 202.dp
 
@@ -58,7 +70,7 @@ fun RecommendCollectionCard(
 
     Box(
         modifier = modifier
-            .width(270.dp)
+            .width(CARD_WIDTH)
             .height(320.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
@@ -115,30 +127,22 @@ fun RecommendCollectionCard(
 
             Spacer(Modifier.height(BADGE_TO_TITLE_SPACING))
 
-            Text(
+            CenteredEllipsisText(
                 text = item.title,
                 style = FlintTheme.typography.head3Sb18,
                 color = FlintTheme.colors.gray50,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 48.dp)
+                horizontalPadding = TITLE_HORIZONTAL_PADDING,
             )
 
             Spacer(Modifier.height(4.dp))
 
-            Text(
+            CenteredEllipsisText(
                 text = item.description,
                 style = FlintTheme.typography.caption1R12,
                 color = FlintTheme.colors.gray200,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 34.dp)
+                horizontalPadding = DESCRIPTION_HORIZONTAL_PADDING,
             )
         }
 
@@ -150,6 +154,76 @@ fun RecommendCollectionCard(
                 .background(bottomGradient)
         )
     }
+}
+
+private const val ELLIPSIS = "…"
+
+/**
+ * 가운데 정렬(TextAlign.Center)과 말줄임(TextOverflow.Ellipsis)을 함께 주면,
+ * 생략된 마지막 줄이 가운데가 아니라 오른쪽 끝에 붙는다.
+ * 2줄짜리 소개글에서 아랫줄만 들여쓰기된 것처럼 보이던 QA 제보가 이 때문이었다.
+ *
+ * 그래서 말줄임을 Compose 에 맡기지 않고, 들어갈 만큼 직접 잘라 말줄임표를 붙인 뒤
+ * Clip 으로 그린다. 잘라낸 뒤에는 모든 줄이 같은 기준으로 가운데 정렬된다.
+ */
+@Composable
+private fun CenteredEllipsisText(
+    text: String,
+    style: TextStyle,
+    color: Color,
+    maxLines: Int,
+    horizontalPadding: Dp,
+) {
+    val measurer = rememberTextMeasurer()
+    // 카드 폭이 고정이라 사용 가능한 폭도 고정이다. BoxWithConstraints 없이 바로 계산한다.
+    val availableWidth = with(LocalDensity.current) { (CARD_WIDTH - horizontalPadding * 2).roundToPx() }
+
+    val shownText = remember(text, style, maxLines, availableWidth) {
+        text.truncateToFit(
+            maxLines = maxLines,
+            maxWidthPx = availableWidth,
+            measurer = measurer,
+            style = style,
+        )
+    }
+
+    Text(
+        text = shownText,
+        style = style,
+        color = color,
+        maxLines = maxLines,
+        overflow = TextOverflow.Clip,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = horizontalPadding),
+    )
+}
+
+/** [maxLines] 안에 들어가는 가장 긴 앞부분을 이분 탐색으로 찾아 말줄임표를 붙인다. */
+private fun String.truncateToFit(
+    maxLines: Int,
+    maxWidthPx: Int,
+    measurer: TextMeasurer,
+    style: TextStyle,
+): String {
+    fun overflows(candidate: String): Boolean =
+        measurer.measure(
+            text = AnnotatedString(candidate),
+            style = style,
+            maxLines = maxLines,
+            constraints = Constraints(maxWidth = maxWidthPx),
+        ).hasVisualOverflow
+
+    if (!overflows(this)) return this
+
+    var low = 0
+    var high = length
+    while (low < high) {
+        val mid = (low + high + 1) / 2
+        if (overflows(take(mid).trimEnd() + ELLIPSIS)) high = mid - 1 else low = mid
+    }
+    return take(low).trimEnd() + ELLIPSIS
 }
 
 @Preview
