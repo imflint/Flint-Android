@@ -36,6 +36,8 @@ private fun PopularCollectionItemResponseDto.toModel(): CollectionItemModel {
         thumbnailUrl = thumbnailUrl,
         title = title,
         imageList = imageList,
+        bookmarkCount = bookmarkCount,
+        isBookmarked = isBookmarked,
         nickname = nickname,
         profileUrl = profileUrl
     )
