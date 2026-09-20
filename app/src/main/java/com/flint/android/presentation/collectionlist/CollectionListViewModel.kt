@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.navigation.Route
+import com.flint.android.data.di.qualifier.ApplicationScope
 import com.flint.android.domain.model.collection.CollectionListModel
 import com.flint.android.domain.repository.BookmarkRepository
 import com.flint.android.domain.repository.CollectionRepository
@@ -16,6 +17,7 @@ import com.flint.android.presentation.collectionlist.sideeffect.CollectionListSi
 import com.flint.android.presentation.collectionlist.uistate.CollectionListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,6 +36,7 @@ class CollectionListViewModel @Inject constructor(
     private val collectionRepository: CollectionRepository,
     private val homeRepository: HomeRepository,
     private val bookmarkRepository: BookmarkRepository,
+    @ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<CollectionListUiState>(CollectionListUiState())
     val uiState: StateFlow<CollectionListUiState> = _uiState
@@ -114,7 +117,9 @@ class CollectionListViewModel @Inject constructor(
         )
 
         collectionBookmarkDebounceJobs[collectionId]?.cancel()
-        collectionBookmarkDebounceJobs[collectionId] = viewModelScope.launch {
+        // 디바운스 대기 중에 화면을 벗어나면 viewModelScope 가 취소돼 토글 요청이 아예 나가지 않는다.
+        // 낙관적 UI 는 이미 저장된 것처럼 보여준 뒤라, 재진입하면 저장이 풀린 것처럼 보인다.
+        collectionBookmarkDebounceJobs[collectionId] = applicationScope.launch {
             delay(debounceDelayMs)
 
             val currentCollection = (_uiState.value.collectionList as? UiState.Success)?.data

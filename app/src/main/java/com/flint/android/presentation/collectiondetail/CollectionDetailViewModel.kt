@@ -9,6 +9,7 @@ import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.common.util.DataStoreKey.USER_ID
 import com.flint.android.core.common.util.UiState
 import com.flint.android.core.navigation.Route
+import com.flint.android.data.di.qualifier.ApplicationScope
 import com.flint.android.data.local.PreferencesManager
 import com.flint.android.domain.model.bookmark.CollectionBookmarkUsersModel
 import com.flint.android.domain.model.collection.CollectionDetailModelNew
@@ -21,6 +22,7 @@ import com.flint.android.presentation.collectiondetail.uistate.CollectionDetailU
 import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -43,6 +45,7 @@ class CollectionDetailViewModel @Inject constructor(
     private val analyticsTracker: AnalyticsTracker,
     private val collectionRepository: CollectionRepository,
     private val preferencesManager: PreferencesManager,
+    @ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
     init {
         val collectionId: String = savedStateHandle.toRoute<Route.CollectionDetail>().collectionId
@@ -74,7 +77,8 @@ class CollectionDetailViewModel @Inject constructor(
         updateCollectionBookmarkState(!uiState.collectionDetail.isBookmarked)
 
         collectionBookmarkDebounceJob?.cancel()
-        collectionBookmarkDebounceJob = viewModelScope.launch {
+        // 디바운스 대기 중 화면을 벗어나면 viewModelScope 가 취소돼 토글이 서버로 나가지 않는다.
+        collectionBookmarkDebounceJob = applicationScope.launch {
             delay(debounceDelayMs)
 
             val currentState: Boolean =
@@ -131,7 +135,8 @@ class CollectionDetailViewModel @Inject constructor(
                 return
             }
 
-            viewModelScope.launch {
+            // 저장 해제는 디바운스 없이 바로 보내지만, 전송 도중 화면을 벗어나도 끊기면 안 된다.
+            applicationScope.launch {
                 bookmarkRepository.toggleContentBookmark(contentId)
                     .onSuccess { isBookmarked: Boolean ->
                         updateContentBookmarkState(
@@ -159,7 +164,7 @@ class CollectionDetailViewModel @Inject constructor(
         )
 
         contentBookmarkDebounceJobs[contentId]?.cancel()
-        contentBookmarkDebounceJobs[contentId] = viewModelScope.launch {
+        contentBookmarkDebounceJobs[contentId] = applicationScope.launch {
             delay(debounceDelayMs)
 
             val currentContent: ContentModelNew =
