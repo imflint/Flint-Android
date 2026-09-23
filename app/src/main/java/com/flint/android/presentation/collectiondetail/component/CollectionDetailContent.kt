@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -127,7 +128,7 @@ private fun CollectionDetailContentInfo(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Row {
+            Row(modifier = Modifier.weight(1f)) {
                 NetworkImage(
                     imageUrl = content.imageUrl,
                     modifier = Modifier.size(width = 60.dp, height = 90.dp),
@@ -136,11 +137,13 @@ private fun CollectionDetailContentInfo(
 
                 Spacer(modifier = Modifier.width(14.dp))
 
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = content.title,
                         color = FlintTheme.colors.white,
                         style = FlintTheme.typography.head2Sb20,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -170,12 +173,14 @@ private fun CollectionDetailContentInfo(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_bookmark_fill),
                         contentDescription = "저장됨",
                         tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp),
                     )
                 } else {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_bookmark_empty),
                         contentDescription = "저장되지 않음",
                         tint = Color.White,
+                        modifier = Modifier.size(24.dp),
                     )
                 }
 
@@ -234,7 +239,7 @@ private class CollectionDetailContentPreviewProvider : PreviewParameterProvider<
             ),
             ContentModelNew(
                 id = "0",
-                title = "스포일러 있는 영화",
+                title = "스포일러 있는 영화스포일러 있는 영화스포일러 있는 영화스포일러 있는 영화",
                 year = 2024,
                 imageUrl = "",
                 director = "감독 이름",
