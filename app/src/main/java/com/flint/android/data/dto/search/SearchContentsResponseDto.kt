@@ -13,15 +13,15 @@ data class SearchContentsResponseDto(
     @Serializable
     data class Content(
         @SerialName("id")
-        val id: String,
+        val id: String? = null,
         @SerialName("title")
-        val title: String,
+        val title: String? = null,
         @SerialName("author")
-        val author: String,
+        val author: String? = null,
         @SerialName("posterUrl")
-        val posterUrl: String,
+        val posterUrl: String? = null,
         @SerialName("year")
-        val year: Int,
+        val year: Int? = null,
     )
 
     @Serializable
