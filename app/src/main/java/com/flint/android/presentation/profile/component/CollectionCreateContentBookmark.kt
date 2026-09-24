@@ -41,7 +41,8 @@ fun CollectionCreateContentBookmark(
     bookmarkCount: Int,
     imageUrl: String,
     title: String,
-    director: String,
+    /** 감독(영화) 또는 creator(TV). 서버가 내려주지 않으면 null 이고, 이때는 영역 자체를 그리지 않는다. */
+    director: String?,
     createdYear: Int,
     ottList: List<OttType>,
     modifier: Modifier = Modifier,
@@ -113,7 +114,7 @@ private fun CollectionCreateContentBookmarkImage(
 @Composable
 private fun CollectionCreateContentBookmarkInfo(
     title: String,
-    director: String,
+    director: String?,
     createdYear: Int,
     ottList: List<OttType>,
     onMoreClick: () -> Unit,
@@ -133,12 +134,14 @@ private fun CollectionCreateContentBookmarkInfo(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = director,
-            modifier = Modifier.fillMaxWidth(),
-            color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.caption1M12,
-        )
+        if (!director.isNullOrBlank()) {
+            Text(
+                text = director,
+                modifier = Modifier.fillMaxWidth(),
+                color = FlintTheme.colors.gray300,
+                style = FlintTheme.typography.caption1M12,
+            )
+        }
 
         Text(
             text = createdYear.toString(),
@@ -217,6 +220,25 @@ private fun CollectionCreateContentBookmarkMore(
 
 
 
+
+/** 서버가 감독을 내려주지 않는 경우 — 감독 줄 없이 연도가 바로 붙는다. */
+@Preview
+@Composable
+private fun CollectionCreateContentBookmarkNoDirectorPreview() {
+    FlintTheme {
+        CollectionCreateContentBookmark(
+            onBookmarkClick = {},
+            onMoreClick = {},
+            isBookmarked = true,
+            bookmarkCount = 60,
+            imageUrl = "",
+            title = "너에게 닿기를",
+            director = null,
+            createdYear = 2009,
+            ottList = listOf(OttType.Netflix),
+        )
+    }
+}
 
 @Preview
 @Composable

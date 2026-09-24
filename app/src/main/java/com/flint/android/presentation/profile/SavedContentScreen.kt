@@ -283,7 +283,7 @@ private fun SavedContentList(
                 bookmarkCount = content.bookmarkCount,
                 imageUrl = content.imageUrl,
                 title = content.title,
-                director = "감독이름",
+                director = content.author,
                 createdYear = content.year,
                 ottList = content.getOttSimpleList,
             )
@@ -296,6 +296,7 @@ private object SavedContentPreviewData {
         BookmarkedContentItemModel(
             id = "0",
             title = "은하수를 여행하는 히치하이커를 위한 안내서",
+            author = "가스 제닝스",
             year = 2005,
             imageUrl = "",
             bookmarkCount = 42,
@@ -309,6 +310,7 @@ private object SavedContentPreviewData {
         BookmarkedContentItemModel(
             id = "1",
             title = "해리포터와 불의잔",
+            author = "마이크 뉴얼",
             year = 2005,
             imageUrl = "",
             bookmarkCount = 18,
@@ -319,6 +321,7 @@ private object SavedContentPreviewData {
             ),
         ),
         BookmarkedContentItemModel(
+            // 서버가 감독을 내려주지 않는 경우 (author = null) — 감독 줄이 그려지지 않아야 한다.
             id = "2",
             title = "해리포터와 불의잔",
             year = 2005,
