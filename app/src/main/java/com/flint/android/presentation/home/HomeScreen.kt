@@ -10,13 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,18 +25,15 @@ import com.flint.android.core.analytics.HomeContentType
 import com.flint.android.core.analytics.LocalAnalyticsTracker
 import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.common.util.UiState
-import com.flint.android.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.android.core.designsystem.component.listView.CollectionSection
 import com.flint.android.core.designsystem.component.listView.SavedContentsSection
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.domain.model.collection.CollectionListModel
 import com.flint.android.domain.model.content.BookmarkedContentListModel
-import com.flint.android.domain.model.ott.OttListModel
 import com.flint.android.core.navigation.model.CollectionListRouteType
 import com.flint.android.presentation.home.component.HomeBanner
 import com.flint.android.presentation.home.component.HomeFab
 import com.flint.android.presentation.home.component.HomeRecommendCollectionList
-import com.flint.android.presentation.home.sideeffect.HomeSideEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,25 +48,10 @@ fun HomeRoute(
     val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val analyticsTracker = LocalAnalyticsTracker.current
 
-    var showOttListBottomSheet by remember { mutableStateOf(false) }
-    var ottListModel by remember { mutableStateOf(OttListModel()) }
-    val sheetState = rememberModalBottomSheetState()
-
     LaunchedEffect(Unit) {
         viewModel.getRecommendedCollectionList()
         viewModel.getBookmarkedContentList()
         viewModel.getPopularCollectionList()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.homeSideEffect.collect { sideEffect ->
-            when (sideEffect) {
-                is HomeSideEffect.ShowOttListBottomSheet -> {
-                    ottListModel = sideEffect.ottListModel
-                    if (ottListModel.otts.isNotEmpty()) showOttListBottomSheet = true
-                }
-            }
-        }
     }
 
     when (uiState.loadState) {
@@ -102,20 +80,11 @@ fun HomeRoute(
                 },
                 onSavedContentItemClick = {
                     analyticsTracker.track(FlintEvent.ClickHomeContent(HomeContentType.RECENTLY_SAVED))
-                    viewModel.showOttList(it)
                 },
                 modifier = Modifier.padding(paddingValues),
             )
         }
         else -> {}
-    }
-
-    if (showOttListBottomSheet) {
-        OttListBottomSheet(
-            ottList = ottListModel,
-            onDismiss = { showOttListBottomSheet = false },
-            sheetState = sheetState,
-        )
     }
 }
 

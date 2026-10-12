@@ -34,7 +34,6 @@ import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.analytics.LocalAnalyticsTracker
 import com.flint.android.core.analytics.onItemImpression
 import com.flint.android.core.common.util.UiState
-import com.flint.android.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.android.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.android.core.designsystem.component.modal.OneButtonModal
 import com.flint.android.core.designsystem.component.toast.ShowToast
@@ -44,8 +43,6 @@ import com.flint.android.core.designsystem.component.view.FlintSearchEmptyView
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.domain.model.content.BookmarkedContentItemModel
 import com.flint.android.domain.model.content.BookmarkedContentListModel
-import com.flint.android.domain.model.ott.OttListModel
-import com.flint.android.domain.model.ott.OttModel
 import com.flint.android.domain.type.OttType
 import com.flint.android.presentation.profile.component.CollectionCreateContentBookmark
 import com.flint.android.presentation.profile.uistate.SavedContentUiState
@@ -121,8 +118,6 @@ fun SavedContentScreen(
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var showOttBottomSheet by remember { mutableStateOf(false) }
-    var selectedOttList by remember { mutableStateOf<List<OttType>>(emptyList()) }
 
     Column(
         modifier = modifier
@@ -194,10 +189,6 @@ fun SavedContentScreen(
                     SavedContentList(
                         contents = uiState.filteredContents,
                         onBookmarkClick = onBookmarkClick,
-                        onMoreClick = { ottList ->
-                            selectedOttList = ottList
-                            showOttBottomSheet = true
-                        },
                     )
                 }
             }
@@ -213,13 +204,6 @@ fun SavedContentScreen(
                 }
             }
         }
-    }
-
-    if (showOttBottomSheet && selectedOttList.isNotEmpty()) {
-        OttListBottomSheet(
-            ottList = OttListModel(otts = selectedOttList.map { OttModel(name = it.name) }),
-            onDismiss = { showOttBottomSheet = false },
-        )
     }
 
     // 저장 취소 제한 안내 모달 (저장 작품이 5개일 때 북마크 토글 시 노출)
@@ -239,7 +223,6 @@ fun SavedContentScreen(
 private fun SavedContentList(
     contents: ImmutableList<BookmarkedContentItemModel>,
     onBookmarkClick: (contentId: String) -> Unit,
-    onMoreClick: (ottList: List<OttType>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val analyticsTracker = LocalAnalyticsTracker.current
@@ -278,14 +261,12 @@ private fun SavedContentList(
                         },
                     ),
                 onBookmarkClick = { onBookmarkClick(content.id) },
-                onMoreClick = { onMoreClick(content.getOttSimpleList) },
                 isBookmarked = content.isBookmarked,
                 bookmarkCount = content.bookmarkCount,
                 imageUrl = content.imageUrl,
                 title = content.title,
                 director = content.author,
                 createdYear = content.year,
-                ottList = content.getOttSimpleList,
             )
         }
     }

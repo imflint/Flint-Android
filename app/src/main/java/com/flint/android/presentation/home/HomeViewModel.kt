@@ -7,19 +7,14 @@ import com.flint.android.core.common.util.UiState
 import com.flint.android.data.local.PreferencesManager
 import com.flint.android.domain.model.collection.CollectionListModel
 import com.flint.android.domain.model.content.BookmarkedContentListModel
-import com.flint.android.domain.model.ott.OttListModel
-import com.flint.android.domain.model.ott.OttModel
 import com.flint.android.domain.repository.HomeRepository
 import com.flint.android.domain.repository.UserRepository
-import com.flint.android.presentation.home.sideeffect.HomeSideEffect
 import com.flint.android.presentation.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -37,9 +32,6 @@ class HomeViewModel @Inject constructor(
     private val _recommendCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
     private val _bookmarkedContentListLoadState = MutableStateFlow<UiState<BookmarkedContentListModel>>(UiState.Loading)
     private val _popularCollectionListLoadState = MutableStateFlow<UiState<CollectionListModel>>(UiState.Loading)
-
-    private val _homeSideEffect = MutableSharedFlow<HomeSideEffect>()
-    val homeSideEffect = _homeSideEffect.asSharedFlow()
 
     val homeUiState: StateFlow<HomeUiState> = combine(
         _userName,
@@ -94,24 +86,6 @@ class HomeViewModel @Inject constructor(
         homeRepository.getPopularCollectionList()
             .onSuccess { _popularCollectionListLoadState.emit(UiState.Success(it)) }
             .onFailure { Timber.e(it.message) }
-    }
-
-    // 콘텐츠별 OTT 목록 API(/contents/ott/{id})가 빈 배열만 반환하므로
-    // 이미 로드된 북마크 목록의 OTT 정보를 사용한다.
-    // 프로필/저장한 콘텐츠 화면도 동일하게 getOttSimpleList를 쓴다.
-    fun showOttList(contentId: String) = viewModelScope.launch {
-        val otts = (_bookmarkedContentListLoadState.value as? UiState.Success)
-            ?.data
-            ?.contents
-            ?.find { it.id == contentId }
-            ?.getOttSimpleList
-            .orEmpty()
-
-        _homeSideEffect.emit(
-            HomeSideEffect.ShowOttListBottomSheet(
-                OttListModel(otts = otts.map { OttModel(name = it.name) }),
-            ),
-        )
     }
 
     companion object {

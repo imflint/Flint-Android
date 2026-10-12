@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,7 +36,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.flint.android.core.common.util.UiState
-import com.flint.android.core.designsystem.component.bottomsheet.OttListBottomSheet
 import com.flint.android.core.designsystem.component.indicator.FlintLoadingIndicator
 import com.flint.android.core.designsystem.component.listView.CollectionSection
 import com.flint.android.core.designsystem.component.listView.SavedContentsSection
@@ -47,13 +45,10 @@ import com.flint.android.core.designsystem.theme.FlintTheme.colors
 import com.flint.android.core.navigation.model.CollectionListRouteType
 import com.flint.android.domain.model.collection.CollectionListModel
 import com.flint.android.domain.model.content.BookmarkedContentListModel
-import com.flint.android.domain.model.ott.OttListModel
-import com.flint.android.domain.model.ott.OttModel
 import com.flint.android.domain.model.user.KeywordListModel
 import com.flint.android.domain.model.user.UserProfileResponseModel
 import com.flint.android.presentation.profile.component.ProfileKeywordSection
 import com.flint.android.presentation.profile.component.ProfileTopSection
-import com.flint.android.presentation.profile.sideeffect.ProfileSideEffect
 import com.flint.android.presentation.profile.uistate.ProfileSectionData
 import com.flint.android.presentation.profile.uistate.ProfileUiState
 
@@ -73,27 +68,10 @@ fun ProfileRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
 
-    var showOttListBottomSheet by remember { mutableStateOf(false) }
-    var ottListModel by remember { mutableStateOf(OttListModel()) }
-    val sheetState = rememberModalBottomSheetState()
-
     LaunchedEffect(shouldRefreshProfile) {
         if (shouldRefreshProfile) {
             viewModel.reloadUserProfile()
             onProfileRefreshed()
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.sideEffect.collect { sideEffect ->
-            when (sideEffect) {
-                is ProfileSideEffect.ShowOttListBottomSheet -> {
-                    ottListModel = sideEffect.ottListModel
-                    if (ottListModel.otts.isNotEmpty()) {
-                        showOttListBottomSheet = true
-                    }
-                }
-            }
         }
     }
 
@@ -108,13 +86,6 @@ fun ProfileRoute(
             navigateToCollectionDetail(collectionId, CollectionSource.MY_SAVED)
         },
         onSettingsClick = navigateToSetting,
-        onContentItemClick = { contentId ->
-            val ottList = (uiState.sectionData as? UiState.Success)
-                ?.data?.savedContents?.contents
-                ?.find { it.id == contentId }?.getOttSimpleList ?: emptyList()
-            ottListModel = OttListModel(otts = ottList.map { OttModel(name = it.name) })
-            if (ottListModel.otts.isNotEmpty()) showOttListBottomSheet = true
-        },
         onContentMoreClick = { navigateToSavedContentList(uiState.userId) },
         onCreatedCollectionMoreClick = {
             navigateToCollectionList(
@@ -130,14 +101,6 @@ fun ProfileRoute(
         },
         onRefreshClick = viewModel::recalculateKeywords,
     )
-
-    if (showOttListBottomSheet) {
-        OttListBottomSheet(
-            ottList = ottListModel,
-            onDismiss = { showOttListBottomSheet = false },
-            sheetState = sheetState,
-        )
-    }
 }
 
 @Composable

@@ -27,16 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.android.R
 import com.flint.android.core.designsystem.component.image.NetworkImage
-import com.flint.android.core.designsystem.component.listView.OttHorizontalList
-import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.interaction.flintIconClickable
 import com.flint.android.core.designsystem.theme.FlintTheme
-import com.flint.android.domain.type.OttType
 
 @Composable
 fun CollectionCreateContentBookmark(
     onBookmarkClick: () -> Unit,
-    onMoreClick: () -> Unit,
     isBookmarked: Boolean,
     bookmarkCount: Int,
     imageUrl: String,
@@ -44,7 +40,6 @@ fun CollectionCreateContentBookmark(
     /** 감독(영화) 또는 creator(TV). 서버가 내려주지 않으면 null 이고, 이때는 영역 자체를 그리지 않는다. */
     director: String?,
     createdYear: Int,
-    ottList: List<OttType>,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -57,7 +52,6 @@ fun CollectionCreateContentBookmark(
     ) {
         CollectionCreateContentBookmarkImage(
             imageUrl = imageUrl,
-            ottList = ottList,
             modifier =
                 Modifier
                     .height(150.dp)
@@ -70,8 +64,6 @@ fun CollectionCreateContentBookmark(
             title = title,
             director = director,
             createdYear = createdYear,
-            ottList = ottList,
-            onMoreClick = onMoreClick,
             modifier =
                 Modifier
                     .weight(1f)
@@ -91,7 +83,6 @@ fun CollectionCreateContentBookmark(
 @Composable
 private fun CollectionCreateContentBookmarkImage(
     imageUrl: String,
-    ottList: List<OttType>,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -101,13 +92,6 @@ private fun CollectionCreateContentBookmarkImage(
             imageUrl = imageUrl,
             modifier = Modifier.fillMaxWidth().height(150.dp),
         )
-
-        OttHorizontalList(
-            ottList = ottList,
-            modifier =
-                Modifier
-                    .padding(top = 10.dp, start = 8.dp),
-        )
     }
 }
 
@@ -116,8 +100,6 @@ private fun CollectionCreateContentBookmarkInfo(
     title: String,
     director: String?,
     createdYear: Int,
-    ottList: List<OttType>,
-    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -149,14 +131,6 @@ private fun CollectionCreateContentBookmarkInfo(
             color = FlintTheme.colors.gray300,
             style = FlintTheme.typography.caption1M12,
         )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        if (ottList.isNotEmpty()) {
-            CollectionCreateContentBookmarkMore(
-                onClick = onMoreClick,
-            )
-        }
     }
 }
 
@@ -194,33 +168,6 @@ private fun CollectionCreateContentBookmarkTag(
     }
 }
 
-@Composable
-private fun CollectionCreateContentBookmarkMore(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.flintCardClickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = "시청 가능한 OTT",
-            color = FlintTheme.colors.white,
-            style = FlintTheme.typography.body2R14,
-        )
-
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_more),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.size(16.dp),
-        )
-    }
-}
-
-
-
-
 /** 서버가 감독을 내려주지 않는 경우 — 감독 줄 없이 연도가 바로 붙는다. */
 @Preview
 @Composable
@@ -228,14 +175,12 @@ private fun CollectionCreateContentBookmarkNoDirectorPreview() {
     FlintTheme {
         CollectionCreateContentBookmark(
             onBookmarkClick = {},
-            onMoreClick = {},
             isBookmarked = true,
             bookmarkCount = 60,
             imageUrl = "",
             title = "너에게 닿기를",
             director = null,
             createdYear = 2009,
-            ottList = listOf(OttType.Netflix),
         )
     }
 }
@@ -247,20 +192,12 @@ private fun CollectionCreateContentBookmarkPreview() {
         var isBookmarked by remember { mutableStateOf(true) }
         CollectionCreateContentBookmark(
             onBookmarkClick = { isBookmarked = !isBookmarked },
-            onMoreClick = {},
             isBookmarked = isBookmarked,
             bookmarkCount = 413,
             imageUrl = "https://buly.kr/DEaVFRZ",
             title = "어바웃 타임",
             director = "스파이더맨",
             createdYear = 2001,
-            ottList =
-                listOf(
-                    OttType.Netflix,
-                    OttType.Disney,
-                    OttType.Tving,
-                    OttType.CoupangPlay,
-                ),
         )
     }
 }

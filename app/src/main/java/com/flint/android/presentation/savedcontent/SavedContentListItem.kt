@@ -30,16 +30,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.android.R
 import com.flint.android.core.designsystem.component.image.NetworkImage
-import com.flint.android.core.designsystem.component.listView.OttHorizontalList
 import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.interaction.flintIconClickable
 import com.flint.android.core.designsystem.theme.FlintTheme
-import com.flint.android.domain.type.OttType
 
 @Composable
 fun SavedContentListItem(
     contentImage: String,
-    ottList: List<OttType>,
     title: String,
     director: String,
     createdYear: String,
@@ -59,7 +56,6 @@ fun SavedContentListItem(
     ) {
         SavedContentListItemImage(
             contentImage = contentImage,
-            ottList = ottList,
             modifier = Modifier.fillMaxHeight(),
         )
 
@@ -89,7 +85,6 @@ fun SavedContentListItem(
 @Composable
 private fun SavedContentListItemImage(
     contentImage: String,
-    ottList: List<OttType>,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -101,10 +96,6 @@ private fun SavedContentListItemImage(
         NetworkImage(
             imageUrl = contentImage,
             modifier = Modifier.fillMaxSize(),
-        )
-        OttHorizontalList(
-            ottList = ottList,
-            modifier = Modifier.padding(top = 10.dp, start = 8.dp),
         )
     }
 }
@@ -206,11 +197,8 @@ private fun SavedContentListItemBookmarkPreview() {
     FlintTheme {
         var isBookmarked by remember { mutableStateOf(false) }
 
-        val ottSimpleList = OttType.entries
-
         SavedContentListItem(
             contentImage = "",
-            ottList = ottSimpleList,
             title = "해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔 해리포터 불의 잔",
             director = "메롱",
             createdYear = "2005",

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -17,10 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.component.image.NetworkImage
-import com.flint.android.core.designsystem.component.listView.OttHorizontalList
 import com.flint.android.core.designsystem.theme.FlintTheme
 import com.flint.android.domain.model.content.BookmarkedContentItemModel
-import com.flint.android.domain.type.OttType
 
 @Composable
 fun SavedContentItem(
@@ -46,13 +43,6 @@ fun SavedContentItem(
                 imageUrl = contentModel.imageUrl,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxSize(),
-            )
-
-            OttHorizontalList(
-                ottList = contentModel.getOttSimpleList,
-                modifier =
-                    Modifier
-                        .padding(top = 10.dp, start = 8.dp),
             )
         }
 
@@ -86,15 +76,6 @@ private fun PreviewSavedContentItem() {
                 title = "드라마 제목",
                 year = 2000,
                 imageUrl = "",
-                getOttSimpleList =
-                    listOf(
-                        OttType.Netflix,
-                        OttType.Disney,
-                        OttType.Tving,
-                        OttType.CoupangPlay,
-                        OttType.Wavve,
-                        OttType.Watcha,
-                    ),
             )
 
 

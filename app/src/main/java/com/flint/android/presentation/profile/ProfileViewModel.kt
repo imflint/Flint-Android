@@ -13,18 +13,14 @@ import com.flint.android.domain.model.bookmark.BookmarkChange
 import com.flint.android.domain.model.user.KeywordListModel
 import com.flint.android.domain.repository.BookmarkRepository
 import com.flint.android.domain.repository.CollectionRepository
-import com.flint.android.domain.repository.ContentRepository
 import com.flint.android.domain.repository.UserRepository
-import com.flint.android.presentation.profile.sideeffect.ProfileSideEffect
 import com.flint.android.presentation.profile.uistate.ProfileSectionData
 import com.flint.android.presentation.profile.uistate.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,7 +31,6 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val userRepository: UserRepository,
-    private val contentRepository: ContentRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val collectionRepository: CollectionRepository,
     private val analyticsTracker: AnalyticsTracker,
@@ -45,9 +40,6 @@ class ProfileViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ProfileUiState(userId = userId))
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
-
-    private val _sideEffect = MutableSharedFlow<ProfileSideEffect>()
-    val sideEffect = _sideEffect.asSharedFlow()
 
     init {
         getProfile()
@@ -212,16 +204,6 @@ class ProfileViewModel @Inject constructor(
                 Timber.e(it)
             }
         }
-    }
-
-    fun getOttListPerContent(contentId: String) = viewModelScope.launch {
-        contentRepository.getOttListPerContent(contentId)
-            .onSuccess {
-                _sideEffect.emit(ProfileSideEffect.ShowOttListBottomSheet(it))
-            }
-            .onFailure {
-                Timber.e(it)
-            }
     }
 
     // 프로필 헤더만 재조회 (섹션 데이터는 유지)
