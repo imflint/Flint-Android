@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.android.core.common.extension.toDisplayYear
 import com.flint.android.core.designsystem.interaction.flintCardClickable
 import com.flint.android.core.designsystem.component.image.NetworkImage
 import com.flint.android.core.designsystem.theme.FlintTheme
@@ -56,13 +57,15 @@ fun SavedContentItem(
             overflow = TextOverflow.Ellipsis
         )
 
-        Spacer(Modifier.height(4.dp))
+        contentModel.year.toDisplayYear()?.let { year ->
+            Spacer(Modifier.height(4.dp))
 
-        Text(
-            text = "${contentModel.year}",
-            color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.caption1R12,
-        )
+            Text(
+                text = year,
+                color = FlintTheme.colors.gray300,
+                style = FlintTheme.typography.caption1R12,
+            )
+        }
     }
 }
 

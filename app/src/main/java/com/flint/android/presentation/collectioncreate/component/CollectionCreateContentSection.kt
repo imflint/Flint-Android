@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.flint.android.core.common.extension.toDisplayYear
 import com.flint.android.R
 import com.flint.android.core.designsystem.component.image.NetworkImage
 import com.flint.android.core.designsystem.theme.FlintTheme
@@ -83,12 +84,14 @@ private fun CollectionCreateInfoSection(
             style = FlintTheme.typography.body1R16,
         )
 
-        Text(
-            text = createdYear.toString(),
-            modifier = Modifier.fillMaxWidth(),
-            color = FlintTheme.colors.gray300,
-            style = FlintTheme.typography.body1R16,
-        )
+        createdYear.toDisplayYear()?.let { year ->
+            Text(
+                text = year,
+                modifier = Modifier.fillMaxWidth(),
+                color = FlintTheme.colors.gray300,
+                style = FlintTheme.typography.body1R16,
+            )
+        }
     }
 }
 

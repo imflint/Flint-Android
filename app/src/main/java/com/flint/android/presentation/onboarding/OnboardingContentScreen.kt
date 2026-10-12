@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.flint.android.core.common.extension.toDisplayYear
 import com.flint.android.core.analytics.FlintEvent
 import com.flint.android.core.analytics.TrackScreenView
 import com.flint.android.core.common.util.UiState
@@ -322,7 +323,7 @@ fun OnboardingContentScreen(
                                 imageUrl = content.posterUrl,
                                 title = content.title,
                                 director = content.author,
-                                releaseYear = content.year.toString(),
+                                releaseYear = content.year.toDisplayYear(),
                                 isSelected = contentUiState.isContentSelected(content.id),
                                 onClick = { onContentClick(content) },
                                 modifier = Modifier.padding(top = topPadding),

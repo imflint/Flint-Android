@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.flint.android.core.common.extension.toDisplayYear
 import com.flint.android.R
 import com.flint.android.core.designsystem.interaction.flintIconClickable
 import com.flint.android.core.designsystem.component.collection.Spoiler
@@ -148,11 +149,13 @@ private fun CollectionDetailContentInfo(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    Text(
-                        text = content.year.toString(),
-                        color = FlintTheme.colors.gray300,
-                        style = FlintTheme.typography.body1R16,
-                    )
+                    content.year.toDisplayYear()?.let { year ->
+                        Text(
+                            text = year,
+                            color = FlintTheme.colors.gray300,
+                            style = FlintTheme.typography.body1R16,
+                        )
+                    }
 
                     Text(
                         text = content.director,

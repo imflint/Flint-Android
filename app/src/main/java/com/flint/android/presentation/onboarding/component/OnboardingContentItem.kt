@@ -37,7 +37,7 @@ fun OnboardingContentItem(
     imageUrl: String,
     title: String,
     director: String,
-    releaseYear: String,
+    releaseYear: String?,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -109,13 +109,15 @@ fun OnboardingContentItem(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Text(
-            text = releaseYear,
-            style = FlintTheme.typography.caption1R12,
-            color = FlintColors.gray300,
-            maxLines = 1,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        if (releaseYear != null) {
+            Text(
+                text = releaseYear,
+                style = FlintTheme.typography.caption1R12,
+                color = FlintColors.gray300,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 
