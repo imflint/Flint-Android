@@ -216,13 +216,13 @@ class OnboardingViewModel
         }
 
         if (keyword.isEmpty() && previousKeyword.isNotEmpty()) {
-            val genres = _contentUiState.value.selectedGenres
-            getSearchContentList(keyword = null, genres = genres)
+            val genre = _contentUiState.value.selectedGenre
+            getSearchContentList(keyword = null, genre = genre)
         }
     }
 
     fun loadInitialContents() {
-        getSearchContentList(keyword = null, genres = emptySet())
+        getSearchContentList(keyword = null, genre = null)
     }
 
     fun clearSearchKeyword() {
@@ -231,32 +231,28 @@ class OnboardingViewModel
 
     fun searchContents() {
         val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
-        val genres = _contentUiState.value.selectedGenres
-        getSearchContentList(keyword = keyword, genres = genres)
+        val genre = _contentUiState.value.selectedGenre
+        getSearchContentList(keyword = keyword, genre = genre)
     }
 
     fun selectGenre(genre: String) {
         _contentUiState.update { currentState ->
-            val newSelected = if (currentState.selectedGenres.contains(genre)) {
-                currentState.selectedGenres - genre
-            } else {
-                currentState.selectedGenres + genre
-            }
-            currentState.copy(selectedGenres = newSelected)
+            // 이미 선택된 칩을 다시 누르면 해제, 다른 칩을 누르면 그 칩으로 교체
+            val newSelected = if (currentState.selectedGenre == genre) null else genre
+            currentState.copy(selectedGenre = newSelected)
         }
         // 장르 선택/해제 시 즉시 재검색
         val keyword = _contentUiState.value.searchKeyword.ifEmpty { null }
-        val selected = _contentUiState.value.selectedGenres
-        getSearchContentList(keyword = keyword, genres = selected)
+        val selected = _contentUiState.value.selectedGenre
+        getSearchContentList(keyword = keyword, genre = selected)
     }
 
-    private fun getSearchContentList(keyword: String?, genres: Set<String>) {
+    private fun getSearchContentList(keyword: String?, genre: String?) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             _contentUiState.update { it.copy(searchResults = UiState.Loading, nextCursor = null) }
 
-            val genreApiValues = genres.mapNotNull { OnboardingContentUiState.GENRES[it] }
-                .ifEmpty { null }
+            val genreApiValues = genre?.toGenreApiValues()
 
             searchRepository.getSearchContentList(
                 keyword = keyword,
@@ -289,9 +285,7 @@ class OnboardingViewModel
             _contentUiState.update { it.copy(isLoadingMore = true) }
 
             val keyword = state.searchKeyword.ifEmpty { null }
-            val genreApiValues = state.selectedGenres
-                .mapNotNull { OnboardingContentUiState.GENRES[it] }
-                .ifEmpty { null }
+            val genreApiValues = state.selectedGenre?.toGenreApiValues()
 
             searchRepository.getSearchContentList(
                 keyword = keyword,
@@ -405,3 +399,7 @@ class OnboardingViewModel
             .onFailure { error -> Timber.e(error, "Failed to update profile image after signup") }
     }
 }
+
+// 표시용 장르명 → 검색 API 파라미터. 매핑에 없는 값이면 필터 없이 검색한다.
+private fun String.toGenreApiValues(): List<String>? =
+    OnboardingContentUiState.GENRES[this]?.let(::listOf)

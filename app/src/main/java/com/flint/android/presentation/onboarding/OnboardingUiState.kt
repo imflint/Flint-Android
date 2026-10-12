@@ -104,7 +104,8 @@ data class OnboardingContentUiState(
     val searchResults: UiState<ImmutableList<SearchContentItemModel>> = UiState.Empty,
     val selectedContents: ImmutableList<SearchContentItemModel> = persistentListOf(),
     val isSearching: Boolean = false,
-    val selectedGenres: Set<String> = emptySet(),
+    // 장르 칩은 단일 선택이다. null 이면 장르 필터 없이 검색한다.
+    val selectedGenre: String? = null,
     val nextCursor: String? = null,
     val isLoadingMore: Boolean = false,
 ) {

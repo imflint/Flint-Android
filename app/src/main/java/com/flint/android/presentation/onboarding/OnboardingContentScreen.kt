@@ -183,7 +183,7 @@ fun OnboardingContentScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             items(OnboardingContentUiState.GENRES.keys.toList()) { genre ->
-                                val isSelected = contentUiState.selectedGenres.contains(genre)
+                                val isSelected = contentUiState.selectedGenre == genre
                                 FlintGenreChip(
                                     text = genre,
                                     isSelected = isSelected,
@@ -394,13 +394,13 @@ private fun OnboardingContentScreenEmptyPreview() {
 @Preview(showBackground = true, name = "장르 칩 인터랙티브")
 @Composable
 private fun OnboardingContentScreenGenreInteractivePreview() {
-    var selectedGenres by remember { mutableStateOf(emptySet<String>()) }
+    var selectedGenre by remember { mutableStateOf<String?>(null) }
 
     FlintTheme {
         OnboardingContentScreen(
             contentUiState = OnboardingContentUiState(
                 searchResults = UiState.Success(SearchContentListModel.FakeList),
-                selectedGenres = selectedGenres,
+                selectedGenre = selectedGenre,
             ),
             onBackClick = {},
             onNextClick = {},
@@ -410,11 +410,7 @@ private fun OnboardingContentScreenGenreInteractivePreview() {
             onContentClick = {},
             onRemoveContent = {},
             onGenreClick = { genre ->
-                selectedGenres = if (selectedGenres.contains(genre)) {
-                    selectedGenres - genre
-                } else {
-                    selectedGenres + genre
-                }
+                selectedGenre = if (selectedGenre == genre) null else genre
             },
         )
     }
