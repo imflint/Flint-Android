@@ -89,7 +89,7 @@ fun ExploreRoute(
                         navigateToCollectionDetail(collectionId, imageUrl)
                     },
                     onMakeCollectionButtonClick = navigateToCollectionCreate,
-                    onLoadNextSession = viewModel::advanceToNextSession,
+                    onPageSettled = viewModel::onPageSettled,
                     modifier = Modifier.padding(paddingValues),
                 )
             }
@@ -113,19 +113,22 @@ private fun ExploreScreen(
     initialPage: Int,
     onWatchCollectionButtonClick: (collectionId: String, imageUrl: String) -> Unit,
     onMakeCollectionButtonClick: () -> Unit,
-    onLoadNextSession: () -> Unit,
+    onPageSettled: (page: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val itemCount: Int = items.size
+    // End 페이지는 서버가 END를 확인해 준 뒤에만 마지막 작품 아래에 붙인다.
     val pagerState: PagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { itemCount + 1 },
+        pageCount = { if (isEnd) itemCount + 1 else itemCount },
     )
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (!isEnd && pagerState.currentPage >= itemCount - 3 && itemCount > 0) {
-            onLoadNextSession()
-        }
+    // 스와이프가 끝나 페이지가 자리 잡을 때마다 진행 위치를 저장한다.
+    // 반쯤 끌다 되돌아온 경우까지 본 것으로 치지 않도록 currentPage 대신 settledPage를 본다.
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.settledPage }
+            .distinctUntilChanged()
+            .collect { page -> onPageSettled(page) }
     }
 
     // 기획 확정 기준: 머문 시간과 무관하게 페이지가 바뀔 때마다 노출로 집계한다.
@@ -161,36 +164,20 @@ private fun ExploreScreen(
         ) { page: Int ->
             val item: ExplorationItemModel? = items.getOrNull(page)
 
-            when {
-                item != null -> {
-                    ExplorePageItem(
-                        imageUrl = item.imageUrl,
-                        collectionId = item.collectionId,
-                        contentTitle = item.title,
-                        contentDescription = item.description,
-                        year = item.year,
-                        onButtonClick = { onWatchCollectionButtonClick(it, item.imageUrl) },
-                    )
-                }
-                // isEnd == true일 때만 진짜 End 화면을 보여준다.
-                isEnd -> {
-                    ExploreEndPage(
-                        onButtonClick = onMakeCollectionButtonClick,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
-                // isEnd == false인데 item이 없는 경우(다음 세션 로딩 중/실패 등)는
-                // End로 오해하지 않도록 로딩 표시만 하고 대기한다.
-                else -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(FlintTheme.colors.background),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        FlintLoadingIndicator()
-                    }
-                }
+            if (item != null) {
+                ExplorePageItem(
+                    imageUrl = item.imageUrl,
+                    collectionId = item.collectionId,
+                    contentTitle = item.title,
+                    contentDescription = item.description,
+                    year = item.year,
+                    onButtonClick = { onWatchCollectionButtonClick(it, item.imageUrl) },
+                )
+            } else {
+                ExploreEndPage(
+                    onButtonClick = onMakeCollectionButtonClick,
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
         }
     }
@@ -482,13 +469,14 @@ private fun ExploreScreenPreview() {
                         imageUrl = "https://buly.kr/G3Edbfu",
                         year = 2014,
                         collectionId = "0",
+                        position = it + 1,
                     )
                 }.toImmutableList(),
             isEnd = false,
             initialPage = 0,
             onWatchCollectionButtonClick = { _, _ -> },
             onMakeCollectionButtonClick = {},
-            onLoadNextSession = {},
+            onPageSettled = {},
             modifier =
                 Modifier
                     .padding(PaddingValues())

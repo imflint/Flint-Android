@@ -11,7 +11,7 @@ fun ExplorationResponseDto.toModel(): ExplorationSessionModel =
     ExplorationSessionModel(
         items = items.map { it.toModel() }.toImmutableList(),
         state = state.toExplorationState(),
-        hasNext = hasNext,
+        lastViewedPosition = lastViewedPosition,
     )
 
 private fun String.toExplorationState(): ExplorationState =
@@ -33,4 +33,5 @@ private fun ExplorationResponseDto.Item.toModel(): ExplorationItemModel =
         imageUrl = imageUrl,
         year = year ?: 0,
         collectionId = collectionId,
+        position = position,
     )

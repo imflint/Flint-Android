@@ -7,8 +7,6 @@ import kotlinx.collections.immutable.ImmutableList
 data class ExploreUiState(
     val items: ImmutableList<ExplorationItemModel>,
     val state: ExplorationState,
-    val hasNext: Boolean = false,
-    val isLoadingNext: Boolean = false,
     val initialPage: Int = 0,
 ) {
     val isEnd: Boolean
@@ -16,7 +14,4 @@ data class ExploreUiState(
 
     val isEmpty: Boolean
         get() = state == ExplorationState.EMPTY
-
-    val canAdvance: Boolean
-        get() = !isLoadingNext && state == ExplorationState.IN_PROGRESS
 }

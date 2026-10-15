@@ -8,7 +8,8 @@ data class ExplorationResponseDto(
     @SerialName("items") val items: List<Item>,
     // IN_PROGRESS / END / EMPTY
     @SerialName("state") val state: String,
-    @SerialName("hasNext") val hasNext: Boolean,
+    // 마지막으로 확인한 세션 내 위치. 시작 전은 0
+    @SerialName("lastViewedPosition") val lastViewedPosition: Int,
 ) {
     @Serializable
     data class Item(
@@ -18,5 +19,7 @@ data class ExplorationResponseDto(
         @SerialName("imageUrl") val imageUrl: String = "",
         @SerialName("year") val year: Int? = null,
         @SerialName("collectionId") val collectionId: String = "",
+        // 세션 내 고정 위치(1~30). 숨김·삭제된 작품은 빠지므로 인덱스+1 과 다를 수 있다.
+        @SerialName("position") val position: Int,
     )
 }

@@ -12,7 +12,7 @@ enum class ExplorationState {
 data class ExplorationSessionModel(
     val items: ImmutableList<ExplorationItemModel>,
     val state: ExplorationState,
-    val hasNext: Boolean,
+    val lastViewedPosition: Int,
 ) {
     val isEnd: Boolean
         get() = state == ExplorationState.END
@@ -28,4 +28,5 @@ data class ExplorationItemModel(
     val imageUrl: String,
     val year: Int,
     val collectionId: String,
+    val position: Int,
 )
