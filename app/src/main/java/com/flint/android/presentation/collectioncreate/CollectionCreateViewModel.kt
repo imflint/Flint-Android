@@ -1,6 +1,5 @@
 package com.flint.android.presentation.collectioncreate
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -17,10 +16,9 @@ import com.flint.android.domain.repository.CollectionRepository
 import com.flint.android.domain.repository.ContentRepository
 import com.flint.android.domain.repository.SearchRepository
 import com.flint.android.domain.repository.StorageRepository
-import com.flint.android.domain.type.FileExtension
+import com.flint.android.domain.repository.UploadImageReader
 import com.flint.android.domain.type.StoragePathType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,12 +26,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 import javax.inject.Inject
@@ -45,11 +41,11 @@ private const val BOOKMARKED_CONTENT_PAGE_SIZE = 20
 @HiltViewModel
 class CollectionCreateViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    @ApplicationContext private val context: Context,
     private val collectionRepository: CollectionRepository,
     private val searchRepository: SearchRepository,
     private val contentRepository: ContentRepository,
     private val storageRepository: StorageRepository,
+    private val uploadImageReader: UploadImageReader,
     private val analyticsTracker: AnalyticsTracker,
 ) : ViewModel() {
 
@@ -471,47 +467,28 @@ class CollectionCreateViewModel @Inject constructor(
     private suspend fun uploadImageIfNeeded(uri: Uri?, pathType: StoragePathType): Result<String?> {
         uri ?: return Result.success(null)
 
-        val mimeType = runCatching {
-            withContext(Dispatchers.IO) { context.contentResolver.getType(uri) }
-        }.getOrElse { error ->
-            Timber.e(error, "Failed to resolve mimeType")
+        val image = uploadImageReader.read(uri).getOrElse { error ->
+            Timber.e(error, "Failed to read image")
             return Result.failure(error)
-        } ?: "image/jpeg"
-        val extension = mimeTypeToFileExtension(mimeType)
+        }
 
         val presignedUrl = storageRepository.getPresignedUrl(
             pathType = pathType,
-            extension = extension,
+            extension = image.extension,
         ).getOrElse { error ->
             Timber.e(error, "Failed to get presigned URL")
             return Result.failure(error)
         }
 
-        val imageBytes = runCatching {
-            withContext(Dispatchers.IO) {
-                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            }
-        }.getOrElse { error ->
-            Timber.e(error, "Failed to read image bytes")
-            return Result.failure(error)
-        } ?: return Result.failure(IllegalStateException("Failed to open image stream: $uri"))
-
         storageRepository.uploadToS3(
             uploadUrl = presignedUrl.uploadUrl,
-            imageBytes = imageBytes,
-            mimeType = mimeType,
+            imageBytes = image.bytes,
+            mimeType = image.mimeType,
         ).getOrElse { error ->
             Timber.e(error, "Failed to upload image to S3")
             return Result.failure(error)
         }
 
         return Result.success(presignedUrl.key)
-    }
-
-    private fun mimeTypeToFileExtension(mimeType: String): FileExtension = when (mimeType) {
-        "image/png" -> FileExtension.PNG
-        "image/gif" -> FileExtension.GIF
-        "image/webp" -> FileExtension.WEBP
-        else -> FileExtension.JPEG
     }
 }
