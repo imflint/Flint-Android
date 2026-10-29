@@ -112,4 +112,11 @@ class UserRepository @Inject constructor(
             apiService.updateProfileImage(UpdateProfileImageRequestDto(profileImage = imageKey))
             Unit
         }
+
+    // 프로필 이미지 삭제
+    suspend fun deleteProfileImage(): Result<Unit> =
+        suspendRunCatching {
+            apiService.deleteProfileImage()
+            Unit
+        }
 }

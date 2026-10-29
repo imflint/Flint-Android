@@ -105,7 +105,7 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             when {
                 state.isProfileImageDeleted -> {
-                    userRepository.updateProfileImage("")
+                    userRepository.deleteProfileImage()
                         .onFailure {
                             Timber.e(it, "Failed to delete profile image")
                             return@launch

@@ -13,6 +13,7 @@ import com.flint.android.data.dto.user.response.UserProfileResponseDto
 import retrofit2.Response
 import retrofit2.http.PATCH
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -82,4 +83,8 @@ interface UserApi {
     suspend fun updateProfileImage(
         @Body requestDto: UpdateProfileImageRequestDto,
     ): BaseEmptyResponse
+
+    // 프로필 이미지 삭제 (기본 이미지로 되돌림)
+    @DELETE("/api/v1/users/me/profile-image")
+    suspend fun deleteProfileImage(): BaseEmptyResponse
 }
