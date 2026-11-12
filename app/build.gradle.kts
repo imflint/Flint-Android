@@ -83,7 +83,10 @@ android {
             if (hasReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
             }
-            isMinifyEnabled = false
+            // Play Console 의 DEX 최적화(난독화 비율) 기준을 맞추기 위해 R8 로 코드·리소스를 축소한다.
+            // 리플렉션에 기대는 코드가 깨지지 않도록 필요한 keep 규칙은 proguard-rules.pro 에 둔다.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
