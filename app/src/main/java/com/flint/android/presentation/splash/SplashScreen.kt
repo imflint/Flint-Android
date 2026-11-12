@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
@@ -16,6 +17,8 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.flint.android.R
+import com.flint.android.core.common.extension.openStoreUrl
+import com.flint.android.core.designsystem.component.modal.AppUpdateModal
 import com.flint.android.core.designsystem.theme.FlintTheme
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,15 +33,29 @@ fun SplashRoute(
     navigateToHome: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val autoLoginState by viewModel.autoLoginState.collectAsStateWithLifecycle()
+    val appUpdateState by viewModel.appUpdateState.collectAsStateWithLifecycle()
     var isAnimationFinished by remember { mutableStateOf(false) }
 
     SplashScreen(
         onAnimationFinished = { isAnimationFinished = true },
     )
 
-    LaunchedEffect(isAnimationFinished, autoLoginState) {
-        if (isAnimationFinished && autoLoginState != AutoLoginState.Loading) {
+    // 강제 업데이트 대상이면 다음 화면으로 넘어가지 않고 닫을 수 없는 업데이트 모달만 띄운다
+    val requiredUpdate = appUpdateState as? AppUpdateState.Required
+    if (isAnimationFinished && requiredUpdate != null) {
+        AppUpdateModal(
+            onUpdateClick = { context.openStoreUrl(requiredUpdate.storeUrl) },
+            onDismiss = {},
+        )
+    }
+
+    LaunchedEffect(isAnimationFinished, autoLoginState, appUpdateState) {
+        if (isAnimationFinished &&
+            autoLoginState != AutoLoginState.Loading &&
+            appUpdateState == AppUpdateState.NotRequired
+        ) {
             when (autoLoginState) {
                 AutoLoginState.NavigateToHome -> navigateToHome()
                 AutoLoginState.NavigateToLogin -> navigateToLogin()

@@ -8,6 +8,7 @@ import com.flint.android.data.api.ExplorationApi
 import com.flint.android.data.api.HomeApi
 import com.flint.android.data.api.SearchApi
 import com.flint.android.data.api.StorageApi
+import com.flint.android.data.api.SystemApi
 import com.flint.android.data.api.TermsApi
 import com.flint.android.data.api.UserApi
 import dagger.Module
@@ -59,4 +60,8 @@ object ServiceModule {
     @Provides
     @Singleton
     fun provideExplorationApi(retrofit: Retrofit): ExplorationApi = retrofit.create(ExplorationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSystemApi(retrofit: Retrofit): SystemApi = retrofit.create(SystemApi::class.java)
 }

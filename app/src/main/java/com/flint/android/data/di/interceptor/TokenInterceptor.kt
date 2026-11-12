@@ -23,7 +23,7 @@ class TokenInterceptor
 
             val requestBuilder = originalRequest.newBuilder()
 
-            val isPublicEndpoint = originalRequest.url.encodedPath == "/api/v1/search/contents"
+            val isPublicEndpoint = originalRequest.url.encodedPath in PUBLIC_ENDPOINTS
             if (accessToken.isNotEmpty() && !isPublicEndpoint) {
                 requestBuilder.header("Authorization", "Bearer $accessToken")
             }
@@ -34,3 +34,9 @@ class TokenInterceptor
             return chain.proceed(request)
         }
     }
+
+// 인증 없이 호출하는 엔드포인트. 만료된 토큰이 실려 가면 서버 인증 필터에서 막힐 수 있어 토큰을 싣지 않는다.
+private val PUBLIC_ENDPOINTS = setOf(
+    "/api/v1/search/contents",
+    "/api/v1/system/version",
+)
